@@ -66,12 +66,12 @@
         <div class="small-muted">Historial</div>
       </div>
 
-      <!-- ✔️ NUEVO BOTÓN AGREGADO AQUÍ -->
+      <!-- ✔️ BOTÓN NUEVO Respetando tu código -->
       <a href="resets.html" class="menu-item neon-btn">
         <div class="text-neon-yellow">♻️ Sistemas de Resets</div>
         <div class="small-muted">Abrir</div>
       </a>
-      <!-- ✔️ FIN DEL BOTÓN NUEVO -->
+      <!-- ✔️ FIN DEL BOTÓN -->
 
       <div id="menuLogout" class="menu-item neon-btn">
         <div class="text-neon-pink">🚪 Cerrar sesión</div>
@@ -117,6 +117,13 @@
 
     <section id="myKeysContainer" class="hidden">
       <h2 class="text-xl font-semibold mb-4">🔒 Historial de Keys compradas</h2>
+
+      <!-- 🔥🔥 BOTÓN NUEVO PARA ELIMINAR KEYS EXPIRADAS 🔥🔥 -->
+      <button id="deleteExpiredKeysBtn"
+        class="mb-4 py-2 px-4 bg-red-600 rounded-lg font-bold hover:bg-red-700 transition">
+        🗑️ Eliminar Keys Expiradas
+      </button>
+
       <div class="flex flex-col md:flex-row gap-3 mb-4">
         <input id="searchKeyInput" type="text" placeholder="🔍 Buscar por nombre o clave..."
         class="w-full md:w-1/2 px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400">
@@ -175,4 +182,4 @@
   </div>
   <script src="script.js"></script>
 </body>
-</html>
+        </html>
