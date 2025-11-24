@@ -24,10 +24,7 @@
     appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
 };
 
-// Inicializar Firebase si no está iniciado
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
       const database = firebase.database();
