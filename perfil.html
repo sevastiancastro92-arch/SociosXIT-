@@ -13,7 +13,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script> 
     
- <script src="https://sevastiancastro92-arch.github.io/Pruevafirebase/firebaseconfig.js"></script>
     </head>
 
 <body class="p-4 md:p-8 text-white">
@@ -100,8 +99,25 @@
 /* CONFIGURACIÓN Y UTILIDADES */
 /* ========================================================== */
 
-// Estas variables (auth, database, usersRef) son accesibles porque
-// fueron definidas globalmente en firebaseconfig.js
+// --- Configuración de Firebase ---
+const firebaseConfig = {
+    apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
+    authDomain: "chatglobal-e9370.firebaseapp.com",
+    databaseURL: "https://chatglobal-e9370-default-rtdb.firebaseio.com",
+    projectId: "chatglobal-e9370",
+    storageBucket: "chatglobal-e9370.firebasestorage.app",
+    messagingSenderId: "382420208590",
+    appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
+};
+
+// Inicializar Firebase si no está iniciado
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const database = firebase.database(); 
+const usersRef = database.ref('users'); 
 
 // Referencias DOM
 const currentUsernameInput = document.getElementById('currentUsername');
@@ -264,6 +280,8 @@ if (changePasswordForm) {
             }
             
             // 🛑 2. VERIFICACIÓN DE CONTRASEÑA ACTUAL CONTRA RTDB
+            // ¡ATENCIÓN! ESTO ES UN HUECO DE SEGURIDAD. DEBES USAR HASHING.
+            // Reemplazar: 'userData.password === currentPassword' con tu lógica de Hashing (e.g., await bcrypt.compare(currentPassword, userData.password))
             
             const isPasswordCorrect = (userData.password === currentPassword); 
             
@@ -272,6 +290,8 @@ if (changePasswordForm) {
             }
 
             // 🛑 3. ACTUALIZACIÓN DE CONTRASEÑA EN RTDB
+            // ¡ATENCIÓN! LA NUEVA CONTRASEÑA DEBE SER HASHEADA ANTES DE GUARDARSE.
+            // Reemplazar 'newPassword' con tu función de Hashing (e.g., await bcrypt.hash(newPassword, 10))
             
             await usersRef.child(sessionUser).update({
                 password: newPassword, 
