@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,14 +8,100 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Firebase -->
+    <link rel="stylesheet" href="style.css">
+
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script> 
+    
+    </head>
 
-    <!-- Tu config Firebase DIRECTO -->
+<body class="p-4 md:p-8 text-white">
+    
+    <canvas id="particles"></canvas> 
+
+    <div class="app-root relative z-10">
+        <div class="max-w-xl mx-auto mt-6">
+
+            <a href="dashboard.html" class="flex items-center text-sm font-medium text-neon-cyan hover:text-white transition duration-200 mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="m15 18-6-6 6-6"/></svg>
+                Volver al Dashboard
+            </a>
+
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-8 text-neon-pink drop-shadow-lg">
+                🔧 Ajustes de Perfil
+            </h1>
+
+            <div id="statusMessage" class="hidden p-4 rounded-lg mb-4 font-semibold"></div>
+
+            <div class="card rounded-xl p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4 text-neon-cyan">
+                    Editar Nombre de Usuario
+                </h2>
+                <form id="updateUsernameForm" class="space-y-4">
+                    <div>
+                        <label for="currentUsername" class="block text-sm font-medium text-gray-400">Nombre de Usuario Actual</label>
+                        <input type="text" id="currentUsername" readonly
+                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed">
+                    </div>
+
+                    <div>
+                        <label for="newUsername" class="block text-sm font-medium text-gray-400">Nuevo Nombre de Usuario</label>
+                        <input type="text" id="newUsername" 
+                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-neon-cyan"
+                            placeholder="Ingresa un nuevo nombre">
+                    </div>
+
+                    <button type="submit" 
+                        class="neon-btn btn-show w-full text-center py-3 px-6 rounded-lg font-bold text-lg uppercase tracking-wider mt-4">
+                        Actualizar Nombre
+                    </button>
+                </form>
+            </div>
+
+            <div id="changePasswordCard" class="card rounded-xl p-6">
+                <h2 class="text-2xl font-bold mb-4 text-neon-pink">
+                    Cambiar Contraseña
+                </h2>
+                <form id="changePasswordForm" class="space-y-4">
+                    <div>
+                        <label for="currentPassword" class="block text-sm font-medium text-gray-400">Contraseña Actual</label>
+                        <input type="password" id="currentPassword" required
+                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-neon-pink"
+                            placeholder="Ingresa tu contraseña actual">
+                    </div>
+                    
+                    <div>
+                        <label for="newPassword" class="block text-sm font-medium text-gray-400">Nueva Contraseña</label>
+                        <input type="password" id="newPassword" required
+                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-neon-pink"
+                            placeholder="Mínimo 6 caracteres">
+                    </div>
+
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-400">Confirmar Contraseña</label>
+                        <input type="password" id="confirmPassword" required
+                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-neon-pink"
+                            placeholder="Repite la nueva contraseña">
+                    </div>
+
+                    <button type="submit" 
+                        class="neon-btn btn-logout w-full text-center py-3 px-6 rounded-lg font-bold text-lg uppercase tracking-wider mt-4">
+                        Actualizar Contraseña
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
     <script>
-      const firebaseConfig = {
+/* ========================================================== */
+/* CONFIGURACIÓN Y UTILIDADES */
+/* ========================================================== */
+
+// --- Configuración de Firebase ---
+const firebaseConfig = {
     apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
     authDomain: "chatglobal-e9370.firebaseapp.com",
     databaseURL: "https://chatglobal-e9370-default-rtdb.firebaseio.com",
@@ -24,276 +111,208 @@
     appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
 };
 
+// Inicializar Firebase si no está iniciado
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const database = firebase.database();
-      const usersRef = database.ref("users");
-    </script>
+const auth = firebase.auth();
+const database = firebase.database(); 
+const usersRef = database.ref('users'); 
 
-    <!-- Estilos internos (soluciona el fondo negro) -->
-    <style>
-        body {
-            margin: 0;
-            background: #000;
-            color: white;
-            overflow-x: hidden;
-        }
+// Referencias DOM
+const currentUsernameInput = document.getElementById('currentUsername');
+const newUsernameInput = document.getElementById('newUsername');
+const updateUsernameForm = document.getElementById('updateUsernameForm');
+const changePasswordForm = document.getElementById('changePasswordForm');
+const changePasswordCard = document.getElementById('changePasswordCard'); 
+const currentPasswordInput = document.getElementById('currentPassword'); 
+const newPasswordInput = document.getElementById('newPassword');
+const confirmPasswordInput = document.getElementById('confirmPassword');
+const statusMessage = document.getElementById('statusMessage');
 
-        /* EL CANVAS SIEMPRE DETRÁS */
-        #particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0 !important;
-            pointer-events: none;
-        }
+let currentUser = null;
+const sessionUser = sessionStorage.getItem("sociosxit_user"); 
 
-        /* EL CONTENIDO SIEMPRE ENCIMA */
-        .app-root {
-            position: relative;
-            z-index: 10 !important;
-        }
+// Validación de sesión compartida
+if (!sessionUser) {
+    window.location.href = 'index.html'; 
+} else {
+    currentUsernameInput.value = sessionUser;
+}
 
-        .card {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+// Mostrar mensajes
+function displayStatus(message, isSuccess = true) {
+    statusMessage.textContent = message;
+    statusMessage.className = `p-4 rounded-lg mb-4 font-semibold ${isSuccess ? 'bg-green-700 text-white border-2 border-neon-green' : 'bg-red-700 text-white border-2 border-neon-pink'}`;
+    statusMessage.classList.remove('hidden');
+    setTimeout(() => { statusMessage.classList.add('hidden'); }, 5000);
+}
 
-        .neon-btn {
-            background: linear-gradient(90deg, #ff00c8, #00c3ff);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            transition: 0.25s;
-        }
+// ==========================================================
+// VISIBILIDAD DE TARJETA (BASADA EN RTDB SOLAMENTE)
+// ==========================================================
 
-        .neon-btn:hover {
-            filter: brightness(1.2);
-        }
-    </style>
-</head>
+auth.onAuthStateChanged(async user => { 
+    if (user) {
+        currentUser = user;
+        
+        if (changePasswordCard) {
+            
+            if (sessionUser) {
+                try {
+                    const snapshot = await usersRef.child(sessionUser).once('value');
+                    const userData = snapshot.val();
+                    
+                    // Mostrar si el usuario TIENE una propiedad 'password' y NO es null (asumiendo que es una cuenta manual)
+                    const hasManualPassword = userData && userData.password && userData.password !== null; 
+                    
+                    if (hasManualPassword) {
+                        changePasswordCard.style.display = 'block'; 
+                    } else {
+                        changePasswordCard.style.display = 'none'; 
+                    }
 
-<body class="p-4 md:p-8 text-white">
-
-    <!-- FONDO DE PARTÍCULAS -->
-    <canvas id="particles"></canvas>
-
-    <div class="app-root">
-        <div class="max-w-xl mx-auto mt-6">
-
-            <a href="dashboard.html"
-                class="flex items-center text-sm font-medium text-cyan-300 hover:text-white transition duration-200 mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                    fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" class="mr-1">
-                    <path d="m15 18-6-6 6-6" />
-                </svg>
-                Volver al Dashboard
-            </a>
-
-            <h1 class="text-3xl md:text-4xl font-extrabold mb-8 text-pink-400 drop-shadow-lg">
-                🔧 Ajustes de Perfil
-            </h1>
-
-            <div id="statusMessage" class="hidden p-4 rounded-lg mb-4 font-semibold"></div>
-
-            <!-- Editar Nombre -->
-            <div class="card rounded-xl p-6 mb-8">
-                <h2 class="text-2xl font-bold mb-4 text-cyan-300">
-                    Editar Nombre de Usuario
-                </h2>
-
-                <form id="updateUsernameForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm text-gray-400">Nombre Actual</label>
-                        <input id="currentUsername" readonly
-                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-700 text-gray-400 border border-gray-600">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm text-gray-400">Nuevo Nombre</label>
-                        <input id="newUsername"
-                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-cyan-300">
-                    </div>
-
-                    <button class="neon-btn w-full">Actualizar Nombre</button>
-                </form>
-            </div>
-
-            <!-- Cambiar Contraseña -->
-            <div id="changePasswordCard" class="card rounded-xl p-6">
-                <h2 class="text-2xl font-bold mb-4 text-pink-400">Cambiar Contraseña</h2>
-
-                <form id="changePasswordForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm text-gray-400">Contraseña Actual</label>
-                        <input id="currentPassword" type="password" required
-                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm text-gray-400">Nueva Contraseña</label>
-                        <input id="newPassword" type="password" required
-                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm text-gray-400">Confirmar</label>
-                        <input id="confirmPassword" type="password" required
-                            class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600">
-                    </div>
-
-                    <button class="neon-btn w-full">Actualizar Contraseña</button>
-                </form>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- SCRIPT DE PARTÍCULAS (100% funcionando) -->
-    <script>
-        const canvas = document.getElementById("particles");
-        const ctx = canvas.getContext("2d");
-        let particlesArray = [];
-        let w, h;
-
-        function initCanvas() {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener("resize", initCanvas);
-        initCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * w;
-                this.y = Math.random() * h;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = (Math.random() - 0.5) * 0.7;
-                this.speedY = (Math.random() - 0.5) * 0.7;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (this.x < 0 || this.x > w) this.speedX *= -1;
-                if (this.y < 0 || this.y > h) this.speedY *= -1;
-            }
-            draw() {
-                ctx.fillStyle = "rgba(0,255,255,0.7)";
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                } catch (error) {
+                    console.error("Error al verificar el proveedor en RTDB:", error);
+                    changePasswordCard.style.display = 'none'; 
+                }
+            } else {
+                 changePasswordCard.style.display = 'none'; 
             }
         }
 
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < 130; i++) particlesArray.push(new Particle());
+    } else {
+        window.location.href = 'index.html'; 
+    }
+});
+
+/* ========================================================== */
+/* LÓGICA DE ACTUALIZACIÓN DE NOMBRE */
+/* ========================================================== */
+
+if (updateUsernameForm) {
+    updateUsernameForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!currentUser) return displayStatus('Error: Usuario no autenticado.', false);
+
+        const newUsername = newUsernameInput.value.trim();
+        if (newUsername.length < 3)
+            return displayStatus('El nombre de usuario debe tener al menos 3 caracteres.', false);
+        
+        const oldUsername = sessionStorage.getItem("sociosxit_user");
+
+        if (newUsername === oldUsername) {
+            return displayStatus('El nuevo nombre es el mismo que el actual.', false);
         }
-        initParticles();
 
-        function animate() {
-            ctx.clearRect(0, 0, w, h);
-            particlesArray.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animate);
+        try {
+            // 1. Verificar si el nuevo nombre ya está ocupado
+            const snapshot = await usersRef.child(newUsername).once('value');
+            if (snapshot.exists()) {
+                return displayStatus('El nombre de usuario ya está en uso en la base de datos.', false);
+            }
+
+            // 2. Obtener la información completa del nodo antiguo
+            const oldUserDataSnapshot = await usersRef.child(oldUsername).once('value');
+            if (!oldUserDataSnapshot.exists()) {
+                 throw new Error('No se encontró el perfil antiguo en la base de datos.');
+            }
+            const userData = oldUserDataSnapshot.val();
+            
+            if (userData.name) { userData.name = newUsername; }
+            
+            // 3. Crear el nuevo nodo y eliminar el antiguo
+            await usersRef.child(newUsername).set(userData);
+            await usersRef.child(oldUsername).remove();
+            
+            // 4. Actualizar el perfil en Firebase Auth y sesión
+            await currentUser.updateProfile({ displayName: newUsername });
+            sessionStorage.setItem("sociosxit_user", newUsername); 
+            
+            // 5. Actualización de la UI
+            currentUsernameInput.value = newUsername; 
+            newUsernameInput.value = '';
+            
+            displayStatus('¡Nombre de usuario actualizado con éxito y sincronizado con la base de datos!');
+        } catch (error) {
+            console.error("Error al actualizar perfil:", error);
+            displayStatus(`Error al actualizar nombre: ${error.message}`, false);
         }
-        animate();
-    </script>
+    });
+}
 
-    <!-- LÓGICA FIREBASE (exactamente igual que la tuya) -->
-    <script>
-        const currentUsernameInput = document.getElementById('currentUsername');
-        const newUsernameInput = document.getElementById('newUsername');
-        const updateUsernameForm = document.getElementById('updateUsernameForm');
-        const changePasswordForm = document.getElementById('changePasswordForm');
-        const changePasswordCard = document.getElementById('changePasswordCard');
-        const currentPasswordInput = document.getElementById('currentPassword');
-        const newPasswordInput = document.getElementById('newPassword');
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        const statusMessage = document.getElementById('statusMessage');
+/* ========================================================== */
+/* LÓGICA DE CAMBIO DE CONTRASEÑA (RTDB PURO - SIN EMAILS) */
+/* ========================================================== */
 
-        let currentUser = null;
+if (changePasswordForm) {
+    changePasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
+        if (!currentUser) return displayStatus('Error: Usuario no autenticado.', false);
+        
+        // Obtener valores
+        const currentPassword = currentPasswordInput.value;
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        // Validaciones
+        if (!currentPassword) 
+            return displayStatus('Debes ingresar tu contraseña actual.', false);
+        
+        if (newPassword.length < 6)
+            return displayStatus('La nueva contraseña debe tener al menos 6 caracteres.', false);
+
+        if (newPassword !== confirmPassword)
+            return displayStatus('Las nuevas contraseñas no coinciden.', false);
+
+        
         const sessionUser = sessionStorage.getItem("sociosxit_user");
-        if (!sessionUser) location.href = "index.html";
-        else currentUsernameInput.value = sessionUser;
 
-        function displayStatus(msg, ok = true) {
-            statusMessage.textContent = msg;
-            statusMessage.className = `p-4 rounded-lg mb-4 font-semibold ${ok ? "bg-green-700" : "bg-red-700"}`;
-            statusMessage.classList.remove("hidden");
-            setTimeout(() => statusMessage.classList.add("hidden"), 5000);
+        try {
+            // 1. Obtener los datos del usuario de la RTDB
+            const snapshot = await usersRef.child(sessionUser).once('value');
+            const userData = snapshot.val();
+            
+            if (!userData || !userData.password) {
+                return displayStatus('Error: La cuenta no tiene una contraseña manual registrada.', false);
+            }
+            
+            // 🛑 2. VERIFICACIÓN DE CONTRASEÑA ACTUAL CONTRA RTDB
+            // ¡ATENCIÓN! ESTO ES UN HUECO DE SEGURIDAD. DEBES USAR HASHING.
+            // Reemplazar: 'userData.password === currentPassword' con tu lógica de Hashing (e.g., await bcrypt.compare(currentPassword, userData.password))
+            
+            const isPasswordCorrect = (userData.password === currentPassword); 
+            
+            if (!isPasswordCorrect) {
+                return displayStatus('La Contraseña Actual es incorrecta.', false);
+            }
+
+            // 🛑 3. ACTUALIZACIÓN DE CONTRASEÑA EN RTDB
+            // ¡ATENCIÓN! LA NUEVA CONTRASEÑA DEBE SER HASHEADA ANTES DE GUARDARSE.
+            // Reemplazar 'newPassword' con tu función de Hashing (e.g., await bcrypt.hash(newPassword, 10))
+            
+            await usersRef.child(sessionUser).update({
+                password: newPassword, 
+                updated_at: new Date().toISOString()
+            });
+            
+            // 4. Limpiar campos y mostrar éxito
+            currentPasswordInput.value = '';
+            newPasswordInput.value = '';
+            confirmPasswordInput.value = '';
+            
+            displayStatus('¡Contraseña actualizada con éxito en la base de datos!', true);
+            
+        } catch (error) {
+            console.error("Error al cambiar contraseña en RTDB:", error);
+            displayStatus(`Error interno al actualizar la contraseña: ${error.message}`, false);
         }
+    });
+}
 
-        auth.onAuthStateChanged(async user => {
-            if (!user) return location.href = "index.html";
-            currentUser = user;
-
-            const snap = await usersRef.child(sessionUser).once("value");
-            const userData = snap.val();
-
-            if (!userData || !userData.password) changePasswordCard.style.display = "none";
-        });
-
-        updateUsernameForm.addEventListener("submit", async e => {
-            e.preventDefault();
-            const newName = newUsernameInput.value.trim();
-            const oldName = sessionStorage.getItem("sociosxit_user");
-
-            if (newName.length < 3) return displayStatus("Mínimo 3 caracteres", false);
-
-            const exists = await usersRef.child(newName).once("value");
-            if (exists.exists()) return displayStatus("Nombre ya en uso", false);
-
-            const oldData = (await usersRef.child(oldName).once("value")).val();
-
-            oldData.name = newName;
-
-            await usersRef.child(newName).set(oldData);
-            await usersRef.child(oldName).remove();
-
-            await currentUser.updateProfile({ displayName: newName });
-
-            sessionStorage.setItem("sociosxit_user", newName);
-            currentUsernameInput.value = newName;
-            newUsernameInput.value = "";
-
-            displayStatus("Nombre actualizado ✔");
-        });
-
-        changePasswordForm.addEventListener("submit", async e => {
-            e.preventDefault();
-
-            const old = currentPasswordInput.value;
-            const n1 = newPasswordInput.value;
-            const n2 = confirmPasswordInput.value;
-
-            if (n1 !== n2) return displayStatus("Las contraseñas no coinciden", false);
-
-            const snap = await usersRef.child(sessionUser).once("value");
-            const data = snap.val();
-
-            if (data.password !== old) return displayStatus("Contraseña actual incorrecta", false);
-
-            await usersRef.child(sessionUser).update({ password: n1 });
-
-            currentPasswordInput.value = "";
-            newPasswordInput.value = "";
-            confirmPasswordInput.value = "";
-
-            displayStatus("Contraseña actualizada ✔");
-        });
     </script>
-
 </body>
-</html>
+</html>v
