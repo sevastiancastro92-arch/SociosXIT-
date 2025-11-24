@@ -7,7 +7,8 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    
+    <link rel="stylesheet" href="style.css">
+
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script> 
@@ -15,8 +16,6 @@
     </head>
 
 <body class="p-4 md:p-8 text-white">
-    
-    <canvas id="particles"></canvas> 
 
     <div class="app-root relative z-10">
         <div class="max-w-xl mx-auto mt-6">
@@ -162,7 +161,7 @@ auth.onAuthStateChanged(async user => {
                     const snapshot = await usersRef.child(sessionUser).once('value');
                     const userData = snapshot.val();
                     
-                    // Mostrar si el usuario TIENE una propiedad 'password' y NO es null (asumiendo que es una cuenta manual)
+                    // Mostrar si el usuario TIENE una propiedad 'password' y NO es null
                     const hasManualPassword = userData && userData.password && userData.password !== null; 
                     
                     if (hasManualPassword) {
@@ -206,13 +205,11 @@ if (updateUsernameForm) {
         }
 
         try {
-            // 1. Verificar si el nuevo nombre ya está ocupado
             const snapshot = await usersRef.child(newUsername).once('value');
             if (snapshot.exists()) {
                 return displayStatus('El nombre de usuario ya está en uso en la base de datos.', false);
             }
 
-            // 2. Obtener la información completa del nodo antiguo
             const oldUserDataSnapshot = await usersRef.child(oldUsername).once('value');
             if (!oldUserDataSnapshot.exists()) {
                  throw new Error('No se encontró el perfil antiguo en la base de datos.');
@@ -221,15 +218,12 @@ if (updateUsernameForm) {
             
             if (userData.name) { userData.name = newUsername; }
             
-            // 3. Crear el nuevo nodo y eliminar el antiguo
             await usersRef.child(newUsername).set(userData);
             await usersRef.child(oldUsername).remove();
             
-            // 4. Actualizar el perfil en Firebase Auth y sesión
             await currentUser.updateProfile({ displayName: newUsername });
             sessionStorage.setItem("sociosxit_user", newUsername); 
             
-            // 5. Actualización de la UI
             currentUsernameInput.value = newUsername; 
             newUsernameInput.value = '';
             
@@ -242,7 +236,7 @@ if (updateUsernameForm) {
 }
 
 /* ========================================================== */
-/* LÓGICA DE CAMBIO DE CONTRASEÑA (RTDB PURO - SIN EMAILS) */
+/* LÓGICA DE CAMBIO DE CONTRASEÑA */
 /* ========================================================== */
 
 if (changePasswordForm) {
@@ -251,12 +245,10 @@ if (changePasswordForm) {
 
         if (!currentUser) return displayStatus('Error: Usuario no autenticado.', false);
         
-        // Obtener valores
         const currentPassword = currentPasswordInput.value;
         const newPassword = newPasswordInput.value;
         const confirmPassword = confirmPasswordInput.value;
 
-        // Validaciones
         if (!currentPassword) 
             return displayStatus('Debes ingresar tu contraseña actual.', false);
         
@@ -270,7 +262,6 @@ if (changePasswordForm) {
         const sessionUser = sessionStorage.getItem("sociosxit_user");
 
         try {
-            // 1. Obtener los datos del usuario de la RTDB
             const snapshot = await usersRef.child(sessionUser).once('value');
             const userData = snapshot.val();
             
@@ -278,26 +269,17 @@ if (changePasswordForm) {
                 return displayStatus('Error: La cuenta no tiene una contraseña manual registrada.', false);
             }
             
-            // 🛑 2. VERIFICACIÓN DE CONTRASEÑA ACTUAL CONTRA RTDB
-            // ¡ATENCIÓN! ESTO ES UN HUECO DE SEGURIDAD. DEBES USAR HASHING.
-            // Reemplazar: 'userData.password === currentPassword' con tu lógica de Hashing (e.g., await bcrypt.compare(currentPassword, userData.password))
-            
             const isPasswordCorrect = (userData.password === currentPassword); 
             
             if (!isPasswordCorrect) {
                 return displayStatus('La Contraseña Actual es incorrecta.', false);
             }
 
-            // 🛑 3. ACTUALIZACIÓN DE CONTRASEÑA EN RTDB
-            // ¡ATENCIÓN! LA NUEVA CONTRASEÑA DEBE SER HASHEADA ANTES DE GUARDARSE.
-            // Reemplazar 'newPassword' con tu función de Hashing (e.g., await bcrypt.hash(newPassword, 10))
-            
             await usersRef.child(sessionUser).update({
                 password: newPassword, 
                 updated_at: new Date().toISOString()
             });
             
-            // 4. Limpiar campos y mostrar éxito
             currentPasswordInput.value = '';
             newPasswordInput.value = '';
             confirmPasswordInput.value = '';
