@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,13 +7,107 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="style.css">
-
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <link rel="stylesheet" href="style.css"> <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script> 
     
-    </head>
+    <script src="firebaseconfig.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <style>
+        /* --- Definición de colores Neón --- */
+        :root {
+            --neon-pink: #ff006e;
+            --neon-cyan: #3a86ff;
+            --neon-green: #2ecc71;
+            --bg-color: #0c001a;
+        }
+
+        /* --- Estilos Base y Fondo de Partículas --- */
+        body {
+            background-color: var(--bg-color); 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            margin: 0;
+            position: relative;
+            font-family: 'Poppins', sans-serif; /* Usando una fuente moderna */
+        }
+        #particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .app-root {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Estilo de Tarjeta (Card) --- */
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 25px rgba(131, 56, 236, 0.3), inset 0 0 5px rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- Estilos de Input (mejorados para neón) --- */
+        input:not([readonly]) {
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+        input:not([readonly]):focus {
+            box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px rgba(58, 134, 255, 0.5);
+            border-color: var(--neon-cyan);
+            background-color: #1a1a1a;
+        }
+
+        /* --- Estilos de Botón Neón Flotante --- */
+        .neon-btn {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            color: white;
+            border: none;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(58, 134, 255, 0.5);
+        }
+        .neon-btn:hover {
+            transform: translateY(-3px) scale(1.01); /* Efecto flotante */
+            box-shadow: 0 5px 25px var(--neon-pink), 0 0 50px var(--neon-cyan);
+        }
+        
+        /* Efecto de borde brillante al pasar el ratón (animación) */
+        .neon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.7s;
+        }
+        .neon-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Colores específicos para títulos y estado */
+        .text-neon-pink { color: var(--neon-pink); text-shadow: 0 0 5px var(--neon-pink); }
+        .text-neon-cyan { color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); }
+        .border-neon-pink { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 110, 0.5); }
+        .border-neon-green { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
+
+
+    </style>
+    
+</head>
 
 <body class="p-4 md:p-8 text-white">
     
@@ -53,7 +146,7 @@
                     </div>
 
                     <button type="submit" 
-                        class="neon-btn btn-show w-full text-center py-3 px-6 rounded-lg font-bold text-lg uppercase tracking-wider mt-4">
+                        class="neon-btn w-full text-center py-3 px-6 rounded-lg font-bold text-lg uppercase tracking-wider mt-4">
                         Actualizar Nombre
                     </button>
                 </form>
@@ -86,7 +179,7 @@
                     </div>
 
                     <button type="submit" 
-                        class="neon-btn btn-logout w-full text-center py-3 px-6 rounded-lg font-bold text-lg uppercase tracking-wider mt-4">
+                        class="neon-btn w-full text-center py-3 px-6 rounded-lg font-bold text-lg uppercase tracking-wider mt-4">
                         Actualizar Contraseña
                     </button>
                 </form>
@@ -96,29 +189,31 @@
     </div>
 
     <script>
+        // Configuración de Particles.js
+        particlesJS("particles", {
+          "particles": {
+            "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+            "color": { "value": ["#ff006e", "#3a86ff", "#8338ec"] }, /* Colores Neón */
+            "shape": { "type": "circle" },
+            "opacity": { "value": 0.5 },
+            "size": { "value": 3, "random": true },
+            "line_linked": { "enable": true, "distance": 150, "color": "#3a86ff", "opacity": 0.4, "width": 1 },
+            "move": { "enable": true, "speed": 2 }
+          },
+          "interactivity": {
+            "detect_on": "canvas",
+            "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+            "modes": { "grab": { "distance": 180, "line_linked": { "opacity": 1 } }, "push": { "particles_nb": 4 } }
+          },
+          "retina_detect": true
+        });
+
 /* ========================================================== */
 /* CONFIGURACIÓN Y UTILIDADES */
 /* ========================================================== */
 
-// --- Configuración de Firebase ---
-const firebaseConfig = {
-    apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
-    authDomain: "chatglobal-e9370.firebaseapp.com",
-    databaseURL: "https://chatglobal-e9370-default-rtdb.firebaseio.com",
-    projectId: "chatglobal-e9370",
-    storageBucket: "chatglobal-e9370.firebasestorage.app",
-    messagingSenderId: "382420208590",
-    appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
-};
-
-// Inicializar Firebase si no está iniciado
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
-const auth = firebase.auth();
-const database = firebase.database(); 
-const usersRef = database.ref('users'); 
+// Estas variables (auth, database, usersRef) son accesibles porque
+// fueron definidas globalmente en firebaseconfig.js
 
 // Referencias DOM
 const currentUsernameInput = document.getElementById('currentUsername');
@@ -144,6 +239,7 @@ if (!sessionUser) {
 // Mostrar mensajes
 function displayStatus(message, isSuccess = true) {
     statusMessage.textContent = message;
+    // Usa las clases de borde neón
     statusMessage.className = `p-4 rounded-lg mb-4 font-semibold ${isSuccess ? 'bg-green-700 text-white border-2 border-neon-green' : 'bg-red-700 text-white border-2 border-neon-pink'}`;
     statusMessage.classList.remove('hidden');
     setTimeout(() => { statusMessage.classList.add('hidden'); }, 5000);
@@ -281,8 +377,6 @@ if (changePasswordForm) {
             }
             
             // 🛑 2. VERIFICACIÓN DE CONTRASEÑA ACTUAL CONTRA RTDB
-            // ¡ATENCIÓN! ESTO ES UN HUECO DE SEGURIDAD. DEBES USAR HASHING.
-            // Reemplazar: 'userData.password === currentPassword' con tu lógica de Hashing (e.g., await bcrypt.compare(currentPassword, userData.password))
             
             const isPasswordCorrect = (userData.password === currentPassword); 
             
@@ -291,8 +385,6 @@ if (changePasswordForm) {
             }
 
             // 🛑 3. ACTUALIZACIÓN DE CONTRASEÑA EN RTDB
-            // ¡ATENCIÓN! LA NUEVA CONTRASEÑA DEBE SER HASHEADA ANTES DE GUARDARSE.
-            // Reemplazar 'newPassword' con tu función de Hashing (e.g., await bcrypt.hash(newPassword, 10))
             
             await usersRef.child(sessionUser).update({
                 password: newPassword, 
@@ -315,4 +407,4 @@ if (changePasswordForm) {
 
     </script>
 </body>
-</html>v
+</html>
