@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ranking & Premios - SociosXIT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+  <style>
+    /* Estilos base */
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background-color: #050505;
+      background-image: radial-gradient(circle at 50% 0%, #1a1033 0%, transparent 70%);
+      color: #fff; min-height: 100vh;
+    }
+    .text-neon-pink { color: #ff00ff; text-shadow: 0 0 8px rgba(255,0,255,0.6); }
+    .text-neon-cyan { color: #00f0ff; text-shadow: 0 0 8px rgba(0,240,255,0.6); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+    /* Ranking Items */
+    .rank-circle {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; justify-content: center; align-items: center;
+      font-weight: bold; font-size: 11px; margin-right: 5px;
+    }
+    @media(min-width: 768px){ .rank-circle { width: 32px; height: 32px; font-size: 14px; margin-right: 10px; } }
+    .pos-1 { background: linear-gradient(135deg, #FFD700, #FDB931); color: black; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+    .pos-2 { background: linear-gradient(135deg, #E0E0E0, #BDBDBD); color: black; }
+    .pos-3 { background: linear-gradient(135deg, #CD7F32, #A0522D); color: white; }
+    .pos-other { background: #1a1a1a; color: #666; border: 1px solid #333; }
+    .rank-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px; margin-bottom: 5px; border-radius: 8px;
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+    }
+    .is-me-row { background: rgba(0, 240, 255, 0.08) !important; border: 1px solid rgba(0, 240, 255, 0.4) !important; }
+    .animate-tilt { animation: tilt 10s infinite linear; }
+    @keyframes tilt { 0%, 50%, 100% { transform: rotate(0deg); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
+  </style>
+</head>
+<body class="p-2 md:p-8">
+
+  <div class="max-w-6xl mx-auto mb-4 flex justify-between items-center px-2">
+    <a href="javascript:history.back()" class="flex items-center gap-1 text-gray-400 hover:text-white text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Volver
+    </a>
+    <div class="text-right">
+      <div id="headerUserName" class="font-bold text-neon-cyan text-sm">...</div>
+      <div id="headerBalance" class="text-[10px] md:text-xs text-gray-400">$0.00</div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-2">
+      <h1 class="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 filter drop-shadow-[0_0_10px_rgba(0,240,255,0.3)]">RANKINGS</h1>
+      <p class="text-gray-500 text-xs md:text-sm">Gana $5 USD siendo el Top 1 (Cierre: día 11)</p>
+    </div>
+    <div class="text-center text-[10px] text-gray-500 mb-6 animate-pulse">↻ Se actualiza automáticamente cada 30 segundos</div>
+
+    <div class="flex justify-center mb-8">
+      <div class="relative group w-64 md:w-72 scale-90 md:scale-100">
+        <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl blur opacity-60 group-hover:opacity-100 transition duration-500 animate-tilt"></div>
+        <div class="relative px-6 py-6 bg-[#0a0a0a] rounded-2xl flex flex-col items-center border border-gray-800 shadow-2xl">
+          <div class="text-5xl mb-2">💎</div>
+          <div class="text-4xl font-bold text-white mb-1" style="text-shadow: 0 0 15px #ff00ff;">$5 USD</div>
+          <div class="text-neon-pink text-xs font-bold tracking-widest uppercase text-center">Premio Top 1<br>(Cierra el día 11)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-md mx-auto mb-8 p-3 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md">
+      <div class="text-center text-neon-pink text-xs md:text-sm font-bold mb-2">⏳ CIERRE DE CICLO (DÍA 11)</div>
+      <div class="grid grid-cols-4 gap-2 text-center divide-x divide-gray-800" id="countdownTimer"></div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2 md:gap-8 h-[500px] md:h-[600px]">
+      
+      <div class="bg-[#0c0c0c] border border-gray-800 rounded-xl overflow-hidden shadow-lg flex flex-col h-full">
+        <div class="p-2 md:p-5 border-b border-gray-800 bg-gray-900/50 text-center relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
+          <div class="text-2xl md:text-4xl mb-1">💳</div>
+          <h2 class="text-sm md:text-2xl font-bold text-white leading-tight">Top Recargas</h2>
+          <div id="myRankRecharge" class="hidden mt-2 py-1 px-2 rounded bg-cyan-900/20 border border-cyan-500/30 text-cyan-400 font-bold text-[10px] md:text-sm animate-pulse"></div>
+        </div>
+        <div id="listRecharges" class="flex-1 p-2 overflow-y-auto"><p class="text-center text-gray-600 text-xs mt-4">...</p></div>
+      </div>
+
+      <div class="bg-[#0c0c0c] border border-gray-800 rounded-xl overflow-hidden shadow-lg flex flex-col h-full">
+        <div class="p-2 md:p-5 border-b border-gray-800 bg-gray-900/50 text-center relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-pink-500 to-transparent"></div>
+          <div class="text-2xl md:text-4xl mb-1">🛒</div>
+          <h2 class="text-sm md:text-2xl font-bold text-white leading-tight">Top Gastos</h2>
+          <div id="myRankSales" class="hidden mt-2 py-1 px-2 rounded bg-pink-900/20 border border-pink-500/30 text-pink-400 font-bold text-[10px] md:text-sm animate-pulse"></div>
+        </div>
+        <div id="listSales" class="flex-1 p-2 overflow-y-auto"><p class="text-center text-gray-600 text-xs mt-4">...</p></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
+      authDomain: "chatglobal-e9370.firebaseapp.com",
+      databaseURL: "https://chatglobal-e9370-default-rtdb.firebaseio.com",
+      projectId: "chatglobal-e9370",
+      storageBucket: "chatglobal-e9370.firebasestorage.app",
+      messagingSenderId: "382420208590",
+      appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const currentUser = sessionStorage.getItem("sociosxit_user");
+    if (!currentUser) window.location.href = "index.html";
+    else {
+        document.getElementById('headerUserName').textContent = currentUser.split('@')[0];
+        loadUserBalance();
+    }
+
+    const listRecharges = document.getElementById("listRecharges");
+    const listSales = document.getElementById("listSales");
+    const myRankRecharge = document.getElementById("myRankRecharge");
+    const myRankSales = document.getElementById("myRankSales");
+    const countdownTimer = document.getElementById("countdownTimer");
+
+    function sanitizeEmail(email) { return email.replace(/\./g, "_"); }
+    function loadUserBalance() {
+        const userKey = sanitizeEmail(currentUser);
+        db.ref(`users/${userKey}/balance`).on("value", snap => {
+            const val = parseFloat(snap.val() || 0);
+            document.getElementById('headerBalance').textContent = `$${val.toFixed(2)}`;
+        });
+    }
+
+    // --- LÓGICA PRINCIPAL ---
+    async function loadRankings() {
+      const myEmail = sanitizeEmail(currentUser);
+      const now = new Date();
+      const currentDay = now.getDate();
+      
+      // CALCULAR INICIO DE CICLO (DÍA 11)
+      let cycleStartDate;
+      if (currentDay >= 11) {
+          // Estamos entre el 11 y fin de mes. El ciclo empezó este mes.
+          cycleStartDate = new Date(now.getFullYear(), now.getMonth(), 11, 0, 0, 0);
+      } else {
+          // Estamos entre el 1 y el 10. El ciclo empezó el mes pasado.
+          cycleStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 11, 0, 0, 0);
+      }
+
+      try {
+        const snapshot = await db.ref('users').once('value');
+        const usersData = snapshot.val();
+        if (!usersData) return;
+
+        const rankingData = [];
+
+        Object.keys(usersData).forEach(key => {
+            // EXCLUSIÓN DE LK-XT
+            let displayName = key.replace(/_gmail_com|_hotmail_com|_outlook_com/g, "").replace(/_/g, "");
+            if (displayName === "LK-XT" || displayName === "LK XT" || key.includes("LK-XT")) return;
+
+            const u = usersData[key];
+            
+            // --- CALCULAR GASTOS (Purchases) EN EL CICLO ---
+            let cycleSpent = 0; 
+            if (u.purchases) {
+                Object.values(u.purchases).forEach(p => {
+                    const price = parseFloat(p.price || 0);
+                    const pDate = new Date(p.date);
+                    // Solo sumar si la compra fue después del día 11
+                    if (pDate >= cycleStartDate) cycleSpent += price;
+                });
+            }
+
+            // --- CALCULAR RECARGAS (Recharge History) EN EL CICLO ---
+            let cycleRecharged = 0;
+            if (u.recharge_history) {
+                Object.values(u.recharge_history).forEach(r => {
+                    const amount = parseFloat(r.amount || 0);
+                    const rDate = new Date(r.date);
+                    // Solo sumar si la recarga fue después del día 11
+                    if (rDate >= cycleStartDate) cycleRecharged += amount;
+                });
+            }
+
+            if(displayName.length > 8) displayName = displayName.substring(0, 8) + "..";
+
+            rankingData.push({
+                id: key,
+                name: displayName,
+                cycleSpent: cycleSpent,
+                cycleRecharged: cycleRecharged, // Ahora usamos la recarga real
+                isMe: key === myEmail
+            });
+        });
+
+        // 1. TOP RECARGAS DEL MES (REALES)
+        rankingData.sort((a, b) => b.cycleRecharged - a.cycleRecharged);
+        renderList(rankingData, listRecharges, 'cycleRecharged', myRankRecharge, '$');
+
+        // 2. TOP GASTOS DEL MES
+        rankingData.sort((a, b) => b.cycleSpent - a.cycleSpent);
+        renderList(rankingData, listSales, 'cycleSpent', myRankSales, '$');
+
+      } catch (error) {
+        console.error("Error ranking:", error);
+      }
+    }
+
+    // --- RENDERIZADO ---
+    function renderList(data, container, valueKey, myAlert, prefix) {
+        container.innerHTML = "";
+        const topData = data.slice(0, 20); // Top 20
+        
+        topData.forEach((user, index) => {
+            const rank = index + 1;
+            let circleClass = "pos-other";
+            if(rank === 1) circleClass = "pos-1";
+            else if(rank === 2) circleClass = "pos-2";
+            else if(rank === 3) circleClass = "pos-3";
+
+            const isMeClass = user.isMe ? "is-me-row" : "";
+            const nameColor = user.isMe ? "text-cyan-300 font-bold" : "text-gray-300";
+
+            // Si el valor es 0, lo mostramos un poco más apagado
+            const amountClass = user[valueKey] > 0 ? "text-white" : "text-gray-600";
+
+            const html = `
+                <div class="rank-row ${isMeClass}">
+                    <div class="flex items-center">
+                        <div class="rank-circle ${circleClass}">${rank}</div>
+                        <span class="${nameColor} truncate max-w-[70px] md:max-w-none">${user.name}</span>
+                    </div>
+                    <div class="font-bold ${amountClass} text-xs md:text-sm">
+                        ${prefix}${user[valueKey].toFixed(2)}
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+
+        const myIndex = data.findIndex(u => u.isMe);
+        if (myIndex !== -1) {
+            const val = data[myIndex][valueKey];
+            myAlert.innerHTML = `Top #${myIndex + 1} ($${val.toFixed(2)})`;
+            myAlert.classList.remove("hidden");
+        } else {
+            myAlert.classList.add("hidden");
+        }
+    }
+
+    // --- TIMER ---
+    function startCountdown() {
+        const updateTimer = () => {
+            const now = new Date();
+            let nextReset;
+            if (now.getDate() < 11) nextReset = new Date(now.getFullYear(), now.getMonth(), 11, 0, 0, 0);
+            else nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 11, 0, 0, 0);
+
+            const diff = nextReset - now;
+            if (diff <= 0) { countdownTimer.innerHTML = "<div class='col-span-4 text-neon-pink'>¡Cierre de ciclo!</div>"; return; }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const item = (num, label) => `<div><span class="text-xl md:text-2xl font-bold text-white block font-mono">${num<10?'0'+num:num}</span><span class="text-[9px] text-gray-500 font-bold uppercase">${label}</span></div>`;
+            countdownTimer.innerHTML = item(d,"DIAS") + item(h,"HRS") + item(m,"MIN") + item(s,"SEG");
+        };
+        updateTimer(); setInterval(updateTimer, 1000);
+    }
+
+    loadRankings();
+    startCountdown();
+    setInterval(loadRankings, 30000); // 30s refresh
+  </script>
+</body>
+</html>
