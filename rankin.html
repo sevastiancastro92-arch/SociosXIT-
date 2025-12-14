@@ -9,98 +9,178 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 
   <style>
-    /* Estilos base */
-    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
+    /* --- FUENTES Y FONDO --- */
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700;800&family=Orbitron:wght@400;700&display=swap');
+    
     body {
       font-family: 'Rajdhani', sans-serif;
-      background-color: #050505;
-      background-image: radial-gradient(circle at 50% 0%, #1a1033 0%, transparent 70%);
-      color: #fff; min-height: 100vh;
+      background-color: #020205;
+      color: #fff; 
+      min-height: 100vh;
+      overflow-x: hidden;
+      /* Fondo Grid Animado */
+      background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 255, 0.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: bgScroll 20s linear infinite;
     }
-    .text-neon-pink { color: #ff00ff; text-shadow: 0 0 8px rgba(255,0,255,0.6); }
-    .text-neon-cyan { color: #00f0ff; text-shadow: 0 0 8px rgba(0,240,255,0.6); }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #0a0a0a; }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+    
+    @keyframes bgScroll { from { background-position: 0 0; } to { background-position: 40px 40px; } }
 
-    /* Ranking Items */
+    /* Scrollbar Neon */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #020202; }
+    ::-webkit-scrollbar-thumb { background: #00f3ff; border-radius: 4px; box-shadow: 0 0 10px #00f3ff; }
+
+    /* Efectos de Texto Ultra Neon */
+    .text-glow-pink { color: #ff00ff; text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+    .text-glow-cyan { color: #00ffff; text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff; }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+    /* Contenedores con Borde Brillante */
+    .neon-card {
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Ranking Círculos */
     .rank-circle {
       width: 24px; height: 24px; border-radius: 50%;
       display: flex; justify-content: center; align-items: center;
-      font-weight: bold; font-size: 11px; margin-right: 5px;
+      font-weight: 800; font-size: 12px; margin-right: 6px;
+      z-index: 10; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.2);
     }
-    @media(min-width: 768px){ .rank-circle { width: 32px; height: 32px; font-size: 14px; margin-right: 10px; } }
-    .pos-1 { background: linear-gradient(135deg, #FFD700, #FDB931); color: black; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-    .pos-2 { background: linear-gradient(135deg, #E0E0E0, #BDBDBD); color: black; }
-    .pos-3 { background: linear-gradient(135deg, #CD7F32, #A0522D); color: white; }
-    .pos-other { background: #1a1a1a; color: #666; border: 1px solid #333; }
+    @media(min-width: 768px){ .rank-circle { width: 38px; height: 38px; font-size: 18px; margin-right: 12px; } }
+
+    /* --- TOP 3 SUPER BRILLANTES --- */
+    
+    /* TOP 1: ORO RADIACTIVO */
+    .row-top-1 {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.25), transparent);
+      border: 1px solid #FFD700;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.1);
+      animation: pulseGold 2s infinite alternate;
+    }
+    .circle-top-1 { background: #FFD700; color: black; box-shadow: 0 0 15px #FFD700; border: 2px solid white; }
+    @keyframes pulseGold { from { box-shadow: 0 0 10px rgba(255,215,0,0.3); } to { box-shadow: 0 0 25px rgba(255,215,0,0.6); } }
+
+    /* TOP 2: PLATA CROMADA */
+    .row-top-2 {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.15), transparent);
+      border: 1px solid #00f3ff;
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+    .circle-top-2 { background: #e0e0e0; color: black; box-shadow: 0 0 10px white; }
+
+    /* TOP 3: BRONCE MAGMA */
+    .row-top-3 {
+      background: linear-gradient(90deg, rgba(255, 80, 0, 0.15), transparent);
+      border: 1px solid #ff5500;
+      box-shadow: 0 0 15px rgba(255, 80, 0, 0.3);
+    }
+    .circle-top-3 { background: #ff7b00; color: white; box-shadow: 0 0 10px #ff7b00; }
+
+    /* OTROS PUESTOS */
+    .row-other { 
+      background: rgba(20, 20, 25, 0.6); 
+      border-bottom: 1px solid rgba(255,255,255,0.05); 
+    }
+    .circle-other { background: #222; color: #777; border: 1px solid #444; }
+
+    /* CONTENEDOR DE LA FILA */
     .rank-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 8px; margin-bottom: 5px; border-radius: 8px;
-      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-      font-size: 13px;
+      padding: 8px 6px; margin-bottom: 6px; border-radius: 4px;
+      font-size: 11px; transition: all 0.2s;
     }
-    .is-me-row { background: rgba(0, 240, 255, 0.08) !important; border: 1px solid rgba(0, 240, 255, 0.4) !important; }
-    .animate-tilt { animation: tilt 10s infinite linear; }
+    @media(min-width: 768px){ .rank-row { padding: 12px; font-size: 13px; margin-bottom: 8px; } }
+    .rank-row:hover { background: rgba(255,255,255,0.1); transform: translateX(2px); }
+
+    /* SI SOY YO */
+    .is-me-row { 
+      background: rgba(255, 0, 255, 0.15) !important;
+      border: 1px solid #ff00ff !important; 
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.4) !important;
+    }
+
+    /* Animaciones */
+    .animate-tilt { animation: tilt 4s infinite linear; }
     @keyframes tilt { 0%, 50%, 100% { transform: rotate(0deg); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
   </style>
 </head>
-<body class="p-2 md:p-8">
+<body class="p-2 md:p-6">
 
-  <div class="max-w-6xl mx-auto mb-4 flex justify-between items-center px-2">
-    <a href="javascript:history.back()" class="flex items-center gap-1 text-gray-400 hover:text-white text-sm">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Volver
+  <div class="max-w-6xl mx-auto mb-6 flex justify-between items-center px-1 relative z-10">
+    <a href="javascript:history.back()" class="flex items-center gap-2 text-cyan-400 hover:text-white transition px-3 py-1 rounded-full border border-cyan-500/50 bg-cyan-900/20 shadow-[0_0_10px_rgba(0,255,255,0.3)]">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> 
+      <span class="text-xs font-bold tracking-widest uppercase">Volver</span>
     </a>
-    <div class="text-right">
-      <div id="headerUserName" class="font-bold text-neon-cyan text-sm">...</div>
-      <div id="headerBalance" class="text-[10px] md:text-xs text-gray-400">$0.00</div>
+    <div class="text-right bg-black/80 p-2 rounded border border-pink-500/50 shadow-[0_0_10px_rgba(255,0,255,0.2)]">
+      <div id="headerUserName" class="font-bold text-glow-pink text-xs tracking-widest">...</div>
+      <div id="headerBalance" class="text-[10px] text-cyan-300 font-mono font-bold">$0.00</div>
     </div>
   </div>
 
-  <div class="max-w-5xl mx-auto">
-    <div class="text-center mb-2">
-      <h1 class="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 filter drop-shadow-[0_0_10px_rgba(0,240,255,0.3)]">RANKINGS</h1>
-      <p class="text-gray-500 text-xs md:text-sm">Gana $5 USD siendo el Top 1 (Cierre: día 11)</p>
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="text-center mb-6 relative">
+      <div class="absolute inset-0 flex justify-center items-center blur-xl opacity-30">
+        <h1 class="text-6xl font-black text-purple-600">RANKINGS</h1>
+      </div>
+      <h1 class="text-4xl md:text-7xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-pink-500 filter drop-shadow-[0_0_10px_rgba(0,255,255,0.8)] uppercase font-orbitron">
+        RANKINGS
+      </h1>
+      <p class="text-cyan-200 text-[10px] md:text-sm font-bold tracking-[0.3em] mt-2 uppercase text-shadow">🏆 Gana $5 USD - Top 1 🏆</p>
     </div>
-    <div class="text-center text-[10px] text-gray-500 mb-6 animate-pulse">↻ Se actualiza automáticamente cada 30 segundos</div>
-
+    
     <div class="flex justify-center mb-8">
-      <div class="relative group w-64 md:w-72 scale-90 md:scale-100">
-        <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl blur opacity-60 group-hover:opacity-100 transition duration-500 animate-tilt"></div>
-        <div class="relative px-6 py-6 bg-[#0a0a0a] rounded-2xl flex flex-col items-center border border-gray-800 shadow-2xl">
-          <div class="text-5xl mb-2">💎</div>
-          <div class="text-4xl font-bold text-white mb-1" style="text-shadow: 0 0 15px #ff00ff;">$5 USD</div>
-          <div class="text-neon-pink text-xs font-bold tracking-widest uppercase text-center">Premio Top 1<br>(Cierra el día 11)</div>
+      <div class="text-[9px] text-white font-bold bg-gradient-to-r from-purple-900 to-pink-900 border border-pink-500 px-4 py-1 rounded-full shadow-[0_0_15px_#ff00ff] animate-pulse">
+        ⚡ ACTUALIZACIÓN EN VIVO: 30s ⚡
+      </div>
+    </div>
+
+    <div class="flex justify-center mb-10">
+      <div class="relative group w-64 md:w-96 transition-all duration-500 hover:scale-105">
+        <div class="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-2xl blur opacity-75 group-hover:opacity-100 animate-tilt"></div>
+        <div class="relative px-6 py-8 bg-[#050508] rounded-2xl flex flex-col items-center border border-white/20">
+          <div class="text-6xl mb-3 filter drop-shadow-[0_0_20px_rgba(255,215,0,0.8)] animate-bounce">👑</div>
+          <div class="text-5xl font-black text-white mb-2 tracking-tighter font-orbitron" style="text-shadow: 0 0 20px #00ffff, 0 0 40px #ff00ff;">$5 USD</div>
+          <div class="text-pink-400 text-[10px] font-bold tracking-[0.2em] uppercase text-center border-t border-white/10 pt-3 w-full">
+            Premio Top 1 • <span class="text-cyan-300">Cierre: Día 11</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="max-w-md mx-auto mb-8 p-3 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md">
-      <div class="text-center text-neon-pink text-xs md:text-sm font-bold mb-2">⏳ CIERRE DE CICLO (DÍA 11)</div>
-      <div class="grid grid-cols-4 gap-2 text-center divide-x divide-gray-800" id="countdownTimer"></div>
+    <div class="max-w-md mx-auto mb-8 neon-card p-4 rounded-xl border-pink-500/50">
+      <div class="text-center text-glow-pink text-[10px] md:text-sm font-black mb-3 tracking-[0.2em] uppercase border-b border-pink-500/30 pb-2">⏰ TIEMPO RESTANTE</div>
+      <div class="grid grid-cols-4 gap-2 text-center divide-x divide-pink-500/30" id="countdownTimer"></div>
     </div>
 
-    <div class="grid grid-cols-2 gap-2 md:gap-8 h-[500px] md:h-[600px]">
+    <div class="grid grid-cols-2 gap-3 md:gap-10 h-[550px] md:h-[700px]">
       
-      <div class="bg-[#0c0c0c] border border-gray-800 rounded-xl overflow-hidden shadow-lg flex flex-col h-full">
-        <div class="p-2 md:p-5 border-b border-gray-800 bg-gray-900/50 text-center relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
-          <div class="text-2xl md:text-4xl mb-1">💳</div>
-          <h2 class="text-sm md:text-2xl font-bold text-white leading-tight">Top Recargas</h2>
-          <div id="myRankRecharge" class="hidden mt-2 py-1 px-2 rounded bg-cyan-900/20 border border-cyan-500/30 text-cyan-400 font-bold text-[10px] md:text-sm animate-pulse"></div>
+      <div class="neon-card rounded-xl overflow-hidden flex flex-col h-full border-cyan-500/30 shadow-[0_0_15px_rgba(0,255,255,0.15)]">
+        <div class="p-3 md:p-5 border-b border-cyan-500/30 bg-gradient-to-b from-cyan-900/40 to-transparent text-center relative">
+            <h2 class="text-xs md:text-2xl font-black text-cyan-100 uppercase tracking-widest font-orbitron drop-shadow-[0_0_5px_cyan]">Top Recargas</h2>
+            <div id="myRankRecharge" class="hidden mt-2 py-1 px-3 rounded-full bg-black border border-cyan-400 text-cyan-300 font-bold text-[9px] shadow-[0_0_10px_cyan] inline-block"></div>
         </div>
-        <div id="listRecharges" class="flex-1 p-2 overflow-y-auto"><p class="text-center text-gray-600 text-xs mt-4">...</p></div>
+        <div id="listRecharges" class="flex-1 p-2 md:p-4 overflow-y-auto custom-scroll">
+            <p class="text-center text-cyan-500/50 text-[10px] mt-10 animate-pulse font-mono">CARGANDO DATOS...</p>
+        </div>
       </div>
 
-      <div class="bg-[#0c0c0c] border border-gray-800 rounded-xl overflow-hidden shadow-lg flex flex-col h-full">
-        <div class="p-2 md:p-5 border-b border-gray-800 bg-gray-900/50 text-center relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-pink-500 to-transparent"></div>
-          <div class="text-2xl md:text-4xl mb-1">🛒</div>
-          <h2 class="text-sm md:text-2xl font-bold text-white leading-tight">Top Gastos</h2>
-          <div id="myRankSales" class="hidden mt-2 py-1 px-2 rounded bg-pink-900/20 border border-pink-500/30 text-pink-400 font-bold text-[10px] md:text-sm animate-pulse"></div>
+      <div class="neon-card rounded-xl overflow-hidden flex flex-col h-full border-pink-500/30 shadow-[0_0_15px_rgba(255,0,255,0.15)]">
+        <div class="p-3 md:p-5 border-b border-pink-500/30 bg-gradient-to-b from-pink-900/40 to-transparent text-center relative">
+            <h2 class="text-xs md:text-2xl font-black text-pink-100 uppercase tracking-widest font-orbitron drop-shadow-[0_0_5px_magenta]">Top Gastos</h2>
+            <div id="myRankSales" class="hidden mt-2 py-1 px-3 rounded-full bg-black border border-pink-400 text-pink-300 font-bold text-[9px] shadow-[0_0_10px_magenta] inline-block"></div>
         </div>
-        <div id="listSales" class="flex-1 p-2 overflow-y-auto"><p class="text-center text-gray-600 text-xs mt-4">...</p></div>
+        <div id="listSales" class="flex-1 p-2 md:p-4 overflow-y-auto custom-scroll">
+            <p class="text-center text-pink-500/50 text-[10px] mt-10 animate-pulse font-mono">CARGANDO DATOS...</p>
+        </div>
       </div>
+
     </div>
   </div>
 
@@ -120,7 +200,7 @@
     const currentUser = sessionStorage.getItem("sociosxit_user");
     if (!currentUser) window.location.href = "index.html";
     else {
-        document.getElementById('headerUserName').textContent = currentUser.split('@')[0];
+        document.getElementById('headerUserName').textContent = currentUser.split('@')[0].toUpperCase();
         loadUserBalance();
     }
 
@@ -145,13 +225,10 @@
       const now = new Date();
       const currentDay = now.getDate();
       
-      // CALCULAR INICIO DE CICLO (DÍA 11)
       let cycleStartDate;
       if (currentDay >= 11) {
-          // Estamos entre el 11 y fin de mes. El ciclo empezó este mes.
           cycleStartDate = new Date(now.getFullYear(), now.getMonth(), 11, 0, 0, 0);
       } else {
-          // Estamos entre el 1 y el 10. El ciclo empezó el mes pasado.
           cycleStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 11, 0, 0, 0);
       }
 
@@ -163,50 +240,44 @@
         const rankingData = [];
 
         Object.keys(usersData).forEach(key => {
-            // EXCLUSIÓN DE LK-XT
             let displayName = key.replace(/_gmail_com|_hotmail_com|_outlook_com/g, "").replace(/_/g, "");
             if (displayName === "LK-XT" || displayName === "LK XT" || key.includes("LK-XT")) return;
 
             const u = usersData[key];
             
-            // --- CALCULAR GASTOS (Purchases) EN EL CICLO ---
             let cycleSpent = 0; 
             if (u.purchases) {
                 Object.values(u.purchases).forEach(p => {
                     const price = parseFloat(p.price || 0);
                     const pDate = new Date(p.date);
-                    // Solo sumar si la compra fue después del día 11
                     if (pDate >= cycleStartDate) cycleSpent += price;
                 });
             }
 
-            // --- CALCULAR RECARGAS (Recharge History) EN EL CICLO ---
             let cycleRecharged = 0;
             if (u.recharge_history) {
                 Object.values(u.recharge_history).forEach(r => {
                     const amount = parseFloat(r.amount || 0);
                     const rDate = new Date(r.date);
-                    // Solo sumar si la recarga fue después del día 11
                     if (rDate >= cycleStartDate) cycleRecharged += amount;
                 });
             }
 
-            if(displayName.length > 8) displayName = displayName.substring(0, 8) + "..";
+            // Nombre corto para que quepa en celular
+            if(displayName.length > 7) displayName = displayName.substring(0, 7) + "..";
 
             rankingData.push({
                 id: key,
                 name: displayName,
                 cycleSpent: cycleSpent,
-                cycleRecharged: cycleRecharged, // Ahora usamos la recarga real
+                cycleRecharged: cycleRecharged,
                 isMe: key === myEmail
             });
         });
 
-        // 1. TOP RECARGAS DEL MES (REALES)
         rankingData.sort((a, b) => b.cycleRecharged - a.cycleRecharged);
         renderList(rankingData, listRecharges, 'cycleRecharged', myRankRecharge, '$');
 
-        // 2. TOP GASTOS DEL MES
         rankingData.sort((a, b) => b.cycleSpent - a.cycleSpent);
         renderList(rankingData, listSales, 'cycleSpent', myRankSales, '$');
 
@@ -215,31 +286,64 @@
       }
     }
 
-    // --- RENDERIZADO ---
+    // --- RENDERIZADO CON NUEVOS ESTILOS NEON ---
     function renderList(data, container, valueKey, myAlert, prefix) {
         container.innerHTML = "";
         const topData = data.slice(0, 20); // Top 20
         
         topData.forEach((user, index) => {
             const rank = index + 1;
-            let circleClass = "pos-other";
-            if(rank === 1) circleClass = "pos-1";
-            else if(rank === 2) circleClass = "pos-2";
-            else if(rank === 3) circleClass = "pos-3";
+            
+            // Definir clases dinámicas según la posición
+            let rowClass = "row-other";
+            let circleClass = "circle-other";
+            let textClass = "text-gray-500 font-semibold";
+            let icon = "";
 
-            const isMeClass = user.isMe ? "is-me-row" : "";
-            const nameColor = user.isMe ? "text-cyan-300 font-bold" : "text-gray-300";
+            if (rank === 1) {
+                rowClass = "row-top-1";
+                circleClass = "circle-top-1";
+                textClass = "text-yellow-100 font-black drop-shadow-[0_0_5px_gold]";
+                icon = "👑";
+            } else if (rank === 2) {
+                rowClass = "row-top-2";
+                circleClass = "circle-top-2";
+                textClass = "text-white font-bold drop-shadow-[0_0_5px_white]";
+                icon = "🥈";
+            } else if (rank === 3) {
+                rowClass = "row-top-3";
+                circleClass = "circle-top-3";
+                textClass = "text-orange-200 font-bold drop-shadow-[0_0_5px_orange]";
+                icon = "🥉";
+            }
 
-            // Si el valor es 0, lo mostramos un poco más apagado
-            const amountClass = user[valueKey] > 0 ? "text-white" : "text-gray-600";
+            if (user.isMe) {
+                rowClass = "is-me-row";
+                textClass = "text-fuchsia-200 font-bold tracking-wider drop-shadow-[0_0_5px_magenta]";
+            }
+
+            // Color del dinero neón
+            const amountClass = user[valueKey] > 0 ? "text-cyan-300 drop-shadow-[0_0_3px_cyan]" : "text-gray-700";
+            if (valueKey === 'cycleSpent' && user[valueKey] > 0) {
+                 // Para gastos usamos color rosa neón
+                 // No tengo acceso directo a amountClass aquí fácilmente sin refactor, 
+                 // pero podemos usar css inline o clases utilitarias.
+                 // Dejémoslo consistente cian, o cambiémoslo dinámicamente:
+            }
+            const finalAmountClass = (valueKey === 'cycleSpent' && user[valueKey] > 0) ? "text-pink-300 drop-shadow-[0_0_3px_magenta]" : amountClass;
+
 
             const html = `
-                <div class="rank-row ${isMeClass}">
-                    <div class="flex items-center">
+                <div class="rank-row ${rowClass}">
+                    <div class="flex items-center overflow-hidden w-2/3">
                         <div class="rank-circle ${circleClass}">${rank}</div>
-                        <span class="${nameColor} truncate max-w-[70px] md:max-w-none">${user.name}</span>
+                        <div class="flex flex-col min-w-0">
+                            <span class="${textClass} uppercase truncate flex items-center gap-1">
+                                ${user.name} <span class="text-[10px]">${icon}</span>
+                            </span>
+                        </div>
                     </div>
-                    <div class="font-bold ${amountClass} text-xs md:text-sm">
+                    <div class="font-mono ${finalAmountClass} tracking-tighter text-[10px] md:text-sm ml-1 text-right w-1/3 font-bold">
                         ${prefix}${user[valueKey].toFixed(2)}
                     </div>
                 </div>
@@ -250,7 +354,7 @@
         const myIndex = data.findIndex(u => u.isMe);
         if (myIndex !== -1) {
             const val = data[myIndex][valueKey];
-            myAlert.innerHTML = `Top #${myIndex + 1} ($${val.toFixed(2)})`;
+            myAlert.innerHTML = `PUESTO #${myIndex + 1} <span class="text-white">($${val.toFixed(2)})</span>`;
             myAlert.classList.remove("hidden");
         } else {
             myAlert.classList.add("hidden");
@@ -266,14 +370,18 @@
             else nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 11, 0, 0, 0);
 
             const diff = nextReset - now;
-            if (diff <= 0) { countdownTimer.innerHTML = "<div class='col-span-4 text-neon-pink'>¡Cierre de ciclo!</div>"; return; }
+            if (diff <= 0) { countdownTimer.innerHTML = "<div class='col-span-4 text-glow-pink font-bold animate-pulse'>¡CIERRE DE CICLO!</div>"; return; }
 
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-            const item = (num, label) => `<div><span class="text-xl md:text-2xl font-bold text-white block font-mono">${num<10?'0'+num:num}</span><span class="text-[9px] text-gray-500 font-bold uppercase">${label}</span></div>`;
+            const item = (num, label) => `
+                <div>
+                    <span class="text-lg md:text-3xl font-black text-white block font-mono" style="text-shadow: 0 0 10px #ff00ff; -webkit-text-stroke: 1px rgba(255,0,255,0.3);">${num<10?'0'+num:num}</span>
+                    <span class="text-[8px] text-pink-400 font-bold uppercase tracking-widest">${label}</span>
+                </div>`;
             countdownTimer.innerHTML = item(d,"DIAS") + item(h,"HRS") + item(m,"MIN") + item(s,"SEG");
         };
         updateTimer(); setInterval(updateTimer, 1000);
@@ -281,7 +389,7 @@
 
     loadRankings();
     startCountdown();
-    setInterval(loadRankings, 30000); // 30s refresh
+    setInterval(loadRankings, 30000); 
   </script>
 </body>
 </html>
