@@ -47,7 +47,20 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         .step-hidden { display: none !important; }
         .step-active { display: block !important; animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform { scale: 0.95; } } to { opacity: 1; transform: scale(1); } }
+        /* Estilo para el bloque de texto formateado */
+        .payment-format {
+            white-space: pre-wrap;
+            font-size: 11px;
+            font-family: monospace;
+            background-color: #0f172a; /* dark-900 */
+            border: 1px solid #334155; /* slate-700 */
+            padding: 12px;
+            border-radius: 8px;
+            color: #f1f5f9; /* slate-100 */
+            overflow-x: auto;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body class="p-4 md:p-6 flex justify-center items-start pt-6">
@@ -163,14 +176,13 @@
                     <span id="ticketId" class="font-mono text-[10px] text-brand-green bg-brand-green/10 px-2 py-1 rounded">#0000</span>
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                    <div class="text-center">
-                        <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Debes transferir</p>
-                        <p id="finalLocalAmount" class="text-2xl font-extrabold text-white">--</p>
-                    </div>
+                    
+                    <pre id="formattedPaymentDetails" class="payment-format"></pre>
                     <button id="copyAllDetailsBtn" class="w-full py-2.5 bg-slate-800 border border-brand-cyan/30 text-brand-cyan font-bold rounded-lg flex justify-center items-center gap-2 hover:bg-slate-700 transition-all text-xs"><i class="fa-regular fa-copy"></i><span id="copyBtnText">COPIAR DATOS</span></button>
+                    
                     <div class="border-t border-slate-700"></div>
-                    <div id="paymentMethodsList" class="space-y-2"></div>
-                </div>
+
+                    </div>
                 <div class="p-3 border-t border-slate-700 bg-dark-900 shrink-0"><button onclick="closeModal()" class="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition text-xs">Cerrar Ventana</button></div>
             </div>
         </div>
@@ -213,22 +225,22 @@
         // 2. LÓGICA DE BILLETERA (PAGOS)
         // ============================================
         const EXCHANGE_DATA = {
-            ARG: { name: "Argentina", flag: "🇦🇷", currency: "ARS", locale: "es-AR", decimals: 0, rate: 150000, methods: [{name: "Uala", type: "TRANSFERENCIA", details: "CVU: 0000007900203350273548 | Alias: C.CORREA1315.UALA"}] },
-            BOL: { name: "Bolivia", flag: "🇧🇴", currency: "BOB", locale: "es-BO", decimals: 2, rate: 12, methods: [{name: "Yape", type: "APP", details: "N° Cuenta: 62656932"}, {name: "Yape QR", type: "QR", details: "Link: https://i.postimg.cc/YCg1rRGF/qrbolivia.jpg", isQR: true, qrLink: "https://i.postimg.cc/YCg1rRGF/qrbolivia.jpg"}, {name: "BCP", type: "BANCO", details: "N° Cuenta: 20152008832355"}] },
-            BRL: { name: "Brasil", flag: "🇧🇷", currency: "BRL", locale: "pt-BR", decimals: 2, rate: 5.20, methods: [{name: "PIX", type: "PIX", details: "Chave PIX: 91991076791"}] },
-            CHL: { name: "Chile", flag: "🇨🇱", currency: "CLP", locale: "es-CL", decimals: 0, rate: 950, methods: [{name: "Banco Estado", type: "CAJA VECINA", details: "RUT: 23.710.151-0 | CuentaRUT: 23710151"}, {name: "Banco Estado", type: "TRANSF.", details: "RUT: 23.710.151-0 | CuentaRUT: 23710151"}] },
-            COL: { name: "Colombia", flag: "🇨🇴", currency: "COP", locale: "es-CO", decimals: 0, rate: 4200, methods: [{name: "Bancolombia", type: "BANCO", details: "Cta Ahorros: 76900007797"}, {name: "Nequi", type: "APP", details: "Cel: 3016043120"}, {name: "Nu Bank", type: "BANCO", details: "Llave: @PMG3555"}] },
-            DOM: { name: "Rep. Dominicana", flag: "🇩🇴", currency: "DOP", locale: "es-DO", decimals: 2, rate: 68.00, methods: [{name: "Banreservas", type: "BANCO", details: "Cta: 9601546622"}, {name: "Popular", type: "BANCO", details: "Cta: 837147719"}, {name: "BHD León", type: "BANCO", details: "Cta: 34478720012"}, {name: "Qik", type: "APP", details: "Cta: 1002173707"}] },
-            ECU: { name: "Ecuador", flag: "🇪🇨", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{name: "Pichincha", type: "BANCO", details: "Cta: 2207195565"}] },
-            USA: { name: "Estados Unidos", flag: "🇺🇸", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{name: "Zelle", type: "ZELLE", details: "+1 (754) 317-1482"}] },
-            GTM: { name: "Guatemala", flag: "🇬🇹", currency: "GTQ", locale: "es-GT", decimals: 2, rate: 7.8, methods: [{name: "Banrural", type: "BANCO", details: "Cta: 4431164091"}] },
-            HND: { name: "Honduras", flag: "🇭🇳", currency: "HNL", locale: "es-HN", decimals: 2, rate: 25.00, methods: [{name: "Bampais", type: "BANCO", details: "Cta: 216400100524"}] },
-            MEX: { name: "México", flag: "🇲🇽", currency: "MXN", locale: "es-MX", decimals: 2, rate: 20.00, methods: [{name: "Albo", type: "SPEI", details: "Cta: 721180100042683432"}, {name: "Nu (OXXO)", type: "DEPÓSITO", details: "Tarjeta: 5101 2506 8691 9389"}] },
-            NIC: { name: "Nicaragua", flag: "🇳🇮", currency: "NIO", locale: "es-NI", decimals: 0, rate: 36.5, methods: [{name: "BAC", type: "BANCO", details: "Cta: 371674409"}] },
-            PAN: { name: "Panamá", flag: "🇵🇦", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{name: "Punto Pago", type: "APP", details: "Cta: +584128975265"}, {name: "Zinli", type: "APP", details: "chauran2001@gmail.com"}] },
-            PRY: { name: "Paraguay", flag: "🇵🇾", currency: "PYG", locale: "es-PY", decimals: 0, rate: 7300, methods: [{name: "Itau", type: "BANCO", details: "Cta: 300406285"}, {name: "Personal", type: "APP", details: "0993363424"}] },
-            PER: { name: "Perú", flag: "🇵🇪", currency: "PEN", locale: "es-PE", decimals: 2, rate: 3.8, methods: [{name: "Yape/Plin", type: "APP", details: "Cel: 954302258"}] },
-            VEN: { name: "Venezuela", flag: "🇻🇪", currency: "VES", locale: "es-VE", decimals: 2, rate: 350, methods: [{name: "Pago Móvil", type: "MÓVIL", details: "0102 - 04128975265 - 31303430"}] }
+            ARG: { name: "Argentina", flag: "🇦🇷", currency: "ARS", locale: "es-AR", decimals: 0, rate: 150000, methods: [{icon: "🟡", name: "Uala", type: "TRANSFERENCIA", details: "CVU: 0000007900203350273548", tip: "Alias: C.CORREA1315.UALA"}] },
+            BOL: { name: "Bolivia", flag: "🇧🇴", currency: "BOB", locale: "es-BO", decimals: 2, rate: 12, methods: [{icon: "🟡", name: "Yape", type: "APP", details: "N° Cuenta: 62656932", tip: "Envía dinero por Yape"}, {icon: "🟡", name: "Yape QR", type: "QR", details: "Link: https://i.postimg.cc/YCg1rRGF/qrbolivia.jpg", tip: "Escanea el QR para pagar", isQR: true, qrLink: "https://i.postimg.cc/YCg1rRGF/qrbolivia.jpg"}, {icon: "🔵", name: "BCP", type: "BANCO", details: "N° Cuenta: 20152008832355", tip: "Transferencia BCP"}] },
+            BRL: { name: "Brasil", flag: "🇧🇷", currency: "BRL", locale: "pt-BR", decimals: 2, rate: 5.20, methods: [{icon: "🟣", name: "PIX", type: "PIX", details: "Chave PIX: 91991076791", tip: "Copia y pega la llave PIX"}] },
+            CHL: { name: "Chile", flag: "🇨🇱", currency: "CLP", locale: "es-CL", decimals: 0, rate: 950, methods: [{icon: "🟡", name: "Banco Estado", type: "CAJA VECINA", details: "RUT: 23.710.151-0", tip: "CuentaRUT: 23710151"}, {icon: "🔵", name: "Banco Estado", type: "TRANSF.", details: "RUT: 23.710.151-0", tip: "CuentaRUT: 23710151"}] },
+            COL: { name: "Colombia", flag: "🇨🇴", currency: "COP", locale: "es-CO", decimals: 0, rate: 4200, methods: [{icon: "🟡", name: "Bancolombia", type: "TRANSFERENCIA", details: "N° Cuenta: 76900007797", tip: "Transferencia Ahorros Bancolombia"}, {icon: "🔵", name: "Nequi", type: "EFECTIVO", details: "Nequi: 3016043120", tip: "Envía dinero por Nequi"}, {icon: "🟣", name: "Nu Bank", type: "TRANSFERENCIA", details: "Llave Nu: @PMG3555", tip: "Transferencia Nu Bank"}] },
+            DOM: { name: "Rep. Dominicana", flag: "🇩🇴", currency: "DOP", locale: "es-DO", decimals: 2, rate: 68.00, methods: [{icon: "🟡", name: "Banreservas", type: "BANCO", details: "Cta: 9601546622", tip: "Transferencia Banreservas"}, {icon: "🔵", name: "Popular", type: "BANCO", details: "Cta: 837147719", tip: "Transferencia Popular"}, {icon: "🟣", name: "BHD León", type: "BANCO", details: "Cta: 34478720012", tip: "Transferencia BHD"}, {icon: "🟢", name: "Qik", type: "APP", details: "Cta: 1002173707", tip: "Envía dinero a Qik"}] },
+            ECU: { name: "Ecuador", flag: "🇪🇨", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{icon: "🟡", name: "Pichincha", type: "BANCO", details: "Cta: 2207195565", tip: "Transferencia Pichincha"}] },
+            USA: { name: "Estados Unidos", flag: "🇺🇸", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{icon: "🟢", name: "Zelle", type: "ZELLE", details: "+1 (754) 317-1482", tip: "Transferencia Zelle"}] },
+            GTM: { name: "Guatemala", flag: "🇬🇹", currency: "GTQ", locale: "es-GT", decimals: 2, rate: 7.8, methods: [{icon: "🟡", name: "Banrural", type: "BANCO", details: "Cta: 4431164091", tip: "Transferencia Banrural"}] },
+            HND: { name: "Honduras", flag: "🇭🇳", currency: "HNL", locale: "es-HN", decimals: 2, rate: 25.00, methods: [{icon: "🟡", name: "Bampais", type: "BANCO", details: "Cta: 216400100524", tip: "Transferencia Bampais"}] },
+            MEX: { name: "México", flag: "🇲🇽", currency: "MXN", locale: "es-MX", decimals: 2, rate: 20.00, methods: [{icon: "🟣", name: "Albo", type: "SPEI", details: "Cta: 721180100042683432", tip: "Transferencia SPEI a Albo"}, {icon: "🟡", name: "Nu (OXXO)", type: "DEPÓSITO", details: "Tarjeta: 5101 2506 8691 9389", tip: "Depósito en OXXO a tarjeta Nu"}] },
+            NIC: { name: "Nicaragua", flag: "🇳🇮", currency: "NIO", locale: "es-NI", decimals: 0, rate: 36.5, methods: [{icon: "🟡", name: "BAC", type: "BANCO", details: "Cta: 371674409", tip: "Transferencia BAC"}] },
+            PAN: { name: "Panamá", flag: "🇵🇦", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{icon: "🟢", name: "Punto Pago", type: "APP", details: "Cta: +584128975265", tip: "Envía dinero por Punto Pago"}, {icon: "🟡", name: "Zinli", type: "APP", details: "chauran2001@gmail.com", tip: "Envía por Zinli"}] },
+            PRY: { name: "Paraguay", flag: "🇵🇾", currency: "PYG", locale: "es-PY", decimals: 0, rate: 7300, methods: [{icon: "🟡", name: "Itau", type: "BANCO", details: "Cta: 300406285", tip: "Transferencia Itau"}, {icon: "🔵", name: "Personal", type: "APP", details: "0993363424", tip: "Envía por Personal Pay"}] },
+            PER: { name: "Perú", flag: "🇵🇪", currency: "PEN", locale: "es-PE", decimals: 2, rate: 3.8, methods: [{icon: "🟢", name: "Yape/Plin", type: "APP", details: "Cel: 954302258", tip: "Envía por Yape o Plin"}] },
+            VEN: { name: "Venezuela", flag: "🇻🇪", currency: "VES", locale: "es-VE", decimals: 2, rate: 350, methods: [{icon: "🟡", name: "Pago Móvil", type: "MÓVIL", details: "0102 - 04128975265 - 31303430", tip: "Datos Pago Móvil"}] }
         };
 
         let state = { step: 1, selectedCountry: null, amountUSD: 0, amountLocalRaw: 0 };
@@ -372,32 +384,75 @@
             const id = Math.floor(100000 + Math.random() * 900000);
             const fmt = formatCurrency(state.amountLocalRaw, state.selectedCountry);
             const d = EXCHANGE_DATA[state.selectedCountry];
-            saveOrder({
+            
+            const orderData = {
                 id: id,
                 date: new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit'}) + ' ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
                 countryCode: state.selectedCountry, countryName: d.name, flag: d.flag,
                 amountUSD: state.amountUSD, amountLocalRaw: state.amountLocalRaw, amountLocalFormatted: fmt, currency: d.currency
-            });
-            renderPaymentDetails({id:id, countryCode:state.selectedCountry, amountLocalFormatted:fmt});
+            };
+
+            saveOrder(orderData);
+            renderPaymentDetails(orderData);
             changeStep(3);
         }
+        
+        /**
+         * Genera el texto con el formato solicitado (emojis y asteriscos)
+         */
+        function generateFormattedText(order) {
+            const d = EXCHANGE_DATA[order.countryCode];
+            let text = `💰 *DATOS DE PAGO* (ID: #${order.id})\n\n`;
+            
+            text += `🌍 *País:* ${d.name}\n`;
+            text += `💸 *Monto a pagar:* ${order.amountLocalFormatted}\n\n`;
+            
+            text += `💳 *MÉTODOS DE PAGO DISPONIBLES:*\n`;
+
+            d.methods.forEach(m => {
+                // El formato de la línea de detalles es "Tipo de Cuenta: Detalle"
+                const detailLabel = m.details.split(':')[0].trim();
+                const detailValue = m.details.split(':')[1] ? m.details.split(':')[1].trim() : m.details;
+
+                text += `\n${m.icon} *${m.name}* (${m.type})\n`;
+                text += `📋 ${detailLabel}: ${detailValue}\n`;
+                text += `💡 ${m.tip}`;
+            });
+
+            text += `\n\n⚠️ *IMPORTANTE:*\n`;
+            text += `• Envía exactamente ${order.amountLocalFormatted}\n`;
+            text += `• Guarda el comprobante de pago\n`;
+            text += `• Envía el comprobante para confirmar el pago\n\n`;
+            text += `✅ *Una vez realizado el pago, será procesado automáticamente.*`;
+            
+            return text;
+        }
+
+        /**
+         * Renderiza los detalles de pago utilizando el formato solicitado.
+         */
         function renderPaymentDetails(order) {
             const d = EXCHANGE_DATA[order.countryCode];
+            
             document.getElementById('ticketId').textContent = `#${order.id}`;
             document.getElementById('finalLocalAmount').textContent = order.amountLocalFormatted;
-            const list = document.getElementById('paymentMethodsList'); list.innerHTML = '';
-            let txt = `💰 *PEDIDO #${order.id}* | ${d.flag} ${d.name}\n💸 *TOTAL:* ${order.amountLocalFormatted}\n\n💳 *DATOS:*`;
-            d.methods.forEach(m => {
-                txt += `\n\n🔹 ${m.name}\n${m.details}`;
-                const div = document.createElement('div');
-                div.className = "bg-dark-900 border border-slate-700 p-2.5 rounded-lg flex justify-between items-center";
-                div.innerHTML = `<div class="overflow-hidden mr-2"><div class="font-bold text-white text-[11px]">${m.name} <span class="text-[9px] bg-slate-700 text-slate-300 px-1 py-0.5 rounded uppercase">${m.type}</span></div><div class="text-[10px] text-brand-cyan font-mono mt-0.5 break-all">${m.details}</div></div><button onclick="copyToClipboard('${m.details}', this)" class="shrink-0 w-7 h-7 rounded bg-dark-800 text-slate-400 hover:text-white flex items-center justify-center"><i class="fa-regular fa-copy text-[10px]"></i></button>`;
-                list.appendChild(div);
-            });
-            txt += `\n\n⚠️ ID: ${order.id}`;
-            const btn = document.getElementById('copyAllDetailsBtn'); const nBtn = btn.cloneNode(true); btn.parentNode.replaceChild(nBtn, btn);
-            nBtn.addEventListener('click', () => copyToClipboard(txt, nBtn, true));
+            
+            // 1. GENERAR EL TEXTO FORMATEADO
+            const formattedText = generateFormattedText(order);
+
+            // 2. INSERTARLO EN EL ELEMENTO <pre>
+            const formattedDisplay = document.getElementById('formattedPaymentDetails');
+            formattedDisplay.textContent = formattedText;
+            
+            // 3. ACTUALIZAR BOTÓN DE COPIAR
+            const btn = document.getElementById('copyAllDetailsBtn'); 
+            const nBtn = btn.cloneNode(true); 
+            btn.parentNode.replaceChild(nBtn, btn);
+
+            // El botón principal ahora copia el texto formateado
+            nBtn.addEventListener('click', () => copyToClipboard(formattedText, nBtn, true));
         }
+
         function viewOrderDetails(id) {
             const o = getOrders().find(x => x.id == id);
             if(o) { openModal(); renderPaymentDetails(o); changeStep(3); }
