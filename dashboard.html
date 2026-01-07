@@ -7,7 +7,37 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://sevastiancastro92-arch.github.io/Pruevafirebase/style.css">
+  
+  <style>
+    .chat-float-link {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #00f3ff, #0066ff); /* Gradiente Neon Cyan/Blue */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(255,255,255,0.3);
+      border: 2px solid white;
+      z-index: 9999;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    .chat-float-link:hover {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 0 35px rgba(0, 243, 255, 0.8);
+    }
+    .chat-float-link svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+    }
+  </style>
 </head>
 <body class="text-white p-4 md:p-8 hide-on-main">
   
@@ -63,10 +93,6 @@
       <a href="metodos.html" class="menu-item neon-btn">
         <div class="text-neon-green">💳 Recargar Saldo</div>
       </a>
-      
-      <div id="menuRecharge" class="menu-item neon-btn">
-         <div class="text-neon-green">💬 Recarga WhatsApp</div>
-      </div>
 
       <a href="https://docs.google.com/document/d/1eeOCnYJDjFJIGpY8sfuoFdVve1d_jSrnkxSHqqqKieg/edit?usp=drivesdk" 
          target="_blank" 
@@ -178,26 +204,23 @@
       </div>
     </div>
     
-    <div id="rechargeModal" class="modal-backdrop" style="display: none;">
-      <div class="modal">
-        <h3 class="text-lg font-bold mb-2">Recargar Saldo (WhatsApp)</h3>
-        <input id="rechargeAmountInput" type="number" placeholder="Monto (min $4.00)" class="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2">
-        <div id="rechargeError" class="text-red-500 text-sm hidden mb-2">Mínimo $4.00 USD</div>
-        <div class="actions">
-           <button id="rechargeCancelBtn" class="py-2 px-4 rounded-lg border border-white/10">Cancelar</button>
-           <button id="rechargeConfirmBtn" class="py-2 px-4 rounded-lg bg-green-500 font-semibold neon-btn">Ir a WhatsApp</button>
-        </div>
-      </div>
+    <div id="menuRecharge" style="display: none;"></div>
+    
+    <div id="rechargeModal" style="display: none;">
+        <input id="rechargeAmountInput">
+        <div id="rechargeError"></div>
+        <button id="rechargeCancelBtn"></button>
+        <button id="rechargeConfirmBtn"></button>
     </div>
-
-    <a href="chat.html" class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(0,243,255,0.6)] border-2 border-white hover:scale-110 transition-transform z-50">
-      <svg viewBox="0 0 24 24" class="w-8 h-8 fill-white drop-shadow-md">
+    
+    <a href="chat.html" class="chat-float-link" title="Abrir Chat Global">
+      <svg viewBox="0 0 24 24">
         <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
       </svg>
     </a>
-
+    
   </div>
   
-  <script src="script.js"></script>
+  <script src="https://sevastiancastro92-arch.github.io/Pruevafirebase/script.js"></script>
 </body>
 </html>
