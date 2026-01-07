@@ -7,116 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-  <link rel="stylesheet" href="https://sevastiancastro92-arch.github.io/Pruevafirebase/style.css">
-  
-  <style>
-    /* Chat Floating Button */
-    #chatToggleBtn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #00f2ea, #0066ff);
-      border-radius: 50%;
-      box-shadow: 0 0 15px rgba(0, 242, 234, 0.6);
-      border: none;
-      cursor: pointer;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease;
-    }
-    #chatToggleBtn:hover { transform: scale(1.1); }
-    #chatToggleBtn svg { fill: white; width: 30px; height: 30px; }
-
-    /* Chat Window */
-    #chatWindow {
-      position: fixed;
-      bottom: 90px;
-      right: 20px;
-      width: 320px;
-      height: 450px;
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 242, 234, 0.3);
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(20px);
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-    #chatWindow.active { opacity: 1; pointer-events: all; transform: translateY(0); }
-
-    /* Header */
-    .chat-header {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .chat-title { color: #00f2ea; font-weight: bold; font-size: 14px; }
-    .chat-close { background: none; border: none; color: #aaa; cursor: pointer; font-size: 18px; }
-
-    /* Messages Area */
-    #chatMessages {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .message { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 13px; word-wrap: break-word; }
-    
-    /* Mensajes propios */
-    .message.self { align-self: flex-end; background: rgba(0, 102, 255, 0.2); border: 1px solid rgba(0, 102, 255, 0.5); color: white; border-bottom-right-radius: 2px; }
-    /* Mensajes de otros */
-    .message.other { align-self: flex-start; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #ddd; border-bottom-left-radius: 2px; }
-    
-    .msg-user { font-size: 10px; color: #aaa; margin-bottom: 2px; display: block; }
-    .msg-img { max-width: 100%; border-radius: 8px; margin-top: 5px; border: 1px solid rgba(255,255,255,0.2); }
-
-    /* Input Area */
-    .chat-input-area {
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.3);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    #chatInput {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 8px 12px;
-      color: white;
-      font-size: 13px;
-      outline: none;
-    }
-    #chatInput:focus { border-color: #00f2ea; }
-    
-    .chat-btn-icon {
-      background: none; border: none; cursor: pointer; color: #00f2ea;
-      display: flex; align-items: center; justify-content: center;
-      padding: 5px; transition: color 0.2s;
-    }
-    .chat-btn-icon:hover { color: #fff; }
-    
-    /* Scrollbar */
-    #chatMessages::-webkit-scrollbar { width: 4px; }
-    #chatMessages::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="text-white p-4 md:p-8 hide-on-main">
   
@@ -132,20 +23,12 @@
     
     <div id="menuBackdrop" class="menu-backdrop"></div>
     <aside id="sideMenu" class="side-menu" aria-hidden="true">
-      
       <div class="menu-user">
         <div class="avatar" id="menuAvatar">UX</div>
         <div>
           <div class="flex items-center gap-2"> 
             <div id="menuUserName" class="font-semibold text-lg text-neon-cyan">Usuario</div>
-            
-            <a id="editProfileBtnMenu" href='perfil.html' class="
-                text-xs font-semibold 
-                py-0.5 px-2 rounded-lg 
-                bg-gray-700 hover:bg-gray-600 
-                text-neon-cyan transition-colors 
-                flex items-center w-fit h-fit
-            " title="Editar Perfil">
+            <a id="editProfileBtnMenu" href='perfil.html' class="text-xs font-semibold py-0.5 px-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-neon-cyan transition-colors flex items-center w-fit h-fit" title="Editar Perfil">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
             </a>
           </div>
@@ -172,12 +55,11 @@
       <a href="metodos.html" class="menu-item neon-btn">
         <div class="text-neon-green">💳 Recargar Saldo</div>
       </a>
+      <div id="menuRecharge" class="menu-item neon-btn"> <div class="text-neon-green">💬 Recarga WhatsApp</div>
+      </div>
 
-      <a href="https://docs.google.com/document/d/1eeOCnYJDjFJIGpY8sfuoFdVve1d_jSrnkxSHqqqKieg/edit?usp=drivesdk" 
-         target="_blank" 
-         class="menu-item neon-btn">
+      <a href="https://docs.google.com/document/d/1eeOCnYJDjFJIGpY8sfuoFdVve1d_jSrnkxSHqqqKieg/edit?usp=drivesdk" target="_blank" class="menu-item neon-btn">
         <div class="text-neon-cyan">📚 Tutoriales</div>
-        <div class="small-muted"></div>
       </a>
 
       <div id="menuPublicaciones" class="menu-item neon-btn">
@@ -240,14 +122,12 @@
     <section id="myKeysContainer" class="hidden">
       <h2 class="text-xl font-semibold mb-4">🔒 Historial de Keys compradas</h2>
 
-      <button id="deleteExpiredKeysBtn"
-        class="mb-4 py-2 px-4 bg-red-600 rounded-lg font-bold hover:bg-red-700 transition">
+      <button id="deleteExpiredKeysBtn" class="mb-4 py-2 px-4 bg-red-600 rounded-lg font-bold hover:bg-red-700 transition">
         🗑️ Eliminar Keys Expiradas
       </button>
 
       <div class="flex flex-col md:flex-row gap-3 mb-4">
-        <input id="searchKeyInput" type="text" placeholder="🔍 Buscar por nombre o clave..."
-        class="w-full md:w-1/2 px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400">
+        <input id="searchKeyInput" type="text" placeholder="🔍 Buscar por nombre o clave..." class="w-full md:w-1/2 px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400">
         <select id="filterDateSelect" class="px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-blue-400">
           <option value="all">📅 Todos</option>
           <option value="today">Hoy</option>
@@ -283,16 +163,19 @@
       </div>
     </div>
     
-    <div id="menuRecharge" style="display: none;"></div>
-    
-    <div id="rechargeModal" style="display: none;">
-        <input id="rechargeAmountInput">
-        <div id="rechargeError"></div>
-        <button id="rechargeCancelBtn"></button>
-        <button id="rechargeConfirmBtn"></button>
+    <div id="rechargeModal" class="modal-backdrop" style="display: none;">
+      <div class="modal">
+        <h3 class="text-lg font-bold mb-2">Recargar Saldo (WhatsApp)</h3>
+        <input id="rechargeAmountInput" type="number" placeholder="Monto (min $4.00)" class="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2">
+        <div id="rechargeError" class="text-red-500 text-sm hidden mb-2">Mínimo $4.00 USD</div>
+        <div class="actions">
+           <button id="rechargeCancelBtn" class="py-2 px-4 rounded-lg border border-white/10">Cancelar</button>
+           <button id="rechargeConfirmBtn" class="py-2 px-4 rounded-lg bg-green-500 font-semibold neon-btn">Ir a WhatsApp</button>
+        </div>
+      </div>
     </div>
 
-    <button id="chatToggleBtn" title="Chat Global">
+    <button id="chatToggleBtn" title="Chat Global" onclick="document.getElementById('chatWindow').classList.toggle('active');">
       <svg viewBox="0 0 24 24">
         <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
       </svg>
@@ -301,7 +184,7 @@
     <div id="chatWindow">
       <div class="chat-header">
         <span class="chat-title">💬 Chat SociosXIT</span>
-        <button id="chatCloseBtn" class="chat-close">&times;</button>
+        <button id="chatCloseBtn" class="chat-close" onclick="document.getElementById('chatWindow').classList.remove('active');">&times;</button>
       </div>
       <div id="chatMessages">
         </div>
@@ -318,120 +201,6 @@
     </div>
     </div>
   
-  <script src="https://sevastiancastro92-arch.github.io/Pruevafirebase/script.js"></script>
-  
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const chatWindow = document.getElementById("chatWindow");
-      const chatToggleBtn = document.getElementById("chatToggleBtn");
-      const chatCloseBtn = document.getElementById("chatCloseBtn");
-      const chatInput = document.getElementById("chatInput");
-      const chatSendBtn = document.getElementById("chatSendBtn");
-      const chatMessages = document.getElementById("chatMessages");
-      const chatUploadBtn = document.getElementById("chatUploadBtn");
-      const chatImgInput = document.getElementById("chatImgInput");
-
-      // API KEY de ImgBB dada por el usuario
-      const IMGBB_API_KEY = "f4a63b9f9af2fd112ded296694732a20";
-
-      // Toggle Chat
-      chatToggleBtn.addEventListener("click", () => {
-        chatWindow.classList.toggle("active");
-        scrollToBottom();
-      });
-      chatCloseBtn.addEventListener("click", () => chatWindow.classList.remove("active"));
-
-      // Referencia a Firebase (Asumiendo que firebase ya está inicializado en script.js)
-      // Si no funciona, asegúrate de que script.js cargue ANTES o usa un timeout
-      const db = firebase.database();
-      const chatRef = db.ref("globalChat");
-
-      // Obtener nombre de usuario actual del DOM (para respetar script existente)
-      function getCurrentUser() {
-        const nameEl = document.getElementById("menuUserName");
-        return nameEl ? nameEl.innerText : "Anónimo";
-      }
-
-      // Enviar Mensaje Texto
-      function sendMessage(text, type = "text") {
-        if (!text.trim()) return;
-        
-        const username = getCurrentUser();
-        const newMessage = {
-          user: username,
-          content: text,
-          type: type,
-          timestamp: Date.now()
-        };
-        
-        chatRef.push(newMessage);
-        chatInput.value = "";
-      }
-
-      chatSendBtn.addEventListener("click", () => sendMessage(chatInput.value));
-      chatInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMessage(chatInput.value);
-      });
-
-      // Manejo de Imágenes (ImgBB)
-      chatUploadBtn.addEventListener("click", () => chatImgInput.click());
-      
-      chatImgInput.addEventListener("change", async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        // Feedback visual de carga
-        const loadingBtn = chatUploadBtn.innerHTML;
-        chatUploadBtn.innerHTML = "..."; 
-
-        const formData = new FormData();
-        formData.append("image", file);
-
-        try {
-          const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-            method: "POST",
-            body: formData
-          });
-          const data = await response.json();
-
-          if (data.success) {
-            sendMessage(data.data.url, "image");
-          } else {
-            alert("Error al subir imagen");
-          }
-        } catch (error) {
-          console.error("Error ImgBB:", error);
-          alert("Error de conexión con ImgBB");
-        } finally {
-          chatUploadBtn.innerHTML = loadingBtn;
-          chatImgInput.value = ""; // Reset input
-        }
-      });
-
-      // Escuchar Mensajes
-      chatRef.limitToLast(50).on("child_added", (snapshot) => {
-        const data = snapshot.val();
-        const isMe = data.user === getCurrentUser();
-        
-        const msgDiv = document.createElement("div");
-        msgDiv.className = `message ${isMe ? "self" : "other"}`;
-        
-        let contentHtml = "";
-        if (data.type === "image") {
-          contentHtml = `<span class="msg-user">${data.user}</span><a href="${data.content}" target="_blank"><img src="${data.content}" class="msg-img" alt="imagen"></a>`;
-        } else {
-          contentHtml = `<span class="msg-user">${data.user}</span>${data.content}`;
-        }
-        
-        msgDiv.innerHTML = contentHtml;
-        chatMessages.appendChild(msgDiv);
-        scrollToBottom();
-      });
-
-      function scrollToBottom() {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
