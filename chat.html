@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat Global - SociosXIT</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   
@@ -12,148 +14,164 @@
     :root {
       --neon-cyan: #00f3ff;
       --neon-pink: #ff00ff;
-      --glass-dark: rgba(10, 15, 30, 0.95);
+      --glass-dark: rgba(10, 15, 30, 0.98);
     }
 
+    /* Fondo centrado y estilizado */
     body {
       background-color: #050505;
       background-image: 
-        radial-gradient(circle at 20% 20%, rgba(0, 243, 255, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.15) 0%, transparent 40%);
-      background-size: cover;
+        radial-gradient(circle at 10% 10%, rgba(0, 243, 255, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(255, 0, 255, 0.1) 0%, transparent 40%);
       height: 100vh;
       margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       overflow: hidden;
     }
 
-    /* CONTENEDOR TIPO BOX CENTRADO */
+    /* Caja de Chat Centrada (Bot Grand) */
     #chatBox {
-      width: 92%;
-      max-width: 900px;
+      width: 95%;
+      max-width: 1000px;
       height: 85vh;
       background: var(--glass-dark);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border: 1px solid var(--neon-cyan);
-      border-radius: 20px;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 243, 255, 0.2);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 243, 255, 0.1);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      animation: popIn 0.3s ease-out;
+      animation: fadeIn 0.4s ease-out;
     }
 
-    @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
 
+    /* Header */
     .chat-header {
-      background: rgba(0, 243, 255, 0.05);
-      padding: 15px 20px;
+      padding: 18px 25px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(0, 243, 255, 0.2);
     }
 
+    /* Contenedor de Mensajes */
     #messagesContainer {
       flex: 1;
-      padding: 20px;
+      padding: 25px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 15px;
+      background: rgba(0, 0, 0, 0.2);
     }
 
-    /* Estilo de burbujas */
+    /* Burbujas */
     .message {
       max-width: 75%;
-      padding: 10px 14px;
-      border-radius: 15px;
+      padding: 12px 16px;
+      border-radius: 18px;
       font-size: 14px;
-      line-height: 1.4;
-      word-wrap: break-word;
+      line-height: 1.5;
       color: white;
+      position: relative;
     }
     .self {
       align-self: flex-end;
       background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(0, 102, 255, 0.2));
       border: 1px solid var(--neon-cyan);
       border-bottom-right-radius: 2px;
+      box-shadow: 0 4px 15px rgba(0, 243, 255, 0.1);
     }
     .other {
       align-self: flex-start;
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-bottom-left-radius: 2px;
     }
 
-    .username { font-size: 10px; font-weight: bold; margin-bottom: 4px; display: block; text-transform: uppercase; }
+    .username {
+      font-size: 10px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      display: block;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
     .self .username { color: var(--neon-cyan); text-align: right; }
     .other .username { color: var(--neon-pink); }
-    
-    .msg-img { 
-      max-width: 100%; 
-      border-radius: 8px; 
-      margin-top: 5px; 
-      cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.1);
+
+    /* Imágenes */
+    .msg-img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
       transition: transform 0.2s;
     }
-    .msg-img:hover { transform: scale(1.02); }
+    .msg-img:hover { transform: scale(1.02); cursor: pointer; }
 
+    /* Input Area */
     .input-area {
-      padding: 15px 20px;
-      background: rgba(0, 0, 0, 0.4);
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
-      gap: 12px;
+      gap: 15px;
+      align-items: center;
     }
-    
     .chat-input {
       flex: 1;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 25px;
-      padding: 10px 20px;
+      border-radius: 30px;
+      padding: 12px 20px;
       color: white;
       outline: none;
+      transition: 0.3s;
     }
-    .chat-input:focus { border-color: var(--neon-cyan); }
+    .chat-input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
 
     .btn-icon {
-      width: 42px; height: 42px;
+      width: 45px; height: 45px;
       display: flex; align-items: center; justify-content: center;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
       border-radius: 50%;
       cursor: pointer;
-      transition: 0.2s;
+      transition: 0.3s;
     }
-    .btn-icon:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 10px var(--neon-cyan); }
-
-    .btn-back {
-      color: #aaa; font-size: 13px; text-decoration: none; border: 1px solid #333;
-      padding: 5px 12px; border-radius: 5px; transition: 0.2s;
-    }
-    .btn-back:hover { color: white; border-color: white; }
+    .btn-icon:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
 
     /* Scrollbar */
     #messagesContainer::-webkit-scrollbar { width: 5px; }
     #messagesContainer::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 10px; }
+
+    .btn-close {
+      color: #777; font-size: 13px; font-weight: bold; border: 1px solid #333;
+      padding: 6px 15px; border-radius: 8px; transition: 0.3s;
+    }
+    .btn-close:hover { color: white; border-color: white; background: rgba(255,255,255,0.1); }
   </style>
 </head>
 <body>
 
   <div id="chatBox">
     <header class="chat-header">
-      <div class="flex items-center gap-2">
-        <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-        <h1 class="text-md font-bold tracking-widest text-white">SOCIOS<span class="text-cyan-400">XIT</span> CHAT</h1>
+      <div class="flex items-center gap-3">
+        <div class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#00f3ff]"></div>
+        <h1 class="text-lg font-black tracking-tighter text-white">SOCIOS<span class="text-cyan-400">XIT</span> <span class="font-light text-gray-400">CHAT</span></h1>
       </div>
-      <a href="index.html" class="btn-back">Cerrar</a>
+      <a href="index.html" class="btn-close">DASHBOARD</a>
     </header>
 
     <div id="messagesContainer">
@@ -161,18 +179,21 @@
 
     <div class="input-area">
       <input type="file" id="imgInput" accept="image/*" style="display: none;">
-      <button class="btn-icon" id="btnUpload" title="Mandar Foto">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      
+      <button class="btn-icon" id="btnUpload" title="Enviar Imagen">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </button>
-      <input type="text" id="txtMsg" class="chat-input" placeholder="Escribe un mensaje..." autocomplete="off">
+
+      <input type="text" id="txtMsg" class="chat-input" placeholder="Escribe tu mensaje aquí..." autocomplete="off">
+      
       <button class="btn-icon" id="btnSend">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
 
   <script>
-    // --- FIREBASE CONFIG (TU CONFIGURACIÓN) ---
+    // --- 1. CONFIGURACIÓN FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
         authDomain: "chatglobal-e9370.firebaseapp.com",
@@ -183,52 +204,76 @@
         appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    // Inicialización segura
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.database();
     const chatRef = db.ref("globalChat");
     const IMGBB_API_KEY = "f4a63b9f9af2fd112ded296694732a20";
 
-    const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo";
+    // --- 2. IDENTIDAD DEL USUARIO ---
+    const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
+    
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
 
-    // Función para auto-scroll
-    const scrollToBottom = () => {
+    // Función para bajar el scroll automáticamente
+    function scrollToBottom() {
         container.scrollTop = container.scrollHeight;
-    };
+    }
 
-    // --- ENVIAR ---
+    // --- 3. FUNCIÓN ENVIAR ---
     function send(content, type = "text") {
         if (!content.trim()) return;
+
         chatRef.push({
             user: currentUser,
             content: content,
             type: type,
             timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => {
+            console.log("Mensaje enviado");
+        }).catch(err => {
+            alert("Error de Firebase: ¿Olvidaste cambiar las Reglas a true?");
         });
+        
         txtMsg.value = "";
     }
 
     document.getElementById("btnSend").onclick = () => send(txtMsg.value);
     txtMsg.onkeypress = (e) => { if (e.key === "Enter") send(txtMsg.value); };
 
-    // --- SUBIR FOTO ---
+    // --- 4. FUNCIÓN SUBIR IMAGEN ---
     document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
     document.getElementById("imgInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Feedback visual
+        document.getElementById("btnUpload").innerHTML = "⏳";
+        
         const formData = new FormData();
         formData.append("image", file);
 
         try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                method: "POST",
+                body: formData
+            });
             const data = await res.json();
-            if (data.success) send(data.data.url, "image");
-        } catch (err) { alert("Error al subir foto"); }
+            if (data.success) {
+                send(data.data.url, "image");
+            }
+        } catch (err) {
+            alert("Error al conectar con ImgBB");
+        } finally {
+            document.getElementById("btnUpload").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+            e.target.value = ""; // Limpiar input
+        }
     };
 
-    // --- RECIBIR Y MOSTRAR ---
+    // --- 5. RECIBIR Y RENDERIZAR MENSAJES ---
     chatRef.limitToLast(50).on("child_added", (snap) => {
         const msg = snap.val();
         const isMe = msg.user === currentUser;
@@ -236,24 +281,26 @@
         const div = document.createElement("div");
         div.className = `message ${isMe ? "self" : "other"}`;
 
-        // Lógica de detección de contenido (Texto o Imagen)
+        // Lógica de detección: ¿Es imagen o texto?
         let html = `<span class="username">${msg.user}</span>`;
         
-        // Si el tipo es 'image' o el contenido es un link de imagen directo
-        const isImageUrl = typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+        // Expresión regular para detectar links de imágenes pegados manualmente
+        const isImageUrl = (msg.type === "image") || (typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i));
         
-        if (msg.type === "image" || isImageUrl) {
+        if (isImageUrl) {
             html += `<a href="${msg.content}" target="_blank">
-                        <img src="${msg.content}" class="msg-img" onload="this.parentElement.parentElement.parentElement.scrollTop = this.parentElement.parentElement.parentElement.scrollHeight">
+                        <img src="${msg.content}" class="msg-img" onload="this.closest('#messagesContainer').scrollTop = this.closest('#messagesContainer').scrollHeight">
                      </a>`;
         } else {
-            // Limpiar HTML para evitar ataques pero permitir emoticonos
-            const cleanText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            html += `<div>${cleanText}</div>`;
+            // Limpiar texto para seguridad
+            const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            html += `<div>${safeText}</div>`;
         }
 
         div.innerHTML = html;
         container.appendChild(div);
+        
+        // Scroll inmediato
         scrollToBottom();
     });
   </script>
