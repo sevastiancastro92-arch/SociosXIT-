@@ -50,55 +50,84 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      position: relative;
     }
 
-    /* --- ANIMACIONES EMOJIS --- */
+    /* --- ANIMACIONES EMOJIS (100% CUBIERTOS) --- */
     .emoji-anim { display: inline-block; font-style: normal; vertical-align: middle; }
-    @keyframes laugh { 0%, 100% { transform: rotate(0deg) translateY(0); } 25% { transform: rotate(-10deg) translateY(-2px); } 75% { transform: rotate(10deg) translateY(-2px); } }
+    @keyframes laugh { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg) translateY(-2px); } 75% { transform: rotate(10deg) translateY(-2px); } }
     .emoji-laugh { animation: laugh 0.4s infinite; }
-    @keyframes heart { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #ff0055); } 50% { transform: scale(1.25); filter: drop-shadow(0 0 10px #ff0055); } }
+    @keyframes heart { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); filter: drop-shadow(0 0 8px #ff0055); } }
     .emoji-heart { animation: heart 0.8s infinite; }
-    @keyframes cry { 0%, 100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(3px); opacity: 0.8; filter: drop-shadow(0 0 5px var(--neon-cyan)); } }
+    @keyframes cry { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); filter: drop-shadow(0 0 5px var(--neon-cyan)); } }
     .emoji-cry { animation: cry 0.5s infinite; }
-    @keyframes angry { 0% { transform: translate(0,0); } 20% { transform: translate(-2px, 1px); } 40% { transform: translate(2px, -1px); } 60% { transform: translate(-1px, -2px); } 80% { transform: translate(2px, 2px); } }
+    @keyframes angry { 0% { transform: translate(0,0); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(1px, 1px); } }
     .emoji-angry { animation: angry 0.1s infinite; filter: drop-shadow(0 0 3px red); }
-    @keyframes shock { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.4); } }
-    .emoji-shock { animation: shock 0.6s infinite; }
-    @keyframes shine { 0% { transform: rotateY(0deg); filter: brightness(1); } 50% { transform: rotateY(180deg); filter: brightness(1.8) drop-shadow(0 0 5px gold); } 100% { transform: rotateY(360deg); filter: brightness(1); } }
-    .emoji-shine { animation: shine 1.5s infinite; }
-    @keyframes power { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; filter: drop-shadow(0 0 10px orange); } }
-    .emoji-power { animation: power 0.3s infinite; }
-    @keyframes float-gen { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(5deg); filter: drop-shadow(0 0 3px white); } }
+    @keyframes float-gen { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
     .emoji-gen { animation: float-gen 2s ease-in-out infinite; }
 
-    /* ESTILOS DE CHAT */
-    .chat-header { padding: 15px 20px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+    /* ESTILOS DE MENSAJES */
     #messagesContainer { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.2); }
-    .message { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 14px; color: white; word-wrap: break-word; white-space: pre-wrap; }
-    .self { align-self: flex-end; background: linear-gradient(135deg, rgba(0, 243, 255, 0.15), rgba(0, 102, 255, 0.15)); border: 1px solid var(--neon-cyan); border-bottom-right-radius: 2px; }
+    .message { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 14px; color: white; word-wrap: break-word; white-space: pre-wrap; position: relative; cursor: pointer; transition: background 0.2s; }
+    .message:active { background: rgba(255,255,255,0.05); }
+    .self { align-self: flex-end; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(0, 102, 255, 0.1)); border: 1px solid var(--neon-cyan); border-bottom-right-radius: 2px; }
     .other { align-self: flex-start; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-bottom-left-radius: 2px; }
-    .actions { display: flex; gap: 10px; margin-top: 5px; font-size: 10px; font-weight: bold; }
-    .btn-edit { color: var(--neon-cyan); cursor: pointer; }
-    .btn-delete { color: #ff4d4d; cursor: pointer; }
-    .username { font-size: 10px; font-weight: 800; margin-bottom: 4px; display: block; text-transform: uppercase; color: var(--neon-pink); }
-    .self .username { color: var(--neon-cyan); text-align: right; }
-    .chat-link { color: var(--neon-cyan); text-decoration: underline; }
 
-    /* AREA DE ENTRADA */
-    .input-area { padding: 12px 15px; background: rgba(0,0,0,0.7); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: flex-end; position: relative; }
-    .chat-input { flex: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px 15px; color: white; resize: none; font-size: 15px; max-height: 120px; min-height: 40px; overflow-y: auto; }
+    /* MINI BOX - MENÚ CONTEXTUAL */
+    #contextMenu {
+      position: fixed;
+      display: none;
+      z-index: 1000;
+      background: rgba(10, 10, 20, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--neon-pink);
+      border-radius: 15px;
+      padding: 8px;
+      flex-direction: column;
+      gap: 5px;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+      animation: popMenu 0.2s ease-out;
+    }
+    @keyframes popMenu { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     
-    /* Indicador de Modo Edición */
-    .edit-mode .chat-input { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.2); }
+    .menu-btn {
+      padding: 8px 15px;
+      border-radius: 10px;
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .menu-btn:hover { background: rgba(255,255,255,0.1); }
+    .btn-edit-opt { color: var(--neon-cyan); }
+    .btn-del-opt { color: #ff4d4d; }
 
-    .btn-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: 0.3s; }
-    .edit-mode #btnSend { border-color: var(--neon-pink); color: var(--neon-pink); }
+    /* INPUT AREA */
+    .input-area { padding: 12px 15px; background: rgba(0,0,0,0.7); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: flex-end; }
+    .chat-input { flex: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px 15px; color: white; resize: none; font-size: 15px; max-height: 120px; min-height: 40px; }
+    .edit-mode .chat-input { border-color: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+    .btn-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 50%; cursor: pointer; flex-shrink: 0; }
   </style>
 </head>
 <body oncontextmenu="return false;">
 
+  <div id="contextMenu">
+    <div class="menu-btn btn-edit-opt" id="optEdit">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        EDITAR MENSAJE
+    </div>
+    <div class="menu-btn btn-del-opt" id="optDelete">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        ELIMINAR MENSAJE
+    </div>
+  </div>
+
   <div id="chatBox">
-    <header class="chat-header">
+    <header class="chat-header p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
       <div class="flex items-center gap-2">
         <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
         <h1 class="text-md font-black text-white">SOCIOS<span class="text-cyan-400">XIT</span></h1>
@@ -111,12 +140,8 @@
     <div class="input-area" id="inputWrapper">
       <input type="file" id="imgInput" accept="image/*" style="display: none;">
       <button class="btn-icon" id="btnUpload"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
-      
-      <textarea id="txtMsg" class="chat-input" placeholder="Mensaje..." rows="1" autocomplete="off"></textarea>
-      
-      <button class="btn-icon" id="btnSend">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
+      <textarea id="txtMsg" class="chat-input" placeholder="Escribe aquí..." rows="1" autocomplete="off"></textarea>
+      <button class="btn-icon" id="btnSend"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
     </div>
   </div>
 
@@ -131,30 +156,23 @@
         appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
     };
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const chatRef = db.ref("globalChat");
     const IMGBB_API_KEY = "f4a63b9f9af2fd112ded296694732a20";
     const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
-    const inputWrapper = document.getElementById("inputWrapper");
-
-    // Variable global para rastrear si estamos editando
+    const menu = document.getElementById("contextMenu");
+    
     let editingKey = null;
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', () => {
-        document.body.style.height = window.visualViewport.height + 'px';
-        scrollToBottom();
-      });
-    }
+    let longPressTimer;
 
     function scrollToBottom() { container.scrollTop = container.scrollHeight; }
 
+    // --- LOGICA DE EMOJIS Y LINKS ---
     function linkify(text) {
-        const urlRegex = /(https?:\/\/[^\s]+)/g;
-        return text.replace(urlRegex, (url) => `<a href="${url}" target="_blank" class="chat-link">${url}</a>`);
+        return text.replace(/(https?:\/\/[^\s]+)/g, (url) => `<a href="${url}" target="_blank" class="chat-link">${url}</a>`);
     }
 
     function emojify(text) {
@@ -162,106 +180,108 @@
         return text.replace(emojiRegex, (match) => {
             let cls = "emoji-gen";
             if (/[😂🤣😆😹]/.test(match)) cls = "emoji-laugh";
-            else if (/[❤️😍💖💝💘💓😻🔥]/.test(match)) cls = "emoji-heart";
-            else if (/[😭😢☹️😿💔💧]/.test(match)) cls = "emoji-cry";
-            else if (/[😡😠🤬👿💢]/.test(match)) cls = "emoji-angry";
-            else if (/[😲😱🤯😮⚡💥]/.test(match)) cls = "emoji-shock";
-            else if (/[🤑💰💵💎✨🌟⭐]/.test(match)) cls = "emoji-shine";
-            else if (/[🔥⚡💥🚀]/.test(match)) cls = "emoji-power";
+            else if (/[❤️😍💖💝🔥]/.test(match)) cls = "emoji-heart";
+            else if (/[😭😢☹️💔]/.test(match)) cls = "emoji-cry";
+            else if (/[😡😠🤬👿]/.test(match)) cls = "emoji-angry";
             return `<i class="emoji-anim ${cls}">${match}</i>`;
         });
     }
 
-    // Auto-ajuste de altura del textarea
+    // --- ACCIONES DE MENSAJES ---
+    function openMenu(x, y, key, content) {
+        menu.style.display = "flex";
+        menu.style.top = `${y}px`;
+        menu.style.left = `${x}px`;
+        
+        document.getElementById("optEdit").onclick = () => {
+            editingKey = key;
+            txtMsg.value = content;
+            document.getElementById("inputWrapper").classList.add("edit-mode");
+            txtMsg.focus();
+            closeMenu();
+        };
+        
+        document.getElementById("optDelete").onclick = () => {
+            if(confirm("¿Eliminar este mensaje?")) chatRef.child(key).remove();
+            closeMenu();
+        };
+    }
+
+    function closeMenu() { menu.style.display = "none"; }
+
+    document.addEventListener("click", (e) => { if(!menu.contains(e.target)) closeMenu(); });
+
+    // --- ENVÍO ---
+    function send(content, type = "text") {
+        if (!content.trim()) return;
+        if (editingKey) {
+            chatRef.child(editingKey).update({ content: content });
+            editingKey = null;
+            document.getElementById("inputWrapper").classList.remove("edit-mode");
+        } else {
+            chatRef.push({ user: currentUser, content: content, type: type, timestamp: firebase.database.ServerValue.TIMESTAMP });
+        }
+        txtMsg.value = "";
+        txtMsg.style.height = '40px';
+    }
+
+    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
+    
     txtMsg.addEventListener('input', function() {
         this.style.height = '40px';
         this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
     });
 
-    // --- FUNCIÓN DE ENVÍO Y EDICIÓN ---
-    function send(content, type = "text") {
-        if (!content.trim()) return;
+    // --- RENDERIZADO ---
+    chatRef.limitToLast(50).on("child_added", (snap) => render(snap.key, snap.val(), true));
+    chatRef.on("child_changed", (snap) => render(snap.key, snap.val(), false));
+    chatRef.on("child_removed", (snap) => document.getElementById("msg-" + snap.key)?.remove());
 
-        if (editingKey) {
-            // Si hay un editingKey, actualizamos en lugar de crear uno nuevo
-            chatRef.child(editingKey).update({ content: content })
-            .then(() => {
-                cancelEdit(); // Limpiar estado de edición
-            });
-        } else {
-            // Envío normal
-            chatRef.push({ user: currentUser, content: content, type: type, timestamp: firebase.database.ServerValue.TIMESTAMP });
-            txtMsg.value = "";
-            txtMsg.style.height = '40px';
-        }
-    }
-
-    function deleteMsg(key) { if (confirm("¿Eliminar?")) chatRef.child(key).remove(); }
-
-    // --- FUNCIÓN DE EDICIÓN AVANZADA ---
-    function editMsg(key, content) {
-        editingKey = key; // Guardamos el ID que vamos a editar
-        txtMsg.value = content; // Ponemos el texto en el textarea
-        inputWrapper.classList.add("edit-mode"); // Cambio visual neón rosa
-        txtMsg.focus();
+    function render(key, msg, isNew) {
+        let div = document.getElementById("msg-" + key) || document.createElement("div");
+        div.id = "msg-" + key;
+        const isMe = msg.user === currentUser;
+        div.className = `message ${isMe ? "self" : "other"}`;
         
-        // Ajustar altura del textarea automáticamente al cargar el texto
-        txtMsg.style.height = '40px';
-        txtMsg.style.height = (txtMsg.scrollHeight > 120 ? 120 : txtMsg.scrollHeight) + 'px';
+        let html = `<span class="username text-[9px] font-black opacity-50 block mb-1">${msg.user}</span>`;
+        if (msg.type === "image") {
+            html += `<img src="${msg.content}" class="max-w-full rounded-lg mt-1" onload="scrollToBottom()">`;
+        } else {
+            html += `<div>${emojify(linkify(msg.content.replace(/</g, "&lt;")))}</div>`;
+        }
+        div.innerHTML = html;
+        if (isNew) container.appendChild(div);
+
+        // --- LONG PRESS EVENT (2 SEGUNDOS) ---
+        if (isMe) {
+            div.onpointerdown = (e) => {
+                longPressTimer = setTimeout(() => {
+                    openMenu(e.clientX, e.clientY, key, msg.content);
+                }, 2000); // 2 segundos exactos
+            };
+            div.onpointerup = () => clearTimeout(longPressTimer);
+            div.onpointerleave = () => clearTimeout(longPressTimer);
+        }
+
+        if (isNew) scrollToBottom();
     }
 
-    function cancelEdit() {
-        editingKey = null;
-        txtMsg.value = "";
-        txtMsg.style.height = '40px';
-        inputWrapper.classList.remove("edit-mode");
-    }
-
-    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
-    
+    // Upload Imagen
     document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
     document.getElementById("imgInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        document.getElementById("btnUpload").innerHTML = "..";
         const formData = new FormData(); formData.append("image", file);
-        try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
-            const data = await res.json();
-            if (data.success) send(data.data.url, "image");
-        } catch (err) { alert("Error"); }
-        finally {
-            document.getElementById("btnUpload").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
-            e.target.value = "";
-        }
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+        const data = await res.json();
+        if (data.success) send(data.data.url, "image");
     };
 
-    chatRef.limitToLast(50).on("child_added", (snap) => renderOrUpdate(snap.key, snap.val(), true));
-    chatRef.on("child_changed", (snap) => renderOrUpdate(snap.key, snap.val(), false));
-    chatRef.on("child_removed", (snap) => { const el = document.getElementById("msg-" + snap.key); if (el) el.remove(); });
-
-    function renderOrUpdate(key, msg, isNew) {
-        let div = document.getElementById("msg-" + key);
-        if (!div) { div = document.createElement("div"); div.id = "msg-" + key; container.appendChild(div); }
-        const isMe = msg.user === currentUser;
-        div.className = `message ${isMe ? "self" : "other"}`;
-        let contentHtml = `<span class="username">${msg.user}</span>`;
-        if (msg.type === "image" || (typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i))) {
-            contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" onload="scrollToBottom()"></a>`;
-        } else {
-            const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            contentHtml += `<div class="content-text">${emojify(linkify(safeText))}</div>`;
-        }
-        if (isMe) {
-            // Pasamos el contenido escapando comillas para evitar errores en el onclick
-            const escapedContent = msg.content.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-            contentHtml += `<div class="actions">
-                <span class="btn-edit" onclick="editMsg('${key}', '${escapedContent}')">Editar</span>
-                <span class="btn-delete" onclick="deleteMsg('${key}')">Borrar</span>
-            </div>`;
-        }
-        div.innerHTML = contentHtml;
-        if (isNew) scrollToBottom();
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        document.body.style.height = window.visualViewport.height + 'px';
+        scrollToBottom();
+      });
     }
   </script>
 </body>
