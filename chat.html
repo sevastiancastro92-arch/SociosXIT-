@@ -88,7 +88,6 @@
     .input-area { padding: 12px 15px; background: rgba(0,0,0,0.7); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: flex-end; position: relative; }
     .chat-input { flex: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px 15px; color: white; resize: none; font-size: 15px; max-height: 120px; min-height: 40px; overflow-y: auto; }
     
-    /* Indicador de Modo Edición */
     .edit-mode .chat-input { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.2); }
 
     .btn-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: 0.3s; }
@@ -109,8 +108,11 @@
     <div id="messagesContainer"></div>
 
     <div class="input-area" id="inputWrapper">
-      <input type="file" id="imgInput" accept="image/*" style="display: none;">
-      <button class="btn-icon" id="btnUpload"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+      <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
+      
+      <button class="btn-icon" id="btnUpload">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </button>
       
       <textarea id="txtMsg" class="chat-input" placeholder="Mensaje..." rows="1" autocomplete="off"></textarea>
       
@@ -121,6 +123,7 @@
   </div>
 
   <script>
+    // --- CONFIGURACIÓN ---
     const firebaseConfig = {
         apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
         authDomain: "chatglobal-e9370.firebaseapp.com",
@@ -131,31 +134,21 @@
         appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
     };
 
+    // CLOUDINARY CONFIG (Rellena estos dos campos)
+    const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dql8gkjfl";
+    const CLOUDINARY_PRESET = "SociosXIT";
+
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const chatRef = db.ref("globalChat");
-    const IMGBB_API_KEY = "f4a63b9f9af2fd112ded296694732a20";
+    
     const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
-    const container = document.getElementById("messagesContainer");
-    const txtMsg = document.getElementById("txtMsg");
+    const container = document.getElementByItElementById("txtMsg");
     const inputWrapper = document.getElementById("inputWrapper");
-
-    // SOLICITAR PERMISO DE NOTIFICACIONES AL CARGAR
-    if ("Notification" in window) {
-        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-            Notification.requestPermission();
-        }
-    }
 
     let editingKey = null;
 
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', () => {
-        document.body.style.height = window.visualViewport.height + 'px';
-        scrollToBottom();
-      });
-    }
-
+    // --- FUNCIONES DE UTILIDAD ---
     function scrollToBottom() { container.scrollTop = container.scrollHeight; }
 
     function linkify(text) {
@@ -178,60 +171,57 @@
         });
     }
 
-    txtMsg.addEventListener('input', function() {
-        this.style.height = '40px';
-        this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
-    });
-
+    // --- LÓGICA DE MENSAJES ---
     function send(content, type = "text") {
         if (!content.trim()) return;
         if (editingKey) {
             chatRef.child(editingKey).update({ content: content })
             .then(() => { cancelEdit(); });
         } else {
-            chatRef.push({ user: currentUser, content: content, type: type, timestamp: firebase.database.ServerValue.TIMESTAMP });
+            chatRef.push({ 
+                user: currentUser, 
+                content: content, 
+                type: type, 
+                timestamp: firebase.database.ServerValue.TIMESTAMP 
+            });
             txtMsg.value = "";
             txtMsg.style.height = '40px';
         }
     }
 
-    function deleteMsg(key) { if (confirm("¿Eliminar?")) chatRef.child(key).remove(); }
-
-    function editMsg(key, content) {
-        editingKey = key;
-        txtMsg.value = content;
-        inputWrapper.classList.add("edit-mode");
-        txtMsg.focus();
-        txtMsg.style.height = '40px';
-        txtMsg.style.height = (txtMsg.scrollHeight > 120 ? 120 : txtMsg.scrollHeight) + 'px';
-    }
-
-    function cancelEdit() {
-        editingKey = null;
-        txtMsg.value = "";
-        txtMsg.style.height = '40px';
-        inputWrapper.classList.remove("edit-mode");
-    }
-
-    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
+    // --- SUBIDA DE ARCHIVOS (IMÁGENES Y VIDEOS) ---
+    document.getElementById("btnUpload").onclick = () => document.getElementById("mediaInput").click();
     
-    document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
-    document.getElementById("imgInput").onchange = async (e) => {
+    document.getElementById("mediaInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        document.getElementById("btnUpload").innerHTML = "..";
-        const formData = new FormData(); formData.append("image", file);
+
+        const btn = document.getElementById("btnUpload");
+        btn.innerHTML = "⏳";
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", CLOUDINARY_PRESET);
+
         try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+            const resourceType = file.type.startsWith("video") ? "video" : "image";
+            const uploadUrl = CLOUDINARY_URL.replace("/upload", `/${resourceType}/upload`);
+
+            const res = await fetch(uploadUrl, { method: "POST", body: formData });
             const data = await res.json();
-            if (data.success) send(data.data.url, "image");
-        } catch (err) { alert("Error"); }
-        finally {
-            document.getElementById("btnUpload").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+            
+            if (data.secure_url) {
+                send(data.secure_url, resourceType);
+            }
+        } catch (err) {
+            alert("Error al subir archivo");
+        } finally {
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
             e.target.value = "";
         }
     };
 
+    // --- RENDERIZADO DE MENSAJES ---
     chatRef.limitToLast(50).on("child_added", (snap) => renderOrUpdate(snap.key, snap.val(), true));
     chatRef.on("child_changed", (snap) => renderOrUpdate(snap.key, snap.val(), false));
     chatRef.on("child_removed", (snap) => { const el = document.getElementById("msg-" + snap.key); if (el) el.remove(); });
@@ -239,15 +229,27 @@
     function renderOrUpdate(key, msg, isNew) {
         let div = document.getElementById("msg-" + key);
         if (!div) { div = document.createElement("div"); div.id = "msg-" + key; container.appendChild(div); }
+        
         const isMe = msg.user === currentUser;
         div.className = `message ${isMe ? "self" : "other"}`;
+        
         let contentHtml = `<span class="username">${msg.user}</span>`;
-        if (msg.type === "image" || (typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i))) {
+        
+        if (msg.type === "image") {
             contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" onload="scrollToBottom()"></a>`;
-        } else {
+        } 
+        else if (msg.type === "video") {
+            contentHtml += `
+                <video controls class="max-w-full rounded-lg mt-2 border border-cyan-500/40" onloadeddata="scrollToBottom()">
+                    <source src="${msg.content}" type="video/mp4">
+                    Tu navegador no soporta video.
+                </video>`;
+        } 
+        else {
             const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             contentHtml += `<div class="content-text">${emojify(linkify(safeText))}</div>`;
         }
+
         if (isMe) {
             const escapedContent = msg.content.replace(/'/g, "\\'").replace(/"/g, "&quot;");
             contentHtml += `<div class="actions">
@@ -255,21 +257,42 @@
                 <span class="btn-delete" onclick="deleteMsg('${key}')">Borrar</span>
             </div>`;
         }
+        
         div.innerHTML = contentHtml;
 
-        // --- LÓGICA DE NOTIFICACIÓN INTEGRADA ---
         if (isNew && !isMe && document.visibilityState !== "visible") {
             if ("Notification" in window && Notification.permission === "granted") {
-                const notif = new Notification(`SociosXIT: ${msg.user}`, {
-                    body: msg.type === "image" ? "📷 Envió una imagen" : msg.content,
-                    icon: "https://cdn-icons-png.flaticon.com/512/733/733585.png"
-                });
-                notif.onclick = () => { window.focus(); notif.close(); };
+                new Notification(`SociosXIT: ${msg.user}`, { body: msg.type !== "text" ? "📷 Enviado multimedia" : msg.content });
             }
         }
 
         if (isNew) scrollToBottom();
     }
+
+    // --- EDICIÓN Y OTROS ---
+    function deleteMsg(key) { if (confirm("¿Eliminar?")) chatRef.child(key).remove(); }
+    
+    function editMsg(key, content) {
+        editingKey = key;
+        txtMsg.value = content;
+        inputWrapper.classList.add("edit-mode");
+        txtMsg.focus();
+    }
+
+    function cancelEdit() {
+        editingKey = null;
+        txtMsg.value = "";
+        inputWrapper.classList.remove("edit-mode");
+    }
+
+    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
+    
+    txtMsg.addEventListener('input', function() {
+        this.style.height = '40px';
+        this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
+    });
+
+    if ("Notification" in window) Notification.requestPermission();
   </script>
 </body>
 </html>
