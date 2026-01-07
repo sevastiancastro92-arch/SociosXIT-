@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
   <title>Chat Global - SociosXIT</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -16,11 +16,12 @@
       --glass-dark: rgba(10, 15, 30, 0.98);
     }
 
-    /* ANTI-COPIA Y SELECCIÓN */
+    /* BLOQUEO DE SELECCIÓN Y COPIA */
     * {
       user-select: none !important;
       -webkit-user-select: none !important;
       -webkit-touch-callout: none !important;
+      outline: none;
     }
 
     body {
@@ -28,67 +29,63 @@
       background-image: 
         radial-gradient(circle at 10% 10%, rgba(0, 243, 255, 0.1) 0%, transparent 40%),
         radial-gradient(circle at 90% 90%, rgba(255, 0, 255, 0.1) 0%, transparent 40%);
-      height: 100vh;
+      height: 100dvh; /* Dynamic Viewport Height */
       margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       overflow: hidden;
+      position: fixed; /* Evita rebotes en iOS */
+      width: 100%;
     }
 
     #chatBox {
       width: 95%;
       max-width: 1000px;
-      height: 85vh;
+      height: 90%;
       background: var(--glass-dark);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(0, 243, 255, 0.3);
       border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 243, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      animation: fadeIn 0.4s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
+      transition: height 0.2s ease-in-out;
     }
 
     .chat-header {
-      padding: 18px 25px;
+      padding: 15px 20px;
       background: rgba(255, 255, 255, 0.03);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-shrink: 0;
     }
 
     #messagesContainer {
       flex: 1;
-      padding: 25px;
+      padding: 20px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 12px;
       background: rgba(0, 0, 0, 0.2);
     }
 
-    /* BURBUJAS ESTILO WHATSAPP CON WORD-WRAP */
+    /* BURBUJAS OPTIMIZADAS */
     .message {
-      max-width: 80%;
-      padding: 12px 16px;
-      border-radius: 18px;
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 16px;
       font-size: 14px;
-      line-height: 1.5;
       color: white;
-      position: relative;
-      word-wrap: break-word;      /* Rompe palabras largas */
-      overflow-wrap: break-word;  /* Estándar moderno */
-      word-break: break-word;     /* Compatibilidad */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
     
     .self {
@@ -106,102 +103,84 @@
 
     .actions {
       display: flex;
-      gap: 12px;
-      margin-top: 8px;
+      gap: 10px;
+      margin-top: 5px;
       font-size: 10px;
       font-weight: bold;
-      opacity: 0.7;
     }
-    .actions span:hover { cursor: pointer; opacity: 1; text-decoration: underline; }
     .btn-edit { color: var(--neon-cyan); }
     .btn-delete { color: #ff4d4d; }
 
     .username {
       font-size: 10px;
       font-weight: 800;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       display: block;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      color: var(--neon-pink);
     }
     .self .username { color: var(--neon-cyan); text-align: right; }
-    .other .username { color: var(--neon-pink); }
 
-    .msg-img {
-      max-width: 100%;
-      border-radius: 12px;
-      margin-top: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    /* ESTILO DE LINKS */
     .chat-link {
       color: var(--neon-cyan);
       text-decoration: underline;
-      font-weight: 500;
-      word-break: break-all;
     }
 
     .input-area {
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.6);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
-      gap: 15px;
+      gap: 10px;
       align-items: center;
+      flex-shrink: 0;
     }
+
     .chat-input {
       flex: 1;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 30px;
-      padding: 12px 20px;
+      border-radius: 25px;
+      padding: 10px 18px;
       color: white;
-      outline: none;
     }
-    .chat-input:focus { border-color: var(--neon-cyan); }
 
     .btn-icon {
-      width: 45px; height: 45px;
+      width: 40px; height: 40px;
       display: flex; align-items: center; justify-content: center;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
       border-radius: 50%;
       cursor: pointer;
-      transition: 0.3s;
-    }
-    .btn-icon:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
-    
-    .btn-close {
-      color: #777; font-size: 11px; font-weight: bold; border: 1px solid #333;
-      padding: 5px 12px; border-radius: 6px;
     }
 
-    #messagesContainer::-webkit-scrollbar { width: 4px; }
-    #messagesContainer::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 10px; }
+    #messagesContainer::-webkit-scrollbar { width: 3px; }
+    #messagesContainer::-webkit-scrollbar-thumb { background: var(--neon-cyan); }
   </style>
 </head>
-<body oncontextmenu="return false;"> <div id="chatBox">
+<body oncontextmenu="return false;">
+
+  <div id="chatBox">
     <header class="chat-header">
-      <div class="flex items-center gap-3">
-        <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#00f3ff]"></div>
-        <h1 class="text-lg font-black tracking-tighter text-white">SOCIOS<span class="text-cyan-400">XIT</span> <span class="font-light text-gray-400">CHAT</span></h1>
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+        <h1 class="text-md font-black text-white">SOCIOS<span class="text-cyan-400">XIT</span></h1>
       </div>
-      <a href="dashboard.html" class="btn-close">DASHBOARD</a>
+      <a href="dashboard.html" class="text-[10px] text-gray-500 border border-gray-700 px-3 py-1 rounded">DASHBOARD</a>
     </header>
 
     <div id="messagesContainer"></div>
 
     <div class="input-area">
       <input type="file" id="imgInput" accept="image/*" style="display: none;">
-      <button class="btn-icon" id="btnUpload" title="Enviar Imagen">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <button class="btn-icon" id="btnUpload">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </button>
 
-      <input type="text" id="txtMsg" class="chat-input" placeholder="Escribe tu mensaje aquí..." autocomplete="off">
+      <input type="text" id="txtMsg" class="chat-input" placeholder="Mensaje..." autocomplete="off">
       
       <button class="btn-icon" id="btnSend">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
@@ -225,15 +204,23 @@
     const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
+    const chatBox = document.getElementById("chatBox");
+
+    // --- MEJORA: AJUSTE AUTOMÁTICO AL TECLADO ---
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        const viewHeight = window.visualViewport.height;
+        // Ajustamos la altura del body para que coincida con el espacio disponible
+        document.body.style.height = viewHeight + 'px';
+        scrollToBottom();
+      });
+    }
 
     function scrollToBottom() { container.scrollTop = container.scrollHeight; }
 
-    // Función para detectar links y convertirlos en HTML
     function linkify(text) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
-        return text.replace(urlRegex, (url) => {
-            return `<a href="${url}" target="_blank" class="chat-link">${url}</a>`;
-        });
+        return text.replace(urlRegex, (url) => `<a href="${url}" target="_blank" class="chat-link">${url}</a>`);
     }
 
     function send(content, type = "text") {
@@ -248,11 +235,11 @@
     }
 
     function deleteMsg(key) {
-        if (confirm("¿Eliminar este mensaje?")) chatRef.child(key).remove();
+        if (confirm("¿Eliminar?")) chatRef.child(key).remove();
     }
 
     function editMsg(key, oldContent) {
-        const newContent = prompt("Edita tu mensaje:", oldContent);
+        const newContent = prompt("Editar:", oldContent);
         if (newContent !== null && newContent.trim() !== "") {
             chatRef.child(key).update({ content: newContent });
         }
@@ -261,12 +248,12 @@
     document.getElementById("btnSend").onclick = () => send(txtMsg.value);
     txtMsg.onkeypress = (e) => { if (e.key === "Enter") send(txtMsg.value); };
 
-    // Subida de Imágenes
+    // Subida de imágenes
     document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
     document.getElementById("imgInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        document.getElementById("btnUpload").innerHTML = "⏳";
+        document.getElementById("btnUpload").innerHTML = "..";
         const formData = new FormData();
         formData.append("image", file);
         try {
@@ -275,21 +262,14 @@
             if (data.success) send(data.data.url, "image");
         } catch (err) { alert("Error"); }
         finally {
-            document.getElementById("btnUpload").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+            document.getElementById("btnUpload").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
             e.target.value = "";
         }
     };
 
-    // --- LÓGICA DE TIEMPO REAL ---
-
-    chatRef.limitToLast(50).on("child_added", (snap) => {
-        renderOrUpdate(snap.key, snap.val(), true);
-    });
-
-    chatRef.on("child_changed", (snap) => {
-        renderOrUpdate(snap.key, snap.val(), false);
-    });
-
+    // Firebase Listeners
+    chatRef.limitToLast(50).on("child_added", (snap) => renderOrUpdate(snap.key, snap.val(), true));
+    chatRef.on("child_changed", (snap) => renderOrUpdate(snap.key, snap.val(), false));
     chatRef.on("child_removed", (snap) => {
         const el = document.getElementById("msg-" + snap.key);
         if (el) el.remove();
@@ -302,28 +282,22 @@
             div.id = "msg-" + key;
             container.appendChild(div);
         }
-
         const isMe = msg.user === currentUser;
         div.className = `message ${isMe ? "self" : "other"}`;
-
         let contentHtml = `<span class="username">${msg.user}</span>`;
-        const isImageUrl = (msg.type === "image") || (typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i));
-
-        if (isImageUrl) {
-            contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="msg-img" onload="scrollToBottom()"></a>`;
+        const isImg = (msg.type === "image") || (typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i));
+        if (isImg) {
+            contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" onload="scrollToBottom()"></a>`;
         } else {
-            // Limpiamos HTML y luego aplicamos linkify
             const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             contentHtml += `<div class="content-text">${linkify(safeText)}</div>`;
         }
-
         if (isMe) {
             contentHtml += `<div class="actions">
                 <span class="btn-edit" onclick="editMsg('${key}', '${msg.content.replace(/'/g, "\\'")}')">Editar</span>
                 <span class="btn-delete" onclick="deleteMsg('${key}')">Eliminar</span>
             </div>`;
         }
-
         div.innerHTML = contentHtml;
         if (isNew) scrollToBottom();
     }
