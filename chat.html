@@ -43,7 +43,7 @@
     #chatBox {
       width: 95%;
       max-width: 1000px;
-      height: 90%;
+      height: 92%;
       background: var(--glass-dark);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -53,7 +53,6 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: height 0.2s ease-in-out;
     }
 
     .chat-header {
@@ -76,7 +75,7 @@
       background: rgba(0, 0, 0, 0.2);
     }
 
-    /* BURBUJAS CON SOPORTE PARA SALTOS DE LÍNEA */
+    /* BURBUJAS ESTILO WHATSAPP */
     .message {
       max-width: 85%;
       padding: 10px 14px;
@@ -85,8 +84,7 @@
       color: white;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      word-break: break-word;
-      white-space: pre-wrap; /* Mantiene los saltos de línea al mostrar el mensaje */
+      white-space: pre-wrap;
     }
     
     .self {
@@ -103,8 +101,8 @@
     }
 
     .actions { display: flex; gap: 10px; margin-top: 5px; font-size: 10px; font-weight: bold; }
-    .btn-edit { color: var(--neon-cyan); }
-    .btn-delete { color: #ff4d4d; }
+    .btn-edit { color: var(--neon-cyan); cursor: pointer; }
+    .btn-delete { color: #ff4d4d; cursor: pointer; }
 
     .username {
       font-size: 10px;
@@ -119,37 +117,43 @@
     .chat-link { color: var(--neon-cyan); text-decoration: underline; }
 
     .input-area {
-      padding: 15px;
-      background: rgba(0, 0, 0, 0.6);
+      padding: 12px 15px;
+      background: rgba(0, 0, 0, 0.7);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       gap: 10px;
-      align-items: flex-end; /* Alinea los botones abajo si el textarea crece */
+      align-items: flex-end; /* Mantiene los botones al nivel de la última línea */
       flex-shrink: 0;
     }
 
-    /* TEXTAREA ESTILIZADO PARA SALTOS DE LÍNEA */
+    /* INPUT AUTO-EXPANDIBLE (WHATSAPP STYLE) */
     .chat-input {
       flex: 1;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 10px 18px;
+      border-radius: 20px;
+      padding: 10px 15px;
       color: white;
-      resize: none; /* Evita que el usuario lo deforme manualmente */
+      resize: none;
       font-family: inherit;
-      font-size: 14px;
-      max-height: 120px; /* Altura máxima antes de hacer scroll interno */
+      font-size: 15px;
+      line-height: 20px;
+      max-height: 120px; /* Se detiene tras unas 5-6 líneas y activa scroll interno */
+      min-height: 40px;
+      overflow-y: auto;
+      transition: border-color 0.2s;
     }
+    .chat-input:focus { border-color: var(--neon-cyan); }
 
     .btn-icon {
-      width: 40px; height: 40px;
+      width: 42px; height: 42px;
       display: flex; align-items: center; justify-content: center;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
       border-radius: 50%;
       cursor: pointer;
       flex-shrink: 0;
+      margin-bottom: 2px; /* Alineación visual */
     }
 
     #messagesContainer::-webkit-scrollbar { width: 3px; }
@@ -175,7 +179,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </button>
 
-      <textarea id="txtMsg" class="chat-input" placeholder="Mensaje..." rows="1" autocomplete="off"></textarea>
+      <textarea id="txtMsg" class="chat-input" placeholder="Escribe un mensaje..." rows="1" autocomplete="off"></textarea>
       
       <button class="btn-icon" id="btnSend">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -203,7 +207,7 @@
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
 
-    // Ajuste visual del teclado
+    // Re-ajuste para teclado móvil
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', () => {
         document.body.style.height = window.visualViewport.height + 'px';
@@ -218,6 +222,13 @@
         return text.replace(urlRegex, (url) => `<a href="${url}" target="_blank" class="chat-link">${url}</a>`);
     }
 
+    // LÓGICA DE AUTO-EXPANSIÓN (WhatsApp Style)
+    txtMsg.addEventListener('input', function() {
+        this.style.height = '40px'; // Reset inicial
+        let newHeight = this.scrollHeight;
+        this.style.height = (newHeight > 120 ? 120 : newHeight) + 'px';
+    });
+
     function send(content, type = "text") {
         if (!content.trim()) return;
         chatRef.push({
@@ -227,35 +238,28 @@
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
         txtMsg.value = "";
-        txtMsg.style.height = 'auto'; // Resetea la altura tras enviar
+        txtMsg.style.height = '40px'; // Volver a una línea
     }
 
     function deleteMsg(key) {
-        if (confirm("¿Eliminar?")) chatRef.child(key).remove();
+        if (confirm("¿Eliminar mensaje?")) chatRef.child(key).remove();
     }
 
     function editMsg(key, oldContent) {
-        const newContent = prompt("Editar:", oldContent);
+        const newContent = prompt("Editar mensaje:", oldContent);
         if (newContent !== null && newContent.trim() !== "") {
             chatRef.child(key).update({ content: newContent });
         }
     }
 
-    // El botón de enviar ahora es la única forma de mandar el mensaje
     document.getElementById("btnSend").onclick = () => send(txtMsg.value);
 
-    // Auto-expandir el textarea según el contenido
-    txtMsg.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
-    });
-
-    // Subida de imágenes
+    // Subida de Imágenes
     document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
     document.getElementById("imgInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        document.getElementById("btnUpload").innerHTML = "..";
+        document.getElementById("btnUpload").innerHTML = "⏳";
         const formData = new FormData();
         formData.append("image", file);
         try {
@@ -269,7 +273,7 @@
         }
     };
 
-    // Listeners
+    // Listeners Firebase
     chatRef.limitToLast(50).on("child_added", (snap) => renderOrUpdate(snap.key, snap.val(), true));
     chatRef.on("child_changed", (snap) => renderOrUpdate(snap.key, snap.val(), false));
     chatRef.on("child_removed", (snap) => {
@@ -288,12 +292,14 @@
         div.className = `message ${isMe ? "self" : "other"}`;
         let contentHtml = `<span class="username">${msg.user}</span>`;
         const isImg = (msg.type === "image") || (typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i));
+        
         if (isImg) {
             contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" onload="scrollToBottom()"></a>`;
         } else {
             const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             contentHtml += `<div class="content-text">${linkify(safeText)}</div>`;
         }
+        
         if (isMe) {
             contentHtml += `<div class="actions">
                 <span class="btn-edit" onclick="editMsg('${key}', '${msg.content.replace(/'/g, "\\'")}')">Editar</span>
