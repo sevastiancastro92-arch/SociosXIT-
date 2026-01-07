@@ -46,26 +46,53 @@
       height: 92%;
       background: var(--glass-dark);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(0, 243, 255, 0.3);
       border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-    /* ANIMACIÓN DE EMOJIS */
-    @keyframes emoji-float {
-      0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0px transparent); }
-      50% { transform: translateY(-5px) scale(1.2); filter: drop-shadow(0 0 8px var(--neon-cyan)); }
+    /* --- ANIMACIONES REALES PARA EMOJIS --- */
+    .emoji-anim { display: inline-block; font-style: normal; }
+
+    /* Risa 😂 🤣: Se sacude de arriba a abajo y rota */
+    @keyframes laugh-anim {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      25% { transform: translateY(-3px) rotate(-5deg); }
+      75% { transform: translateY(-3px) rotate(5deg); }
     }
-    .animated-emoji {
-      display: inline-block;
-      animation: emoji-float 2s ease-in-out infinite;
-      padding: 0 2px;
-      font-style: normal;
+    .emoji-laugh { animation: laugh-anim 0.4s infinite; }
+
+    /* Llorar 😭 😢: Vibra rápido verticalmente */
+    @keyframes cry-anim {
+      0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 2px #0066ff); }
+      50% { transform: translateY(2px); filter: drop-shadow(0 0 5px #00f3ff); }
     }
+    .emoji-cry { animation: cry-anim 0.3s infinite; }
+
+    /* Amor ❤️ 😍: Latido de corazón */
+    @keyframes heart-anim {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); filter: drop-shadow(0 0 10px #ff0000); }
+    }
+    .emoji-heart { animation: heart-anim 0.8s infinite; }
+
+    /* Enojado 😡 😠: Vibración violenta */
+    @keyframes angry-anim {
+        0% { transform: translate(0,0); }
+        25% { transform: translate(2px, 2px); }
+        50% { transform: translate(-2px, -2px); }
+        75% { transform: translate(2px, -2px); }
+    }
+    .emoji-angry { animation: angry-anim 0.1s infinite; filter: drop-shadow(0 0 5px red); }
+
+    /* Por defecto para otros emojis */
+    @keyframes default-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .emoji-default { animation: default-float 2s ease-in-out infinite; }
 
     .chat-header {
       padding: 15px 20px;
@@ -94,7 +121,6 @@
       font-size: 14px;
       color: white;
       word-wrap: break-word;
-      overflow-wrap: break-word;
       white-space: pre-wrap;
     }
     
@@ -229,12 +255,18 @@
         return text.replace(urlRegex, (url) => `<a href="${url}" target="_blank" class="chat-link">${url}</a>`);
     }
 
-    // --- NUEVA FUNCIÓN: ANIMACIÓN DE EMOJIS ---
+    // --- FUNCIÓN MEJORADA: ANIMACIÓN REAL POR TIPO DE EMOJI ---
     function emojify(text) {
-        // Expresión regular para detectar emojis
         const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
         return text.replace(emojiRegex, (match) => {
-            return `<i class="animated-emoji">${match}</i>`;
+            let animClass = "emoji-default";
+            
+            if (["😂", "🤣", "😆"].includes(match)) animClass = "emoji-laugh";
+            else if (["😭", "😢", "☹️", "💔"].includes(match)) animClass = "emoji-cry";
+            else if (["❤️", "😍", "💖", "🔥"].includes(match)) animClass = "emoji-heart";
+            else if (["😡", "😠", "🤬"].includes(match)) animClass = "emoji-angry";
+
+            return `<i class="emoji-anim ${animClass}">${match}</i>`;
         });
     }
 
@@ -257,11 +289,11 @@
     }
 
     function deleteMsg(key) {
-        if (confirm("¿Eliminar mensaje?")) chatRef.child(key).remove();
+        if (confirm("¿Eliminar?")) chatRef.child(key).remove();
     }
 
     function editMsg(key, oldContent) {
-        const newContent = prompt("Editar mensaje:", oldContent);
+        const newContent = prompt("Editar:", oldContent);
         if (newContent !== null && newContent.trim() !== "") {
             chatRef.child(key).update({ content: newContent });
         }
@@ -273,7 +305,7 @@
     document.getElementById("imgInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        document.getElementById("btnUpload").innerHTML = "⏳";
+        document.getElementById("btnUpload").innerHTML = "..";
         const formData = new FormData();
         formData.append("image", file);
         try {
@@ -310,16 +342,13 @@
             contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" onload="scrollToBottom()"></a>`;
         } else {
             const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            // APLICAMOS LINKIFY Y LUEGO EMOJIFY
-            const htmlWithLinks = linkify(safeText);
-            const htmlWithEmojis = emojify(htmlWithLinks);
-            contentHtml += `<div class="content-text">${htmlWithEmojis}</div>`;
+            contentHtml += `<div class="content-text">${emojify(linkify(safeText))}</div>`;
         }
         
         if (isMe) {
             contentHtml += `<div class="actions">
-                <span class="btn-edit" onclick="editMsg('${key}', '${msg.content.replace(/'/g, "\\'")}')">Editar</span>
-                <span class="btn-delete" onclick="deleteMsg('${key}')">Eliminar</span>
+                <span class="btn-edit" onclick="editMsg('${key}', '${msg.content.replace(/'/g, "\\'")}')">Edit</span>
+                <span class="btn-delete" onclick="deleteMsg('${key}')">Del</span>
             </div>`;
         }
         div.innerHTML = contentHtml;
