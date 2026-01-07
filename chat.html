@@ -55,6 +55,18 @@
       overflow: hidden;
     }
 
+    /* ANIMACIÓN DE EMOJIS */
+    @keyframes emoji-float {
+      0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0px transparent); }
+      50% { transform: translateY(-5px) scale(1.2); filter: drop-shadow(0 0 8px var(--neon-cyan)); }
+    }
+    .animated-emoji {
+      display: inline-block;
+      animation: emoji-float 2s ease-in-out infinite;
+      padding: 0 2px;
+      font-style: normal;
+    }
+
     .chat-header {
       padding: 15px 20px;
       background: rgba(255, 255, 255, 0.03);
@@ -75,7 +87,6 @@
       background: rgba(0, 0, 0, 0.2);
     }
 
-    /* BURBUJAS ESTILO WHATSAPP */
     .message {
       max-width: 85%;
       padding: 10px 14px;
@@ -122,11 +133,10 @@
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       gap: 10px;
-      align-items: flex-end; /* Mantiene los botones al nivel de la última línea */
+      align-items: flex-end;
       flex-shrink: 0;
     }
 
-    /* INPUT AUTO-EXPANDIBLE (WHATSAPP STYLE) */
     .chat-input {
       flex: 1;
       background: rgba(255, 255, 255, 0.07);
@@ -138,12 +148,10 @@
       font-family: inherit;
       font-size: 15px;
       line-height: 20px;
-      max-height: 120px; /* Se detiene tras unas 5-6 líneas y activa scroll interno */
+      max-height: 120px;
       min-height: 40px;
       overflow-y: auto;
-      transition: border-color 0.2s;
     }
-    .chat-input:focus { border-color: var(--neon-cyan); }
 
     .btn-icon {
       width: 42px; height: 42px;
@@ -153,7 +161,7 @@
       border-radius: 50%;
       cursor: pointer;
       flex-shrink: 0;
-      margin-bottom: 2px; /* Alineación visual */
+      margin-bottom: 2px;
     }
 
     #messagesContainer::-webkit-scrollbar { width: 3px; }
@@ -207,7 +215,6 @@
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
 
-    // Re-ajuste para teclado móvil
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', () => {
         document.body.style.height = window.visualViewport.height + 'px';
@@ -222,9 +229,17 @@
         return text.replace(urlRegex, (url) => `<a href="${url}" target="_blank" class="chat-link">${url}</a>`);
     }
 
-    // LÓGICA DE AUTO-EXPANSIÓN (WhatsApp Style)
+    // --- NUEVA FUNCIÓN: ANIMACIÓN DE EMOJIS ---
+    function emojify(text) {
+        // Expresión regular para detectar emojis
+        const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+        return text.replace(emojiRegex, (match) => {
+            return `<i class="animated-emoji">${match}</i>`;
+        });
+    }
+
     txtMsg.addEventListener('input', function() {
-        this.style.height = '40px'; // Reset inicial
+        this.style.height = '40px';
         let newHeight = this.scrollHeight;
         this.style.height = (newHeight > 120 ? 120 : newHeight) + 'px';
     });
@@ -238,7 +253,7 @@
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
         txtMsg.value = "";
-        txtMsg.style.height = '40px'; // Volver a una línea
+        txtMsg.style.height = '40px';
     }
 
     function deleteMsg(key) {
@@ -254,7 +269,6 @@
 
     document.getElementById("btnSend").onclick = () => send(txtMsg.value);
 
-    // Subida de Imágenes
     document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
     document.getElementById("imgInput").onchange = async (e) => {
         const file = e.target.files[0];
@@ -273,7 +287,6 @@
         }
     };
 
-    // Listeners Firebase
     chatRef.limitToLast(50).on("child_added", (snap) => renderOrUpdate(snap.key, snap.val(), true));
     chatRef.on("child_changed", (snap) => renderOrUpdate(snap.key, snap.val(), false));
     chatRef.on("child_removed", (snap) => {
@@ -297,7 +310,10 @@
             contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" onload="scrollToBottom()"></a>`;
         } else {
             const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            contentHtml += `<div class="content-text">${linkify(safeText)}</div>`;
+            // APLICAMOS LINKIFY Y LUEGO EMOJIFY
+            const htmlWithLinks = linkify(safeText);
+            const htmlWithEmojis = emojify(htmlWithLinks);
+            contentHtml += `<div class="content-text">${htmlWithEmojis}</div>`;
         }
         
         if (isMe) {
