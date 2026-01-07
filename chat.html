@@ -140,7 +140,13 @@
     const txtMsg = document.getElementById("txtMsg");
     const inputWrapper = document.getElementById("inputWrapper");
 
-    // Variable global para rastrear si estamos editando
+    // SOLICITAR PERMISO DE NOTIFICACIONES AL CARGAR
+    if ("Notification" in window) {
+        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
+    }
+
     let editingKey = null;
 
     if (window.visualViewport) {
@@ -172,24 +178,17 @@
         });
     }
 
-    // Auto-ajuste de altura del textarea
     txtMsg.addEventListener('input', function() {
         this.style.height = '40px';
         this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
     });
 
-    // --- FUNCIÓN DE ENVÍO Y EDICIÓN ---
     function send(content, type = "text") {
         if (!content.trim()) return;
-
         if (editingKey) {
-            // Si hay un editingKey, actualizamos en lugar de crear uno nuevo
             chatRef.child(editingKey).update({ content: content })
-            .then(() => {
-                cancelEdit(); // Limpiar estado de edición
-            });
+            .then(() => { cancelEdit(); });
         } else {
-            // Envío normal
             chatRef.push({ user: currentUser, content: content, type: type, timestamp: firebase.database.ServerValue.TIMESTAMP });
             txtMsg.value = "";
             txtMsg.style.height = '40px';
@@ -198,14 +197,11 @@
 
     function deleteMsg(key) { if (confirm("¿Eliminar?")) chatRef.child(key).remove(); }
 
-    // --- FUNCIÓN DE EDICIÓN AVANZADA ---
     function editMsg(key, content) {
-        editingKey = key; // Guardamos el ID que vamos a editar
-        txtMsg.value = content; // Ponemos el texto en el textarea
-        inputWrapper.classList.add("edit-mode"); // Cambio visual neón rosa
+        editingKey = key;
+        txtMsg.value = content;
+        inputWrapper.classList.add("edit-mode");
         txtMsg.focus();
-        
-        // Ajustar altura del textarea automáticamente al cargar el texto
         txtMsg.style.height = '40px';
         txtMsg.style.height = (txtMsg.scrollHeight > 120 ? 120 : txtMsg.scrollHeight) + 'px';
     }
@@ -253,7 +249,6 @@
             contentHtml += `<div class="content-text">${emojify(linkify(safeText))}</div>`;
         }
         if (isMe) {
-            // Pasamos el contenido escapando comillas para evitar errores en el onclick
             const escapedContent = msg.content.replace(/'/g, "\\'").replace(/"/g, "&quot;");
             contentHtml += `<div class="actions">
                 <span class="btn-edit" onclick="editMsg('${key}', '${escapedContent}')">Editar</span>
@@ -261,6 +256,18 @@
             </div>`;
         }
         div.innerHTML = contentHtml;
+
+        // --- LÓGICA DE NOTIFICACIÓN INTEGRADA ---
+        if (isNew && !isMe && document.visibilityState !== "visible") {
+            if ("Notification" in window && Notification.permission === "granted") {
+                const notif = new Notification(`SociosXIT: ${msg.user}`, {
+                    body: msg.type === "image" ? "📷 Envió una imagen" : msg.content,
+                    icon: "https://cdn-icons-png.flaticon.com/512/733/733585.png"
+                });
+                notif.onclick = () => { window.focus(); notif.close(); };
+            }
+        }
+
         if (isNew) scrollToBottom();
     }
   </script>
