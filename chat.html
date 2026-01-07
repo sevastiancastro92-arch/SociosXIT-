@@ -9,7 +9,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   
   <style>
-    /* === ESTILOS NEON === */
     :root {
       --neon-cyan: #00f3ff;
       --neon-pink: #ff00ff;
@@ -18,7 +17,6 @@
 
     body {
       background-color: #050505;
-      /* Fondo elaborado para que luzca bien detrás de la caja */
       background-image: 
         radial-gradient(circle at 20% 20%, rgba(0, 243, 255, 0.15) 0%, transparent 40%),
         radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.15) 0%, transparent 40%);
@@ -29,38 +27,30 @@
       align-items: center;
       justify-content: center;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow: hidden; /* Evita scroll en el body, solo en el chat */
+      overflow: hidden;
     }
 
-    /* === LA CAJA DEL CHAT (BOT GRAND CENTRADO) === */
+    /* CONTENEDOR TIPO BOX CENTRADO */
     #chatBox {
-      width: 95%;            /* En móvil ocupa casi todo el ancho */
-      max-width: 1000px;     /* En PC no pasa de este ancho (Grande) */
-      height: 85vh;          /* Ocupa el 85% de la altura (deja bordes arriba/abajo) */
+      width: 92%;
+      max-width: 900px;
+      height: 85vh;
       background: var(--glass-dark);
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
       border: 1px solid var(--neon-cyan);
-      border-radius: 24px;   /* Bordes redondeados */
-      box-shadow: 
-        0 0 50px rgba(0, 0, 0, 0.8),       /* Sombra profunda */
-        0 0 20px rgba(0, 243, 255, 0.15),  /* Resplandor Cian */
-        inset 0 0 20px rgba(255, 255, 255, 0.05); /* Brillo interior */
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 243, 255, 0.2);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      position: relative;
-      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: popIn 0.3s ease-out;
     }
 
-    @keyframes popIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-    /* Header dentro de la caja */
     .chat-header {
-      background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
+      background: rgba(0, 243, 255, 0.05);
       padding: 15px 20px;
       display: flex;
       justify-content: space-between;
@@ -68,7 +58,6 @@
       border-bottom: 1px solid rgba(0, 243, 255, 0.2);
     }
 
-    /* Area de mensajes */
     #messagesContainer {
       flex: 1;
       padding: 20px;
@@ -77,128 +66,113 @@
       flex-direction: column;
       gap: 12px;
     }
-    #messagesContainer::-webkit-scrollbar { width: 8px; }
-    #messagesContainer::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 4px; }
-    #messagesContainer::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
 
-    /* Burbujas */
+    /* Estilo de burbujas */
     .message {
-      max-width: 80%;
+      max-width: 75%;
       padding: 10px 14px;
-      border-radius: 14px;
+      border-radius: 15px;
       font-size: 14px;
-      line-height: 1.5;
-      position: relative;
+      line-height: 1.4;
       word-wrap: break-word;
+      color: white;
     }
     .self {
       align-self: flex-end;
-      background: linear-gradient(135deg, rgba(0, 243, 255, 0.15), rgba(0, 100, 255, 0.15));
-      border: 1px solid rgba(0, 243, 255, 0.5);
-      color: white;
+      background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(0, 102, 255, 0.2));
+      border: 1px solid var(--neon-cyan);
       border-bottom-right-radius: 2px;
     }
     .other {
       align-self: flex-start;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #ddd;
       border-bottom-left-radius: 2px;
     }
 
-    .username { font-size: 11px; font-weight: bold; margin-bottom: 4px; display: block; opacity: 0.8; }
+    .username { font-size: 10px; font-weight: bold; margin-bottom: 4px; display: block; text-transform: uppercase; }
     .self .username { color: var(--neon-cyan); text-align: right; }
     .other .username { color: var(--neon-pink); }
     
-    .msg-img { max-width: 100%; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); margin-top:5px; max-height: 250px; object-fit: cover; }
+    .msg-img { 
+      max-width: 100%; 
+      border-radius: 8px; 
+      margin-top: 5px; 
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.2s;
+    }
+    .msg-img:hover { transform: scale(1.02); }
 
-    /* Footer / Input */
     .input-area {
       padding: 15px 20px;
       background: rgba(0, 0, 0, 0.4);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       gap: 12px;
-      align-items: center;
     }
     
     .chat-input {
       flex: 1;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 99px;
-      padding: 12px 18px;
+      border-radius: 25px;
+      padding: 10px 20px;
       color: white;
       outline: none;
-      transition: all 0.3s;
     }
-    .chat-input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+    .chat-input:focus { border-color: var(--neon-cyan); }
 
     .btn-icon {
       width: 42px; height: 42px;
       display: flex; align-items: center; justify-content: center;
-      background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
       border-radius: 50%;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: 0.2s;
     }
-    .btn-icon:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+    .btn-icon:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 10px var(--neon-cyan); }
 
-    .close-btn {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      text-decoration: none;
-      transition: background 0.2s;
-      border: 1px solid transparent;
+    .btn-back {
+      color: #aaa; font-size: 13px; text-decoration: none; border: 1px solid #333;
+      padding: 5px 12px; border-radius: 5px; transition: 0.2s;
     }
-    .close-btn:hover { background: rgba(255, 0, 0, 0.2); border-color: rgba(255,0,0,0.5); }
+    .btn-back:hover { color: white; border-color: white; }
 
+    /* Scrollbar */
+    #messagesContainer::-webkit-scrollbar { width: 5px; }
+    #messagesContainer::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 10px; }
   </style>
 </head>
 <body>
 
   <div id="chatBox">
-    
     <header class="chat-header">
       <div class="flex items-center gap-2">
-        <div class="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"></div>
-        <h1 class="text-lg font-bold text-white tracking-wide">CHAT <span class="text-cyan-400">GLOBAL</span></h1>
+        <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+        <h1 class="text-md font-bold tracking-widest text-white">SOCIOS<span class="text-cyan-400">XIT</span> CHAT</h1>
       </div>
-      <a href="index.html" class="close-btn flex items-center gap-1">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        Cerrar
-      </a>
+      <a href="index.html" class="btn-back">Cerrar</a>
     </header>
 
     <div id="messagesContainer">
-      <div class="text-center text-gray-500 text-xs mt-4">
-        -- Inicio de la conversación --
       </div>
-    </div>
 
     <div class="input-area">
       <input type="file" id="imgInput" accept="image/*" style="display: none;">
-      
-      <button class="btn-icon" id="btnUpload" title="Subir Imagen">
+      <button class="btn-icon" id="btnUpload" title="Mandar Foto">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </button>
-      
-      <input type="text" id="txtMsg" class="chat-input" placeholder="Escribe algo..." autocomplete="off">
-      
-      <button class="btn-icon" id="btnSend" title="Enviar">
+      <input type="text" id="txtMsg" class="chat-input" placeholder="Escribe un mensaje..." autocomplete="off">
+      <button class="btn-icon" id="btnSend">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-
   </div>
 
   <script>
-    // --- LÓGICA FIREBASE Y CHAT (IDÉNTICA A LA TUYA) ---
+    // --- FIREBASE CONFIG (TU CONFIGURACIÓN) ---
     const firebaseConfig = {
         apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
         authDomain: "chatglobal-e9370.firebaseapp.com",
@@ -209,25 +183,22 @@
         appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
     };
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const chatRef = db.ref("globalChat");
     const IMGBB_API_KEY = "f4a63b9f9af2fd112ded296694732a20";
-    
-    // Obtener usuario del sessionStorage
-    const currentUser = sessionStorage.getItem("sociosxit_user");
-    if (!currentUser) {
-        alert("Debes iniciar sesión primero.");
-        window.location.href = "index.html";
-    }
 
-    const messagesContainer = document.getElementById("messagesContainer");
+    const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo";
+    const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
-    const btnSend = document.getElementById("btnSend");
-    const btnUpload = document.getElementById("btnUpload");
-    const imgInput = document.getElementById("imgInput");
 
-    function sendMessage(content, type = "text") {
+    // Función para auto-scroll
+    const scrollToBottom = () => {
+        container.scrollTop = container.scrollHeight;
+    };
+
+    // --- ENVIAR ---
+    function send(content, type = "text") {
         if (!content.trim()) return;
         chatRef.push({
             user: currentUser,
@@ -236,43 +207,54 @@
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
         txtMsg.value = "";
-        txtMsg.focus();
     }
 
-    btnSend.addEventListener("click", () => sendMessage(txtMsg.value));
-    txtMsg.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(txtMsg.value); });
+    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
+    txtMsg.onkeypress = (e) => { if (e.key === "Enter") send(txtMsg.value); };
 
-    btnUpload.addEventListener("click", () => imgInput.click());
-    imgInput.addEventListener("change", async (e) => {
-        const file = e.target.files[0]; if (!file) return;
-        const oldIcon = btnUpload.innerHTML;
-        btnUpload.innerHTML = `...`; // loading simple
+    // --- SUBIR FOTO ---
+    document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
+    document.getElementById("imgInput").onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
         const formData = new FormData();
         formData.append("image", file);
+
         try {
             const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
             const data = await res.json();
-            if (data.success) sendMessage(data.data.url, "image");
-            else alert("Error al subir imagen");
-        } catch (error) { console.error(error); alert("Error de red"); }
-        finally { btnUpload.innerHTML = oldIcon; imgInput.value = ""; }
-    });
+            if (data.success) send(data.data.url, "image");
+        } catch (err) { alert("Error al subir foto"); }
+    };
 
-    chatRef.limitToLast(50).on("child_added", (snapshot) => {
-        const data = snapshot.val();
-        const isMe = data.user === currentUser;
+    // --- RECIBIR Y MOSTRAR ---
+    chatRef.limitToLast(50).on("child_added", (snap) => {
+        const msg = snap.val();
+        const isMe = msg.user === currentUser;
+        
         const div = document.createElement("div");
         div.className = `message ${isMe ? "self" : "other"}`;
+
+        // Lógica de detección de contenido (Texto o Imagen)
+        let html = `<span class="username">${msg.user}</span>`;
         
-        if (data.type === "image") {
-            div.innerHTML = `<span class="username">${data.user}</span><a href="${data.content}" target="_blank"><img src="${data.content}" class="msg-img"></a>`;
+        // Si el tipo es 'image' o el contenido es un link de imagen directo
+        const isImageUrl = typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+        
+        if (msg.type === "image" || isImageUrl) {
+            html += `<a href="${msg.content}" target="_blank">
+                        <img src="${msg.content}" class="msg-img" onload="this.parentElement.parentElement.parentElement.scrollTop = this.parentElement.parentElement.parentElement.scrollHeight">
+                     </a>`;
         } else {
-            const safe = data.content.replace(/</g, "&lt;");
-            div.innerHTML = `<span class="username">${data.user}</span>${safe}`;
+            // Limpiar HTML para evitar ataques pero permitir emoticonos
+            const cleanText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            html += `<div>${cleanText}</div>`;
         }
-        
-        messagesContainer.appendChild(div);
-        setTimeout(() => messagesContainer.scrollTop = messagesContainer.scrollHeight, 100);
+
+        div.innerHTML = html;
+        container.appendChild(div);
+        scrollToBottom();
     });
   </script>
 </body>
