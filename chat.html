@@ -109,10 +109,7 @@
 
     <div class="input-area" id="inputWrapper">
       <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
-      
-      <button class="btn-icon" id="btnUpload">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      </button>
+      <button class="btn-icon" id="btnUpload" title="Subir Foto o Video"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
       
       <textarea id="txtMsg" class="chat-input" placeholder="Mensaje..." rows="1" autocomplete="off"></textarea>
       
@@ -123,6 +120,7 @@
   </div>
 
   <script>
+    // --- CONFIGURACIÓN ---
     const firebaseConfig = {
         apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
         authDomain: "chatglobal-e9370.firebaseapp.com",
@@ -133,14 +131,13 @@
         appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
     };
 
-    // --- DATOS DE CLOUDINARY ---
-    const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/upload";
-    const CLOUDINARY_PRESET = "TU_PRESET_NAME";
+    // --- CONFIG CLOUDINARY ---
+    const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dql8gkjfl/upload";
+    const CLOUDINARY_PRESET = "AQUI_PON_TU_PRESET"; // <--- NO OLVIDES PONER EL NOMBRE DE TU PRESET AQUÍ
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const chatRef = db.ref("globalChat");
-    
     const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
@@ -148,9 +145,10 @@
 
     let editingKey = null;
 
-    // SCROLL Y UI
+    // SCROLL AUTOMÁTICO
     function scrollToBottom() { container.scrollTop = container.scrollHeight; }
 
+    // FUNCIONES DE TEXTO
     function linkify(text) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         return text.replace(urlRegex, (url) => `<a href="${url}" target="_blank" class="chat-link">${url}</a>`);
@@ -171,17 +169,18 @@
         });
     }
 
+    // AJUSTE DINÁMICO TEXTAREA
     txtMsg.addEventListener('input', function() {
         this.style.height = '40px';
         this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
     });
 
-    // FUNCIONES CORE
+    // --- ENVIAR ---
     function send(content, type = "text") {
         if (!content.trim()) return;
         if (editingKey) {
             chatRef.child(editingKey).update({ content: content })
-            .then(() => { cancelEdit(); });
+            .then(() => cancelEdit());
         } else {
             chatRef.push({ user: currentUser, content: content, type: type, timestamp: firebase.database.ServerValue.TIMESTAMP });
             txtMsg.value = "";
@@ -189,9 +188,8 @@
         }
     }
 
-    // SUBIDA DE ARCHIVOS (IMÁGENES Y VIDEOS)
+    // --- SUBIDA MULTIMEDIA (CLOUDINARY) ---
     document.getElementById("btnUpload").onclick = () => document.getElementById("mediaInput").click();
-    
     document.getElementById("mediaInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -213,15 +211,14 @@
             if (data.secure_url) {
                 send(data.secure_url, resourceType);
             }
-        } catch (err) {
-            alert("Error al subir multimedia");
-        } finally {
+        } catch (err) { alert("Error al subir multimedia"); }
+        finally {
             btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
             e.target.value = "";
         }
     };
 
-    // RENDERIZADO FIREBASE
+    // --- ESCUCHAR FIREBASE ---
     chatRef.limitToLast(50).on("child_added", (snap) => renderOrUpdate(snap.key, snap.val(), true));
     chatRef.on("child_changed", (snap) => renderOrUpdate(snap.key, snap.val(), false));
     chatRef.on("child_removed", (snap) => { const el = document.getElementById("msg-" + snap.key); if (el) el.remove(); });
@@ -240,7 +237,7 @@
         } 
         else if (msg.type === "video") {
             contentHtml += `
-                <video controls class="max-w-full rounded-lg mt-2 border border-cyan-500/40" onloadeddata="scrollToBottom()">
+                <video controls class="max-w-full rounded-lg mt-2 border border-cyan-500/40 shadow-[0_0_10px_rgba(0,243,255,0.2)]" onloadeddata="scrollToBottom()">
                     <source src="${msg.content}" type="video/mp4">
                     Tu navegador no soporta video.
                 </video>`;
@@ -262,19 +259,22 @@
 
         if (isNew && !isMe && document.visibilityState !== "visible") {
             if ("Notification" in window && Notification.permission === "granted") {
-                new Notification(`SociosXIT: ${msg.user}`, { body: msg.type !== "text" ? "Multimedia recibido" : msg.content });
+                new Notification(`SociosXIT: ${msg.user}`, { body: msg.type !== "text" ? "Archivo multimedia" : msg.content });
             }
         }
         if (isNew) scrollToBottom();
     }
 
-    function deleteMsg(key) { if (confirm("¿Eliminar?")) chatRef.child(key).remove(); }
+    // EDICIÓN Y BORRADO
+    function deleteMsg(key) { if (confirm("¿Borrar mensaje?")) chatRef.child(key).remove(); }
     
     function editMsg(key, content) {
         editingKey = key;
         txtMsg.value = content;
         inputWrapper.classList.add("edit-mode");
         txtMsg.focus();
+        txtMsg.style.height = '40px';
+        txtMsg.style.height = (txtMsg.scrollHeight > 120 ? 120 : txtMsg.scrollHeight) + 'px';
     }
 
     function cancelEdit() {
