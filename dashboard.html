@@ -10,13 +10,14 @@
   <link rel="stylesheet" href="https://sevastiancastro92-arch.github.io/Pruevafirebase/style.css">
   
   <style>
+    /* Estilos originales del botón flotante (ahora quedará detrás del bloqueo) */
     .chat-float-link {
       position: fixed;
       bottom: 25px;
       right: 25px;
       width: 64px;
       height: 64px;
-      background: linear-gradient(135deg, #00f3ff, #0066ff); /* Gradiente Neon Cyan/Blue */
+      background: linear-gradient(135deg, #00f3ff, #0066ff);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -37,10 +38,97 @@
       fill: white;
       filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
     }
+
+    /* --- ESTILOS DE BLOQUEO DE PANTALLA --- */
+    #maintenanceOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(5, 8, 16, 0.98); /* Fondo casi negro */
+      backdrop-filter: blur(15px); /* Efecto borroso */
+      z-index: 9999999; /* Por encima de TODO */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .lock-card {
+      background: rgba(20, 25, 40, 0.9);
+      border: 1px solid #ff0055; /* Borde rojo neón de alerta */
+      box-shadow: 0 0 40px rgba(255, 0, 85, 0.2);
+      padding: 40px 30px;
+      border-radius: 20px;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .lock-icon {
+      font-size: 50px;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    .lock-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ff0055;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .lock-msg {
+      color: #cbd5e1;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .chat-btn-lock {
+      background: linear-gradient(90deg, #00f3ff, #0066ff);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+      transition: transform 0.2s;
+    }
+    .chat-btn-lock:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
   </style>
 </head>
 <body class="text-white p-4 md:p-8 hide-on-main">
   
+  <div id="maintenanceOverlay">
+    <div class="lock-card">
+      <div class="lock-icon">⚠️🔒</div>
+      <h2 class="lock-title">Acceso Bloqueado</h2>
+      <p class="lock-msg">
+        Pagina web temporal mente bloqueda porfavor esperar si deseas entrar al chat clikea el boton de chat...
+      </p>
+      
+      <a href="chat.html" class="chat-btn-lock">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        ENTRAR AL CHAT
+      </a>
+    </div>
+  </div>
   <canvas id="particles"></canvas>
   
   <div class="app-root">
