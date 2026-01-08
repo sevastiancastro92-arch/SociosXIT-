@@ -59,16 +59,6 @@
     .emoji-laugh { animation: laugh 0.4s infinite; }
     @keyframes heart { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #ff0055); } 50% { transform: scale(1.25); filter: drop-shadow(0 0 10px #ff0055); } }
     .emoji-heart { animation: heart 0.8s infinite; }
-    @keyframes cry { 0%, 100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(3px); opacity: 0.8; filter: drop-shadow(0 0 5px var(--neon-cyan)); } }
-    .emoji-cry { animation: cry 0.5s infinite; }
-    @keyframes angry { 0% { transform: translate(0,0); } 20% { transform: translate(-2px, 1px); } 40% { transform: translate(2px, -1px); } 60% { transform: translate(-1px, -2px); } 80% { transform: translate(2px, 2px); } }
-    .emoji-angry { animation: angry 0.1s infinite; filter: drop-shadow(0 0 3px red); }
-    @keyframes shock { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.4); } }
-    .emoji-shock { animation: shock 0.6s infinite; }
-    @keyframes shine { 0% { transform: rotateY(0deg); filter: brightness(1); } 50% { transform: rotateY(180deg); filter: brightness(1.8) drop-shadow(0 0 5px gold); } 100% { transform: rotateY(360deg); filter: brightness(1); } }
-    .emoji-shine { animation: shine 1.5s infinite; }
-    @keyframes power { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; filter: drop-shadow(0 0 10px orange); } }
-    .emoji-power { animation: power 0.3s infinite; }
     @keyframes float-gen { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(5deg); filter: drop-shadow(0 0 3px white); } }
     .emoji-gen { animation: float-gen 2s ease-in-out infinite; }
 
@@ -85,30 +75,39 @@
     .self .username { color: var(--neon-cyan); text-align: right; }
     .chat-link { color: var(--neon-cyan); text-decoration: underline; }
 
-    /* INDICADOR ESCRIBIENDO */
-    #typingIndicator { padding: 5px 20px; font-size: 11px; color: var(--neon-cyan); font-style: italic; height: 20px; transition: 0.3s; }
+    /* INDICADOR ESCRIBIENDO (WHATSAPP STYLE) */
+    #typingIndicator { 
+      padding: 0 25px; 
+      font-size: 12px; 
+      color: var(--neon-cyan); 
+      height: 25px; 
+      display: flex; 
+      align-items: center;
+      font-weight: 600;
+      text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+    }
 
     /* MODAL USUARIOS EN LINEA */
     #onlineModal {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
       z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center;
     }
     .modal-content {
-      width: 80%; max-width: 400px; background: var(--glass-dark);
-      border: 1px solid var(--neon-cyan); border-radius: 20px; padding: 20px;
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+      width: 85%; max-width: 380px; background: #0a0f1e;
+      border: 1px solid var(--neon-cyan); border-radius: 24px; padding: 25px;
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
     }
-    .user-item { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; display: flex; align-items: center; gap: 10px; }
-    .status-dot { width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
+    .user-item { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: white; display: flex; align-items: center; gap: 12px; }
+    .status-dot { width: 10px; height: 10px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; }
 
     /* AREA DE ENTRADA */
-    .input-area { padding: 12px 15px; background: rgba(0,0,0,0.7); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: flex-end; position: relative; }
-    .chat-input { flex: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px 15px; color: white; resize: none; font-size: 15px; max-height: 120px; min-height: 40px; overflow-y: auto; }
+    .input-area { padding: 12px 15px; background: rgba(0,0,0,0.8); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: flex-end; }
+    .chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 22px; padding: 12px 18px; color: white; resize: none; font-size: 15px; max-height: 120px; min-height: 45px; overflow-y: auto; }
     
-    .edit-mode .chat-input { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.2); }
-    .btn-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: 0.3s; }
-    .edit-mode #btnSend { border-color: var(--neon-pink); color: var(--neon-pink); }
+    .edit-mode .chat-input { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255, 0, 255, 0.3); }
+    .btn-icon { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: 0.2s; }
+    .btn-icon:active { transform: scale(0.9); }
   </style>
 </head>
 <body oncontextmenu="return false;">
@@ -116,37 +115,38 @@
   <div id="chatBox">
     <header class="chat-header">
       <div class="flex items-center gap-2">
-        <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-        <h1 class="text-md font-black text-white">SOCIOS<span class="text-cyan-400">XIT</span></h1>
+        <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f3ff]"></div>
+        <h1 class="text-md font-black text-white tracking-widest">SOCIOS<span class="text-cyan-400">XIT</span></h1>
       </div>
       
-      <div onclick="toggleOnlineModal()" class="cursor-pointer flex flex-col items-end">
-        <span id="onlineCount" class="text-[10px] font-bold text-cyan-400 border border-cyan-400 px-2 py-0.5 rounded-full shadow-[0_0_5px_rgba(0,243,255,0.5)]">0 ONLINE</span>
-        <span class="text-[8px] text-gray-500 mt-1 uppercase">Ver lista</span>
+      <div onclick="toggleOnlineModal()" class="cursor-pointer bg-cyan-500/10 border border-cyan-400/30 px-3 py-1 rounded-xl flex items-center gap-2 hover:bg-cyan-500/20 transition">
+        <div class="status-dot"></div>
+        <span id="onlineCount" class="text-xs font-bold text-cyan-400">0 ONLINE</span>
       </div>
     </header>
 
     <div id="onlineModal" onclick="toggleOnlineModal()">
       <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 class="text-cyan-400 font-bold mb-4 flex justify-between">
-          USUARIOS ACTIVOS <span onclick="toggleOnlineModal()" class="text-gray-500 cursor-pointer">✕</span>
-        </h2>
-        <div id="onlineUsersList" class="max-h-[300px] overflow-y-auto custom-scrollbar">
-          </div>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-cyan-400 font-black text-lg">USUARIOS ACTIVOS</h2>
+            <button onclick="toggleOnlineModal()" class="text-gray-500 hover:text-white text-xl">✕</button>
+        </div>
+        <div id="onlineUsersList" class="max-h-[350px] overflow-y-auto pr-2"></div>
       </div>
     </div>
 
     <div id="messagesContainer"></div>
+    
     <div id="typingIndicator"></div>
 
     <div class="input-area" id="inputWrapper">
       <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
-      <button class="btn-icon" id="btnUpload" title="Subir Foto o Video"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+      <button class="btn-icon" id="btnUpload"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
       
-      <textarea id="txtMsg" class="chat-input" placeholder="Mensaje..." rows="1" autocomplete="off"></textarea>
+      <textarea id="txtMsg" class="chat-input" placeholder="Escribe un mensaje..." rows="1" autocomplete="off"></textarea>
       
       <button class="btn-icon" id="btnSend">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
@@ -162,32 +162,36 @@
         appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
     };
 
-    const CLOUDINARY_CLOUD_NAME = "dql8gkjfl";
-    const CLOUDINARY_PRESET = "AQUI_PON_TU_PRESET"; 
+    const CL_NAME = "dql8gkjfl";
+    const CL_PRESET = "AQUI_TU_PRESET"; // IMPORTANTE: Cambia esto por tu preset de Cloudinary
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const chatRef = db.ref("globalChat");
     const typingRef = db.ref("typingStatus");
-    const presenceRef = db.ref("presence"); // Referencia de presencia
+    const presenceRef = db.ref("presence");
 
     const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
-    const typingIndicator = document.getElementById("typingIndicator");
     const onlineCountLabel = document.getElementById("onlineCount");
     const onlineUsersList = document.getElementById("onlineUsersList");
-    const onlineModal = document.getElementById("onlineModal");
+    const typingIndicator = document.getElementById("typingIndicator");
 
     let editingKey = null;
     let typingTimer;
 
     function scrollToBottom() { container.scrollTop = container.scrollHeight; }
 
-    // --- LÓGICA DE PRESENCIA (ONLINE/OFFLINE) ---
-    const userPresenceRef = presenceRef.child(currentUser);
-    userPresenceRef.set({ status: "online", lastActive: firebase.database.ServerValue.TIMESTAMP });
-    userPresenceRef.onDisconnect().remove();
+    // --- LÓGICA DE PRESENCIA REAL (FIEL AL ESTADO DE CONEXIÓN) ---
+    const connectedRef = db.ref(".info/connected");
+    connectedRef.on("value", (snap) => {
+        if (snap.val() === true) {
+            const myPresence = presenceRef.child(currentUser);
+            myPresence.onDisconnect().remove(); // Se borra al desconectar
+            myPresence.set(true); // Se marca como online
+        }
+    });
 
     presenceRef.on("value", (snap) => {
         const users = snap.val() || {};
@@ -195,117 +199,144 @@
         onlineCountLabel.innerText = `${count} ONLINE`;
         
         onlineUsersList.innerHTML = "";
-        Object.keys(users).forEach(userName => {
+        Object.keys(users).forEach(name => {
             const div = document.createElement("div");
             div.className = "user-item";
-            div.innerHTML = `<div class="status-dot"></div> ${userName} ${userName === currentUser ? '(Tú)' : ''}`;
+            div.innerHTML = `<div class="status-dot"></div> <span class="font-semibold">${name}</span> ${name === currentUser ? '<span class="text-[10px] text-gray-500 ml-auto">(Tú)</span>' : ''}`;
             onlineUsersList.appendChild(div);
         });
     });
 
     function toggleOnlineModal() {
-        onlineModal.style.display = (onlineModal.style.display === "flex") ? "none" : "flex";
+        const modal = document.getElementById("onlineModal");
+        modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
     }
 
-    // --- RESTO DEL CÓDIGO (CHAT, SUBIDA, ESCRIBIENDO) ---
-    txtMsg.addEventListener('input', function() {
-        this.style.height = '40px';
-        this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
+    // --- LÓGICA ESCRIBIENDO TIPO WHATSAPP ---
+    txtMsg.addEventListener('input', () => {
+        // Ajuste altura
+        txtMsg.style.height = '45px';
+        txtMsg.style.height = (txtMsg.scrollHeight > 120 ? 120 : txtMsg.scrollHeight) + 'px';
+
+        // Avisar que escribo
         typingRef.child(currentUser).set(true);
+        
+        // Si dejo de escribir por 2 segundos, quito el estado
         clearTimeout(typingTimer);
-        typingTimer = setTimeout(() => typingRef.child(currentUser).remove(), 3000);
+        typingTimer = setTimeout(() => {
+            typingRef.child(currentUser).remove();
+        }, 2000);
     });
 
     typingRef.on("value", (snap) => {
         const users = snap.val() || {};
-        const typers = Object.keys(users).filter(user => user !== currentUser);
-        typingIndicator.innerText = typers.length > 0 ? `(${typers.join(", ")}) escribiendo...` : "";
+        const othersTyping = Object.keys(users).filter(u => u !== currentUser);
+        
+        if (othersTyping.length > 0) {
+            const texto = othersTyping.length > 1 ? "Varios están escribiendo..." : `${othersTyping[0]} está escribiendo...`;
+            typingIndicator.innerHTML = `<span class="animate-pulse">${texto}</span>`;
+        } else {
+            typingIndicator.innerHTML = "";
+        }
     });
 
     typingRef.child(currentUser).onDisconnect().remove();
 
+    // --- FUNCIONES DE ENVÍO ---
     function send(content, type = "text") {
         if (!content.trim()) return;
+        
+        // Al enviar, borramos el estado de escribiendo inmediatamente
         typingRef.child(currentUser).remove();
+
         if (editingKey) {
             chatRef.child(editingKey).update({ content: content }).then(() => cancelEdit());
         } else {
-            chatRef.push({ user: currentUser, content: content, type: type, timestamp: firebase.database.ServerValue.TIMESTAMP });
-            txtMsg.value = ""; txtMsg.style.height = '40px';
+            chatRef.push({ 
+                user: currentUser, 
+                content: content, 
+                type: type, 
+                timestamp: firebase.database.ServerValue.TIMESTAMP 
+            });
+            txtMsg.value = ""; 
+            txtMsg.style.height = '45px';
         }
     }
 
+    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
+    
+    // Subida Cloudinary
     document.getElementById("btnUpload").onclick = () => document.getElementById("mediaInput").click();
     document.getElementById("mediaInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const btn = document.getElementById("btnUpload");
-        btn.innerHTML = "⏳";
+        btn.innerHTML = "⌛";
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", CLOUDINARY_PRESET);
+        formData.append("upload_preset", CL_PRESET);
         try {
-            const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
-            const res = await fetch(uploadUrl, { method: "POST", body: formData });
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CL_NAME}/auto/upload`, { method: "POST", body: formData });
             const data = await res.json();
             if (data.secure_url) send(data.secure_url, data.resource_type === "video" ? "video" : "image");
-        } catch (err) { alert("Error"); }
+        } catch (err) { alert("Error al subir"); }
         finally {
-            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
             e.target.value = "";
         }
     };
 
-    chatRef.limitToLast(50).on("child_added", (snap) => renderOrUpdate(snap.key, snap.val(), true));
-    chatRef.on("child_changed", (snap) => renderOrUpdate(snap.key, snap.val(), false));
-    chatRef.on("child_removed", (snap) => { const el = document.getElementById("msg-" + snap.key); if (el) el.remove(); });
+    // --- RENDERIZADO DE MENSAJES ---
+    chatRef.limitToLast(50).on("child_added", (snap) => render(snap.key, snap.val(), true));
+    chatRef.on("child_changed", (snap) => render(snap.key, snap.val(), false));
+    chatRef.on("child_removed", (snap) => document.getElementById("msg-" + snap.key)?.remove());
 
-    function linkify(text) { return text.replace(/(https?:\/\/[^\s]+)/g, (url) => `<a href="${url}" target="_blank" class="chat-link">${url}</a>`); }
-    function emojify(text) {
-        const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
-        return text.replace(emojiRegex, (match) => {
-            let cls = "emoji-gen";
-            if (/[😂🤣😆😹]/.test(match)) cls = "emoji-laugh";
-            else if (/[❤️😍💖💝💘💓😻🔥]/.test(match)) cls = "emoji-heart";
-            else if (/[😭😢☹️😿💔💧]/.test(match)) cls = "emoji-cry";
-            else if (/[😡😠🤬👿💢]/.test(match)) cls = "emoji-angry";
-            else if (/[😲😱🤯😮⚡💥]/.test(match)) cls = "emoji-shock";
-            else if (/[🤑💰💵💎✨🌟⭐]/.test(match)) cls = "emoji-shine";
-            else if (/[🔥⚡💥🚀]/.test(match)) cls = "emoji-power";
-            return `<i class="emoji-anim ${cls}">${match}</i>`;
-        });
-    }
-
-    function renderOrUpdate(key, msg, isNew) {
+    function render(key, msg, isNew) {
         let div = document.getElementById("msg-" + key) || document.createElement("div");
         div.id = "msg-" + key;
         if (isNew) container.appendChild(div);
+        
         const isMe = msg.user === currentUser;
         div.className = `message ${isMe ? "self" : "other"}`;
+        
         let contentHtml = `<span class="username">${msg.user}</span>`;
+        
         if (msg.type === "image" || msg.content.match(/\.(jpeg|jpg|gif|png|webp)/i)) {
-            contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" style="max-height: 300px;" onload="scrollToBottom()"></a>`;
-        } else if (msg.type === "video" || msg.content.match(/\.(mp4|webm|ogg|mov)/i)) {
-            contentHtml += `<video controls class="max-w-full rounded-lg mt-2 border border-cyan-500/40" style="max-height: 300px;" onloadeddata="scrollToBottom()"><source src="${msg.content}">Tu navegador no soporta video.</video>`;
+            contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2 border border-white/5" style="max-height: 300px;" onload="scrollToBottom()"></a>`;
+        } else if (msg.type === "video" || msg.content.match(/\.(mp4|webm|mov)/i)) {
+            contentHtml += `<video controls class="max-w-full rounded-lg mt-2 border border-cyan-500/30" style="max-height: 300px;" onloadeddata="scrollToBottom()"><source src="${msg.content}">Video no soportado</video>`;
         } else {
-            const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            contentHtml += `<div class="content-text">${emojify(linkify(safeText))}</div>`;
+            const safe = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            contentHtml += `<div class="content-text">${emojify(linkify(safe))}</div>`;
         }
+
         if (isMe) {
-            const escaped = msg.content.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-            contentHtml += `<div class="actions"><span class="btn-edit" onclick="editMsg('${key}', '${escaped}')">Editar</span><span class="btn-delete" onclick="deleteMsg('${key}')">Borrar</span></div>`;
+            const esc = msg.content.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            contentHtml += `<div class="actions"><span class="btn-edit" onclick="editMsg('${key}', '${esc}')">Editar</span><span class="btn-delete" onclick="deleteMsg('${key}')">Borrar</span></div>`;
         }
+        
         div.innerHTML = contentHtml;
         if (isNew) scrollToBottom();
     }
 
-    function deleteMsg(key) { if (confirm("¿Borrar?")) chatRef.child(key).remove(); }
-    function editMsg(key, content) {
-        editingKey = key; txtMsg.value = content; inputWrapper.classList.add("edit-mode");
+    function linkify(t) { return t.replace(/(https?:\/\/[^\s]+)/g, (u) => `<a href="${u}" target="_blank" class="chat-link">${u}</a>`); }
+    function emojify(t) {
+        const reg = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+        return t.replace(reg, (m) => {
+            let c = "emoji-gen";
+            if (/[😂🤣😆😹]/.test(m)) c = "emoji-laugh";
+            else if (/[❤️😍💖💝🔥]/.test(m)) c = "emoji-heart";
+            return `<i class="emoji-anim ${c}">${m}</i>`;
+        });
+    }
+
+    function deleteMsg(k) { if (confirm("¿Borrar?")) chatRef.child(k).remove(); }
+    function editMsg(k, c) {
+        editingKey = k; txtMsg.value = c; inputWrapper.classList.add("edit-mode");
         txtMsg.focus(); txtMsg.style.height = (txtMsg.scrollHeight) + 'px';
     }
     function cancelEdit() { editingKey = null; txtMsg.value = ""; inputWrapper.classList.remove("edit-mode"); }
-    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
+    
     if ("Notification" in window) Notification.requestPermission();
   </script>
 </body>
