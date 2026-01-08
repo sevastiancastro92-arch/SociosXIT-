@@ -125,10 +125,17 @@
         <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f3ff]"></div>
         <h1 class="text-md font-black text-white tracking-widest">SOCIOS<span class="text-cyan-400">XIT</span></h1>
       </div>
-      
-      <div onclick="toggleOnlineModal()" class="cursor-pointer bg-cyan-500/10 border border-cyan-400/30 px-3 py-1 rounded-xl flex items-center gap-2 hover:bg-cyan-500/20 transition">
-        <div class="status-dot"></div>
-        <span id="onlineCount" class="text-xs font-bold text-cyan-400">0 ONLINE</span>
+
+      <div class="flex items-center gap-2">
+        <button id="adminClearBtn" onclick="vaciarBaseDatos()" style="display:none;" class="bg-red-900/40 border border-red-500 text-red-500 px-3 py-1 rounded-xl text-xs font-bold hover:bg-red-600 hover:text-white transition flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          VACIAR
+        </button>
+        
+        <div onclick="toggleOnlineModal()" class="cursor-pointer bg-cyan-500/10 border border-cyan-400/30 px-3 py-1 rounded-xl flex items-center gap-2 hover:bg-cyan-500/20 transition">
+          <div class="status-dot"></div>
+          <span id="onlineCount" class="text-xs font-bold text-cyan-400">0 ONLINE</span>
+        </div>
       </div>
     </header>
 
@@ -210,11 +217,52 @@
     let editingKey = null;
     let typingTimer;
 
+    // --- LÓGICA DE ADMIN LK-XT ---
+    const adminClearBtn = document.getElementById("adminClearBtn");
+    
+    // 1. Mostrar botón solo si es LK-XT
+    if (currentUser === "LK-XT") {
+        adminClearBtn.style.display = "flex";
+        
+        // 2. Monitor de cantidad de mensajes (Alerta a los 50)
+        chatRef.on("value", snapshot => {
+            const count = snapshot.numChildren();
+            if (count >= 50) {
+                // Alerta Visual (Parpadeo del botón)
+                adminClearBtn.classList.add("animate-pulse", "bg-red-600", "text-white");
+                adminClearBtn.innerHTML = `⚠️ LIMPIAR (${count})`;
+                
+                // Alerta Popup (Solo una vez por sesión para no molestar)
+                if(!sessionStorage.getItem("adminAlertShown")) {
+                    alert("⚠️ ALERTA ADMIN LK-XT ⚠️\n\nLa base de datos ha alcanzado " + count + " mensajes.\nPor favor vacía el chat para mantener la velocidad.");
+                    sessionStorage.setItem("adminAlertShown", "true");
+                }
+            } else {
+                // Estado normal
+                adminClearBtn.classList.remove("animate-pulse", "bg-red-600", "text-white");
+                adminClearBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> VACIAR`;
+                sessionStorage.removeItem("adminAlertShown"); // Reiniciar alerta si baja de 50
+            }
+        });
+    }
+
+    // 3. Función para borrar TODO (1 CLICK)
+    function vaciarBaseDatos() {
+        if(confirm("🛑 ATENCIÓN ADMIN LK-XT 🛑\n\n¿Estás seguro de que quieres VACIAR TODOS los mensajes?\nEsta acción no se puede deshacer.")) {
+            chatRef.remove()
+                .then(() => {
+                    alert("✅ Chat vaciado correctamente.");
+                    container.innerHTML = ""; // Limpiar visualmente también
+                })
+                .catch(error => alert("Error: " + error.message));
+        }
+    }
+
     function scrollToBottom() { 
         setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100); 
     }
 
-    // --- PRESENCIA Y ONLINE (CORREGIDO) ---
+    // --- PRESENCIA Y ONLINE ---
     const connectedRef = db.ref(".info/connected");
     
     connectedRef.on("value", (snap) => {
@@ -222,7 +270,6 @@
             const userKey = sanitizeKey(currentUser);
             const myPresence = presenceRef.child(userKey);
             
-            // Guardamos el nombre real dentro del objeto para mostrarlo bien
             myPresence.onDisconnect().remove();
             myPresence.set({ name: currentUser, online: true });
         }
@@ -235,7 +282,6 @@
         onlineUsersList.innerHTML = "";
         
         Object.values(users).forEach(userObj => {
-            // Usamos userObj.name para mostrar el nombre real (con puntos si tiene)
             const name = userObj.name || "Desconocido"; 
             const div = document.createElement("div");
             div.className = "user-item";
@@ -249,13 +295,12 @@
         modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
     }
 
-    // --- ESCRIBIENDO (CORREGIDO) ---
+    // --- ESCRIBIENDO ---
     txtMsg.addEventListener('input', () => {
         txtMsg.style.height = '45px';
         txtMsg.style.height = (txtMsg.scrollHeight > 120 ? 120 : txtMsg.scrollHeight) + 'px';
         
         const userKey = sanitizeKey(currentUser);
-        // Guardamos el nombre real como valor
         typingRef.child(userKey).set(currentUser);
         
         clearTimeout(typingTimer);
@@ -264,7 +309,6 @@
 
     typingRef.on("value", (snap) => {
         const data = snap.val() || {};
-        // Filtramos nombres que no sean el mío
         const othersTyping = Object.values(data).filter(name => name !== currentUser);
         
         if (othersTyping.length > 0) {
@@ -277,13 +321,12 @@
         }
     });
     
-    // Limpiar typing al desconectar
     typingRef.child(sanitizeKey(currentUser)).onDisconnect().remove();
 
     // --- ENVIAR ---
     function send(content, type = "text") {
         if (!content.trim()) return;
-        typingRef.child(sanitizeKey(currentUser)).remove(); // Dejar de escribir al enviar
+        typingRef.child(sanitizeKey(currentUser)).remove(); 
         
         if (editingKey) {
             chatRef.child(editingKey).update({ content: content }).then(() => cancelEdit());
