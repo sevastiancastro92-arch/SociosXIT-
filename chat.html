@@ -236,6 +236,15 @@
         e.preventDefault();
     });
 
+    // --- VERIFICACIÓN DE SESIÓN (NUEVO) ---
+    // Si no hay usuario en sessionStorage, redirige y para la ejecución.
+    if (!sessionStorage.getItem("sociosxit_user")) {
+        window.location.href = "index.html";
+        throw new Error("Acceso denegado: No hay sesión activa."); 
+    }
+    // Usuario confirmado
+    const currentUser = sessionStorage.getItem("sociosxit_user");
+
     // --- CONFIGURACIÓN ---
     const firebaseConfig = {
         apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
@@ -255,8 +264,7 @@
     const typingRef = db.ref("typingStatus");
     const presenceRef = db.ref("presence");
 
-    const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
-    
+    // Función Key sanitizer
     function sanitizeKey(key) {
         return key.replace(/[.#$\[\]]/g, "_");
     }
