@@ -71,49 +71,62 @@
 
     /* ESTILOS DE CHAT */
     .chat-header { padding: 15px 20px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-    #messagesContainer { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.2); overflow-x: hidden; } /* overflow-x hidden para el swipe */
+    #messagesContainer { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.2); }
     
-    .message-wrapper { width: 100%; display: flex; flex-direction: column; position: relative; transition: transform 0.2s ease-out; }
+    .message { 
+        max-width: 85%; 
+        padding: 10px 14px; 
+        border-radius: 16px; 
+        font-size: 14px; 
+        color: white; 
+        word-wrap: break-word; 
+        white-space: pre-wrap; 
+        position: relative;
+        /* Importante para el Swipe */
+        touch-action: pan-y; 
+        transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
 
-    .message { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 14px; color: white; word-wrap: break-word; white-space: pre-wrap; position: relative; z-index: 2; }
     .self { align-self: flex-end; background: linear-gradient(135deg, rgba(0, 243, 255, 0.15), rgba(0, 102, 255, 0.15)); border: 1px solid var(--neon-cyan); border-bottom-right-radius: 2px; }
     .other { align-self: flex-start; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-bottom-left-radius: 2px; }
-    
     .actions { display: flex; gap: 10px; margin-top: 5px; font-size: 10px; font-weight: bold; }
     .btn-edit { color: var(--neon-cyan); cursor: pointer; }
     .btn-delete { color: #ff4d4d; cursor: pointer; }
-    .btn-reply { color: #00ff88; cursor: pointer; } /* Botón responder desktop */
-
     .username { font-size: 10px; font-weight: 800; margin-bottom: 4px; display: block; text-transform: uppercase; color: var(--neon-pink); }
     .self .username { color: var(--neon-cyan); text-align: right; }
     .chat-link { color: var(--neon-cyan); text-decoration: underline; }
 
-    /* ESTILOS DE RESPUESTA (REPLY) */
-    .quoted-msg {
+    /* ESTILOS RESPUESTA (REPLY) */
+    .reply-quote {
+        margin-bottom: 6px;
+        padding: 6px 10px;
         background: rgba(0, 0, 0, 0.3);
         border-left: 3px solid var(--neon-pink);
-        padding: 5px 8px;
-        border-radius: 4px;
-        margin-bottom: 6px;
-        font-size: 11px;
-        color: #ddd;
-        display: flex; flex-direction: column;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #aaa;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
     }
-    .quoted-user { font-weight: bold; color: var(--neon-cyan); margin-bottom: 2px; }
-
-    /* BANNER DE RESPUESTA SOBRE EL INPUT */
-    #replyBanner {
-        display: none;
-        background: rgba(15, 20, 35, 0.95);
-        border-top: 1px solid var(--neon-cyan);
-        padding: 10px 15px;
-        align-items: center;
+    .reply-quote .reply-user {
+        color: var(--neon-cyan);
+        font-weight: bold;
+        font-size: 11px;
+        margin-bottom: 2px;
+    }
+    .reply-preview-bar {
+        background: rgba(10, 20, 40, 0.95);
+        border-top: 1px solid rgba(0, 243, 255, 0.2);
+        padding: 8px 15px;
+        display: none; /* Oculto por defecto */
         justify-content: space-between;
+        align-items: center;
         animation: slideUp 0.2s ease-out;
     }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .reply-info { font-size: 12px; color: white; border-left: 3px solid var(--neon-cyan); padding-left: 8px; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    .reply-close { color: #ff4d4d; font-size: 18px; padding: 0 10px; cursor: pointer; }
+    .reply-info { font-size: 12px; color: white; border-left: 3px solid var(--neon-pink); padding-left: 10px; }
+    .reply-info strong { display: block; color: var(--neon-pink); }
 
     /* INDICADOR ESCRIBIENDO */
     #typingIndicator { 
@@ -142,25 +155,12 @@
     .status-dot { width: 10px; height: 10px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; }
 
     /* INPUT AREA */
-    .input-wrapper-container { background: rgba(0,0,0,0.8); border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; }
-    .input-area { padding: 12px 15px; display: flex; gap: 10px; align-items: flex-end; }
+    .input-area { padding: 12px 15px; background: rgba(0,0,0,0.8); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: flex-end; }
     .chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 22px; padding: 12px 18px; color: white; resize: none; font-size: 15px; max-height: 120px; min-height: 45px; overflow-y: auto; }
     
     .edit-mode .chat-input { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255, 0, 255, 0.3); }
     .btn-icon { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: 0.2s; }
     .btn-icon:active { transform: scale(0.9); }
-
-    /* ICONO REPLY DURANTE SWIPE */
-    .swipe-reply-icon {
-        position: absolute;
-        top: 50%;
-        left: -40px; /* Escondido a la izquierda */
-        transform: translateY(-50%);
-        color: var(--neon-cyan);
-        font-size: 20px;
-        opacity: 0;
-        transition: opacity 0.2s;
-    }
   </style>
 </head>
 <body oncontextmenu="return false;">
@@ -199,26 +199,24 @@
     
     <div id="typingIndicator"></div>
 
-    <div class="input-wrapper-container" id="inputWrapper">
-      <div id="replyBanner">
-          <div class="flex flex-col flex-1 overflow-hidden">
-              <span class="text-[10px] text-cyan-400 font-bold mb-1">Respondiendo a:</span>
-              <div class="reply-info" id="replyInfoText">Mensaje...</div>
-          </div>
-          <div class="reply-close" onclick="cancelReply()">✕</div>
-      </div>
+    <div id="replyPreview" class="reply-preview-bar">
+        <div class="reply-info">
+            <strong id="replyToUser">Usuario</strong>
+            <span id="replyToText" class="truncate max-w-[200px] block opacity-70">Mensaje...</span>
+        </div>
+        <button onclick="cancelReply()" class="text-gray-400 hover:text-white">✕</button>
+    </div>
 
-      <div class="input-area">
-          <input type="file" id="imgInput" accept="image/*" style="display: none;">
-          
-          <button class="btn-icon" id="btnUpload"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
-          
-          <textarea id="txtMsg" class="chat-input" placeholder="Escribe un mensaje..." rows="1" autocomplete="off"></textarea>
-          
-          <button class="btn-icon" id="btnSend">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </button>
-      </div>
+    <div class="input-area" id="inputWrapper">
+      <input type="file" id="imgInput" accept="image/*" style="display: none;">
+      
+      <button class="btn-icon" id="btnUpload"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+      
+      <textarea id="txtMsg" class="chat-input" placeholder="Escribe un mensaje..." rows="1" autocomplete="off"></textarea>
+      
+      <button class="btn-icon" id="btnSend">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
   </div>
 
@@ -259,7 +257,9 @@
 
     const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
     
-    function sanitizeKey(key) { return key.replace(/[.#$\[\]]/g, "_"); }
+    function sanitizeKey(key) {
+        return key.replace(/[.#$\[\]]/g, "_");
+    }
 
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
@@ -267,12 +267,18 @@
     const onlineUsersList = document.getElementById("onlineUsersList");
     const typingIndicator = document.getElementById("typingIndicator");
 
+    // Variables de Respuesta (Reply)
+    const replyPreview = document.getElementById("replyPreview");
+    const replyToUserEl = document.getElementById("replyToUser");
+    const replyToTextEl = document.getElementById("replyToText");
+    let currentReply = null; // Objeto de la respuesta actual
+
     let editingKey = null;
-    let replyingTo = null; // Variable para almacenar el estado de respuesta
     let typingTimer;
 
     // --- LÓGICA DE ADMIN LK-XT ---
     const adminClearBtn = document.getElementById("adminClearBtn");
+    
     if (currentUser === "LK-XT") {
         adminClearBtn.style.display = "flex";
         chatRef.on("value", snapshot => {
@@ -293,34 +299,37 @@
     }
 
     function vaciarBaseDatos() {
-        if(confirm("🛑 ATENCIÓN ADMIN LK-XT 🛑\n\n¿VACIAR CHAT?")) {
-            chatRef.remove().then(() => { container.innerHTML = ""; alert("✅ Chat vaciado."); });
+        if(confirm("🛑 ATENCIÓN ADMIN LK-XT 🛑\n\n¿Estás seguro de que quieres VACIAR TODOS los mensajes?")) {
+            chatRef.remove().then(() => {
+                alert("✅ Chat vaciado.");
+                container.innerHTML = "";
+            });
         }
     }
 
-    function scrollToBottom() { setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100); }
+    function scrollToBottom() { 
+        setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100); 
+    }
 
-    // --- PRESENCIA ---
+    // --- PRESENCIA Y ONLINE ---
     const connectedRef = db.ref(".info/connected");
     connectedRef.on("value", (snap) => {
         if (snap.val() === true) {
             const userKey = sanitizeKey(currentUser);
-            const myPresence = presenceRef.child(userKey);
-            myPresence.onDisconnect().remove();
-            myPresence.set({ name: currentUser, online: true });
+            presenceRef.child(userKey).onDisconnect().remove();
+            presenceRef.child(userKey).set({ name: currentUser, online: true });
         }
     });
 
     presenceRef.on("value", (snap) => {
         const users = snap.val() || {};
-        const count = Object.keys(users).length;
-        onlineCountLabel.innerText = `${count} ONLINE`;
+        onlineCountLabel.innerText = `${Object.keys(users).length} ONLINE`;
         onlineUsersList.innerHTML = "";
         Object.values(users).forEach(userObj => {
             const name = userObj.name || "Desconocido"; 
             const div = document.createElement("div");
             div.className = "user-item";
-            div.innerHTML = `<div class="status-dot"></div> <span class="font-semibold">${name}</span>`;
+            div.innerHTML = `<div class="status-dot"></div> <span class="font-semibold">${name}</span> ${name === currentUser ? '<span class="text-[10px] text-gray-500 ml-auto">(Tú)</span>' : ''}`;
             onlineUsersList.appendChild(div);
         });
     });
@@ -347,17 +356,18 @@
     });
     typingRef.child(sanitizeKey(currentUser)).onDisconnect().remove();
 
-    // --- FUNCIONES RESPUESTA (SWIPE) ---
-    function startReply(user, content, type) {
-        replyingTo = { user, content: type === 'image' ? '📷 Imagen' : content };
-        document.getElementById("replyBanner").style.display = "flex";
-        document.getElementById("replyInfoText").innerHTML = `<strong class="text-white">${user}:</strong> ${replyingTo.content}`;
+    // --- LÓGICA DE RESPUESTA (REPLY) ---
+    function setReply(user, content) {
+        currentReply = { user, content: content.length > 50 ? content.substring(0, 50) + "..." : content };
+        replyToUserEl.textContent = user;
+        replyToTextEl.textContent = content.includes("http") && content.match(/\.(jpeg|jpg|gif|png|webp)/) ? "📷 Imagen" : currentReply.content;
+        replyPreview.style.display = "flex";
         txtMsg.focus();
     }
 
     function cancelReply() {
-        replyingTo = null;
-        document.getElementById("replyBanner").style.display = "none";
+        currentReply = null;
+        replyPreview.style.display = "none";
     }
 
     // --- ENVIAR ---
@@ -368,27 +378,25 @@
         if (editingKey) {
             chatRef.child(editingKey).update({ content: content }).then(() => cancelEdit());
         } else {
-            const msgData = { 
+            const payload = { 
                 user: currentUser, 
                 content: content, 
                 type: type, 
                 timestamp: firebase.database.ServerValue.TIMESTAMP 
             };
-            
-            // Si hay respuesta, la agregamos
-            if (replyingTo) {
-                msgData.replyTo = replyingTo;
+            // Si hay respuesta activa, adjuntarla
+            if (currentReply) {
+                payload.replyTo = currentReply;
                 cancelReply();
             }
-
-            chatRef.push(msgData);
+            chatRef.push(payload);
             txtMsg.value = ""; 
             txtMsg.style.height = '45px';
         }
     }
     document.getElementById("btnSend").onclick = () => send(txtMsg.value);
 
-    // --- SUBIDA IMAGEN ---
+    // --- SUBIDA IMGBB ---
     document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
     document.getElementById("imgInput").onchange = async (e) => {
         const file = e.target.files[0];
@@ -403,11 +411,45 @@
             const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
             const data = await res.json();
             if (data.success) send(data.data.url, "image");
-        } catch (err) { alert("Error imagen"); } 
+        } catch (err) { alert("Error al subir imagen"); } 
         finally { btn.innerHTML = originalIcon; btn.disabled = false; e.target.value = ""; }
     };
 
-    // --- RENDERIZADO Y GESTOS ---
+    // --- GESTIÓN DE SWIPE PARA RESPONDER ---
+    function attachSwipe(element, user, content) {
+        let touchStartX = 0;
+        let currentTranslate = 0;
+        const threshold = 70; // Distancia para activar respuesta
+
+        element.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            element.style.transition = 'none';
+        }, {passive: true});
+
+        element.addEventListener('touchmove', e => {
+            const touchX = e.touches[0].clientX;
+            const diff = touchX - touchStartX;
+            
+            // Solo permitir deslizar a la derecha y máximo 150px
+            if (diff > 0 && diff < 150) {
+                currentTranslate = diff;
+                element.style.transform = `translateX(${diff}px)`;
+            }
+        }, {passive: true});
+
+        element.addEventListener('touchend', () => {
+            element.style.transition = 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            if (currentTranslate > threshold) {
+                // Trigger Reply
+                if (navigator.vibrate) navigator.vibrate(20); // Vibración WhatsApp Style
+                setReply(user, content);
+            }
+            element.style.transform = 'translateX(0px)';
+            currentTranslate = 0;
+        });
+    }
+
+    // --- RENDERIZADO ---
     chatRef.limitToLast(50).on("child_added", (snap) => render(snap.key, snap.val(), true));
     chatRef.on("child_changed", (snap) => render(snap.key, snap.val(), false));
     chatRef.on("child_removed", (snap) => document.getElementById("msg-" + snap.key)?.remove());
@@ -415,80 +457,69 @@
     function render(key, msg, isNew) {
         let div = document.getElementById("msg-" + key) || document.createElement("div");
         div.id = "msg-" + key;
-        div.className = "message-wrapper"; // Contenedor para el swipe
-        
         if (isNew) container.appendChild(div);
         
         const isMe = msg.user === currentUser;
+        div.className = `message ${isMe ? "self" : "other"}`;
         
-        // Contenido de respuesta (Cita)
-        let replyHtml = "";
-        if (msg.replyTo) {
-            replyHtml = `
-                <div class="quoted-msg">
-                    <span class="quoted-user">${msg.replyTo.user}</span>
-                    <span class="truncate">${msg.replyTo.content}</span>
-                </div>`;
+        // Adjuntar evento de swipe si es mensaje de otro
+        if (!isMe) {
+            attachSwipe(div, msg.user, msg.content);
         }
 
-        let contentHtml = `<span class="username">${msg.user}</span> ${replyHtml}`;
+        let contentHtml = "";
+
+        // Renderizar bloque de respuesta si existe
+        if (msg.replyTo) {
+            contentHtml += `
+                <div class="reply-quote">
+                    <span class="reply-user">${msg.replyTo.user}</span>
+                    <span class="truncate">${msg.replyTo.content}</span>
+                </div>
+            `;
+        }
+        
+        contentHtml += `<span class="username">${msg.user}</span>`;
         
         if (msg.type === "image" || (typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i))) {
-            contentHtml += `<div class="mt-2 relative group"><img src="${msg.content}" class="max-w-[250px] rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${msg.content}', '_blank')" onload="scrollToBottom()"></div>`;
+            contentHtml += `
+                <div class="mt-2 relative group">
+                    <img src="${msg.content}" class="max-w-[250px] rounded-lg border border-white/10 cursor-pointer hover:opacity-90 transition" onclick="window.open('${msg.content}', '_blank')" onload="scrollToBottom()">
+                </div>`;
         } else {
             const safe = String(msg.content).replace(/</g, "&lt;").replace(/>/g, "&gt;");
             contentHtml += `<div class="content-text">${emojify(linkify(safe))}</div>`;
         }
 
-        let actionsHtml = "";
-        if (isMe && msg.type === "text") actionsHtml = `<span class="btn-edit" onclick="editMsg('${key}', '${msg.content.replace(/'/g, "\\'")}')">Editar</span>`;
-        if (isMe) actionsHtml += ` <span class="btn-delete" onclick="deleteMsg('${key}')">Borrar</span>`;
-        
-        // Icono de swipe oculto
-        const swipeIcon = `<i class="fa-solid fa-reply swipe-reply-icon">↩</i>`;
-
-        div.innerHTML = `
-            <div class="message ${isMe ? "self" : "other"}" id="bubble-${key}">
-                ${swipeIcon}
-                ${contentHtml}
-                <div class="actions">
-                    ${!isMe ? `<span class="btn-reply lg:hidden" onclick="startReply('${msg.user}', '${msg.content.replace(/'/g, "\\'")}', '${msg.type}')">Responder</span>` : ''} 
-                    ${actionsHtml}
-                </div>
-            </div>`;
-        
-        // --- LOGICA SWIPE ---
-        const bubble = div.querySelector(".message");
-        let startX = 0;
-        let currentX = 0;
-        
-        bubble.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
-        bubble.addEventListener('touchmove', e => {
-            let diff = e.touches[0].clientX - startX;
-            // Solo permitir deslizar a la derecha
-            if (diff > 0 && diff < 120) {
-                currentX = diff;
-                bubble.style.transform = `translateX(${diff}px)`;
+        if (isMe) {
+            const esc = String(msg.content).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            if(msg.type === "text") {
+                 contentHtml += `<div class="actions"><span class="btn-edit" onclick="editMsg('${key}', '${esc}')">Editar</span><span class="btn-delete" onclick="deleteMsg('${key}')">Borrar</span></div>`;
+            } else {
+                 contentHtml += `<div class="actions"><span class="btn-delete" onclick="deleteMsg('${key}')">Borrar Imagen</span></div>`;
             }
-        });
-        bubble.addEventListener('touchend', e => {
-            if (currentX > 60) { // Umbral de swipe
-                // Vibración háptica
-                if(navigator.vibrate) navigator.vibrate(50);
-                startReply(msg.user, msg.content, msg.type);
-            }
-            bubble.style.transform = 'translateX(0)';
-            currentX = 0;
-        });
-
+        }
+        
+        div.innerHTML = contentHtml;
         if (isNew) scrollToBottom();
     }
 
     function linkify(t) { return t.replace(/(https?:\/\/[^\s]+)/g, (u) => `<a href="${u}" target="_blank" class="chat-link">${u}</a>`); }
-    function emojify(t) { return t.replace(/(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu, m => `<i class="emoji-anim emoji-gen">${m}</i>`); }
+    function emojify(t) {
+        const reg = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+        return t.replace(reg, (m) => {
+            let c = "emoji-gen";
+            if (/[😂🤣😆😹]/.test(m)) c = "emoji-laugh";
+            else if (/[❤️😍💖💝🔥]/.test(m)) c = "emoji-heart";
+            return `<i class="emoji-anim ${c}">${m}</i>`;
+        });
+    }
 
     function deleteMsg(k) { if (confirm("¿Borrar?")) chatRef.child(k).remove(); }
-    function editMsg(k, c) { editingKey = k; txtMsg.value = c; document.getElementById("inputWrapper").classList.add("edit-mode"); txtMsg.focus(); }
+    function editMsg(k, c) {
+        editingKey = k; txtMsg.value = c; document.getElementById("inputWrapper").classList.add("edit-mode");
+        txtMsg.focus();
+    }
     function cancelEdit() { editingKey = null; txtMsg.value = ""; document.getElementById("inputWrapper").classList.remove("edit-mode"); }
     
     if ("Notification" in window) Notification.requestPermission();
