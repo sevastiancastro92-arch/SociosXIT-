@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
   <title>Chat Global - SociosXIT</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,6 +21,14 @@
       -webkit-user-select: none !important;
       -webkit-touch-callout: none !important;
       outline: none;
+      /* MODIFICADO: Evita comportamientos táctiles de zoom pero permite scroll */
+      touch-action: pan-x pan-y; 
+    }
+
+    /* MODIFICADO: Asegura que el texto no se infle automáticamente */
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     body {
@@ -152,6 +160,30 @@
   </div>
 
   <script>
+    // --- LÓGICA ANTI-ZOOM (NUEVO) ---
+    // Prevenir Zoom con teclado (Ctrl + / -) y Ctrl + Rueda
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey || event.metaKey) {
+            // Bloquear teclas +, -, = y 0
+            if (['+', '-', '=', '0'].includes(event.key)) {
+                event.preventDefault();
+            }
+        }
+    });
+
+    document.addEventListener('wheel', function(event) {
+        if (event.ctrlKey) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    // Prevenir gestos de pinza en Safari/iOS
+    document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+    });
+
+    // --- FIN LÓGICA ANTI-ZOOM ---
+
     const firebaseConfig = {
         apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
         authDomain: "chatglobal-e9370.firebaseapp.com",
