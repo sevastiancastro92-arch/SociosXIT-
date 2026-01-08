@@ -186,7 +186,6 @@
         appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
     };
 
-    // API Key de ImgBB recuperada de tu historial
     const IMGBB_API_KEY = "f4a63b9f9af2fd112ded296694732a20"; 
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -196,6 +195,12 @@
     const presenceRef = db.ref("presence");
 
     const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
+    
+    // 🔥 FUNCIÓN CLAVE: Limpia el nombre para usarlo como KEY en Firebase
+    function sanitizeKey(key) {
+        return key.replace(/[.#$\[\]]/g, "_");
+    }
+
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
     const onlineCountLabel = document.getElementById("onlineCount");
@@ -209,13 +214,17 @@
         setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100); 
     }
 
-    // --- PRESENCIA ---
+    // --- PRESENCIA Y ONLINE (CORREGIDO) ---
     const connectedRef = db.ref(".info/connected");
+    
     connectedRef.on("value", (snap) => {
         if (snap.val() === true) {
-            const myPresence = presenceRef.child(currentUser);
+            const userKey = sanitizeKey(currentUser);
+            const myPresence = presenceRef.child(userKey);
+            
+            // Guardamos el nombre real dentro del objeto para mostrarlo bien
             myPresence.onDisconnect().remove();
-            myPresence.set(true);
+            myPresence.set({ name: currentUser, online: true });
         }
     });
 
@@ -224,7 +233,10 @@
         const count = Object.keys(users).length;
         onlineCountLabel.innerText = `${count} ONLINE`;
         onlineUsersList.innerHTML = "";
-        Object.keys(users).forEach(name => {
+        
+        Object.values(users).forEach(userObj => {
+            // Usamos userObj.name para mostrar el nombre real (con puntos si tiene)
+            const name = userObj.name || "Desconocido"; 
             const div = document.createElement("div");
             div.className = "user-item";
             div.innerHTML = `<div class="status-dot"></div> <span class="font-semibold">${name}</span> ${name === currentUser ? '<span class="text-[10px] text-gray-500 ml-auto">(Tú)</span>' : ''}`;
@@ -237,26 +249,42 @@
         modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
     }
 
-    // --- ESCRIBIENDO ---
+    // --- ESCRIBIENDO (CORREGIDO) ---
     txtMsg.addEventListener('input', () => {
         txtMsg.style.height = '45px';
         txtMsg.style.height = (txtMsg.scrollHeight > 120 ? 120 : txtMsg.scrollHeight) + 'px';
-        typingRef.child(currentUser).set(true);
+        
+        const userKey = sanitizeKey(currentUser);
+        // Guardamos el nombre real como valor
+        typingRef.child(userKey).set(currentUser);
+        
         clearTimeout(typingTimer);
-        typingTimer = setTimeout(() => { typingRef.child(currentUser).remove(); }, 2000);
+        typingTimer = setTimeout(() => { typingRef.child(userKey).remove(); }, 2000);
     });
 
     typingRef.on("value", (snap) => {
-        const users = snap.val() || {};
-        const othersTyping = Object.keys(users).filter(u => u !== currentUser);
-        typingIndicator.innerHTML = othersTyping.length > 0 ? `<span class="animate-pulse">${othersTyping.join(", ")} escribiendo...</span>` : "";
+        const data = snap.val() || {};
+        // Filtramos nombres que no sean el mío
+        const othersTyping = Object.values(data).filter(name => name !== currentUser);
+        
+        if (othersTyping.length > 0) {
+            const text = othersTyping.length > 2 
+                ? "Varios están escribiendo..." 
+                : `${othersTyping.join(", ")} escribiendo...`;
+            typingIndicator.innerHTML = `<span class="animate-pulse">${text}</span>`;
+        } else {
+            typingIndicator.innerHTML = "";
+        }
     });
-    typingRef.child(currentUser).onDisconnect().remove();
+    
+    // Limpiar typing al desconectar
+    typingRef.child(sanitizeKey(currentUser)).onDisconnect().remove();
 
     // --- ENVIAR ---
     function send(content, type = "text") {
         if (!content.trim()) return;
-        typingRef.child(currentUser).remove();
+        typingRef.child(sanitizeKey(currentUser)).remove(); // Dejar de escribir al enviar
+        
         if (editingKey) {
             chatRef.child(editingKey).update({ content: content }).then(() => cancelEdit());
         } else {
@@ -272,7 +300,7 @@
     }
     document.getElementById("btnSend").onclick = () => send(txtMsg.value);
 
-    // --- SUBIDA IMGBB (SOLO IMAGENES) ---
+    // --- SUBIDA IMGBB ---
     document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
     
     document.getElementById("imgInput").onchange = async (e) => {
@@ -292,7 +320,6 @@
             const data = await res.json();
             
             if (data.success) {
-                // Enviar el link de la imagen
                 send(data.data.url, "image");
             } else {
                 throw new Error("Fallo en ImgBB");
