@@ -84,11 +84,21 @@
     .self .username { color: var(--neon-cyan); text-align: right; }
     .chat-link { color: var(--neon-cyan); text-decoration: underline; }
 
+    /* INDICADOR ESCRIBIENDO */
+    #typingIndicator {
+      padding: 5px 20px;
+      font-size: 11px;
+      color: var(--neon-cyan);
+      font-style: italic;
+      height: 20px;
+      transition: 0.3s;
+      background: transparent;
+    }
+
     /* AREA DE ENTRADA */
     .input-area { padding: 12px 15px; background: rgba(0,0,0,0.7); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: flex-end; position: relative; }
     .chat-input { flex: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px 15px; color: white; resize: none; font-size: 15px; max-height: 120px; min-height: 40px; overflow-y: auto; }
     
-    /* Indicador de Modo Edición */
     .edit-mode .chat-input { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.2); }
 
     .btn-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: 0.3s; }
@@ -108,9 +118,11 @@
 
     <div id="messagesContainer"></div>
 
+    <div id="typingIndicator"></div>
+
     <div class="input-area" id="inputWrapper">
-      <input type="file" id="imgInput" accept="image/*" style="display: none;">
-      <button class="btn-icon" id="btnUpload"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+      <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
+      <button class="btn-icon" id="btnUpload" title="Subir Foto o Video"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
       
       <textarea id="txtMsg" class="chat-input" placeholder="Mensaje..." rows="1" autocomplete="off"></textarea>
       
@@ -131,24 +143,22 @@
         appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
     };
 
+    const CLOUDINARY_CLOUD_NAME = "dql8gkjfl";
+    const CLOUDINARY_PRESET = "AQUI_PON_TU_PRESET"; // <--- Tu Preset UNSIGNED
+
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const chatRef = db.ref("globalChat");
-    const IMGBB_API_KEY = "f4a63b9f9af2fd112ded296694732a20";
+    const typingRef = db.ref("typingStatus"); // Referencia para el estado de escritura
+
     const currentUser = sessionStorage.getItem("sociosxit_user") || "Anónimo_" + Math.floor(Math.random() * 999);
     const container = document.getElementById("messagesContainer");
     const txtMsg = document.getElementById("txtMsg");
     const inputWrapper = document.getElementById("inputWrapper");
+    const typingIndicator = document.getElementById("typingIndicator");
 
-    // Variable global para rastrear si estamos editando
     let editingKey = null;
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', () => {
-        document.body.style.height = window.visualViewport.height + 'px';
-        scrollToBottom();
-      });
-    }
+    let typingTimer;
 
     function scrollToBottom() { container.scrollTop = container.scrollHeight; }
 
@@ -172,66 +182,82 @@
         });
     }
 
-    // Auto-ajuste de altura del textarea
+    // --- LÓGICA ESCRIBIENDO ---
     txtMsg.addEventListener('input', function() {
+        // Ajuste altura
         this.style.height = '40px';
         this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
+
+        // Actualizar estado en Firebase
+        typingRef.child(currentUser).set(true);
+        
+        // Limpiar el estado después de 3 segundos de inactividad
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+            typingRef.child(currentUser).remove();
+        }, 3000);
     });
 
-    // --- FUNCIÓN DE ENVÍO Y EDICIÓN ---
+    // Escuchar quién está escribiendo
+    typingRef.on("value", (snap) => {
+        const users = snap.val();
+        if (!users) {
+            typingIndicator.innerText = "";
+            return;
+        }
+        
+        const typers = Object.keys(users).filter(user => user !== currentUser);
+        if (typers.length > 0) {
+            typingIndicator.innerText = `(${typers.join(", ")}) escribiendo...`;
+        } else {
+            typingIndicator.innerText = "";
+        }
+    });
+
+    // Borrar estado al cerrar o recargar
+    typingRef.child(currentUser).onDisconnect().remove();
+
     function send(content, type = "text") {
         if (!content.trim()) return;
+        
+        // Al enviar, borramos el estado de escribiendo
+        typingRef.child(currentUser).remove();
 
         if (editingKey) {
-            // Si hay un editingKey, actualizamos en lugar de crear uno nuevo
             chatRef.child(editingKey).update({ content: content })
-            .then(() => {
-                cancelEdit(); // Limpiar estado de edición
-            });
+            .then(() => cancelEdit());
         } else {
-            // Envío normal
-            chatRef.push({ user: currentUser, content: content, type: type, timestamp: firebase.database.ServerValue.TIMESTAMP });
+            chatRef.push({ 
+                user: currentUser, 
+                content: content, 
+                type: type, 
+                timestamp: firebase.database.ServerValue.TIMESTAMP 
+            });
             txtMsg.value = "";
             txtMsg.style.height = '40px';
         }
     }
 
-    function deleteMsg(key) { if (confirm("¿Eliminar?")) chatRef.child(key).remove(); }
-
-    // --- FUNCIÓN DE EDICIÓN AVANZADA ---
-    function editMsg(key, content) {
-        editingKey = key; // Guardamos el ID que vamos a editar
-        txtMsg.value = content; // Ponemos el texto en el textarea
-        inputWrapper.classList.add("edit-mode"); // Cambio visual neón rosa
-        txtMsg.focus();
-        
-        // Ajustar altura del textarea automáticamente al cargar el texto
-        txtMsg.style.height = '40px';
-        txtMsg.style.height = (txtMsg.scrollHeight > 120 ? 120 : txtMsg.scrollHeight) + 'px';
-    }
-
-    function cancelEdit() {
-        editingKey = null;
-        txtMsg.value = "";
-        txtMsg.style.height = '40px';
-        inputWrapper.classList.remove("edit-mode");
-    }
-
-    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
-    
-    document.getElementById("btnUpload").onclick = () => document.getElementById("imgInput").click();
-    document.getElementById("imgInput").onchange = async (e) => {
+    document.getElementById("btnUpload").onclick = () => document.getElementById("mediaInput").click();
+    document.getElementById("mediaInput").onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        document.getElementById("btnUpload").innerHTML = "..";
-        const formData = new FormData(); formData.append("image", file);
+        const btn = document.getElementById("btnUpload");
+        btn.innerHTML = "⏳";
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", CLOUDINARY_PRESET);
         try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+            const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+            const res = await fetch(uploadUrl, { method: "POST", body: formData });
             const data = await res.json();
-            if (data.success) send(data.data.url, "image");
+            if (data.secure_url) {
+                const type = data.resource_type === "video" ? "video" : "image";
+                send(data.secure_url, type);
+            }
         } catch (err) { alert("Error"); }
         finally {
-            document.getElementById("btnUpload").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
             e.target.value = "";
         }
     };
@@ -246,23 +272,37 @@
         const isMe = msg.user === currentUser;
         div.className = `message ${isMe ? "self" : "other"}`;
         let contentHtml = `<span class="username">${msg.user}</span>`;
-        if (msg.type === "image" || (typeof msg.content === 'string' && msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/i))) {
-            contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" onload="scrollToBottom()"></a>`;
+        if (msg.type === "image" || msg.content.match(/\.(jpeg|jpg|gif|png|webp)/i)) {
+            contentHtml += `<a href="${msg.content}" target="_blank"><img src="${msg.content}" class="max-w-full rounded-lg mt-2" style="max-height: 300px;" onload="scrollToBottom()"></a>`;
+        } else if (msg.type === "video" || msg.content.match(/\.(mp4|webm|ogg|mov)/i)) {
+            contentHtml += `<video controls class="max-w-full rounded-lg mt-2 border border-cyan-500/40" style="max-height: 300px;" onloadeddata="scrollToBottom()"><source src="${msg.content}">Tu navegador no soporta video.</video>`;
         } else {
             const safeText = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             contentHtml += `<div class="content-text">${emojify(linkify(safeText))}</div>`;
         }
         if (isMe) {
-            // Pasamos el contenido escapando comillas para evitar errores en el onclick
             const escapedContent = msg.content.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-            contentHtml += `<div class="actions">
-                <span class="btn-edit" onclick="editMsg('${key}', '${escapedContent}')">Editar</span>
-                <span class="btn-delete" onclick="deleteMsg('${key}')">Borrar</span>
-            </div>`;
+            contentHtml += `<div class="actions"><span class="btn-edit" onclick="editMsg('${key}', '${escapedContent}')">Editar</span><span class="btn-delete" onclick="deleteMsg('${key}')">Borrar</span></div>`;
         }
         div.innerHTML = contentHtml;
         if (isNew) scrollToBottom();
     }
+
+    function deleteMsg(key) { if (confirm("¿Borrar?")) chatRef.child(key).remove(); }
+    function editMsg(key, content) {
+        editingKey = key;
+        txtMsg.value = content;
+        inputWrapper.classList.add("edit-mode");
+        txtMsg.focus();
+        txtMsg.style.height = (txtMsg.scrollHeight) + 'px';
+    }
+    function cancelEdit() {
+        editingKey = null;
+        txtMsg.value = "";
+        inputWrapper.classList.remove("edit-mode");
+    }
+    document.getElementById("btnSend").onclick = () => send(txtMsg.value);
+    if ("Notification" in window) Notification.requestPermission();
   </script>
 </body>
 </html>
