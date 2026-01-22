@@ -7,7 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script> <link rel="stylesheet" href="https://sevastiancastro92-arch.github.io/Pruevafirebase/style.css">
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script> 
+  <link rel="stylesheet" href="https://sevastiancastro92-arch.github.io/Pruevafirebase/style.css">
   
   <style>
     /* Estilos del botón flotante existente */
@@ -26,9 +27,50 @@
     #waLinkModal {
         backdrop-filter: blur(10px);
     }
+
+    /* --- DISEÑO NUEVO PARA EL SELECT (BOX BONITO) --- */
+    .neon-select {
+        appearance: none; /* Elimina la flecha por defecto del navegador */
+        background-color: rgba(20, 18, 37, 0.9);
+        border: 1px solid #4b5563;
+        color: white;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f3ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.2em;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+    
+    .neon-select:focus {
+        border-color: #00f3ff;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3), inset 0 0 10px rgba(0,0,0,0.5);
+        outline: none;
+    }
+
     .neon-select option {
         background-color: #141225;
         color: white;
+        padding: 10px;
+    }
+
+    /* --- BARRA DE DESPLAZAMIENTO (SCROLL) PERSONALIZADA --- */
+    /* Esto hace que el scroll dentro del modal y la página sea 'bonito' y delgado */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #0f0812; 
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #00f3ff, #0066ff); 
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #00f3ff; 
     }
   </style>
 </head>
@@ -178,32 +220,34 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-pink-500 mb-1 ml-1">PAÍS</label>
-                    <select id="waCountryCode" class="w-full bg-[#0f0812] border border-gray-600 text-white rounded-lg p-3 outline-none focus:border-cyan-400 neon-select">
-                        <option value="57">🇨🇴 Colombia (+57)</option>
-                        <option value="52">🇲🇽 México (+52)</option>
-                        <option value="54">🇦🇷 Argentina (+54)</option>
-                        <option value="51">🇵🇪 Perú (+51)</option>
-                        <option value="56">🇨🇱 Chile (+56)</option>
-                        <option value="593">🇪🇨 Ecuador (+593)</option>
-                        <option value="58">🇻🇪 Venezuela (+58)</option>
-                        <option value="1">🇺🇸 Estados Unidos (+1)</option>
-                        <option value="34">🇪🇸 España (+34)</option>
-                        <option value="55">🇧🇷 Brasil (+55)</option>
-                        <option value="502">🇬🇹 Guatemala (+502)</option>
-                        <option value="503">🇸🇻 El Salvador (+503)</option>
-                        <option value="504">🇭🇳 Honduras (+504)</option>
-                        <option value="507">🇵🇦 Panamá (+507)</option>
-                        <option value="591">🇧🇴 Bolivia (+591)</option>
-                        <option value="598">🇺🇾 Uruguay (+598)</option>
-                        <option value="595">🇵🇾 Paraguay (+595)</option>
-                        <option value="809">🇩🇴 Rep. Dominicana (+809)</option>
-                    </select>
+                    <div class="relative">
+                        <select id="waCountryCode" class="w-full text-white rounded-lg p-3 outline-none neon-select font-sans text-sm">
+                            <option value="57">🇨🇴 Colombia (+57)</option>
+                            <option value="52">🇲🇽 México (+52)</option>
+                            <option value="505">🇳🇮 Nicaragua (+505)</option> <option value="54">🇦🇷 Argentina (+54)</option>
+                            <option value="51">🇵🇪 Perú (+51)</option>
+                            <option value="56">🇨🇱 Chile (+56)</option>
+                            <option value="593">🇪🇨 Ecuador (+593)</option>
+                            <option value="58">🇻🇪 Venezuela (+58)</option>
+                            <option value="1">🇺🇸 Estados Unidos (+1)</option>
+                            <option value="34">🇪🇸 España (+34)</option>
+                            <option value="55">🇧🇷 Brasil (+55)</option>
+                            <option value="502">🇬🇹 Guatemala (+502)</option>
+                            <option value="503">🇸🇻 El Salvador (+503)</option>
+                            <option value="504">🇭🇳 Honduras (+504)</option>
+                            <option value="507">🇵🇦 Panamá (+507)</option>
+                            <option value="591">🇧🇴 Bolivia (+591)</option>
+                            <option value="598">🇺🇾 Uruguay (+598)</option>
+                            <option value="595">🇵🇾 Paraguay (+595)</option>
+                            <option value="809">🇩🇴 Rep. Dominicana (+809)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-green-400 mb-1 ml-1">NÚMERO DE TELÉFONO</label>
                     <input type="number" id="waPhoneNumber" placeholder="Ej: 3001234567" 
-                           class="w-full bg-[#0f0812] border border-gray-600 text-white rounded-lg p-3 outline-none focus:border-green-400 font-mono text-lg placeholder-gray-600">
+                           class="w-full bg-[#0f0812] border border-gray-600 text-white rounded-lg p-3 outline-none focus:border-green-400 font-mono text-lg placeholder-gray-600 transition-colors">
                 </div>
 
                 <button id="btnSaveWa" class="w-full py-3 mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg font-bold text-white shadow-[0_0_15px_rgba(0,243,255,0.4)] hover:shadow-[0_0_25px_rgba(0,243,255,0.6)] hover:scale-[1.02] transition-all">
