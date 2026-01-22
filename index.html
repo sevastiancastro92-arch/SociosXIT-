@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Xit socios Store - Oficial</title>
+  <title>SOCIOS XIT STORE - Oficial</title>
   
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
@@ -19,9 +19,24 @@
       --neon-purple: #8338ec;
       --neon-blue: #3a86ff;
       --bg-gradient: linear-gradient(180deg, #0d001a 0%, #050505 100%);
+      --input-bg: rgba(255, 255, 255, 0.05);
     }
 
-    * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    /* --- PROTECCIÓN ANTI-COPIA TOTAL --- */
+    * { 
+      box-sizing: border-box; 
+      font-family: "Poppins", sans-serif;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    input, textarea {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
     body { margin: 0; min-height: 100vh; background: var(--bg-gradient); color: white; overflow-x: hidden; }
 
     #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
@@ -32,78 +47,152 @@
       background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .logo { font-size: 1.5rem; font-weight: 800; }
-    .logo .blue { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
-    .logo .red { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
 
-    /* --- VISTA STORE PRINCIPAL --- */
-    #welcomeView {
-      position: relative; z-index: 10; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; min-height: 100vh;
-      text-align: center; padding: 20px;
-    }
+    /* --- ANIMACIÓN LOGO --- */
     .store-icon {
-      width: 100px; height: 100px; background: rgba(58, 134, 255, 0.1);
-      border-radius: 50%; display: flex; justify-content: center; align-items: center;
-      border: 2px solid var(--neon-blue); box-shadow: 0 0 30px rgba(58, 134, 255, 0.4);
-      margin-bottom: 20px; font-size: 3rem; color: var(--neon-blue);
+      width: 100px; height: 100px; 
+      background: rgba(58, 134, 255, 0.1);
+      border-radius: 50%; 
+      display: flex; justify-content: center; align-items: center;
+      border: 2px solid var(--neon-blue); 
+      margin-bottom: 20px; 
+      font-size: 3rem; color: var(--neon-blue);
+      z-index: 10;
+      animation: 
+        reveal-logo 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+        icon-glitch 0.2s infinite 0.8s;
+      transform: scale(0);
+      opacity: 0;
     }
-    .store-title { font-size: 3.5rem; font-weight: 800; text-transform: uppercase; margin: 0; }
-    .store-subtitle { font-size: 2.2rem; font-weight: 800; color: var(--neon-red); text-shadow: 0 0 15px var(--neon-red); margin-bottom: 30px; }
 
-    .btn-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 350px; }
+    @keyframes reveal-logo {
+      0% { transform: scale(0); opacity: 0; filter: blur(10px); }
+      70% { transform: scale(1.2); opacity: 1; filter: blur(0px); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes icon-glitch {
+      0% { transform: translate(0); box-shadow: 0 0 20px var(--neon-blue); }
+      50% { transform: translate(-2px, 2px); border-color: var(--neon-red); }
+      100% { transform: translate(0); box-shadow: 0 0 40px var(--neon-blue); }
+    }
+
+    /* --- TÍTULO CON GLITCH --- */
+    .glitch-container { position: relative; display: inline-block; animation: shake 0.5s infinite; }
+    .store-title {
+      font-size: 3.5rem; font-weight: 900; text-transform: uppercase;
+      position: relative; color: white; letter-spacing: 5px; margin: 0; z-index: 1;
+    }
+    .store-title::before, .store-title::after {
+      content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
+    }
+    .store-title::before { left: 3px; text-shadow: -3px 0 var(--neon-red); animation: intense-glitch-1 0.4s infinite linear alternate-reverse; }
+    .store-title::after { left: -3px; text-shadow: 3px 0 var(--neon-blue); animation: intense-glitch-2 0.3s infinite linear alternate-reverse; }
+
+    @keyframes intense-glitch-1 { 0% { clip-path: inset(10% 0 30% 0); transform: translate(-5px); } 100% { clip-path: inset(25% 0 25% 0); transform: translate(0); } }
+    @keyframes intense-glitch-2 { 0% { clip-path: inset(40% 0 20% 0); transform: translate(5px); } 100% { clip-path: inset(50% 0 30% 0); transform: translate(0); } }
+    @keyframes shake { 0% { transform: translate(0); } 50% { transform: translate(-1px, 1px); } 100% { transform: translate(0); } }
+
+    /* --- BOTONES Y CONTENEDORES --- */
+    #welcomeView { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+    .btn-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 350px; margin-top: 40px; }
+    
     .btn-store {
-      padding: 18px; font-size: 1rem; font-weight: 700; border-radius: 50px;
-      cursor: pointer; text-transform: uppercase; transition: 0.3s;
-      border: 2px solid transparent; background: rgba(0, 0, 0, 0.6); color: white;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 18px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; text-transform: uppercase; transition: 0.3s;
+      border: 2px solid transparent; background: rgba(0, 0, 0, 0.7); color: white; display: flex; align-items: center; justify-content: center; gap: 10px;
     }
     .btn-reg { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(58, 134, 255, 0.3); }
     .btn-log { border-color: var(--neon-red); box-shadow: 0 0 15px rgba(255, 0, 110, 0.3); }
-    .btn-store:hover { transform: scale(1.05); background: white; color: black; }
 
-    /* --- FORMULARIOS --- */
     .container { 
-      position: relative; z-index: 50; width: 90%; max-width: 400px; 
-      background: rgba(0,0,0,0.85); border-radius: 25px; padding: 2.5rem; 
-      backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1);
+      position: relative; z-index: 50; width: 95%; max-width: 420px; 
+      background: rgba(10, 5, 20, 0.85); border-radius: 30px; padding: 2.5rem; 
+      backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); 
       margin: 100px auto; text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px rgba(58, 134, 255, 0.1);
     }
-    input { 
-      width: 100%; padding: 14px; margin: 10px 0; background: rgba(255,255,255,0.05); 
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; text-align: center; outline: none;
+
+    /* --- ESTILOS DE INPUTS MEJORADOS --- */
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+      width: 100%;
     }
-    .primary-btn { 
-      width: 100%; padding: 15px; border: none; border-radius: 12px;
-      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-      color: white; font-weight: 700; cursor: pointer; margin-top: 10px;
+
+    .input-group i.field-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.5);
+      transition: 0.3s;
     }
-    .google-btn { 
-      width: 100%; padding: 12px; margin-top: 15px; border-radius: 12px; background: white; 
-      color: #000; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border: none;
+
+    .input-group input {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      background: var(--input-bg);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 15px;
+      color: white;
+      outline: none;
+      transition: 0.3s;
+      font-size: 0.95rem;
     }
-    .link-btn { background: none; border: 1px solid var(--neon-blue); color: var(--neon-blue); padding: 10px; border-radius: 10px; margin-top: 15px; width: 100%; cursor: pointer; }
-    
+
+    .input-group input:focus {
+      border-color: var(--neon-blue);
+      background: rgba(58, 134, 255, 0.05);
+      box-shadow: 0 0 15px rgba(58, 134, 255, 0.2);
+    }
+
+    .input-group input:focus + i.field-icon {
+      color: var(--neon-blue);
+    }
+
+    /* --- BOTÓN VER CONTRASEÑA --- */
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: rgba(255,255,255,0.5);
+      transition: 0.3s;
+      z-index: 10;
+    }
+
+    .toggle-password:hover {
+      color: var(--neon-red);
+    }
+
+    /* --- COPYRIGHT FOOTER --- */
+    footer {
+      position: fixed; bottom: 20px; width: 100%; text-align: center; z-index: 10;
+      font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 2px;
+      text-transform: uppercase; pointer-events: none;
+    }
+
     .hidden { display: none !important; }
 
-    /* MODAL */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
-    .modal-overlay.show { opacity: 1; visibility: visible; }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false">
 
   <div id="particles-js"></div>
 
   <header>
-    <div class="logo"><span class="blue">Xit</span> <span class="red">socios</span></div>
-    <div style="color: var(--neon-blue); font-size: 1.5rem;"><i class="fas fa-bars"></i></div>
+    <div style="font-weight: 800;">SOCIOS <span style="color:var(--neon-blue)">XIT</span></div>
+    <div style="color: var(--neon-blue);"><i class="fas fa-bars"></i></div>
   </header>
 
   <div id="welcomeView">
     <div class="store-icon"><i class="fas fa-gamepad"></i></div>
-    <h1 class="store-title">Xit socios</h1>
-    <h2 class="store-subtitle">Store</h2>
+    
+    <div class="glitch-container">
+      <h1 class="store-title" data-text="SOCIOS XIT STORE">SOCIOS XIT STORE</h1>
+    </div>
+    
     <div class="btn-container">
       <button class="btn-store btn-reg" id="btnStoreReg"><i class="fas fa-user-plus"></i> Únete Gratis</button>
       <button class="btn-store btn-log" id="btnStoreLog"><i class="fas fa-rocket"></i> Iniciar Sesión</button>
@@ -111,60 +200,103 @@
   </div>
 
   <div class="container hidden" id="mainContainer">
-    
     <div id="loginView" class="hidden">
-      <h2 style="color: var(--neon-blue);">Acceso Socios</h2>
-      <input type="text" id="loginUser" placeholder="Usuario" />
-      <input type="password" id="loginPass" placeholder="Contraseña" />
-      <button id="loginBtn" class="primary-btn">Entrar</button>
-      <button class="link-btn" id="goLinkAccount">Migrar a Google</button>
-      <button class="google-btn" id="googleLoginBtn"><i class="fab fa-google"></i> Google Login</button>
-      <p id="backHome" style="margin-top:20px; font-size:0.8rem; color:#666; cursor:pointer;">← Volver al inicio</p>
+      <h2 style="color: var(--neon-blue); margin-bottom: 30px; font-weight: 900; letter-spacing: 2px;">ACCESO SOCIO</h2>
+      
+      <div class="input-group">
+        <i class="fas fa-user field-icon"></i>
+        <input type="text" id="loginUser" placeholder="Nombre de Usuario" autocomplete="off"/>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock field-icon"></i>
+        <input type="password" id="loginPass" placeholder="Tu Contraseña" />
+        <i class="fas fa-eye toggle-password" id="eyeIcon"></i>
+      </div>
+
+      <button id="loginBtn" style="width:100%; padding:16px; margin-top: 10px; border-radius:15px; border:none; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color:white; font-weight:800; text-transform:uppercase; cursor:pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: 0.3s;">
+        Entrar al Sistema
+      </button>
+
+      <div style="margin: 20px 0; display: flex; align-items: center; gap: 10px;">
+        <hr style="flex:1; border:0; border-top:1px solid rgba(255,255,255,0.1)">
+        <span style="font-size: 0.7rem; color: rgba(255,255,255,0.3);">O TAMBIÉN</span>
+        <hr style="flex:1; border:0; border-top:1px solid rgba(255,255,255,0.1)">
+      </div>
+
+      <button id="googleLoginBtn" style="width:100%; padding:14px; border-radius:15px; border:none; background:white; color:black; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; transition: 0.3s;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_尊o_logo.svg" width="18" alt="G"> Acceder con Google
+      </button>
+
+      <p id="backHome" style="margin-top:25px; font-size:0.85rem; color:var(--neon-blue); cursor:pointer; font-weight: 600;">
+        <i class="fas fa-arrow-left"></i> Volver al inicio
+      </p>
     </div>
 
     <div id="usernamePromptView" class="hidden">
-      <h2>Nuevo Socio</h2>
-      <p>Elige tu nombre de usuario</p>
-      <input type="text" id="promptUser" placeholder="Nombre de usuario" />
-      <button id="promptUserBtn" class="primary-btn">Finalizar</button>
-    </div>
-
-    <div id="linkAccountView" class="hidden">
-        <h2>Migrar Cuenta</h2>
-        <input type="text" id="linkUser" placeholder="Usuario actual" />
-        <input type="password" id="linkPass" placeholder="Contraseña actual" />
-        <button id="linkAccountBtn" class="primary-btn">Vincular Google</button>
-        <button class="link-btn" id="goBackToLogin">Cancelar</button>
+      <h2 style="color: var(--neon-purple);">Finalizar Perfil</h2>
+      <div class="input-group">
+        <i class="fas fa-id-card field-icon"></i>
+        <input type="text" id="promptUser" placeholder="Elige un nombre de socio" />
+      </div>
+      <button id="promptUserBtn" style="width:100%; padding:15px; border-radius:15px; border:none; background:linear-gradient(90deg, var(--neon-purple), var(--neon-red)); color:white; font-weight:700; cursor:pointer;">LISTO PARA EMPEZAR</button>
     </div>
   </div>
 
-  <div id="successModal" class="modal-overlay hidden">
-    <div style="background:#0a0a0a; padding:30px; border-radius:20px; border:2px solid var(--neon-purple); text-align:center; max-width:350px;">
-      <div id="successMessage" style="color:white; margin-bottom:20px;"></div>
-      <button id="closeModalBtn" class="primary-btn">Continuar</button>
-    </div>
-  </div>
+  <footer>
+    Luck xit ofc 2024 - 2026
+  </footer>
 
   <script>
+    // Configuración básica de partículas (Opcional, si no se carga el script externo)
+    if(typeof particlesJS !== 'undefined') {
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#3a86ff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "distance": 150, "color": "#3a86ff", "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 2 }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+            }
+        });
+    }
+
+    // Funcionalidad Ver Contraseña
+    const eyeIcon = document.getElementById('eyeIcon');
+    const loginPass = document.getElementById('loginPass');
+
+    eyeIcon.onclick = () => {
+        const isPassword = loginPass.type === 'password';
+        loginPass.type = isPassword ? 'text' : 'password';
+        eyeIcon.classList.toggle('fa-eye');
+        eyeIcon.classList.toggle('fa-eye-slash');
+    };
+
+    // Protección anti-copia
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.onkeydown = function(e) {
+      if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 73) || e.keyCode === 123) {
+        return false;
+      }
+    };
+
     function goToApp(viewId) {
         document.getElementById('welcomeView').classList.add('hidden');
         document.getElementById('mainContainer').classList.remove('hidden');
-        if (typeof show === "function") {
-            show(viewId);
-        } else {
-            // Backup por si el script externo aún no carga
-            document.getElementById(viewId).classList.remove('hidden');
-        }
+        // Usamos una función que oculte todas las vistas internas
+        document.querySelectorAll('#mainContainer > div').forEach(div => div.classList.add('hidden'));
+        document.getElementById(viewId).classList.remove('hidden');
     }
 
     document.getElementById('btnStoreLog').onclick = () => goToApp('loginView');
     document.getElementById('btnStoreReg').onclick = () => {
-        // Ejecuta la función de Google definida en tu script externo
-        if (typeof signInWithGoogle === "function") {
-            signInWithGoogle();
-        } else {
-            goToApp('loginView');
-        }
+        if (typeof signInWithGoogle === "function") signInWithGoogle();
+        else goToApp('loginView');
     };
     document.getElementById('backHome').onclick = () => {
         document.getElementById('mainContainer').classList.add('hidden');
