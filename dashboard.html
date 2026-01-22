@@ -56,7 +56,6 @@
     }
 
     /* --- BARRA DE DESPLAZAMIENTO (SCROLL) PERSONALIZADA --- */
-    /* Esto hace que el scroll dentro del modal y la página sea 'bonito' y delgado */
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -224,7 +223,8 @@
                         <select id="waCountryCode" class="w-full text-white rounded-lg p-3 outline-none neon-select font-sans text-sm">
                             <option value="57">🇨🇴 Colombia (+57)</option>
                             <option value="52">🇲🇽 México (+52)</option>
-                            <option value="505">🇳🇮 Nicaragua (+505)</option> <option value="54">🇦🇷 Argentina (+54)</option>
+                            <option value="505">🇳🇮 Nicaragua (+505)</option>
+                            <option value="54">🇦🇷 Argentina (+54)</option>
                             <option value="51">🇵🇪 Perú (+51)</option>
                             <option value="56">🇨🇱 Chile (+56)</option>
                             <option value="593">🇪🇨 Ecuador (+593)</option>
@@ -278,7 +278,7 @@
         const waBtn = document.getElementById('btnSaveWa');
         const waError = document.getElementById('waErrorMsg');
 
-        // Función para sanitizar email (igual que en tu script principal)
+        // Función para sanitizar email (por si acaso no existe cuenta previa)
         function cleanEmail(email) { return email.replace(/\./g, "_"); }
 
         // Escuchar el estado de autenticación de Firebase
@@ -287,68 +287,91 @@
                 // --- LÓGICA BOTÓN ADMIN (SEVASTIANCASTRO92) ---
                 if(user.email === "sevastiancastro92@gmail.com") {
                     const adminBtn = document.getElementById("adminUserBtn");
-                    if(adminBtn) {
-                        adminBtn.style.display = "flex"; // Mostramos el botón
-                    }
+                    if(adminBtn) adminBtn.style.display = "flex";
                 }
-                // ------------------------------------------------
+                
+                // -------------------------------------------------------------
+                //  CORRECCIÓN FUNDAMENTAL: BUSCAR LA CUENTA REAL DEL USUARIO
+                // -------------------------------------------------------------
+                
+                const usersRef = firebase.database().ref('users');
+                
+                // Buscamos si existe alguna cuenta con este email
+                usersRef.orderByChild('email').equalTo(user.email).once('value').then(snapshot => {
+                    let finalUserKey = null;
+                    let existingWa = null;
 
-                const userKey = cleanEmail(user.email);
-                const dbRef = firebase.database().ref(`users/${userKey}`);
+                    if (snapshot.exists()) {
+                        // ¡ENCONTRAMOS CUENTA(S)!
+                        // Recorremos para encontrar la "buena" (ej: LK-XT).
+                        // Si hay duplicados, tomaremos la primera que encuentre el sistema.
+                        // (Por eso es importante borrar la duplicada mala en el panel antes)
+                        snapshot.forEach(child => {
+                            finalUserKey = child.key; // Se queda con el Key real (ej: LK-XT)
+                            const userData = child.val();
+                            if(userData.whatsapp) existingWa = userData.whatsapp;
+                        });
+                    } else {
+                        // NO EXISTE CUENTA -> Usamos el método antiguo (crear nueva con email)
+                        finalUserKey = cleanEmail(user.email);
+                    }
 
-                // Verificar si ya tiene WhatsApp
-                dbRef.child('whatsapp').once('value').then((snapshot) => {
-                    const existingWa = snapshot.val();
+                    // Ahora sí tenemos la referencia correcta a la base de datos
+                    const dbRef = firebase.database().ref(`users/${finalUserKey}`);
                     
+                    console.log("🔑 Usando Key de Usuario:", finalUserKey); // Para depurar
+
                     if (!existingWa) {
-                        // NO TIENE WA -> MOSTRAR MODAL OBLIGATORIO
+                        // NO TIENE WA -> MOSTRAR MODAL
                         waModal.style.display = 'flex';
                     } else {
-                        // YA TIENE WA -> OCULTAR (Por seguridad)
+                        // YA TIENE WA -> OCULTAR
                         waModal.style.display = 'none';
-                        console.log("✅ Usuario verificado con WA");
-                    }
-                });
-
-                // Lógica del botón guardar
-                waBtn.onclick = () => {
-                    const country = waCountry.value;
-                    const phone = waPhone.value.trim();
-
-                    if (phone.length < 6) {
-                        waError.innerText = "⚠️ Ingresa un número válido.";
-                        return;
+                        console.log("✅ Usuario verificado con WA:", existingWa);
                     }
 
-                    // Construir número completo
-                    const fullNumber = country + phone;
+                    // --- LÓGICA DEL BOTÓN GUARDAR (DENTRO DEL HILO CORRECTO) ---
+                    waBtn.onclick = () => {
+                        const country = waCountry.value;
+                        const phone = waPhone.value.trim();
 
-                    // Efecto de carga
-                    waBtn.innerText = "GUARDANDO...";
-                    waBtn.disabled = true;
+                        if (phone.length < 6) {
+                            waError.innerText = "⚠️ Ingresa un número válido.";
+                            return;
+                        }
 
-                    // Guardar en Firebase
-                    dbRef.update({
-                        whatsapp: fullNumber
-                    }).then(() => {
-                        // Éxito
-                        waModal.style.display = 'none';
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Vinculado!',
-                            text: 'Tu número ha sido guardado correctamente.',
-                            background: '#141225',
-                            color: '#fff',
-                            timer: 2000,
-                            showConfirmButton: false
+                        // Construir número completo
+                        const fullNumber = country + phone;
+
+                        // Efecto de carga
+                        waBtn.innerText = "GUARDANDO...";
+                        waBtn.disabled = true;
+
+                        // Guardar en Firebase (EN LA CUENTA CORRECTA ENCONTRADA)
+                        dbRef.update({
+                            whatsapp: fullNumber,
+                            email: user.email // Nos aseguramos que el email esté ahí
+                        }).then(() => {
+                            // Éxito
+                            waModal.style.display = 'none';
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Vinculado!',
+                                text: 'Tu número ha sido guardado correctamente.',
+                                background: '#141225',
+                                color: '#fff',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }).catch((error) => {
+                            console.error(error);
+                            waError.innerText = "Error al guardar. Intenta de nuevo.";
+                            waBtn.innerText = "GUARDAR Y CONTINUAR ➔";
+                            waBtn.disabled = false;
                         });
-                    }).catch((error) => {
-                        console.error(error);
-                        waError.innerText = "Error al guardar. Intenta de nuevo.";
-                        waBtn.innerText = "GUARDAR Y CONTINUAR ➔";
-                        waBtn.disabled = false;
-                    });
-                };
+                    };
+
+                }); // Fin del snapshot
             }
         });
     });
