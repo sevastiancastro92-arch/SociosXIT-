@@ -12,7 +12,9 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   
   <style>
-    /* Estilos personalizados del Neon Theme */
+    /* =========================================
+       NEON THEME STYLES
+       ========================================= */
     :root {
         --neon-cyan: #00f0ff;
         --neon-pink: #ff4df0;
@@ -50,7 +52,7 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
-    /* Estilo para el botón de WhatsApp */
+    /* Estilo para el botón de WhatsApp en la tarjeta */
     .wa-btn {
         background: rgba(37, 211, 102, 0.1);
         border: 1px solid #25D366;
@@ -63,7 +65,7 @@
         box-shadow: 0 0 15px #25D366;
     }
 
-    /* Modal styles */
+    /* Modales */
     .modal-backdrop {
       position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
       background: rgba(0,0,0,0.6); z-index: 1000;
@@ -76,7 +78,7 @@
     }
     .modal .actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
 
-    /* Estilos extra para SweetAlert en modo oscuro */
+    /* SweetAlert Dark Mode Overrides */
     .swal2-popup {
         background: #1b1730 !important;
         border: 1px solid rgba(255,255,255,0.1);
@@ -132,10 +134,10 @@
 
     <script>
         /* =================================================================
-         * PANEL DE ADMINISTRACIÓN - LÓGICA DE FIREBASE
+         * LÓGICA DEL PANEL + VINCULACIÓN CON BOT WHATSAPP
          * ================================================================= */
 
-        // --- Firebase Configuración ---
+        // 1. Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
             authDomain: "chatglobal-e9370.firebaseapp.com",
@@ -145,19 +147,26 @@
             messagingSenderId: "382420208590",
             appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
         };
-        firebase.initializeApp(firebaseConfig);
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.database();
         const usersRef = db.ref("users");
 
-        // --- Elementos del DOM ---
+        // Referencias DOM
         const usersListContainer = document.getElementById("usersListContainer");
         const userSearchInput = document.getElementById("userSearchInput");
+        
+        // Modal Saldo
         const balanceModal = document.getElementById("balanceModal");
         const modalUserEmail = document.getElementById("modalUserEmail");
         const balanceAmountInput = document.getElementById("balanceAmountInput");
         const balanceCancelBtn = document.getElementById("balanceCancelBtn");
         const btnAddBalance = document.getElementById("btnAddBalance");
         const btnRemoveBalance = document.getElementById("btnRemoveBalance");
+        
+        // Modal Borrar
         const deleteModal = document.getElementById("deleteModal");
         const deleteModalText = document.getElementById("deleteModalText");
         const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
@@ -166,8 +175,7 @@
         let allUsersData = {};
         let currentEditingUser = null; 
 
-        function sanitizeEmail(email) { return email.replace(/\./g, "_"); }
-
+        // Cargar usuarios en tiempo real
         usersRef.on("value", (snapshot) => {
             allUsersData = snapshot.val() || {};
             searchUsers(); 
@@ -176,6 +184,7 @@
             Swal.fire('Error', 'No se pudieron cargar los usuarios', 'error');
         });
 
+        // Función de búsqueda
         window.searchUsers = function() {
             const searchTerm = userSearchInput.value.toLowerCase().trim();
             const fragment = document.createDocumentFragment();
@@ -199,25 +208,23 @@
             }
         }
 
-        // --- FUNCIÓN MODIFICADA: CREAR TARJETA DE USUARIO CON WHATSAPP ---
+        // Crear Tarjeta de Usuario (Visualización)
         function createUserCard(userKey, userEmail, userData) {
             const div = document.createElement("div");
             div.className = "card p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-3";
             
             const balance = parseFloat(userData.balance || 0).toFixed(2);
-            
-            // Lógica para mostrar WhatsApp
             const waNumber = userData.whatsapp || null;
+
+            // Renderizar botón de WhatsApp o aviso
             let waHtml = "";
             if (waNumber) {
-                // Si existe, mostramos botón verde con enlace
                 waHtml = `
                     <a href="https://wa.me/${waNumber}" target="_blank" class="wa-btn text-xs font-bold px-2 py-1 rounded inline-flex items-center gap-1 mt-1 cursor-pointer decoration-0">
                         <span>📱 +${waNumber}</span>
                     </a>
                 `;
             } else {
-                // Si no existe, texto gris
                 waHtml = `<span class="text-xs text-gray-600 mt-1 block">⚠️ Sin WhatsApp vinculado</span>`;
             }
 
@@ -230,7 +237,6 @@
                 <div class="flex-1 min-w-0">
                     <div class="text-lg font-semibold text-neon-cyan truncate">${userEmail}</div>
                     <div>${waHtml}</div>
-                    
                     <div class="mt-2 text-sm text-gray-400">Clave DB: <span class="text-xs text-gray-500">${userKey}</span></div>
                     <div class="mt-1">
                         <span class="font-bold text-xl text-neon-pink">$${balance}</span> 
@@ -253,8 +259,11 @@
             return div;
         }
 
+        /* -------------------------------------------------------------
+           LÓGICA CRÍTICA: ACTUALIZACIÓN DE SALDO Y DISPARADOR DEL BOT
+           ------------------------------------------------------------- */
         window.openBalanceModal = function(userKey, userEmail, currentBalance) {
-            currentEditingUser = { key: userKey, email: userEmail, balance: currentBalance };
+            currentEditingUser = { key: userKey, email: userEmail };
             modalUserEmail.textContent = `Usuario: ${userEmail}`;
             balanceAmountInput.value = ""; 
             balanceModal.style.display = "flex";
@@ -263,8 +272,10 @@
 
         balanceCancelBtn.onclick = () => { balanceModal.style.display = "none"; currentEditingUser = null; };
 
+        // Esta es la función principal que conecta con el Bot
         async function updateBalance(isAddition) {
             if (!currentEditingUser) return;
+            
             const rawValue = parseFloat(balanceAmountInput.value);
             const amount = Math.abs(rawValue); 
             
@@ -272,39 +283,79 @@
                 Swal.fire({ icon: 'warning', title: 'Monto inválido', background: '#1b1730', color: '#fff' });
                 return;
             }
+
             const changeAmount = isAddition ? amount : -amount;
+            const userRef = db.ref(`users/${currentEditingUser.key}`);
+
             try {
-                const userRef = db.ref(`users/${currentEditingUser.key}`);
-                await userRef.child("balance").transaction(currentBalanceRaw => {
-                    let currentBalance = parseFloat(currentBalanceRaw || 0);
-                    return Number((currentBalance + changeAmount).toFixed(2));
-                });
+                // 1. LEER DATOS ACTUALES (Para obtener el saldo viejo y el teléfono)
+                const snapshot = await userRef.once('value');
+                const userData = snapshot.val() || {};
+                
+                const oldBalance = parseFloat(userData.balance || 0);
+                const newBalance = Number((oldBalance + changeAmount).toFixed(2));
+                const userPhone = userData.whatsapp || ""; // IMPORTANTE: Debe coincidir con tu campo en BD
+
+                // 2. GUARDAR NUEVO SALDO EN FIREBASE
+                await userRef.child("balance").set(newBalance);
+
+                // 3. SI ES RECARGA (ADD), GUARDAMOS HISTORIAL Y AVISAMOS AL BOT
                 if (isAddition) {
+                    // A) Guardar en historial de usuario
                     await userRef.child("recharge_history").push({
-                        amount: amount, date: new Date().toISOString(), type: "admin_add", adminAdded: true
+                        amount: amount, 
+                        date: new Date().toISOString(), 
+                        type: "admin_add", 
+                        adminAdded: true
                     });
+
+                    // B) ENVIAR A LA COLA DE MENSAJES (sms_queue)
+                    // El script de Node.js en Termux escuchará esto
+                    if (userPhone) {
+                        await db.ref('sms_queue').push({
+                            phone: userPhone,
+                            userEmail: currentEditingUser.email,
+                            oldBalance: oldBalance,
+                            newBalance: newBalance,
+                            addedAmount: amount,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        });
+                        console.log("📨 Orden enviada al Bot para: " + userPhone);
+                    }
                 }
+
+                // UI Final
                 balanceModal.style.display = "none";
+                let msg = isAddition ? '¡Saldo Agregado!' : '¡Saldo Retirado!';
+                if (isAddition && userPhone) msg += ' y notificación enviada.';
+                
                 Swal.fire({
-                    title: isAddition ? '¡Saldo Agregado!' : '¡Saldo Retirado!',
+                    title: msg,
                     icon: isAddition ? 'success' : 'info',
                     background: '#1b1730', color: '#fff'
                 });
                 currentEditingUser = null;
+
             } catch (error) {
+                console.error(error);
                 Swal.fire({ icon: 'error', title: 'Error', text: error.message, background: '#1b1730', color: '#fff' });
             }
         }
 
+        // Asignar eventos a los botones del modal
         btnAddBalance.onclick = () => updateBalance(true);
         btnRemoveBalance.onclick = () => updateBalance(false);
 
+        /* -------------------------------------------------------------
+           LÓGICA DE ELIMINACIÓN DE USUARIO
+           ------------------------------------------------------------- */
         window.openDeleteModal = function(userKey, userEmail) {
             currentEditingUser = { key: userKey, email: userEmail };
             deleteModalText.innerHTML = `¿Eliminar a <span class="text-neon-pink font-bold">${userEmail}</span>?`;
             deleteModal.style.display = "flex";
         }
         deleteCancelBtn.onclick = () => { deleteModal.style.display = "none"; currentEditingUser = null; };
+        
         deleteConfirmBtn.onclick = async () => {
             if (!currentEditingUser) return;
             try {
