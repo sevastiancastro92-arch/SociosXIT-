@@ -3,69 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SociosXIT | Premium Dashboard</title>
+  <title>Dashboard - SociosXIT</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
-<body class="bg-black">
+<body class="bg-[#050505] text-white font-['Poppins']">
+  
   <canvas id="particles"></canvas>
 
-  <div class="relative z-10 p-4 max-w-5xl mx-auto min-h-screen">
-    <header class="flex justify-between items-center mb-8 p-6 bg-white/5 border border-white/10 rounded-3xl">
-      <div>
-        <h1 id="userName" class="text-2xl font-black text-neon-cyan tracking-tighter">CARGANDO...</h1>
-        <div id="userBalance" class="text-neon-pink font-bold text-lg">0.00 USD</div>
+  <div id="processingOverlay" class="processing-overlay" style="display: none;">
+    <div class="loader-content">
+      <div class="cyber-spinner"></div>
+      <h2 class="neon-text-pulse font-orbitron">SOCIOSXIT SECURITY</h2>
+      <p class="text-xs tracking-[0.4em] opacity-60 mt-2">DECRIPTANDO CLAVE SEGURA...</p>
+      <div class="progress-container-main">
+        <div class="progress-bar-fill-main" id="procBar"></div>
       </div>
-      <button id="hamburgerBtn" class="w-12 h-12 flex items-center justify-center bg-white/5 rounded-xl border border-white/10 text-2xl">☰</button>
+    </div>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 py-6">
+    <header class="flex justify-between items-center mb-10 animate-fade-down">
+      <div class="flex items-center gap-4">
+        <div class="logo-box">
+          <span class="font-orbitron font-bold text-black text-2xl">X</span>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold tracking-tighter font-orbitron">SOCIOS<span class="text-neon-cyan">XIT</span></h1>
+          <span class="text-[10px] uppercase tracking-widest text-neon-green">Protocolo de seguridad activo</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="balance-display glass-panel">
+          <span class="label">Balance Actual</span>
+          <span id="userBalance" class="value font-orbitron">$0.00</span>
+        </div>
+        <button id="logoutBtn" class="logout-btn-new">SALIR</button>
+      </div>
     </header>
 
-    <nav class="flex gap-3 mb-8">
-      <button id="tabPublicaciones" class="flex-1 py-4 rounded-2xl font-bold border-2 border-neon-cyan bg-neon-cyan/10 text-neon-cyan transition-all">TIENDA</button>
-      <button id="tabKeys" class="flex-1 py-4 rounded-2xl font-bold border border-white/10 bg-white/5 text-white/60">MIS COMPRAS</button>
-    </nav>
+    <main class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <aside class="lg:col-span-1 space-y-6">
+        <div class="glass-panel p-6 animate-fade-right">
+          <div class="profile-header text-center mb-6">
+            <div class="avatar-glow mx-auto mb-3">👤</div>
+            <p id="userEmail" class="text-xs truncate opacity-70"></p>
+            <div id="menuUserBalance" class="text-sm font-bold text-neon-pink mt-1"></div>
+          </div>
+          <hr class="border-white/5 mb-6">
+          <h3 class="font-orbitron text-[10px] tracking-widest text-neon-cyan mb-4 uppercase">Mis Adquisiciones</h3>
+          <div id="myKeysList" class="space-y-3 max-h-[400px] overflow-y-auto custom-scroll">
+            </div>
+        </div>
+      </aside>
 
-    <main id="publicationsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></main>
-    <main id="myKeysContainer" class="hidden space-y-4"></main>
-
-    <a href="chat.html" class="chat-float-link">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    </a>
+      <section class="lg:col-span-3">
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="text-xl font-orbitron">TIENDA PREMIUM</h2>
+          <div class="h-[1px] flex-1 bg-gradient-to-r from-neon-cyan to-transparent opacity-20"></div>
+        </div>
+        
+        <div id="storeContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-up">
+          </div>
+      </section>
+    </main>
   </div>
 
-  <div id="processingModal">
-    <div class="cyber-loader"></div>
-    <div class="scanner-line"></div>
-    <h2 class="text-neon-cyan text-xl font-black mt-8 tracking-widest">SISTEMA ANTI-DUPLICADOS</h2>
-    <p class="text-white/40 text-[10px] mt-2 uppercase tracking-widest">Verificando disponibilidad de Key en tiempo real...</p>
-    <div id="processCountdown" class="text-neon-pink text-6xl font-black mt-4">3</div>
-  </div>
-
-  <div id="confirmModal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[500] hidden p-6">
-    <div class="bg-[#0a0a0a] border-2 border-neon-cyan p-8 rounded-[30px] w-full max-w-sm text-center">
-      <h3 class="text-white font-black text-xl mb-2">¿PROCEDER CON LA COMPRA?</h3>
-      <div id="confirmText" class="text-white/60 text-sm mb-6"></div>
-      <div id="finalPriceDisplay" class="text-3xl font-black text-neon-green mb-8"></div>
+  <div id="confirmModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-glass">
+      <h3 class="text-xl font-orbitron mb-4">CONFIRMAR ACCESO</h3>
+      <div id="confirmDetails" class="text-sm opacity-70 mb-8"></div>
       <div class="flex gap-4">
-        <button id="confirmCancel" class="flex-1 py-4 rounded-2xl border border-white/10 font-bold">CANCELAR</button>
-        <button id="confirmOk" class="flex-1 py-4 rounded-2xl bg-neon-cyan text-black font-black shadow-[0_0_20px_rgba(0,243,255,0.4)]">CONFIRMAR</button>
+        <button id="confirmCancel" class="btn-outline">CANCELAR</button>
+        <button id="confirmOk" class="btn-neon-buy">PROCESAR COMPRA</button>
       </div>
     </div>
   </div>
 
-  <div id="keyModal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[1000] hidden p-6">
-    <div class="bg-[#050505] border-2 border-neon-green p-8 rounded-[40px] w-full max-w-sm text-center">
-      <div class="w-16 h-16 bg-neon-green/20 rounded-full flex items-center justify-center mx-auto mb-4 text-neon-green text-3xl">✓</div>
-      <h3 class="text-white font-bold text-xl mb-4">¡KEY DESBLOQUEADA!</h3>
-      <div id="keyModalContent" class="mb-8"></div>
-      <div class="flex flex-col gap-3">
-        <button id="keyCopyBtn" class="py-4 bg-neon-green text-black font-black rounded-2xl">COPIAR AL PORTAPAPELES</button>
-        <button id="keyCloseBtn" class="py-4 text-white/40 font-bold">CERRAR VENTANA</button>
+  <div id="keyModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-glass text-center border-t-4 border-neon-green">
+      <h3 class="text-neon-green font-orbitron text-xl mb-6">SISTEMA: KEY GENERADA</h3>
+      <div id="keyModalContent" class="key-box-delivery"></div>
+      <div class="flex gap-4 mt-8">
+        <button id="keyCopyBtn" class="btn-copy">COPIAR KEY</button>
+        <button id="keyCloseBtn" class="btn-outline">CERRAR</button>
       </div>
     </div>
   </div>
+
+  <a href="chat.html" class="chat-float-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </a>
 
   <script src="script.js"></script>
 </body>
