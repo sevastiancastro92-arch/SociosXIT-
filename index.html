@@ -19,7 +19,6 @@
       --neon-purple: #8338ec;
       --neon-blue: #3a86ff;
       --bg-gradient: linear-gradient(180deg, #0d001a 0%, #050505 100%);
-      --input-bg: rgba(255, 255, 255, 0.05);
     }
 
     /* --- PROTECCIÓN ANTI-COPIA TOTAL --- */
@@ -58,11 +57,8 @@
       margin-bottom: 20px; 
       font-size: 3rem; color: var(--neon-blue);
       z-index: 10;
-      animation: 
-        reveal-logo 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
-        icon-glitch 0.2s infinite 0.8s;
-      transform: scale(0);
-      opacity: 0;
+      animation: reveal-logo 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, icon-glitch 0.2s infinite 0.8s;
+      transform: scale(0); opacity: 0;
     }
 
     @keyframes reveal-logo {
@@ -77,7 +73,7 @@
       100% { transform: translate(0); box-shadow: 0 0 40px var(--neon-blue); }
     }
 
-    /* --- TÍTULO CON GLITCH --- */
+    /* --- TÍTULO --- */
     .glitch-container { position: relative; display: inline-block; animation: shake 0.5s infinite; }
     .store-title {
       font-size: 3.5rem; font-weight: 900; text-transform: uppercase;
@@ -93,7 +89,7 @@
     @keyframes intense-glitch-2 { 0% { clip-path: inset(40% 0 20% 0); transform: translate(5px); } 100% { clip-path: inset(50% 0 30% 0); transform: translate(0); } }
     @keyframes shake { 0% { transform: translate(0); } 50% { transform: translate(-1px, 1px); } 100% { transform: translate(0); } }
 
-    /* --- BOTONES Y CONTENEDORES --- */
+    /* --- CONTENEDORES --- */
     #welcomeView { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
     .btn-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 350px; margin-top: 40px; }
     
@@ -105,68 +101,55 @@
     .btn-log { border-color: var(--neon-red); box-shadow: 0 0 15px rgba(255, 0, 110, 0.3); }
 
     .container { 
-      position: relative; z-index: 50; width: 95%; max-width: 420px; 
-      background: rgba(10, 5, 20, 0.85); border-radius: 30px; padding: 2.5rem; 
-      backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); 
-      margin: 100px auto; text-align: center;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px rgba(58, 134, 255, 0.1);
+      position: relative; z-index: 50; width: 90%; max-width: 400px; 
+      background: rgba(0,0,0,0.9); border-radius: 25px; padding: 2.5rem; 
+      backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); margin: 100px auto; text-align: center;
     }
 
-    /* --- ESTILOS DE INPUTS MEJORADOS --- */
-    .input-group {
+    /* --- ESTILOS LOGIN PROFESIONAL --- */
+    .input-wrapper {
       position: relative;
       margin-bottom: 20px;
       width: 100%;
     }
 
-    .input-group i.field-icon {
+    .input-wrapper input {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: white;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--neon-blue);
+      background: rgba(58, 134, 255, 0.05);
+    }
+
+    .input-wrapper i.main-icon {
       position: absolute;
       left: 15px;
       top: 50%;
       transform: translateY(-50%);
-      color: rgba(255,255,255,0.5);
-      transition: 0.3s;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 15px 15px 15px 45px;
-      background: var(--input-bg);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 15px;
-      color: white;
-      outline: none;
-      transition: 0.3s;
-      font-size: 0.95rem;
-    }
-
-    .input-group input:focus {
-      border-color: var(--neon-blue);
-      background: rgba(58, 134, 255, 0.05);
-      box-shadow: 0 0 15px rgba(58, 134, 255, 0.2);
-    }
-
-    .input-group input:focus + i.field-icon {
       color: var(--neon-blue);
     }
 
-    /* --- BOTÓN VER CONTRASEÑA --- */
-    .toggle-password {
+    /* Botón Ojo */
+    .toggle-pass {
       position: absolute;
       right: 15px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.4);
       transition: 0.3s;
-      z-index: 10;
     }
 
-    .toggle-password:hover {
-      color: var(--neon-red);
-    }
+    .toggle-pass:hover { color: white; }
 
-    /* --- COPYRIGHT FOOTER --- */
     footer {
       position: fixed; bottom: 20px; width: 100%; text-align: center; z-index: 10;
       font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 2px;
@@ -174,7 +157,6 @@
     }
 
     .hidden { display: none !important; }
-
   </style>
 </head>
 <body oncontextmenu="return false">
@@ -201,45 +183,35 @@
 
   <div class="container hidden" id="mainContainer">
     <div id="loginView" class="hidden">
-      <h2 style="color: var(--neon-blue); margin-bottom: 30px; font-weight: 900; letter-spacing: 2px;">ACCESO SOCIO</h2>
+      <h2 style="color: var(--neon-blue); margin-bottom: 30px;">ACCESO PRIVADO</h2>
       
-      <div class="input-group">
-        <i class="fas fa-user field-icon"></i>
-        <input type="text" id="loginUser" placeholder="Nombre de Usuario" autocomplete="off"/>
+      <div class="input-wrapper">
+        <i class="fas fa-user main-icon"></i>
+        <input type="text" id="loginUser" placeholder="Usuario" autocomplete="off"/>
       </div>
 
-      <div class="input-group">
-        <i class="fas fa-lock field-icon"></i>
-        <input type="password" id="loginPass" placeholder="Tu Contraseña" />
-        <i class="fas fa-eye toggle-password" id="eyeIcon"></i>
+      <div class="input-wrapper">
+        <i class="fas fa-lock main-icon"></i>
+        <input type="password" id="loginPass" placeholder="Contraseña" />
+        <i class="fas fa-eye toggle-pass" id="btnTogglePass"></i>
       </div>
 
-      <button id="loginBtn" style="width:100%; padding:16px; margin-top: 10px; border-radius:15px; border:none; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color:white; font-weight:800; text-transform:uppercase; cursor:pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: 0.3s;">
-        Entrar al Sistema
+      <button id="loginBtn" style="width:100%; padding:15px; border-radius:12px; border:none; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color:white; font-weight:700; cursor:pointer; text-transform:uppercase;">Entrar</button>
+      
+      <button id="googleLoginBtn" style="width:100%; padding:12px; margin-top:15px; border-radius:12px; border:none; background:white; color:black; font-weight:600; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer;">
+        <i class="fab fa-google" style="color:#4285F4"></i> Iniciar con Google
       </button>
 
-      <div style="margin: 20px 0; display: flex; align-items: center; gap: 10px;">
-        <hr style="flex:1; border:0; border-top:1px solid rgba(255,255,255,0.1)">
-        <span style="font-size: 0.7rem; color: rgba(255,255,255,0.3);">O TAMBIÉN</span>
-        <hr style="flex:1; border:0; border-top:1px solid rgba(255,255,255,0.1)">
-      </div>
-
-      <button id="googleLoginBtn" style="width:100%; padding:14px; border-radius:15px; border:none; background:white; color:black; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; transition: 0.3s;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_尊o_logo.svg" width="18" alt="G"> Acceder con Google
-      </button>
-
-      <p id="backHome" style="margin-top:25px; font-size:0.85rem; color:var(--neon-blue); cursor:pointer; font-weight: 600;">
-        <i class="fas fa-arrow-left"></i> Volver al inicio
-      </p>
+      <p id="backHome" style="margin-top:20px; font-size:0.8rem; color:#666; cursor:pointer;">← Volver al inicio</p>
     </div>
 
     <div id="usernamePromptView" class="hidden">
-      <h2 style="color: var(--neon-purple);">Finalizar Perfil</h2>
-      <div class="input-group">
-        <i class="fas fa-id-card field-icon"></i>
-        <input type="text" id="promptUser" placeholder="Elige un nombre de socio" />
+      <h2 style="color: var(--neon-purple);">Nuevo Usuario</h2>
+      <div class="input-wrapper">
+         <i class="fas fa-id-badge main-icon"></i>
+         <input type="text" id="promptUser" placeholder="Nombre de socio" />
       </div>
-      <button id="promptUserBtn" style="width:100%; padding:15px; border-radius:15px; border:none; background:linear-gradient(90deg, var(--neon-purple), var(--neon-red)); color:white; font-weight:700; cursor:pointer;">LISTO PARA EMPEZAR</button>
+      <button id="promptUserBtn" style="width:100%; padding:15px; border-radius:12px; border:none; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color:white; font-weight:700; cursor:pointer;">Finalizar</button>
     </div>
   </div>
 
@@ -248,33 +220,49 @@
   </footer>
 
   <script>
-    // Configuración básica de partículas (Opcional, si no se carga el script externo)
+    // Inicialización de partículas (si el script cargó)
     if(typeof particlesJS !== 'undefined') {
-        particlesJS('particles-js', {
-            "particles": {
-                "number": { "value": 80 },
-                "color": { "value": "#3a86ff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5 },
-                "size": { "value": 3 },
-                "line_linked": { "enable": true, "distance": 150, "color": "#3a86ff", "opacity": 0.4, "width": 1 },
-                "move": { "enable": true, "speed": 2 }
-            },
-            "interactivity": {
-                "events": { "onhover": { "enable": true, "mode": "repulse" } }
-            }
-        });
+      particlesJS('particles-js', {
+        "particles": {
+          "number": { "value": 50 },
+          "color": { "value": "#3a86ff" },
+          "shape": { "type": "circle" },
+          "opacity": { "value": 0.5 },
+          "size": { "value": 2 },
+          "line_linked": { "enable": true, "distance": 150, "color": "#3a86ff", "opacity": 0.2, "width": 1 },
+          "move": { "enable": true, "speed": 1 }
+        }
+      });
     }
 
-    // Funcionalidad Ver Contraseña
-    const eyeIcon = document.getElementById('eyeIcon');
+    // --- FUNCIÓN VER CONTRASEÑA ---
+    const btnTogglePass = document.getElementById('btnTogglePass');
     const loginPass = document.getElementById('loginPass');
 
-    eyeIcon.onclick = () => {
-        const isPassword = loginPass.type === 'password';
-        loginPass.type = isPassword ? 'text' : 'password';
-        eyeIcon.classList.toggle('fa-eye');
-        eyeIcon.classList.toggle('fa-eye-slash');
+    btnTogglePass.onclick = () => {
+        const type = loginPass.getAttribute('type') === 'password' ? 'text' : 'password';
+        loginPass.setAttribute('type', type);
+        btnTogglePass.classList.toggle('fa-eye');
+        btnTogglePass.classList.toggle('fa-eye-slash');
+    };
+
+    // --- LÓGICA DE NAVEGACIÓN (Respetando tu código original) ---
+    function goToApp(viewId) {
+        document.getElementById('welcomeView').classList.add('hidden');
+        document.getElementById('mainContainer').classList.remove('hidden');
+        if (typeof show === "function") show(viewId);
+    }
+
+    document.getElementById('btnStoreLog').onclick = () => goToApp('loginView');
+    
+    document.getElementById('btnStoreReg').onclick = () => {
+        if (typeof signInWithGoogle === "function") signInWithGoogle();
+        else goToApp('loginView');
+    };
+
+    document.getElementById('backHome').onclick = () => {
+        document.getElementById('mainContainer').classList.add('hidden');
+        document.getElementById('welcomeView').classList.remove('hidden');
     };
 
     // Protección anti-copia
@@ -283,24 +271,6 @@
       if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 73) || e.keyCode === 123) {
         return false;
       }
-    };
-
-    function goToApp(viewId) {
-        document.getElementById('welcomeView').classList.add('hidden');
-        document.getElementById('mainContainer').classList.remove('hidden');
-        // Usamos una función que oculte todas las vistas internas
-        document.querySelectorAll('#mainContainer > div').forEach(div => div.classList.add('hidden'));
-        document.getElementById(viewId).classList.remove('hidden');
-    }
-
-    document.getElementById('btnStoreLog').onclick = () => goToApp('loginView');
-    document.getElementById('btnStoreReg').onclick = () => {
-        if (typeof signInWithGoogle === "function") signInWithGoogle();
-        else goToApp('loginView');
-    };
-    document.getElementById('backHome').onclick = () => {
-        document.getElementById('mainContainer').classList.add('hidden');
-        document.getElementById('welcomeView').classList.remove('hidden');
     };
   </script>
 
