@@ -1,0 +1,165 @@
+/* === DISEÑO SOCIOSXIT PREMIUM (ESTILO DARK PROFESIONAL) === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+  /* Paleta Elegante */
+  --bg-dark: #0a0a0f;
+  --card-bg: rgba(18, 18, 26, 0.9);
+  --accent-cyan: #00d2ff;
+  --accent-blue: #3a7bd5;
+  --accent-pink: #ff007a;
+  --accent-green: #00ff87;
+  --accent-yellow: #ffcc00;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  
+  /* Niveles */
+  --level-base: #2d2d44;
+  --level-vip: var(--accent-cyan);
+  --level-premium: var(--accent-pink);
+}
+
+html, body { 
+  height: 100%; 
+  background-color: var(--bg-dark);
+}
+
+body {
+  background: radial-gradient(circle at 0% 0%, #161a31 0%, #0a0a0f 50%);
+  background-attachment: fixed;
+  font-family: 'Inter', sans-serif;
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+
+#particles {
+  position: fixed; inset: 0; z-index: 0;
+  opacity: 0.4;
+}
+
+.app-root { position: relative; z-index: 5; }
+
+/* CARDS - Glassmorphism Refinado */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+/* ANIMACIONES SUTILES */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+main > div, .card {
+  animation: fadeInUp 0.5s ease backwards;
+}
+
+/* BOTONES PROFESIONALES */
+.neon-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.btn-show {
+  background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+  color: white;
+}
+
+.btn-buy {
+  background: rgba(0, 255, 135, 0.1);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+.btn-buy:hover {
+  background: var(--accent-green);
+  color: #000;
+}
+
+.btn-logout {
+  background: rgba(255, 0, 122, 0.1);
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
+}
+.btn-logout:hover {
+  background: var(--accent-pink);
+  color: white;
+}
+
+/* TABS ESTILO NATIVO */
+.tabs { background: rgba(0,0,0,0.2); padding: 5px; border-radius: 14px; width: fit-content; }
+.tab-btn {
+  padding: 8px 20px;
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+.tab-btn.active {
+  background: rgba(255,255,255,0.05);
+  color: white;
+  border: 1px solid var(--glass-border);
+}
+
+/* BARRA DE PROGRESO "SHIMMER" */
+.progress-bar {
+  height: 12px;
+  background: #1a1a24;
+  border-radius: 20px;
+  padding: 2px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 20px;
+  position: relative;
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* SIDE MENU */
+.side-menu {
+  background: rgba(10, 10, 15, 0.98);
+  backdrop-filter: blur(25px);
+  border-left: 1px solid var(--glass-border);
+}
+
+.menu-item {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #94a3b8;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.03);
+  color: white;
+  border-color: rgba(255,255,255,0.1);
+}
+
+/* INPUTS */
+input, select {
+  background: rgba(0,0,0,0.3) !important;
+  border: 1px solid var(--glass-border) !important;
+  transition: border-color 0.3s;
+}
+input:focus {
+  border-color: var(--accent-blue) !important;
+}
