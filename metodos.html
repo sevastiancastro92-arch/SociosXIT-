@@ -48,16 +48,15 @@
         .step-hidden { display: none !important; }
         .step-active { display: block !important; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        /* Estilo para el bloque de texto formateado */
         .payment-format {
             white-space: pre-wrap;
             font-size: 11px;
             font-family: monospace;
-            background-color: #0f172a; /* dark-900 */
-            border: 1px solid #334155; /* slate-700 */
+            background-color: #0f172a; 
+            border: 1px solid #334155; 
             padding: 12px;
             border-radius: 8px;
-            color: #f1f5f9; /* slate-100 */
+            color: #f1f5f9; 
             overflow-x: auto;
             line-height: 1.4;
         }
@@ -122,8 +121,7 @@
                 </h2>
             </div>
             
-            <div id="historyGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                </div>
+            <div id="historyGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
             <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 text-slate-500">
                 <i class="fa-solid fa-receipt text-6xl mb-4 opacity-30"></i>
@@ -142,7 +140,6 @@
             <div id="step1" class="step-active flex flex-col h-full">
                 <div class="p-4 border-b border-slate-700 bg-dark-900/50 shrink-0 z-10">
                     <h2 class="text-lg font-bold text-white text-center">Seleccionar País</h2>
-                    <p class="text-slate-400 text-[10px] text-center mt-1">Desliza para ver más opciones 👇</p>
                 </div>
                 <div class="h-96 overflow-y-auto p-3 custom-scrollbar bg-dark-900/20 overscroll-contain">
                     <div class="grid grid-cols-2 gap-2" id="countryGrid"></div>
@@ -176,15 +173,12 @@
                     <span id="ticketId" class="font-mono text-[10px] text-brand-green bg-brand-green/10 px-2 py-1 rounded">#0000</span>
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                    
                     <div class="text-center">
                         <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Debes transferir</p>
                         <p id="finalLocalAmount" class="text-2xl font-extrabold text-white">--</p>
                     </div>
-                    
                     <pre id="formattedPaymentDetails" class="payment-format"></pre>
                     <button id="copyAllDetailsBtn" class="w-full py-2.5 bg-slate-800 border border-brand-cyan/30 text-brand-cyan font-bold rounded-lg flex justify-center items-center gap-2 hover:bg-slate-700 transition-all text-xs"><i class="fa-regular fa-copy"></i><span id="copyBtnText">COPIAR DATOS</span></button>
-                    
                 </div>
                 <div class="p-3 border-t border-slate-700 bg-dark-900 shrink-0"><button onclick="closeModal()" class="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition text-xs">Cerrar Ventana</button></div>
             </div>
@@ -194,39 +188,21 @@
     <div id="uploadModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="bg-dark-800 border border-brand-purple/50 w-full max-w-sm rounded-2xl shadow-[0_0_30px_rgba(139,92,246,0.3)] p-6 relative">
             <button onclick="document.getElementById('uploadModal').style.display='none'" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            
             <h2 class="text-xl font-bold text-brand-purple text-center mb-1">Subir Comprobante</h2>
             <p class="text-xs text-slate-400 text-center mb-6" id="uploadOrderId">Pedido #---</p>
-            
             <input type="file" id="fileInput" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-purple file:text-white hover:file:bg-purple-600 mb-4 cursor-pointer bg-dark-900 rounded-lg border border-slate-700 p-2">
-            
             <textarea id="messageInput" placeholder="Mensaje opcional..." class="w-full bg-dark-900 border border-slate-700 rounded-lg p-3 text-sm text-white mb-4 h-24 focus:outline-none focus:border-brand-purple resize-none"></textarea>
-            
-            <button onclick="window.sendComprobante()" id="btnSendUpload" class="w-full bg-brand-purple hover:bg-purple-600 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-purple-500/20">
-                Enviar Comprobante 🚀
-            </button>
+            <button onclick="window.sendComprobante()" id="btnSendUpload" class="w-full bg-brand-purple hover:bg-purple-600 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-purple-500/20">Enviar Comprobante 🚀</button>
         </div>
     </div>
 
     <script>
-    // ============================================
-    // 1. LÓGICA MODIFICADA: SIN RESTRICCIÓN DE LOGIN
-    // ============================================
-    
-    // Establecer un nombre de usuario por defecto
-    const disp = document.getElementById("userDisplay");
-    if(disp) disp.innerText = "Usuario";
+        const disp = document.getElementById("userDisplay");
+        if(disp) disp.innerText = "Usuario";
 
-    // Función para Cerrar Sesión (Ahora solo recarga la página)
-    function cerrarSesion() {
-        // Al no haber login obligatorio, el botón simplemente refresca la app
-        window.location.reload();
-    }
+        function cerrarSesion() { window.location.reload(); }
 
-
-        // ============================================
-        // 2. LÓGICA DE BILLETERA (PAGOS)
-        // ============================================
+        // EXCHANGE DATA SIN COSTA RICA
         const EXCHANGE_DATA = {
             ARG: { name: "Argentina", flag: "🇦🇷", currency: "ARS", locale: "es-AR", decimals: 0, rate: 150000, methods: [{icon: "🟡", name: "Uala", type: "TRANSFERENCIA", details: "CVU: 0000007900203350273548", tip: "Alias: C.CORREA1315.UALA"}] },
             BOL: { name: "Bolivia", flag: "🇧🇴", currency: "BOB", locale: "es-BO", decimals: 2, rate: 12, methods: [{icon: "🟡", name: "Yape", type: "APP", details: "N° Cuenta: 62656932", tip: "Envía dinero por Yape"}, {icon: "🟡", name: "Yape QR", type: "QR", details: "Link: https://i.postimg.cc/YCg1rRGF/qrbolivia.jpg", tip: "Escanea el QR para pagar", isQR: true, qrLink: "https://i.postimg.cc/YCg1rRGF/qrbolivia.jpg"}, {icon: "🔵", name: "BCP", type: "BANCO", details: "N° Cuenta: 20152008832355", tip: "Transferencia BCP"}] },
@@ -248,20 +224,15 @@
 
         let state = { step: 1, selectedCountry: null, amountUSD: 0, amountLocalRaw: 0 };
         window.currentOrderId = null; 
-        window.currentOrderAmount = null; // Necesario para el script de subida
+        window.currentOrderAmount = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderHistory();
-            renderCountryGrid();
-        });
+        document.addEventListener('DOMContentLoaded', () => { renderHistory(); renderCountryGrid(); });
 
         function formatCurrency(amount, countryCode) {
             const country = EXCHANGE_DATA[countryCode];
             return new Intl.NumberFormat(country.locale, {
-                style: 'currency',
-                currency: country.currency,
-                minimumFractionDigits: country.decimals,
-                maximumFractionDigits: country.decimals
+                style: 'currency', currency: country.currency,
+                minimumFractionDigits: country.decimals, maximumFractionDigits: country.decimals
             }).format(amount);
         }
 
@@ -277,77 +248,47 @@
             const orders = getOrders();
             const grid = document.getElementById('historyGrid');
             grid.innerHTML = '';
-            
-            if (orders.length === 0) {
-                document.getElementById('emptyState').classList.remove('hidden');
-                return;
-            }
+            if (orders.length === 0) { document.getElementById('emptyState').classList.remove('hidden'); return; }
             document.getElementById('emptyState').classList.add('hidden');
 
             orders.forEach(order => {
                 const card = document.createElement('div');
                 card.className = "bg-dark-800 border border-slate-700 p-5 rounded-2xl hover:border-brand-cyan transition-all duration-300 shadow-lg relative group overflow-hidden";
-                
                 card.innerHTML = `
-                    <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
-                        <span class="text-6xl grayscale">${order.flag}</span>
-                    </div>
-
+                    <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none"><span class="text-6xl grayscale">${order.flag}</span></div>
                     <div class="flex justify-between items-start mb-4 relative z-10">
                         <div>
                             <span class="text-[10px] text-slate-500 font-mono bg-dark-900 px-2 py-1 rounded border border-slate-700">#${order.id}</span>
-                            <div class="text-xs text-slate-400 mt-2 flex items-center gap-1">
-                                <i class="fa-regular fa-calendar"></i> ${order.date}
-                            </div>
+                            <div class="text-xs text-slate-400 mt-2 flex items-center gap-1"><i class="fa-regular fa-calendar"></i> ${order.date}</div>
                         </div>
-                        <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] uppercase px-2 py-1 rounded-full font-bold tracking-wider">
-                            Pendiente
-                        </span>
+                        <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] uppercase px-2 py-1 rounded-full font-bold tracking-wider">Pendiente</span>
                     </div>
-
                     <div class="mb-4 relative z-10">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-2xl">${order.flag}</span>
-                            <span class="font-bold text-white text-sm">${order.countryName}</span>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-2xl font-extrabold text-white tracking-tight">${order.amountLocalFormatted}</span>
-                            <span class="text-xs text-slate-500 font-bold">$${parseFloat(order.amountUSD).toFixed(2)} USD</span>
-                        </div>
+                        <div class="flex items-center gap-2 mb-2"><span class="text-2xl">${order.flag}</span><span class="font-bold text-white text-sm">${order.countryName}</span></div>
+                        <div class="flex flex-col"><span class="text-2xl font-extrabold text-white tracking-tight">${order.amountLocalFormatted}</span><span class="text-xs text-slate-500 font-bold">$${parseFloat(order.amountUSD).toFixed(2)} USD</span></div>
                     </div>
-                    
                     <div class="flex gap-2 relative z-10">
-                        <button onclick="viewOrderDetails('${order.id}')" class="flex-1 bg-slate-700 hover:bg-brand-cyan hover:text-dark-900 text-white py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-eye"></i> Ver
-                        </button>
-                        <button onclick="openUploadModal('${order.id}')" class="flex-1 bg-brand-purple hover:bg-purple-600 text-white py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-lg shadow-purple-500/20">
-                            <i class="fa-solid fa-upload"></i> Subir
-                        </button>
-                    </div>
-                `;
+                        <button onclick="viewOrderDetails('${order.id}')" class="flex-1 bg-slate-700 hover:bg-brand-cyan hover:text-dark-900 text-white py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"><i class="fa-solid fa-eye"></i> Ver</button>
+                        <button onclick="openUploadModal('${order.id}')" class="flex-1 bg-brand-purple hover:bg-purple-600 text-white py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-lg shadow-purple-500/20"><i class="fa-solid fa-upload"></i> Subir</button>
+                    </div>`;
                 grid.appendChild(card);
             });
         }
 
         window.openUploadModal = function(orderId) {
             window.currentOrderId = orderId; 
-            
-            const orders = JSON.parse(localStorage.getItem('walletOrders')) || [];
+            const orders = getOrders();
             const order = orders.find(o => o.id == orderId);
-
             if (order) {
                 window.currentOrderAmount = `$${parseFloat(order.amountUSD).toFixed(2)} USD`; 
                 document.getElementById('uploadOrderId').textContent = `Pedido #${orderId} - Monto: ${window.currentOrderAmount}`;
-            } else {
-                 window.currentOrderAmount = 'N/A';
-                 document.getElementById('uploadOrderId').textContent = `Pedido #${orderId}`;
             }
-
             document.getElementById('uploadModal').style.display = 'flex';
         }
 
         function openModal() { document.getElementById('mainModal').classList.remove('hidden'); changeStep(1); }
         function closeModal() { document.getElementById('mainModal').classList.add('hidden'); }
+        
         function changeStep(n) {
             state.step = n;
             [1,2,3].forEach(i => {
@@ -357,6 +298,7 @@
             });
             if(n===1){document.getElementById('amountInput').value='';document.getElementById('btnGenerate').disabled=true;document.getElementById('localAmountPreview').textContent='--';}
         }
+
         function renderCountryGrid() {
             const grid = document.getElementById('countryGrid'); grid.innerHTML = '';
             Object.keys(EXCHANGE_DATA).forEach(code => {
@@ -368,6 +310,7 @@
                 grid.appendChild(btn);
             });
         }
+
         document.getElementById('amountInput').addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             const btn = document.getElementById('btnGenerate');
@@ -381,97 +324,40 @@
                 if(val>0) document.getElementById('amountError').classList.remove('hidden');
             }
         });
+
         function createOrder() {
             const id = Math.floor(100000 + Math.random() * 900000);
             const fmt = formatCurrency(state.amountLocalRaw, state.selectedCountry);
-            const d = EXCHANGE_DATA[state.selectedCountry];
-            
             const orderData = {
-                id: id,
-                date: new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit'}) + ' ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-                countryCode: state.selectedCountry, countryName: d.name, flag: d.flag,
-                amountUSD: state.amountUSD, amountLocalRaw: state.amountLocalRaw, amountLocalFormatted: fmt, currency: d.currency
+                id: id, date: new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit'}) + ' ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+                countryCode: state.selectedCountry, countryName: EXCHANGE_DATA[state.selectedCountry].name, flag: EXCHANGE_DATA[state.selectedCountry].flag,
+                amountUSD: state.amountUSD, amountLocalRaw: state.amountLocalRaw, amountLocalFormatted: fmt, currency: EXCHANGE_DATA[state.selectedCountry].currency
             };
-
-            saveOrder(orderData);
-            renderPaymentDetails(orderData);
-            changeStep(3);
+            saveOrder(orderData); renderPaymentDetails(orderData); changeStep(3);
         }
         
-        /**
-         * Genera el texto con el formato solicitado (emojis y asteriscos)
-         */
         function generateFormattedText(order) {
             const d = EXCHANGE_DATA[order.countryCode];
-            let text = `💰 *DATOS DE PAGO* (ID: #${order.id})\n\n`;
-            
-            text += `🌍 *País:* ${d.name}\n`;
-            text += `💸 *Monto a pagar:* ${order.amountLocalFormatted}\n\n`;
-            
-            text += `💳 *MÉTODOS DE PAGO DISPONIBLES:*\n`;
-
+            let text = `💰 *DATOS DE PAGO* (ID: #${order.id})\n\n🌍 *País:* ${d.name}\n💸 *Monto a pagar:* ${order.amountLocalFormatted}\n\n💳 *MÉTODOS DE PAGO DISPONIBLES:*\n`;
             d.methods.forEach(m => {
                 let detailLabel = "📋 Dato:";
                 let detailValue = m.details;
-
-                // Lógica de etiquetado robusta y específica
-                if (m.name === "Bancolombia" && m.details.includes(':')) {
-                    const parts = m.details.split(':');
-                    detailLabel = `📋 ${parts[0].trim()}:`; // Cta Ahorros:
-                    detailValue = parts.slice(1).join(':').trim();
-                } else if (m.name === "Nequi") {
-                    detailLabel = "📋 Nequi:";
-                    detailValue = m.details;
-                } else if (m.name === "Nu Bank") {
-                     detailLabel = "📋 Llave Nu:";
-                    detailValue = m.details;
-                } else if (m.type === "TRANSFERENCIA" || m.type === "BANCO") {
-                    detailLabel = "📋 N° Cuenta:";
-                    detailValue = m.details;
-                } else if (m.type === "APP" || m.type === "ZELLE" || m.type === "PIX") {
-                    detailLabel = `📋 ${m.name} / Cel:`;
-                    detailValue = m.details;
-                } else {
-                    detailLabel = "📋 Dato:";
-                    detailValue = m.details;
-                }
-
-                text += `\n${m.icon} *${m.name}* (${m.type})\n`;
-                text += `${detailLabel} ${detailValue}\n`;
-                text += `💡 ${m.tip}`;
+                if (m.name === "Bancolombia") { detailLabel = "📋 Cta Ahorros:"; detailValue = m.details.split(':').pop().trim(); }
+                else if (m.name === "Nequi") { detailLabel = "📋 Nequi:"; }
+                else if (m.name === "Nu Bank") { detailLabel = "📋 Llave Nu:"; }
+                text += `\n${m.icon} *${m.name}* (${m.type})\n${detailLabel} ${detailValue}\n💡 ${m.tip}\n`;
             });
-
-            text += `\n\n⚠️ *IMPORTANTE:*\n`;
-            text += `• Envía exactamente ${order.amountLocalFormatted}\n`;
-            text += `• Guarda el comprobante de pago\n`;
-            text += `• Envía el comprobante para confirmar el pago\n\n`;
-            text += `✅ *Una vez realizado el pago, será procesado automáticamente.*`;
-            
+            text += `\n⚠️ *IMPORTANTE:*\n• Envía exactamente ${order.amountLocalFormatted}\n• Guarda el comprobante\n\n✅ *Pago procesado automáticamente.*`;
             return text;
         }
 
-        /**
-         * Renderiza los detalles de pago utilizando el formato solicitado.
-         */
         function renderPaymentDetails(order) {
-            
             document.getElementById('ticketId').textContent = `#${order.id}`;
             document.getElementById('finalLocalAmount').textContent = order.amountLocalFormatted;
-            
-            // 1. GENERAR EL TEXTO FORMATEADO
             const formattedText = generateFormattedText(order);
-
-            // 2. INSERTARLO EN EL ELEMENTO <pre>
-            const formattedDisplay = document.getElementById('formattedPaymentDetails');
-            formattedDisplay.textContent = formattedText;
-            
-            // 3. ACTUALIZAR BOTÓN DE COPIAR
-            const btn = document.getElementById('copyAllDetailsBtn'); 
-            // Clonar para asegurar que los listeners antiguos se borren si se renderiza dos veces.
-            const nBtn = btn.cloneNode(true); 
-            btn.parentNode.replaceChild(nBtn, btn);
-
-            // El botón principal ahora copia el texto formateado
+            document.getElementById('formattedPaymentDetails').textContent = formattedText;
+            const btn = document.getElementById('copyAllDetailsBtn');
+            const nBtn = btn.cloneNode(true); btn.parentNode.replaceChild(nBtn, btn);
             nBtn.addEventListener('click', () => copyToClipboard(formattedText, nBtn, true));
         }
 
@@ -484,29 +370,12 @@
             const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
             if(isMainBtn) {
                 const og = document.getElementById('copyBtnText').textContent; 
-                const ic = btnElement.querySelector('i');
-                
-                // Efecto visual de copiado
-                btnElement.classList.remove('bg-slate-800');
-                btnElement.classList.add('bg-brand-green', 'text-dark-900', 'border-brand-green/50'); 
+                btnElement.classList.replace('bg-slate-800', 'bg-brand-green'); 
                 document.getElementById('copyBtnText').textContent = "¡COPIADO!"; 
-                ic.className = "fa-solid fa-check";
-                
-                setTimeout(() => { 
-                    // Restaurar
-                    btnElement.classList.remove('bg-brand-green', 'text-dark-900', 'border-brand-green/50');
-                    btnElement.classList.add('bg-slate-800'); 
-                    document.getElementById('copyBtnText').textContent = og; 
-                    ic.className = "fa-regular fa-copy"; 
-                }, 2000);
-            } else {
-                const ic = btnElement.querySelector('i'); 
-                ic.className = "fa-solid fa-check text-brand-green"; 
-                setTimeout(() => ic.className = "fa-regular fa-copy text-[10px]", 2000);
+                setTimeout(() => { btnElement.classList.replace('bg-brand-green', 'bg-slate-800'); document.getElementById('copyBtnText').textContent = og; }, 2000);
             }
         }
     </script>
-    
     <script type="module" src="upload_logic.js"></script>
 </body>
 </html>
