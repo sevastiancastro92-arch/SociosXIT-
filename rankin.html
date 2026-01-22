@@ -106,6 +106,15 @@
       box-shadow: 0 0 15px rgba(255, 0, 255, 0.4) !important;
     }
 
+    /* ESTILO BOTÓN ADMIN (Edición) */
+    .admin-edit-btn {
+        background: #ff0000; color: white; border: 1px solid #fff;
+        border-radius: 4px; padding: 2px 6px; margin-left: 8px;
+        cursor: pointer; font-weight: bold; font-size: 10px;
+        box-shadow: 0 0 5px #ff0000;
+    }
+    .admin-edit-btn:hover { background: #cc0000; }
+
     /* Animaciones */
     .animate-tilt { animation: tilt 4s infinite linear; }
     @keyframes tilt { 0%, 50%, 100% { transform: rotate(0deg); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
@@ -184,6 +193,10 @@
     </div>
   </div>
 
+  <button id="btnAdmin" class="hidden fixed bottom-4 right-4 z-50 bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded-full border-2 border-white shadow-[0_0_15px_red] animate-pulse transition-all">
+    💀 ADMIN
+  </button>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
@@ -198,10 +211,15 @@
     const db = firebase.database();
 
     const currentUser = sessionStorage.getItem("sociosxit_user");
+    // Variables para el modo ADMIN
+    let isAdminMode = false;
+    const btnAdmin = document.getElementById("btnAdmin");
+
     if (!currentUser) window.location.href = "index.html";
     else {
         document.getElementById('headerUserName').textContent = currentUser.split('@')[0].toUpperCase();
         loadUserBalance();
+        checkAdminAccess(); // Verificar si es LK-XT
     }
 
     const listRecharges = document.getElementById("listRecharges");
@@ -211,11 +229,48 @@
     const countdownTimer = document.getElementById("countdownTimer");
 
     function sanitizeEmail(email) { return email.replace(/\./g, "_"); }
+    
     function loadUserBalance() {
         const userKey = sanitizeEmail(currentUser);
         db.ref(`users/${userKey}/balance`).on("value", snap => {
             const val = parseFloat(snap.val() || 0);
             document.getElementById('headerBalance').textContent = `$${val.toFixed(2)}`;
+        });
+    }
+
+    // --- FUNCIONALIDAD ADMIN ---
+    function checkAdminAccess() {
+        // Verifica si el usuario actual es LK-XT
+        if(currentUser.toUpperCase().includes("LK-XT") || currentUser.toUpperCase().includes("LK XT")) {
+            btnAdmin.classList.remove("hidden");
+            btnAdmin.addEventListener("click", () => {
+                isAdminMode = !isAdminMode;
+                btnAdmin.style.backgroundColor = isAdminMode ? "#000" : "#d60000";
+                btnAdmin.innerHTML = isAdminMode ? "❌ SALIR" : "💀 ADMIN";
+                // Recargar rankings para mostrar/ocultar lápices
+                loadRankings();
+            });
+        }
+    }
+
+    window.editPoints = function(userId, currentName) {
+        let amount = prompt(`ADMIN LK-XT:\nEditar saldo para: ${currentName}\n\nIngresa cantidad (ej: 50 para sumar, -20 para restar):`);
+        if(!amount) return;
+        
+        let val = parseFloat(amount);
+        if(isNaN(val)) {
+            alert("Número inválido");
+            return;
+        }
+
+        db.ref('users/' + userId + '/balance').transaction((currentBalance) => {
+            return (currentBalance || 0) + val;
+        }, (error, committed, snapshot) => {
+            if (error) {
+                alert('Error al actualizar.');
+            } else if (committed) {
+                alert(`✅ Saldo actualizado para ${currentName}. Nuevo saldo: $${snapshot.val()}`);
+            }
         });
     }
 
@@ -241,6 +296,7 @@
 
         Object.keys(usersData).forEach(key => {
             let displayName = key.replace(/_gmail_com|_hotmail_com|_outlook_com/g, "").replace(/_/g, "");
+            // Excluir al propio LK-XT de la lista si se desea, o dejarlo
             if (displayName === "LK-XT" || displayName === "LK XT" || key.includes("LK-XT")) return;
 
             const u = usersData[key];
@@ -322,16 +378,14 @@
                 textClass = "text-fuchsia-200 font-bold tracking-wider drop-shadow-[0_0_5px_magenta]";
             }
 
-            // Color del dinero neón
-            const amountClass = user[valueKey] > 0 ? "text-cyan-300 drop-shadow-[0_0_3px_cyan]" : "text-gray-700";
-            if (valueKey === 'cycleSpent' && user[valueKey] > 0) {
-                 // Para gastos usamos color rosa neón
-                 // No tengo acceso directo a amountClass aquí fácilmente sin refactor, 
-                 // pero podemos usar css inline o clases utilitarias.
-                 // Dejémoslo consistente cian, o cambiémoslo dinámicamente:
-            }
-            const finalAmountClass = (valueKey === 'cycleSpent' && user[valueKey] > 0) ? "text-pink-300 drop-shadow-[0_0_3px_magenta]" : amountClass;
+            const finalAmountClass = (valueKey === 'cycleSpent' && user[valueKey] > 0) ? "text-pink-300 drop-shadow-[0_0_3px_magenta]" : (user[valueKey] > 0 ? "text-cyan-300 drop-shadow-[0_0_3px_cyan]" : "text-gray-700");
 
+            // --- LÓGICA DE BOTÓN EDITAR PARA LK-XT ---
+            let adminBtnHtml = "";
+            // Solo mostrar lápiz si está activado el modo admin Y es la lista de recargas
+            if (isAdminMode && valueKey === 'cycleRecharged') {
+                adminBtnHtml = `<button onclick="editPoints('${user.id}', '${user.name}')" class="admin-edit-btn">✏️</button>`;
+            }
 
             const html = `
                 <div class="rank-row ${rowClass}">
@@ -339,7 +393,7 @@
                         <div class="rank-circle ${circleClass}">${rank}</div>
                         <div class="flex flex-col min-w-0">
                             <span class="${textClass} uppercase truncate flex items-center gap-1">
-                                ${user.name} <span class="text-[10px]">${icon}</span>
+                                ${user.name} <span class="text-[10px]">${icon}</span> ${adminBtnHtml}
                             </span>
                         </div>
                     </div>
