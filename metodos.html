@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard | Mi Billetera</title>
+    <title>Billetera | SociosXIT</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,8 +21,8 @@
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        dark: { 900: '#0f172a', 800: '#1e293b', 700: '#334155', 600: '#475569' },
-                        brand: { cyan: '#06B6D4', green: '#10B981', yellow: '#FBBF24', pink: '#EC4899', purple: '#8B5CF6' }
+                        dark: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
+                        brand: { cyan: '#06B6D4', green: '#10B981', purple: '#8B5CF6' }
                     }
                 }
             }
@@ -36,346 +36,227 @@
             color: #f1f5f9;
             min-height: 100vh;
         }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .custom-scrollbar { overflow-y: auto; scrollbar-width: thin; scrollbar-color: #334155 rgba(15, 23, 42, 0.5); }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .step-hidden { display: none !important; }
         .step-active { display: block !important; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        .payment-format {
-            white-space: pre-wrap;
-            font-size: 11px;
-            font-family: monospace;
-            background-color: #0f172a; 
-            border: 1px solid #334155; 
-            padding: 12px;
-            border-radius: 8px;
-            color: #f1f5f9; 
-            overflow-x: auto;
-            line-height: 1.4;
-        }
+        .payment-format { white-space: pre-wrap; font-size: 11px; font-family: monospace; background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid #334155; }
     </style>
 </head>
 <body class="p-4 md:p-6 flex justify-center items-start pt-6">
 
     <div class="w-full max-w-4xl space-y-8">
         
-        <div class="glass-panel p-6 rounded-3xl shadow-2xl relative overflow-hidden border border-slate-700/50">
-            <div class="absolute top-4 left-6">
-                <p class="text-xs text-brand-cyan font-mono">Hola, <span id="userDisplay">Cargando...</span></p>
-            </div>
-
-            <div class="text-center mb-6 mt-4">
-                <h1 class="text-xl md:text-2xl font-bold text-brand-green flex items-center justify-center gap-2 drop-shadow-md">
-                    <i class="fa-solid fa-star text-yellow-400"></i> Sistema de Recarga Internacional
-                </h1>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-dark-900/60 p-5 rounded-2xl border border-white/5 flex flex-col items-center text-center shadow-inner">
-                    <i class="fa-regular fa-credit-card text-2xl text-yellow-400 mb-2"></i>
-                    <h3 class="font-bold text-white">Múltiples Métodos</h3>
-                    <p class="text-xs text-slate-400">Bancos, efectivo y más</p>
+        <div class="glass-panel p-6 rounded-3xl shadow-2xl relative overflow-hidden">
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <p class="text-xs text-brand-cyan font-mono uppercase tracking-wider">Cuenta Activa</p>
+                    <h2 id="userDisplay" class="text-xl font-bold">Cargando usuario...</h2>
+                    <p id="userBalanceDisplay" class="text-2xl font-black text-white mt-1">$0.00 <span class="text-sm font-normal text-slate-500">USD</span></p>
                 </div>
-                <div class="bg-dark-900/60 p-5 rounded-2xl border border-white/5 flex flex-col items-center text-center shadow-inner">
-                    <i class="fa-solid fa-rocket text-2xl text-red-500 mb-2"></i>
-                    <h3 class="font-bold text-white">Proceso Rápido</h3>
-                    <p class="text-xs text-slate-400">Recargas automáticas</p>
-                </div>
-            </div>
-
-            <div class="text-center text-[11px] text-slate-400 flex items-center justify-center gap-2 mb-6">
-                <i class="fa-solid fa-circle-exclamation text-red-500"></i>
-                <span>Disponible para todos con saldo retirable • Mínimo $3.00 USD</span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <button onclick="openModal()" class="bg-gradient-to-r from-lime-400 to-green-500 hover:from-lime-300 hover:to-green-400 text-dark-900 font-extrabold py-4 rounded-full shadow-[0_0_20px_rgba(132,204,22,0.4)] transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 text-lg">
-                    <i class="fa-solid fa-sack-dollar"></i> Recargar Saldo
-                </button>
-                <button class="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-300 hover:to-amber-400 text-white font-extrabold py-4 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 text-lg">
-                    <i class="fa-solid fa-building-columns"></i> Retirar Fondos
+                <button onclick="cerrarSesion()" class="bg-red-500/10 text-red-500 p-2 rounded-lg hover:bg-red-500 hover:text-white transition">
+                    <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button onclick="document.getElementById('historySection').scrollIntoView({behavior: 'smooth'})" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 rounded-full font-bold shadow-lg flex items-center justify-center gap-2 text-sm opacity-90 hover:opacity-100 transition-opacity">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Historial de Recargas
+                <button onclick="openModal()" class="bg-brand-green text-dark-900 font-extrabold py-4 rounded-2xl shadow-lg shadow-green-500/20 flex items-center justify-center gap-2 hover:scale-[1.02] transition">
+                    <i class="fa-solid fa-sack-dollar text-xl"></i> RECARGAR SALDO
                 </button>
-                <button onclick="cerrarSesion()" class="bg-gradient-to-r from-red-500 to-rose-600 text-white py-3 rounded-full font-bold shadow-lg flex items-center justify-center gap-2 text-sm opacity-90 hover:opacity-100 transition-opacity">
-                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                <button class="bg-dark-800 text-slate-400 font-bold py-4 rounded-2xl border border-slate-700 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+                    <i class="fa-solid fa-building-columns"></i> RETIRAR FONDOS
                 </button>
             </div>
         </div>
 
         <div id="historySection">
-            <div class="border-2 border-yellow-500/30 rounded-2xl p-4 text-center bg-black/20 mb-6 backdrop-blur-sm">
-                <h2 class="text-xl font-bold text-yellow-400 flex items-center justify-center gap-3">
-                   <i class="fa-solid fa-sack-dollar text-2xl"></i> Historial de Recargas
-                </h2>
-            </div>
-            
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-brand-cyan"></i> Mis Pedidos de Recarga</h2>
             <div id="historyGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-
-            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 text-slate-500">
-                <i class="fa-solid fa-receipt text-6xl mb-4 opacity-30"></i>
-                <p class="text-lg font-medium">No hay movimientos recientes</p>
-                <p class="text-sm opacity-70">Tus pedidos de recarga aparecerán aquí.</p>
+            <div id="emptyState" class="hidden text-center py-10 text-slate-500">
+                <i class="fa-solid fa-receipt text-4xl mb-2 opacity-20"></i>
+                <p>No tienes pedidos pendientes.</p>
             </div>
         </div>
-
     </div>
 
     <div id="mainModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        <div class="bg-dark-800 border border-slate-700 w-full max-w-sm rounded-2xl shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh]">
-            <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white z-20 bg-dark-900/80 rounded-full p-2 w-8 h-8 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
-
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-dark-800 border border-slate-700 w-full max-w-sm rounded-3xl relative overflow-hidden flex flex-col max-h-[85vh]">
+            
             <div id="step1" class="step-active flex flex-col h-full">
-                <div class="p-4 border-b border-slate-700 bg-dark-900/50 shrink-0 z-10">
-                    <h2 class="text-lg font-bold text-white text-center">Seleccionar País</h2>
-                </div>
-                <div class="h-96 overflow-y-auto p-3 custom-scrollbar bg-dark-900/20 overscroll-contain">
-                    <div class="grid grid-cols-2 gap-2" id="countryGrid"></div>
-                </div>
+                <div class="p-5 border-b border-slate-700 text-center font-bold">Selecciona tu País</div>
+                <div class="overflow-y-auto p-4 grid grid-cols-2 gap-2" id="countryGrid"></div>
             </div>
 
-            <div id="step2" class="step-hidden flex flex-col h-full justify-center p-6 relative">
-                <button onclick="changeStep(1)" class="absolute top-4 left-4 text-slate-400 hover:text-brand-cyan text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-colors"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-                <div class="w-full text-center mt-4">
-                    <div class="text-5xl mb-4 drop-shadow-lg" id="selectedFlag">🇺🇸</div>
-                    <h2 class="text-lg font-bold text-white mb-6">Monto a Recargar</h2>
-                    <div class="bg-dark-900 p-4 rounded-xl border border-slate-700 mb-6 shadow-inner">
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">USD (Mínimo $3.00)</label>
-                        <div class="relative flex items-center justify-center">
-                            <span class="text-xl text-slate-500 font-bold mr-1">$</span>
-                            <input type="number" id="amountInput" min="3" step="0.01" class="w-32 bg-transparent border-b-2 border-slate-600 py-1 text-white text-2xl font-bold focus:border-brand-cyan focus:outline-none transition-all placeholder-slate-700 text-center" placeholder="0.00">
-                        </div>
-                        <div class="mt-3 pt-2 border-t border-slate-700/50 flex justify-between items-center text-xs">
-                            <span class="text-slate-400">Total Local:</span>
-                            <span id="localAmountPreview" class="text-brand-yellow font-bold text-sm">--</span>
-                        </div>
-                    </div>
-                    <button onclick="createOrder()" id="btnGenerate" disabled class="w-full bg-brand-cyan hover:bg-cyan-500 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed text-dark-900 font-bold py-3 rounded-xl transition-all shadow-lg shadow-cyan-500/20 text-sm">Continuar</button>
-                    <p id="amountError" class="text-red-400 text-[10px] mt-3 hidden bg-red-500/10 py-1 px-3 rounded-full inline-block border border-red-500/20">Mínimo $3.00 USD</p>
+            <div id="step2" class="step-hidden p-8 text-center">
+                <div id="selectedFlag" class="text-6xl mb-4"></div>
+                <h3 class="font-bold text-xl mb-6">Monto a Recargar</h3>
+                <div class="bg-dark-900 p-5 rounded-2xl border border-slate-700 mb-6">
+                    <span class="text-xs text-slate-500 font-bold uppercase">USD (Mínimo $3.00)</span>
+                    <input type="number" id="amountInput" min="3" class="w-full bg-transparent text-3xl font-black text-center outline-none text-brand-green mt-2" placeholder="0.00">
+                    <p id="localAmountPreview" class="text-sm text-yellow-500 font-bold mt-2">--</p>
                 </div>
+                <button onclick="createOrder()" id="btnGenerate" disabled class="w-full bg-brand-cyan text-dark-900 font-bold py-4 rounded-xl disabled:opacity-30">GENERAR PEDIDO</button>
+                <button onclick="changeStep(1)" class="mt-4 text-xs text-slate-500 uppercase font-bold">Volver</button>
             </div>
 
-            <div id="step3" class="step-hidden flex flex-col h-full overflow-hidden">
-                <div class="bg-brand-green/10 border-b border-brand-green/20 p-3 shrink-0 flex items-center justify-between">
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-brand-green"></i><span class="font-bold text-brand-green text-sm">Pedido Generado</span></div>
-                    <span id="ticketId" class="font-mono text-[10px] text-brand-green bg-brand-green/10 px-2 py-1 rounded">#0000</span>
-                </div>
-                <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            <div id="step3" class="step-hidden flex flex-col h-full">
+                <div class="p-4 bg-brand-green/10 text-brand-green text-center font-bold text-sm">¡Pedido Generado!</div>
+                <div class="p-6 overflow-y-auto space-y-4">
                     <div class="text-center">
-                        <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Debes transferir</p>
-                        <p id="finalLocalAmount" class="text-2xl font-extrabold text-white">--</p>
+                        <p class="text-xs text-slate-500 uppercase font-bold">Total a transferir</p>
+                        <p id="finalLocalAmount" class="text-3xl font-black text-white"></p>
                     </div>
                     <pre id="formattedPaymentDetails" class="payment-format"></pre>
-                    <button id="copyAllDetailsBtn" class="w-full py-2.5 bg-slate-800 border border-brand-cyan/30 text-brand-cyan font-bold rounded-lg flex justify-center items-center gap-2 hover:bg-slate-700 transition-all text-xs"><i class="fa-regular fa-copy"></i><span id="copyBtnText">COPIAR DATOS</span></button>
+                    <button id="copyAllDetailsBtn" class="w-full bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20 py-3 rounded-xl font-bold text-xs">COPIAR DATOS DE PAGO</button>
                 </div>
-                <div class="p-3 border-t border-slate-700 bg-dark-900 shrink-0"><button onclick="closeModal()" class="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition text-xs">Cerrar Ventana</button></div>
+                <div class="p-4 bg-dark-900"><button onclick="closeModal()" class="w-full py-3 bg-slate-700 rounded-xl text-sm font-bold">LISTO, YA PAGUÉ</button></div>
             </div>
-        </div>
-    </div>
-
-    <div id="uploadModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-dark-800 border border-brand-purple/50 w-full max-w-sm rounded-2xl shadow-[0_0_30px_rgba(139,92,246,0.3)] p-6 relative">
-            <button onclick="document.getElementById('uploadModal').style.display='none'" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-xl font-bold text-brand-purple text-center mb-1">Subir Comprobante</h2>
-            <p class="text-xs text-slate-400 text-center mb-6" id="uploadOrderId">Pedido #---</p>
-            <input type="file" id="fileInput" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-purple file:text-white hover:file:bg-purple-600 mb-4 cursor-pointer bg-dark-900 rounded-lg border border-slate-700 p-2">
-            <textarea id="messageInput" placeholder="Mensaje opcional..." class="w-full bg-dark-900 border border-slate-700 rounded-lg p-3 text-sm text-white mb-4 h-24 focus:outline-none focus:border-brand-purple resize-none"></textarea>
-            <button onclick="window.sendComprobante()" id="btnSendUpload" class="w-full bg-brand-purple hover:bg-purple-600 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-purple-500/20">Enviar Comprobante 🚀</button>
         </div>
     </div>
 
     <script>
-        const disp = document.getElementById("userDisplay");
-        if(disp) disp.innerText = "Usuario";
+        const db = firebase.database();
+        let currentUser = null;
+        let userPath = "";
 
-        function cerrarSesion() { window.location.reload(); }
+        // 1. COMPROBAR LOGUEO (SISTEMA SOCIOSXIT)
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                userPath = user.email.replace(/\./g, '_');
+                document.getElementById('userDisplay').innerText = user.email;
+                
+                // Cargar Saldo en Tiempo Real
+                db.ref(`users/${userPath}/balance`).on('value', (s) => {
+                    const balance = parseFloat(s.val() || 0);
+                    document.getElementById('userBalanceDisplay').innerHTML = `$${balance.toFixed(2)} <span class="text-sm font-normal text-slate-500">USD</span>`;
+                });
 
-        // EXCHANGE DATA SIN COSTA RICA
+                // Cargar Historial
+                loadHistory();
+            } else {
+                // Si no hay usuario, mandarlo al login de tu web
+                window.location.href = "login.html"; 
+            }
+        });
+
+        function cerrarSesion() {
+            firebase.auth().signOut().then(() => window.location.reload());
+        }
+
+        // 2. CONFIGURACIÓN DE PAÍSES
         const EXCHANGE_DATA = {
-            ARG: { name: "Argentina", flag: "🇦🇷", currency: "ARS", locale: "es-AR", decimals: 0, rate: 150000, methods: [{icon: "🟡", name: "Uala", type: "TRANSFERENCIA", details: "CVU: 0000007900203350273548", tip: "Alias: C.CORREA1315.UALA"}] },
-            BOL: { name: "Bolivia", flag: "🇧🇴", currency: "BOB", locale: "es-BO", decimals: 2, rate: 12, methods: [{icon: "🟡", name: "Yape", type: "APP", details: "N° Cuenta: 62656932", tip: "Envía dinero por Yape"}, {icon: "🟡", name: "Yape QR", type: "QR", details: "Link: https://i.postimg.cc/YCg1rRGF/qrbolivia.jpg", tip: "Escanea el QR para pagar", isQR: true, qrLink: "https://i.postimg.cc/YCg1rRGF/qrbolivia.jpg"}, {icon: "🔵", name: "BCP", type: "BANCO", details: "N° Cuenta: 20152008832355", tip: "Transferencia BCP"}] },
-            BRL: { name: "Brasil", flag: "🇧🇷", currency: "BRL", locale: "pt-BR", decimals: 2, rate: 5.20, methods: [{icon: "🟣", name: "PIX", type: "PIX", details: "Chave PIX: 91991076791", tip: "Copia y pega la llave PIX"}] },
-            CHL: { name: "Chile", flag: "🇨🇱", currency: "CLP", locale: "es-CL", decimals: 0, rate: 950, methods: [{icon: "🟡", name: "Banco Estado", type: "CAJA VECINA", details: "RUT: 23.710.151-0", tip: "CuentaRUT: 23710151"}, {icon: "🔵", name: "Banco Estado", type: "TRANSF.", details: "RUT: 23.710.151-0", tip: "CuentaRUT: 23710151"}] },
-            COL: { name: "Colombia", flag: "🇨🇴", currency: "COP", locale: "es-CO", decimals: 0, rate: 3800, methods: [{icon: "🟡", name: "Bancolombia", type: "TRANSFERENCIA", details: "Cta Ahorros: 76900007797", tip: "Transferencia Ahorros Bancolombia"}, {icon: "🔵", name: "Nequi", type: "EFECTIVO", details: "3214701288 sebas.. colo..", tip: "Envía dinero por Nequi"}, {icon: "🟣", name: "Nu Bank", type: "TRANSFERENCIA", details: "@PMG3555", tip: "Transferencia Nu Bank"}] },
-            DOM: { name: "Rep. Dominicana", flag: "🇩🇴", currency: "DOP", locale: "es-DO", decimals: 2, rate: 68.00, methods: [{icon: "🟡", name: "Banreservas", type: "BANCO", details: "Cta: 9601546622", tip: "Transferencia Banreservas"}, {icon: "🔵", name: "Popular", type: "BANCO", details: "Cta: 837147719", tip: "Transferencia Popular"}, {icon: "🟣", name: "BHD León", type: "BANCO", details: "Cta: 34478720012", tip: "Transferencia BHD"}, {icon: "🟢", name: "Qik", type: "APP", details: "Cta: 1002173707", tip: "Envía dinero a Qik"}] },
-            ECU: { name: "Ecuador", flag: "🇪🇨", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{icon: "🟡", name: "Pichincha", type: "BANCO", details: "Cta: 2207195565", tip: "Transferencia Pichincha"}] },
-            USA: { name: "Estados Unidos", flag: "🇺🇸", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{icon: "🟢", name: "Zelle", type: "ZELLE", details: "+1 (754) 317-1482", tip: "Transferencia Zelle"}] },
-            GTM: { name: "Guatemala", flag: "🇬🇹", currency: "GTQ", locale: "es-GT", decimals: 2, rate: 7.8, methods: [{icon: "🟡", name: "Banrural", type: "BANCO", details: "Cta: 4431164091", tip: "Transferencia Banrural"}] },
-            HND: { name: "Honduras", flag: "🇭🇳", currency: "HNL", locale: "es-HN", decimals: 2, rate: 25.00, methods: [{icon: "🟡", name: "Bampais", type: "BANCO", details: "Cta: 216400100524", tip: "Transferencia Bampais"}] },
-            MEX: { name: "México", flag: "🇲🇽", currency: "MXN", locale: "es-MX", decimals: 2, rate: 20.00, methods: [{icon: "🟣", name: "Albo", type: "SPEI", details: "Cta: 721180100042683432", tip: "Transferencia SPEI a Albo"}, {icon: "🟡", name: "Nu (OXXO)", type: "DEPÓSITO", details: "Tarjeta: 5101 2506 8691 9389", tip: "Depósito en OXXO a tarjeta Nu"}] },
-            NIC: { name: "Nicaragua", flag: "🇳🇮", currency: "NIO", locale: "es-NI", decimals: 0, rate: 36.5, methods: [{icon: "🟡", name: "BAC", type: "BANCO", details: "Cta: 371674409", tip: "Transferencia BAC"}] },
-            PAN: { name: "Panamá", flag: "🇵🇦", currency: "USD", locale: "en-US", decimals: 2, rate: 1, methods: [{icon: "🟢", name: "Punto Pago", type: "APP", details: "+584128975265", tip: "Envía dinero por Punto Pago"}, {icon: "🟡", name: "Zinli", type: "APP", details: "chauran2001@gmail.com", tip: "Envía por Zinli"}] },
-            PRY: { name: "Paraguay", flag: "🇵🇾", currency: "PYG", locale: "es-PY", decimals: 0, rate: 7300, methods: [{icon: "🟡", name: "Itau", type: "BANCO", details: "Cta: 300406285", tip: "Transferencia Itau"}, {icon: "🔵", name: "Personal", type: "APP", details: "0993363424", tip: "Envía por Personal Pay"}] },
-            PER: { name: "Perú", flag: "🇵🇪", currency: "PEN", locale: "es-PE", decimals: 2, rate: 3.8, methods: [{icon: "🟢", name: "Yape/Plin", type: "APP", details: "954302258", tip: "Envía por Yape o Plin"}] },
-            VEN: { name: "Venezuela", flag: "🇻🇪", currency: "VES", locale: "es-VE", decimals: 2, rate: 350, methods: [{icon: "🟡", name: "Pago Móvil", type: "MÓVIL", details: "0102 - 04128975265 - 31303430", tip: "Datos Pago Móvil"}] }
+            ARG: { name: "Argentina", flag: "🇦🇷", rate: 1500, currency: "ARS", methods: "Uala: CVU 0000007900203350273548" },
+            COL: { name: "Colombia", flag: "🇨🇴", rate: 4000, currency: "COP", methods: "Nequi: 3214701288\nBancolombia: Ahorros 76900007797" },
+            MEX: { name: "México", flag: "🇲🇽", rate: 18, currency: "MXN", methods: "SPEI: 721180100042683432" },
+            USA: { name: "Zelle / USA", flag: "🇺🇸", rate: 1, currency: "USD", methods: "Zelle: +1 754 317 1482" },
+            VEN: { name: "Venezuela", flag: "🇻🇪", rate: 45, currency: "VES", methods: "Pago Móvil: 0102 - 04128975265 - 31303430" }
         };
 
-        let state = { step: 1, selectedCountry: null, amountUSD: 0, amountLocalRaw: 0 };
-        window.currentOrderId = null; 
-        window.currentOrderAmount = null;
-
-        document.addEventListener('DOMContentLoaded', () => { renderHistory(); renderCountryGrid(); });
-
-        function formatCurrency(amount, countryCode) {
-            const country = EXCHANGE_DATA[countryCode];
-            return new Intl.NumberFormat(country.locale, {
-                style: 'currency', currency: country.currency,
-                minimumFractionDigits: country.decimals, maximumFractionDigits: country.decimals
-            }).format(amount);
-        }
-
-        function getOrders() { return JSON.parse(localStorage.getItem('walletOrders')) || []; }
-        function saveOrder(order) {
-            const orders = getOrders();
-            orders.unshift(order);
-            localStorage.setItem('walletOrders', JSON.stringify(orders));
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const orders = getOrders();
-            const grid = document.getElementById('historyGrid');
-            grid.innerHTML = '';
-            if (orders.length === 0) { document.getElementById('emptyState').classList.remove('hidden'); return; }
-            document.getElementById('emptyState').classList.add('hidden');
-
-            orders.forEach(order => {
-                const card = document.createElement('div');
-                card.className = "bg-dark-800 border border-slate-700 p-5 rounded-2xl hover:border-brand-cyan transition-all duration-300 shadow-lg relative group overflow-hidden";
-                card.innerHTML = `
-                    <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none"><span class="text-6xl grayscale">${order.flag}</span></div>
-                    <div class="flex justify-between items-start mb-4 relative z-10">
-                        <div>
-                            <span class="text-[10px] text-slate-500 font-mono bg-dark-900 px-2 py-1 rounded border border-slate-700">#${order.id}</span>
-                            <div class="text-xs text-slate-400 mt-2 flex items-center gap-1"><i class="fa-regular fa-calendar"></i> ${order.date}</div>
-                        </div>
-                        <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] uppercase px-2 py-1 rounded-full font-bold tracking-wider">Pendiente</span>
-                    </div>
-                    <div class="mb-4 relative z-10">
-                        <div class="flex items-center gap-2 mb-2"><span class="text-2xl">${order.flag}</span><span class="font-bold text-white text-sm">${order.countryName}</span></div>
-                        <div class="flex flex-col"><span class="text-2xl font-extrabold text-white tracking-tight">${order.amountLocalFormatted}</span><span class="text-xs text-slate-500 font-bold">$${parseFloat(order.amountUSD).toFixed(2)} USD</span></div>
-                    </div>
-                    <div class="flex gap-2 relative z-10">
-                        <button onclick="viewOrderDetails('${order.id}')" class="flex-1 bg-slate-700 hover:bg-brand-cyan hover:text-dark-900 text-white py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"><i class="fa-solid fa-eye"></i> Ver</button>
-                        <button onclick="openUploadModal('${order.id}')" class="flex-1 bg-brand-purple hover:bg-purple-600 text-white py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-lg shadow-purple-500/20"><i class="fa-solid fa-upload"></i> Subir</button>
-                    </div>`;
-                grid.appendChild(card);
-            });
-        }
-
-        window.openUploadModal = function(orderId) {
-            window.currentOrderId = orderId; 
-            const orders = getOrders();
-            const order = orders.find(o => o.id == orderId);
-            if (order) {
-                window.currentOrderAmount = `$${parseFloat(order.amountUSD).toFixed(2)} USD`; 
-                document.getElementById('uploadOrderId').textContent = `Pedido #${orderId} - Monto: ${window.currentOrderAmount}`;
-            }
-            document.getElementById('uploadModal').style.display = 'flex';
-        }
-
-        function openModal() { document.getElementById('mainModal').classList.remove('hidden'); changeStep(1); }
-        function closeModal() { document.getElementById('mainModal').classList.add('hidden'); }
-        
-        function changeStep(n) {
-            state.step = n;
-            [1,2,3].forEach(i => {
-                const el = document.getElementById(`step${i}`);
-                if(i===n){el.classList.remove('step-hidden');el.classList.add('step-active')}
-                else{el.classList.add('step-hidden');el.classList.remove('step-active')}
-            });
-            if(n===1){document.getElementById('amountInput').value='';document.getElementById('btnGenerate').disabled=true;document.getElementById('localAmountPreview').textContent='--';}
-        }
+        let state = { selectedCountry: null, amountUSD: 0 };
 
         function renderCountryGrid() {
-            const grid = document.getElementById('countryGrid'); grid.innerHTML = '';
+            const grid = document.getElementById('countryGrid');
+            grid.innerHTML = '';
             Object.keys(EXCHANGE_DATA).forEach(code => {
                 const c = EXCHANGE_DATA[code];
-                const btn = document.createElement('button');
-                btn.className = "bg-dark-700 hover:bg-dark-600 border border-slate-600 hover:border-brand-cyan p-2.5 rounded-lg flex items-center gap-3 transition-all group text-left";
-                btn.onclick = () => { state.selectedCountry = code; document.getElementById('selectedFlag').textContent = c.flag; changeStep(2); };
-                btn.innerHTML = `<span class="text-2xl shrink-0 group-hover:scale-110 transition-transform">${c.flag}</span><div class="overflow-hidden"><span class="text-[11px] font-bold text-slate-200 group-hover:text-white uppercase block truncate">${c.name}</span><span class="text-[9px] text-slate-500 font-mono">${c.currency}</span></div>`;
-                grid.appendChild(btn);
+                grid.innerHTML += `
+                    <button onclick="selectCountry('${code}')" class="bg-dark-700 p-4 rounded-2xl border border-transparent hover:border-brand-cyan transition text-left">
+                        <span class="text-3xl">${c.flag}</span>
+                        <p class="text-[10px] font-bold uppercase text-slate-400 mt-2">${c.name}</p>
+                    </button>
+                `;
             });
+        }
+
+        function selectCountry(code) {
+            state.selectedCountry = code;
+            document.getElementById('selectedFlag').innerText = EXCHANGE_DATA[code].flag;
+            changeStep(2);
         }
 
         document.getElementById('amountInput').addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             const btn = document.getElementById('btnGenerate');
-            if(!isNaN(val) && val >= 3) {
-                btn.disabled = false; document.getElementById('amountError').classList.add('hidden');
-                state.amountUSD = val;
-                state.amountLocalRaw = val * EXCHANGE_DATA[state.selectedCountry].rate;
-                document.getElementById('localAmountPreview').textContent = formatCurrency(state.amountLocalRaw, state.selectedCountry);
+            if (val >= 3) {
+                btn.disabled = false;
+                const local = val * EXCHANGE_DATA[state.selectedCountry].rate;
+                document.getElementById('localAmountPreview').innerText = `Total: ${local.toLocaleString()} ${EXCHANGE_DATA[state.selectedCountry].currency}`;
             } else {
-                btn.disabled = true; document.getElementById('localAmountPreview').textContent = '--';
-                if(val>0) document.getElementById('amountError').classList.remove('hidden');
+                btn.disabled = true;
+                document.getElementById('localAmountPreview').innerText = "--";
             }
         });
 
+        // 3. CREAR PEDIDO Y ENVIAR A FIREBASE (ADMIN)
         function createOrder() {
+            const amountUSD = parseFloat(document.getElementById('amountInput').value);
             const id = Math.floor(100000 + Math.random() * 900000);
-            const fmt = formatCurrency(state.amountLocalRaw, state.selectedCountry);
-            const orderData = {
-                id: id, date: new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit'}) + ' ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-                countryCode: state.selectedCountry, countryName: EXCHANGE_DATA[state.selectedCountry].name, flag: EXCHANGE_DATA[state.selectedCountry].flag,
-                amountUSD: state.amountUSD, amountLocalRaw: state.amountLocalRaw, amountLocalFormatted: fmt, currency: EXCHANGE_DATA[state.selectedCountry].currency
+            const country = EXCHANGE_DATA[state.selectedCountry];
+            
+            const order = {
+                id: id,
+                userEmail: currentUser.email,
+                userPath: userPath,
+                amountUSD: amountUSD,
+                amountLocal: (amountUSD * country.rate).toLocaleString() + " " + country.currency,
+                status: "pendiente",
+                date: new Date().toLocaleString(),
+                flag: country.flag
             };
-            saveOrder(orderData); renderPaymentDetails(orderData); changeStep(3);
-        }
-        
-        function generateFormattedText(order) {
-            const d = EXCHANGE_DATA[order.countryCode];
-            let text = `💰 *DATOS DE PAGO* (ID: #${order.id})\n\n🌍 *País:* ${d.name}\n💸 *Monto a pagar:* ${order.amountLocalFormatted}\n\n💳 *MÉTODOS DE PAGO DISPONIBLES:*\n`;
-            d.methods.forEach(m => {
-                let detailLabel = "📋 Dato:";
-                let detailValue = m.details;
-                if (m.name === "Bancolombia") { detailLabel = "📋 Cta Ahorros:"; detailValue = m.details.split(':').pop().trim(); }
-                else if (m.name === "Nequi") { detailLabel = "📋 Nequi:"; }
-                else if (m.name === "Nu Bank") { detailLabel = "📋 Llave Nu:"; }
-                text += `\n${m.icon} *${m.name}* (${m.type})\n${detailLabel} ${detailValue}\n💡 ${m.tip}\n`;
+
+            // Guardar en la rama global para el Admin
+            db.ref(`pedidos_recarga/${id}`).set(order).then(() => {
+                showOrderDetails(order, country.methods);
+                changeStep(3);
             });
-            text += `\n⚠️ *IMPORTANTE:*\n• Envía exactamente ${order.amountLocalFormatted}\n• Guarda el comprobante\n\n✅ *Pago procesado automáticamente.*`;
-            return text;
         }
 
-        function renderPaymentDetails(order) {
-            document.getElementById('ticketId').textContent = `#${order.id}`;
-            document.getElementById('finalLocalAmount').textContent = order.amountLocalFormatted;
-            const formattedText = generateFormattedText(order);
-            document.getElementById('formattedPaymentDetails').textContent = formattedText;
-            const btn = document.getElementById('copyAllDetailsBtn');
-            const nBtn = btn.cloneNode(true); btn.parentNode.replaceChild(nBtn, btn);
-            nBtn.addEventListener('click', () => copyToClipboard(formattedText, nBtn, true));
+        function loadHistory() {
+            db.ref('pedidos_recarga').orderByChild('userPath').equalTo(userPath).on('value', (s) => {
+                const grid = document.getElementById('historyGrid');
+                grid.innerHTML = '';
+                const data = s.val();
+                if(!data) { document.getElementById('emptyState').classList.remove('hidden'); return; }
+                document.getElementById('emptyState').classList.add('hidden');
+
+                Object.values(data).reverse().forEach(order => {
+                    grid.innerHTML += `
+                        <div class="glass-panel p-4 rounded-2xl border-l-4 ${order.status === 'pendiente' ? 'border-yellow-500' : 'border-green-500'}">
+                            <div class="flex justify-between text-[10px] mb-2 font-bold opacity-50">
+                                <span>#${order.id}</span>
+                                <span>${order.date}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl">${order.flag}</span>
+                                <div>
+                                    <p class="font-bold text-white">${order.amountLocal}</p>
+                                    <p class="text-[10px] text-slate-400">$${order.amountUSD} USD</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
         }
 
-        function viewOrderDetails(id) {
-            const o = getOrders().find(x => x.id == id);
-            if(o) { openModal(); renderPaymentDetails(o); changeStep(3); }
+        // --- FUNCIONES DE INTERFAZ ---
+        function changeStep(n) {
+            [1,2,3].forEach(i => document.getElementById(`step${i}`).className = (i === n ? 'step-active' : 'step-hidden'));
         }
+        function openModal() { document.getElementById('mainModal').classList.remove('hidden'); renderCountryGrid(); changeStep(1); }
+        function closeModal() { document.getElementById('mainModal').classList.add('hidden'); }
         
-        function copyToClipboard(text, btnElement, isMainBtn=false) {
-            const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-            if(isMainBtn) {
-                const og = document.getElementById('copyBtnText').textContent; 
-                btnElement.classList.replace('bg-slate-800', 'bg-brand-green'); 
-                document.getElementById('copyBtnText').textContent = "¡COPIADO!"; 
-                setTimeout(() => { btnElement.classList.replace('bg-brand-green', 'bg-slate-800'); document.getElementById('copyBtnText').textContent = og; }, 2000);
-            }
+        function showOrderDetails(order, methods) {
+            document.getElementById('finalLocalAmount').innerText = order.amountLocal;
+            const text = `💰 DATOS DE PAGO (#${order.id})\n\n${methods}\n\nTotal: ${order.amountLocal}\n\n⚠️ Envía el comprobante al soporte.`;
+            document.getElementById('formattedPaymentDetails').innerText = text;
+            document.getElementById('copyAllDetailsBtn').onclick = () => {
+                navigator.clipboard.writeText(text);
+                alert("Datos copiados");
+            };
         }
     </script>
-    <script type="module" src="upload_logic.js"></script>
 </body>
 </html>
