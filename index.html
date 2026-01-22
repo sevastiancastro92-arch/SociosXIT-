@@ -21,23 +21,10 @@
       --bg-gradient: linear-gradient(180deg, #0d001a 0%, #050505 100%);
     }
 
-    /* --- PROTECCIÓN ANTI-COPIA TOTAL --- */
-    * { 
-      box-sizing: border-box; 
-      font-family: "Poppins", sans-serif;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    input, textarea {
-      user-select: text !important;
-      -webkit-user-select: text !important;
-    }
+    * { box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-user-select: none; user-select: none; }
+    input { user-select: text !important; -webkit-user-select: text !important; }
 
     body { margin: 0; min-height: 100vh; background: var(--bg-gradient); color: white; overflow-x: hidden; }
-
     #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
 
     header {
@@ -47,52 +34,21 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* --- ANIMACIÓN LOGO --- */
-    .store-icon {
-      width: 100px; height: 100px; 
-      background: rgba(58, 134, 255, 0.1);
-      border-radius: 50%; 
-      display: flex; justify-content: center; align-items: center;
-      border: 2px solid var(--neon-blue); 
-      margin-bottom: 20px; 
-      font-size: 3rem; color: var(--neon-blue);
-      z-index: 10;
-      animation: reveal-logo 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, icon-glitch 0.2s infinite 0.8s;
-      transform: scale(0); opacity: 0;
-    }
-
-    @keyframes reveal-logo {
-      0% { transform: scale(0); opacity: 0; filter: blur(10px); }
-      70% { transform: scale(1.2); opacity: 1; filter: blur(0px); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes icon-glitch {
-      0% { transform: translate(0); box-shadow: 0 0 20px var(--neon-blue); }
-      50% { transform: translate(-2px, 2px); border-color: var(--neon-red); }
-      100% { transform: translate(0); box-shadow: 0 0 40px var(--neon-blue); }
-    }
-
-    /* --- TÍTULO --- */
-    .glitch-container { position: relative; display: inline-block; animation: shake 0.5s infinite; }
-    .store-title {
-      font-size: 3.5rem; font-weight: 900; text-transform: uppercase;
-      position: relative; color: white; letter-spacing: 5px; margin: 0; z-index: 1;
-    }
-    .store-title::before, .store-title::after {
-      content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
-    }
-    .store-title::before { left: 3px; text-shadow: -3px 0 var(--neon-red); animation: intense-glitch-1 0.4s infinite linear alternate-reverse; }
-    .store-title::after { left: -3px; text-shadow: 3px 0 var(--neon-blue); animation: intense-glitch-2 0.3s infinite linear alternate-reverse; }
-
-    @keyframes intense-glitch-1 { 0% { clip-path: inset(10% 0 30% 0); transform: translate(-5px); } 100% { clip-path: inset(25% 0 25% 0); transform: translate(0); } }
-    @keyframes intense-glitch-2 { 0% { clip-path: inset(40% 0 20% 0); transform: translate(5px); } 100% { clip-path: inset(50% 0 30% 0); transform: translate(0); } }
-    @keyframes shake { 0% { transform: translate(0); } 50% { transform: translate(-1px, 1px); } 100% { transform: translate(0); } }
-
-    /* --- CONTENEDORES --- */
+    /* --- ESTILO DE VISTAS --- */
     #welcomeView { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
-    .btn-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 350px; margin-top: 40px; }
     
+    .store-icon {
+      width: 100px; height: 100px; background: rgba(58, 134, 255, 0.1);
+      border-radius: 50%; display: flex; justify-content: center; align-items: center;
+      border: 2px solid var(--neon-blue); margin-bottom: 20px; font-size: 3rem; color: var(--neon-blue);
+      animation: reveal-logo 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes reveal-logo { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    .store-title { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px; margin: 0; }
+    
+    .btn-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 350px; margin-top: 40px; }
     .btn-store {
       padding: 18px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; text-transform: uppercase; transition: 0.3s;
       border: 2px solid transparent; background: rgba(0, 0, 0, 0.7); color: white; display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -100,63 +56,27 @@
     .btn-reg { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(58, 134, 255, 0.3); }
     .btn-log { border-color: var(--neon-red); box-shadow: 0 0 15px rgba(255, 0, 110, 0.3); }
 
+    /* CONTENEDOR DE FORMULARIOS */
     .container { 
       position: relative; z-index: 50; width: 90%; max-width: 400px; 
       background: rgba(0,0,0,0.9); border-radius: 25px; padding: 2.5rem; 
       backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); margin: 100px auto; text-align: center;
     }
 
-    /* --- ESTILOS LOGIN PROFESIONAL --- */
-    .input-wrapper {
-      position: relative;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-
+    .input-wrapper { position: relative; margin-bottom: 20px; width: 100%; }
     .input-wrapper input {
-      width: 100%;
-      padding: 15px 15px 15px 45px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      color: white;
-      outline: none;
-      transition: 0.3s;
+      width: 100%; padding: 15px 45px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; outline: none;
     }
+    .input-wrapper i.main-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--neon-blue); }
+    .toggle-pass { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); }
 
-    .input-wrapper input:focus {
-      border-color: var(--neon-blue);
-      background: rgba(58, 134, 255, 0.05);
-    }
-
-    .input-wrapper i.main-icon {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--neon-blue);
-    }
-
-    /* Botón Ojo */
-    .toggle-pass {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: rgba(255,255,255,0.4);
-      transition: 0.3s;
-    }
-
-    .toggle-pass:hover { color: white; }
-
-    footer {
-      position: fixed; bottom: 20px; width: 100%; text-align: center; z-index: 10;
-      font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 2px;
-      text-transform: uppercase; pointer-events: none;
-    }
+    /* MODAL DE ÉXITO */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+    .modal-content { background: #111; padding: 40px; border-radius: 20px; border: 2px solid var(--neon-blue); text-align: center; }
 
     .hidden { display: none !important; }
+    footer { position: fixed; bottom: 20px; width: 100%; text-align: center; z-index: 10; font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 2px; }
   </style>
 </head>
 <body oncontextmenu="return false">
@@ -170,111 +90,55 @@
 
   <div id="welcomeView">
     <div class="store-icon"><i class="fas fa-gamepad"></i></div>
-    
-    <div class="glitch-container">
-      <h1 class="store-title" data-text="SOCIOS XIT STORE">SOCIOS XIT STORE</h1>
-    </div>
-    
+    <h1 class="store-title">SOCIOS XIT STORE</h1>
     <div class="btn-container">
-      <button class="btn-store btn-reg" id="btnStoreReg"><i class="fas fa-user-plus"></i> Únete Gratis</button>
-      <button class="btn-store btn-log" id="btnStoreLog"><i class="fas fa-rocket"></i> Iniciar Sesión</button>
+      <button class="btn-store btn-reg" id="btnGoRegister"><i class="fas fa-user-plus"></i> Únete Gratis</button>
+      <button class="btn-store btn-log" id="btnGoLogin"><i class="fas fa-rocket"></i> Iniciar Sesión</button>
     </div>
   </div>
 
-  <div class="container hidden" id="mainContainer">
+  <div class="container hidden" id="formContainer">
+    
     <div id="loginView" class="hidden">
-      <h2 style="color: var(--neon-blue); margin-bottom: 30px;">ACCESO PRIVADO</h2>
-      
+      <h2 style="color: var(--neon-blue);">Acceso</h2>
       <div class="input-wrapper">
         <i class="fas fa-user main-icon"></i>
         <input type="text" id="loginUser" placeholder="Usuario" autocomplete="off"/>
       </div>
-
       <div class="input-wrapper">
         <i class="fas fa-lock main-icon"></i>
         <input type="password" id="loginPass" placeholder="Contraseña" />
-        <i class="fas fa-eye toggle-pass" id="btnTogglePass"></i>
+        <i class="fas fa-eye toggle-pass" id="btnEye"></i>
       </div>
-
-      <button id="loginBtn" style="width:100%; padding:15px; border-radius:12px; border:none; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color:white; font-weight:700; cursor:pointer; text-transform:uppercase;">Entrar</button>
+      <button id="loginBtn" style="width:100%; padding:15px; border-radius:12px; border:none; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color:white; font-weight:700; cursor:pointer;">Entrar</button>
       
-      <button id="googleLoginBtn" style="width:100%; padding:12px; margin-top:15px; border-radius:12px; border:none; background:white; color:black; font-weight:600; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer;">
-        <i class="fab fa-google" style="color:#4285F4"></i> Iniciar con Google
-      </button>
-
-      <p id="backHome" style="margin-top:20px; font-size:0.8rem; color:#666; cursor:pointer;">← Volver al inicio</p>
+      <button id="googleLoginBtn" style="width:100%; padding:12px; margin-top:15px; border-radius:12px; border:none; background:white; color:black; font-weight:600; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer;"><i class="fab fa-google"></i> Google Login</button>
+      
+      <p id="goBackHome" style="margin-top:20px; font-size:0.8rem; color:#666; cursor:pointer;">← Volver</p>
     </div>
 
     <div id="usernamePromptView" class="hidden">
       <h2 style="color: var(--neon-purple);">Nuevo Usuario</h2>
       <div class="input-wrapper">
-         <i class="fas fa-id-badge main-icon"></i>
-         <input type="text" id="promptUser" placeholder="Nombre de socio" />
+        <i class="fas fa-at main-icon"></i>
+        <input type="text" id="promptUser" placeholder="Nombre de socio" />
       </div>
-      <button id="promptUserBtn" style="width:100%; padding:15px; border-radius:12px; border:none; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color:white; font-weight:700; cursor:pointer;">Finalizar</button>
+      <button id="promptUserBtn" style="width:100%; padding:15px; border-radius:12px; border:none; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color:white; font-weight:700; cursor:pointer;">Finalizar Registro</button>
+    </div>
+
+  </div>
+
+  <div id="successModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <i class="fas fa-check-circle" style="font-size: 3rem; color: #00ff88;"></i>
+      <h2 id="successMessage"></h2>
+      <button id="closeModalBtn" style="padding:10px 30px; border-radius:10px; border:none; background:var(--neon-blue); color:white; cursor:pointer;">Continuar al Dashboard</button>
     </div>
   </div>
 
-  <footer>
-    Luck xit ofc 2024 - 2026
-  </footer>
+  <footer>Luck xit ofc 2024 - 2026</footer>
 
-  <script>
-    // Inicialización de partículas (si el script cargó)
-    if(typeof particlesJS !== 'undefined') {
-      particlesJS('particles-js', {
-        "particles": {
-          "number": { "value": 50 },
-          "color": { "value": "#3a86ff" },
-          "shape": { "type": "circle" },
-          "opacity": { "value": 0.5 },
-          "size": { "value": 2 },
-          "line_linked": { "enable": true, "distance": 150, "color": "#3a86ff", "opacity": 0.2, "width": 1 },
-          "move": { "enable": true, "speed": 1 }
-        }
-      });
-    }
-
-    // --- FUNCIÓN VER CONTRASEÑA ---
-    const btnTogglePass = document.getElementById('btnTogglePass');
-    const loginPass = document.getElementById('loginPass');
-
-    btnTogglePass.onclick = () => {
-        const type = loginPass.getAttribute('type') === 'password' ? 'text' : 'password';
-        loginPass.setAttribute('type', type);
-        btnTogglePass.classList.toggle('fa-eye');
-        btnTogglePass.classList.toggle('fa-eye-slash');
-    };
-
-    // --- LÓGICA DE NAVEGACIÓN (Respetando tu código original) ---
-    function goToApp(viewId) {
-        document.getElementById('welcomeView').classList.add('hidden');
-        document.getElementById('mainContainer').classList.remove('hidden');
-        if (typeof show === "function") show(viewId);
-    }
-
-    document.getElementById('btnStoreLog').onclick = () => goToApp('loginView');
-    
-    document.getElementById('btnStoreReg').onclick = () => {
-        if (typeof signInWithGoogle === "function") signInWithGoogle();
-        else goToApp('loginView');
-    };
-
-    document.getElementById('backHome').onclick = () => {
-        document.getElementById('mainContainer').classList.add('hidden');
-        document.getElementById('welcomeView').classList.remove('hidden');
-    };
-
-    // Protección anti-copia
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = function(e) {
-      if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 73) || e.keyCode === 123) {
-        return false;
-      }
-    };
-  </script>
-
-  <script src="https://sevastiancastro92-arch.github.io/Pruevafirebase/logica-socios.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
