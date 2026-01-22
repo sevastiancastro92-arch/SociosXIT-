@@ -3,126 +3,220 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SociosXIT | Premium Dashboard</title>
+  <title>Dashboard - SociosXIT</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-  <link rel="stylesheet" href="style2.css">
+  <link rel="stylesheet" href="https://sevastiancastro92-arch.github.io/Pruevafirebase/style.css">
+  
+  <style>
+    .chat-float-link {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #00f3ff, #0066ff); /* Gradiente Neon Cyan/Blue */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(255,255,255,0.3);
+      border: 2px solid white;
+      z-index: 9999;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    .chat-float-link:hover {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 0 35px rgba(0, 243, 255, 0.8);
+    }
+    .chat-float-link svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+    }
+  </style>
 </head>
-<body class="hide-on-main">
+<body class="text-white p-4 md:p-8 hide-on-main">
   
   <canvas id="particles"></canvas>
   
-  <div class="app-root max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <div class="app-root">
     
-    <nav class="flex justify-between items-center mb-10">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center font-bold text-white shadow-lg">S</div>
-        <h2 class="text-xl font-bold tracking-tight">Socios<span class="text-cyan-400">XIT</span></h2>
+    <div id="hamburgerBtn" class="hamburger" aria-label="Menú">
+      <div class="burger">
+        <span></span><span></span><span></span>
       </div>
-
-      <div class="flex items-center gap-4">
-        <div id="hamburgerBtn" class="hamburger static !m-0">
-          <div class="burger"><span></span><span></span><span></span></div>
-        </div>
-      </div>
-    </nav>
-
+    </div>
+    
     <div id="menuBackdrop" class="menu-backdrop"></div>
-    <aside id="sideMenu" class="side-menu">
-      <div class="menu-user p-6">
+    <aside id="sideMenu" class="side-menu" aria-hidden="true">
+      
+      <div class="menu-user">
         <div class="avatar" id="menuAvatar">UX</div>
-        <div class="ml-4">
-          <div class="flex items-center gap-2">
-            <span id="menuUserName" class="font-bold text-lg">Usuario</span>
-            <a href="perfil.html" class="opacity-50 hover:opacity-100 transition"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></a>
+        <div>
+          <div class="flex items-center gap-2"> 
+            <div id="menuUserName" class="font-semibold text-lg text-neon-cyan">Usuario</div>
+            
+            <a id="editProfileBtnMenu" href='perfil.html' class="
+                text-xs font-semibold 
+                py-0.5 px-2 rounded-lg 
+                bg-gray-700 hover:bg-gray-600 
+                text-neon-cyan transition-colors 
+                flex items-center w-fit h-fit
+            " title="Editar Perfil">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </a>
           </div>
-          <p id="menuUserBalance" class="text-sm text-green-400 font-medium">Balance: $0.00</p>
+          <div id="menuUserBalance" class="small-muted mt-1">Saldo: $0.00</div>
         </div>
       </div>
-
-      <div class="px-6 space-y-2">
-        <a href="metodos.html" class="menu-item p-3 rounded-xl block">💳 Recargar Saldo</a>
-        <a href="rankin.html" class="menu-item p-3 rounded-xl block">🏆 Ranking Socios</a>
-        <div id="menuKeys" class="menu-item p-3 rounded-xl cursor-pointer">🔑 Mis Keys</div>
-        <div id="menuLogout" class="menu-item p-3 rounded-xl text-red-400 cursor-pointer">🚪 Cerrar Sesión</div>
-      </div>
-    </aside>
-
-    <header class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="col-span-2 card p-8 rounded-3xl">
-        <h1 class="text-3xl font-extrabold mb-1">Bienvenido, <span id="userName" class="text-cyan-400">...</span></h1>
-        <p class="text-slate-400 mb-6">Gestiona tus suscripciones y herramientas desde aquí.</p>
-        <div class="flex items-center gap-6">
-          <div>
-            <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-1">Saldo Disponible</p>
-            <p id="userBalance" class="text-3xl font-bold text-white">$0.00 <span class="text-sm font-normal text-slate-400">USD</span></p>
-          </div>
-          <div class="h-10 w-[1px] bg-slate-800"></div>
-          <button id="logoutBtn" class="btn-logout px-6 py-2 rounded-xl text-sm font-bold">Cerrar Sesión</button>
-        </div>
-      </div>
-
-      <div id="mainLevelBar" class="card p-6 rounded-3xl flex flex-col justify-center">
-          <div class="flex justify-between items-end mb-3">
-              <div>
-                <p id="userLevelTextMain" class="text-xs font-bold uppercase text-cyan-400">Nivel Base</p>
-                <p id="levelNextGoalMain" class="text-[10px] text-slate-500">Faltan $50 para VIP</p>
-              </div>
-              <span id="levelProgressTextMain" class="text-xs font-mono">0%</span>
+      <div style="height:8px;"></div>
+      
+      <div class="card p-3 rounded-lg border-white/5">
+          <div class="flex justify-between items-center mb-1">
+              <div id="userLevelTextMenu" class="level-label">Nivel: Base</div>
+              <div id="levelProgressTextMenu" class="small-muted text-xs">$0.00 / $50.00</div>
           </div>
           <div class="progress-bar">
-              <div id="levelProgressBarMain" class="progress-fill bg-gradient-to-r from-cyan-500 to-blue-600" style="width: 0%;"></div>
+              <div id="levelProgressBarMenu" class="progress-fill" style="width: 0%;"></div>
           </div>
+          <div id="levelNextGoalMenu" class="small-muted text-xs mt-1">
+              Próx. nivel (VIP): $50.00 (10% Desc.)
+          </div>
+      </div>
+      
+      <div style="height:8px;"></div>
+      
+      <a href="metodos.html" class="menu-item neon-btn">
+        <div class="text-neon-green">💳 Recargar Saldo</div>
+      </a>
+
+      <a href="https://docs.google.com/document/d/1eeOCnYJDjFJIGpY8sfuoFdVve1d_jSrnkxSHqqqKieg/edit?usp=drivesdk" 
+         target="_blank" 
+         class="menu-item neon-btn">
+        <div class="text-neon-cyan">📚 Tutoriales</div>
+        <div class="small-muted"></div>
+      </a>
+
+      <div id="menuPublicaciones" class="menu-item neon-btn">
+        <div class="text-neon-pink">📦 Publicaciones</div>
+      </div>
+
+      <div id="menuKeys" class="menu-item neon-btn">
+        <div class="text-neon-green">🔑 Mis Keys</div>
+      </div>
+
+      <a href="rankin.html" class="menu-item neon-btn">
+        <div class="text-neon-cyan">🏆 Rankins Socios</div>
+      </a>
+
+      <a class='menu-item neon-btn' href='resets.html'>
+        <div class="text-neon-yellow">♻️ Sistemas de Resets</div>
+      </a>
+
+      <div id="menuLogout" class="menu-item neon-btn">
+        <div class="text-neon-pink">🚪 Cerrar sesión</div>
+      </div>
+
+      <div style="flex:1"></div>
+      <div class="small-muted text-xs">SociosXIT • Menú</div>
+    </aside>
+
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 p-4 rounded-lg card">
+      <div class="user-block">
+        <h1 class="text-2xl font-bold">Bienvenido, <span id="userName" class="text-blue-300"></span></h1>
+        <p class="text-sm text-gray-300">Publicaciones disponibles para ti</p>
+        <p class="text-lg mt-2">💰 Saldo: <span id="userBalance" class="font-bold text-green-400">$0.00</span> USD</p>
+      </div>
+      <div class="header-right">
+        <button id="logoutBtn" class="btn-logout neon-btn font-semibold py-2 px-4 rounded-lg transition-transform hover:scale-105">
+          Cerrar Sesión
+        </button>
       </div>
     </header>
     
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-      <div class="tabs p-1">
-        <button id="tabPublicaciones" class="tab-btn active font-semibold">Publicaciones</button>
-        <button id="tabKeys" class="tab-btn font-semibold">Mis Keys</button>
-      </div>
+    <div class="tabs">
+      <button id="tabPublicaciones" class="tab-btn active neon-btn">📦 Publicaciones</button>
+      <button id="tabKeys" class="tab-btn neon-btn">🔑 Mis Keys</button>
     </div>
 
-    <main id="publicationsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></main>
+    <div id="mainLevelBar" class="mb-6">
+        <div class="flex justify-between items-center mb-1">
+            <div id="userLevelTextMain" class="level-label">Nivel: Base</div>
+            <div id="levelProgressTextMain" class="small-muted text-xs">$0.00 / $50.00</div>
+        </div>
+        <div class="progress-bar">
+            <div id="levelProgressBarMain" class="progress-fill" style="width: 0%;"></div>
+        </div>
+        <div id="levelNextGoalMain" class="small-muted text-xs mt-1">
+            Próx. nivel (VIP): $50.00 (10% Desc.)
+        </div>
+    </div>
+    
+    <main id="publicationsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></main>
 
     <section id="myKeysContainer" class="hidden">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">Historial de Claves</h2>
-        <button id="deleteExpiredKeysBtn" class="text-xs bg-red-500/10 text-red-500 border border-red-500/20 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition">Eliminar Expiradas</button>
+      <h2 class="text-xl font-semibold mb-4">🔒 Historial de Keys compradas</h2>
+
+      <button id="deleteExpiredKeysBtn"
+        class="mb-4 py-2 px-4 bg-red-600 rounded-lg font-bold hover:bg-red-700 transition">
+        🗑️ Eliminar Keys Expiradas
+      </button>
+
+      <div class="flex flex-col md:flex-row gap-3 mb-4">
+        <input id="searchKeyInput" type="text" placeholder="🔍 Buscar por nombre o clave..."
+        class="w-full md:w-1/2 px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400">
+        <select id="filterDateSelect" class="px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-blue-400">
+          <option value="all">📅 Todos</option>
+          <option value="today">Hoy</option>
+          <option value="7days">Últimos 7 días</option>
+          <option value="month">Este mes</option>
+        </select>
       </div>
-      
       <div id="myKeysList" class="grid grid-cols-1 gap-4"></div>
     </section>
 
     <div id="confirmModal" class="modal-backdrop">
-      <div class="modal card">
-        <h3 class="text-xl font-bold mb-2">Confirmar Adquisición</h3>
-        <p id="confirmText" class="text-slate-400 text-sm mb-4">¿Estás seguro de que deseas procesar esta compra?</p>
-        <div id="finalPriceDisplay" class="text-2xl font-bold text-white mb-6"></div>
-        <div class="flex gap-3 justify-end">
-          <button id="confirmCancel" class="px-5 py-2 text-slate-400 hover:text-white transition">Cancelar</button>
-          <button id="confirmOk" class="btn-show px-6 py-2 rounded-xl font-bold">Confirmar</button>
+      <div class="modal">
+        <div id="confirmContent">
+          <div class="text-lg font-semibold mb-2 text-neon-yellow">Confirmar compra</div>
+          <div id="confirmText" class="small-muted">¿Deseas comprar esta key?</div>
+          <div id="finalPriceDisplay" class="text-xl font-bold mt-2"></div>
+        </div>
+        <div class="actions">
+          <button id="confirmCancel" class="py-2 px-4 rounded-lg border border-white/10">Cancelar</button>
+          <button id="confirmOk" class="py-2 px-4 rounded-lg bg-green-500 font-semibold neon-btn">Comprar</button>
         </div>
       </div>
     </div>
 
     <div id="keyModal" class="modal-backdrop">
-      <div class="modal card text-center">
-        <div class="w-16 h-16 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 11V7a4 4 0 118 0m-4 10v2m-6-10h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2z"/></svg>
-        </div>
-        <h3 class="text-xl font-bold mb-2">¡Compra Exitosa!</h3>
-        <div id="keyModalContent" class="font-mono bg-black/40 p-4 rounded-xl border border-white/5 my-4 break-all text-cyan-400">...</div>
-        <div class="flex gap-3">
-          <button id="keyCopyBtn" class="flex-1 bg-white text-black py-3 rounded-xl font-bold">Copiar Clave</button>
-          <button id="keyCloseBtn" class="px-6 py-3 rounded-xl bg-slate-800 font-bold">Cerrar</button>
+      <div class="modal">
+        <div class="text-lg font-semibold mb-2 text-neon-cyan">Clave entregada</div>
+        <div id="keyModalContent" class="small-muted">Aquí va la clave</div>
+        <div class="actions">
+          <button id="keyCopyBtn" class="py-2 px-4 rounded-lg bg-white text-blue-900 font-semibold">Copiar</button>
+          <button id="keyCloseBtn" class="py-2 px-4 rounded-lg border border-white/10">Cerrar</button>
         </div>
       </div>
     </div>
-
-    <a href="chat.html" class="chat-float-link" title="Soporte y Comunidad">
-      <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    
+    <div id="menuRecharge" style="display: none;"></div>
+    
+    <div id="rechargeModal" style="display: none;">
+        <input id="rechargeAmountInput">
+        <div id="rechargeError"></div>
+        <button id="rechargeCancelBtn"></button>
+        <button id="rechargeConfirmBtn"></button>
+    </div>
+    
+    <a href="chat.html" class="chat-float-link" title="Abrir Chat Global">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+      </svg>
     </a>
     
   </div>
