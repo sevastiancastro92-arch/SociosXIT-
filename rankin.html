@@ -106,6 +106,15 @@
       box-shadow: 0 0 15px rgba(255, 0, 255, 0.4) !important;
     }
 
+    /* ESTILO BOTON ADMIN */
+    .btn-admin-edit {
+        background: red; color: white; border: 1px solid white;
+        padding: 2px 6px; border-radius: 4px; margin-left: 5px;
+        cursor: pointer; font-weight: bold; font-size: 10px;
+        box-shadow: 0 0 5px red;
+    }
+    .btn-admin-edit:hover { background: darkred; }
+
     /* Animaciones */
     .animate-tilt { animation: tilt 4s infinite linear; }
     @keyframes tilt { 0%, 50%, 100% { transform: rotate(0deg); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
@@ -184,6 +193,10 @@
     </div>
   </div>
 
+  <button id="adminToggleBtn" class="hidden fixed bottom-5 right-5 z-50 bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-full border-2 border-white shadow-[0_0_20px_red] animate-pulse">
+    💀 ADMIN
+  </button>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
@@ -202,6 +215,7 @@
     else {
         document.getElementById('headerUserName').textContent = currentUser.split('@')[0].toUpperCase();
         loadUserBalance();
+        checkAdmin();
     }
 
     const listRecharges = document.getElementById("listRecharges");
@@ -209,13 +223,50 @@
     const myRankRecharge = document.getElementById("myRankRecharge");
     const myRankSales = document.getElementById("myRankSales");
     const countdownTimer = document.getElementById("countdownTimer");
+    const adminToggleBtn = document.getElementById("adminToggleBtn");
+
+    let adminMode = false; // Estado del modo edición
 
     function sanitizeEmail(email) { return email.replace(/\./g, "_"); }
+    
     function loadUserBalance() {
         const userKey = sanitizeEmail(currentUser);
         db.ref(`users/${userKey}/balance`).on("value", snap => {
             const val = parseFloat(snap.val() || 0);
             document.getElementById('headerBalance').textContent = `$${val.toFixed(2)}`;
+        });
+    }
+
+    // --- LOGICA ADMIN ---
+    function checkAdmin() {
+        // Verifica si el usuario actual contiene LK-XT
+        if (currentUser.toUpperCase().includes("LK-XT") || currentUser.toUpperCase().includes("LK XT")) {
+            adminToggleBtn.classList.remove("hidden");
+            adminToggleBtn.addEventListener("click", () => {
+                adminMode = !adminMode;
+                adminToggleBtn.textContent = adminMode ? "❌ SALIR ADMIN" : "💀 ADMIN";
+                adminToggleBtn.style.background = adminMode ? "#000" : "red";
+                // Recargar Rankings para mostrar botones
+                loadRankings(); 
+            });
+        }
+    }
+
+    window.editUserBalance = function(userId, currentName) {
+        const amountStr = prompt(`ADMIN LK-XT:\nEditar saldo para: ${currentName}\n\nIngresa cantidad a SUMAR o RESTAR (ej: 10 o -50):`);
+        if (!amountStr) return;
+
+        const amount = parseFloat(amountStr);
+        if (isNaN(amount)) { alert("Número inválido"); return; }
+
+        db.ref('users/' + userId + '/balance').transaction((currentBalance) => {
+            return (currentBalance || 0) + amount;
+        }, (error, committed, snapshot) => {
+            if (error) {
+                alert('Error al actualizar');
+            } else if (committed) {
+                alert(`✅ Saldo actualizado exitosamente para ${currentName}.`);
+            }
         });
     }
 
@@ -241,6 +292,8 @@
 
         Object.keys(usersData).forEach(key => {
             let displayName = key.replace(/_gmail_com|_hotmail_com|_outlook_com/g, "").replace(/_/g, "");
+            
+            // Ocultar al admin de la lista
             if (displayName === "LK-XT" || displayName === "LK XT" || key.includes("LK-XT")) return;
 
             const u = usersData[key];
@@ -263,7 +316,7 @@
                 });
             }
 
-            // Nombre corto para que quepa en celular
+            // Nombre corto
             if(displayName.length > 7) displayName = displayName.substring(0, 7) + "..";
 
             rankingData.push({
@@ -286,7 +339,7 @@
       }
     }
 
-    // --- RENDERIZADO CON NUEVOS ESTILOS NEON ---
+    // --- RENDERIZADO ---
     function renderList(data, container, valueKey, myAlert, prefix) {
         container.innerHTML = "";
         const topData = data.slice(0, 20); // Top 20
@@ -294,7 +347,6 @@
         topData.forEach((user, index) => {
             const rank = index + 1;
             
-            // Definir clases dinámicas según la posición
             let rowClass = "row-other";
             let circleClass = "circle-other";
             let textClass = "text-gray-500 font-semibold";
@@ -322,16 +374,14 @@
                 textClass = "text-fuchsia-200 font-bold tracking-wider drop-shadow-[0_0_5px_magenta]";
             }
 
-            // Color del dinero neón
-            const amountClass = user[valueKey] > 0 ? "text-cyan-300 drop-shadow-[0_0_3px_cyan]" : "text-gray-700";
-            if (valueKey === 'cycleSpent' && user[valueKey] > 0) {
-                 // Para gastos usamos color rosa neón
-                 // No tengo acceso directo a amountClass aquí fácilmente sin refactor, 
-                 // pero podemos usar css inline o clases utilitarias.
-                 // Dejémoslo consistente cian, o cambiémoslo dinámicamente:
-            }
-            const finalAmountClass = (valueKey === 'cycleSpent' && user[valueKey] > 0) ? "text-pink-300 drop-shadow-[0_0_3px_magenta]" : amountClass;
+            const finalAmountClass = (valueKey === 'cycleSpent' && user[valueKey] > 0) ? "text-pink-300 drop-shadow-[0_0_3px_magenta]" : (user[valueKey] > 0 ? "text-cyan-300 drop-shadow-[0_0_3px_cyan]" : "text-gray-700");
 
+            // --- LÓGICA DE BOTON DE EDICIÓN ADMIN ---
+            let adminBtnHtml = "";
+            // Solo mostrar botón editar si AdminMode es true y estamos en la lista de Recargas (como pediste)
+            if (adminMode && valueKey === 'cycleRecharged') {
+                adminBtnHtml = `<button onclick="editUserBalance('${user.id}', '${user.name}')" class="btn-admin-edit">✏️</button>`;
+            }
 
             const html = `
                 <div class="rank-row ${rowClass}">
@@ -339,7 +389,7 @@
                         <div class="rank-circle ${circleClass}">${rank}</div>
                         <div class="flex flex-col min-w-0">
                             <span class="${textClass} uppercase truncate flex items-center gap-1">
-                                ${user.name} <span class="text-[10px]">${icon}</span>
+                                ${user.name} <span class="text-[10px]">${icon}</span> ${adminBtnHtml}
                             </span>
                         </div>
                     </div>
