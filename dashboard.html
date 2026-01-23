@@ -8,372 +8,117 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://sevastiancastro92-arch.github.io/Pruevafirebase/style.css">
-  
   <style>
-    /* Estilos del botón flotante existente */
-    .chat-float-link {
-      position: fixed; bottom: 25px; right: 25px; width: 64px; height: 64px;
-      background: linear-gradient(135deg, #00f3ff, #0066ff);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(255,255,255,0.3);
-      border: 2px solid white; z-index: 9990; /* Z-index menor que el modal */
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer;
-    }
-    .chat-float-link:hover { transform: scale(1.15) rotate(5deg); box-shadow: 0 0 35px rgba(0, 243, 255, 0.8); }
-    .chat-float-link svg { width: 32px; height: 32px; fill: white; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); }
-
-    /* Estilos Específicos para el Modal de WhatsApp */
-    #waLinkModal {
-        backdrop-filter: blur(10px);
-    }
-
-    /* --- DISEÑO NUEVO PARA EL SELECT (BOX BONITO) --- */
-    .neon-select {
-        appearance: none; /* Elimina la flecha por defecto del navegador */
-        background-color: rgba(20, 18, 37, 0.9);
-        border: 1px solid #4b5563;
-        color: white;
-        cursor: pointer;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f3ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 1.2em;
-        transition: all 0.3s ease;
-        box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-    }
-    
-    .neon-select:focus {
-        border-color: #00f3ff;
-        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3), inset 0 0 10px rgba(0,0,0,0.5);
-        outline: none;
-    }
-
-    .neon-select option {
-        background-color: #141225;
-        color: white;
-        padding: 10px;
-    }
-
-    /* --- BARRA DE DESPLAZAMIENTO (SCROLL) PERSONALIZADA --- */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        background: #0f0812; 
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #00f3ff, #0066ff); 
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #00f3ff; 
-    }
+    .neon-select { appearance: none; background-color: rgba(20, 18, 37, 0.9); border: 1px solid #4b5563; color: white; cursor: pointer; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f3ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em; transition: all 0.3s ease; }
+    .chat-float-link { position: fixed; bottom: 25px; right: 25px; width: 64px; height: 64px; background: linear-gradient(135deg, #00f3ff, #0066ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); border: 2px solid white; z-index: 9990; cursor: pointer; }
   </style>
 </head>
-<body class="text-white p-4 md:p-8 hide-on-main">
-  
+<body class="text-white p-4 md:p-8">
   <canvas id="particles"></canvas>
-  
   <div class="app-root">
-    
-    <div id="hamburgerBtn" class="hamburger" aria-label="Menú">
+    <div id="hamburgerBtn" class="hamburger">
       <div class="burger"><span></span><span></span><span></span></div>
     </div>
-    
-    <div id="menuBackdrop" class="menu-backdrop"></div>
-    <aside id="sideMenu" class="side-menu" aria-hidden="true">
+    <aside id="sideMenu" class="side-menu">
       <div class="menu-user">
         <div class="avatar" id="menuAvatar">UX</div>
         <div>
           <div class="flex items-center gap-2"> 
             <div id="menuUserName" class="font-semibold text-lg text-neon-cyan">Usuario</div>
-            <a id="editProfileBtnMenu" href='perfil.html' class="text-xs font-semibold py-0.5 px-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-neon-cyan transition-colors flex items-center w-fit h-fit" title="Editar Perfil">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            </a>
           </div>
-          <div id="menuUserBalance" class="small-muted mt-1">Saldo: $0.00</div>
+          <div id="menuUserBalance" class="small-muted">Saldo: $0.00</div>
         </div>
       </div>
-      <div style="height:8px;"></div>
-      
-      <div class="card p-3 rounded-lg border-white/5">
-          <div class="flex justify-between items-center mb-1">
-              <div id="userLevelTextMenu" class="level-label">Nivel: Base</div>
-              <div id="levelProgressTextMenu" class="small-muted text-xs">$0.00 / $50.00</div>
-          </div>
-          <div class="progress-bar">
-              <div id="levelProgressBarMenu" class="progress-fill" style="width: 0%;"></div>
-          </div>
-          <div id="levelNextGoalMenu" class="small-muted text-xs mt-1">Próx. nivel (VIP): $50.00 (10% Desc.)</div>
+      <div class="card p-3 rounded-lg border-white/5 my-2">
+          <div class="level-label" id="userLevelTextMenu">Nivel: Base</div>
+          <div class="progress-bar"><div id="levelProgressBarMenu" class="progress-fill"></div></div>
       </div>
-      
-      <div style="height:8px;"></div>
       <a href="metodos.html" class="menu-item neon-btn"><div class="text-neon-green">💳 Recargar Saldo</div></a>
-      <a href="https://docs.google.com/document/d/1eeOCnYJDjFJIGpY8sfuoFdVve1d_jSrnkxSHqqqKieg/edit?usp=drivesdk" target="_blank" class="menu-item neon-btn"><div class="text-neon-cyan">📚 Tutoriales</div></a>
-      <div id="menuPublicaciones" class="menu-item neon-btn"><div class="text-neon-pink">📦 Publicaciones</div></div>
-      <div id="menuKeys" class="menu-item neon-btn"><div class="text-neon-green">🔑 Mis Keys</div></div>
-      <a href="rankin.html" class="menu-item neon-btn"><div class="text-neon-cyan">🏆 Rankins Socios</div></a>
-      <a class='menu-item neon-btn' href='resets.html'><div class="text-neon-yellow">♻️ Sistemas de Resets</div></a>
-      
-      <a id="adminUserBtn" href="Teteh3hdysgsy.html" class="menu-item neon-btn" style="display: none;">
-          <div class="text-red-500 font-bold">🛡️ Admin User</div>
-      </a>
-
+      <div id="editWaMenuBtn" class="menu-item neon-btn"><div class="text-green-400 font-bold">📱 Editar WhatsApp</div></div>
       <div id="menuLogout" class="menu-item neon-btn"><div class="text-neon-pink">🚪 Cerrar sesión</div></div>
-      <div style="flex:1"></div>
-      <div class="small-muted text-xs">SociosXIT • Menú</div>
     </aside>
 
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 p-4 rounded-lg card">
-      <div class="user-block">
+    <header class="flex justify-between items-center mb-4 p-4 rounded-lg card">
+      <div>
         <h1 class="text-2xl font-bold">Bienvenido, <span id="userName" class="text-blue-300"></span></h1>
-        <p class="text-sm text-gray-300">Publicaciones disponibles para ti</p>
-        <p class="text-lg mt-2">💰 Saldo: <span id="userBalance" class="font-bold text-green-400">$0.00</span> USD</p>
-      </div>
-      <div class="header-right">
-        <button id="logoutBtn" class="btn-logout neon-btn font-semibold py-2 px-4 rounded-lg transition-transform hover:scale-105">Cerrar Sesión</button>
+        <p class="text-lg">💰 Saldo: <span id="userBalance" class="font-bold text-green-400">$0.00</span> USD</p>
       </div>
     </header>
-    
-    <div class="tabs">
-      <button id="tabPublicaciones" class="tab-btn active neon-btn">📦 Publicaciones</button>
-      <button id="tabKeys" class="tab-btn neon-btn">🔑 Mis Keys</button>
-    </div>
 
-    <div id="mainLevelBar" class="mb-6">
-        <div class="flex justify-between items-center mb-1">
-            <div id="userLevelTextMain" class="level-label">Nivel: Base</div>
-            <div id="levelProgressTextMain" class="small-muted text-xs">$0.00 / $50.00</div>
-        </div>
-        <div class="progress-bar">
-            <div id="levelProgressBarMain" class="progress-fill" style="width: 0%;"></div>
-        </div>
-        <div id="levelNextGoalMain" class="small-muted text-xs mt-1">Próx. nivel (VIP): $50.00 (10% Desc.)</div>
-    </div>
-    
     <main id="publicationsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></main>
 
-    <section id="myKeysContainer" class="hidden">
-      <h2 class="text-xl font-semibold mb-4">🔒 Historial de Keys compradas</h2>
-      <button id="deleteExpiredKeysBtn" class="mb-4 py-2 px-4 bg-red-600 rounded-lg font-bold hover:bg-red-700 transition">🗑️ Eliminar Keys Expiradas</button>
-      <div class="flex flex-col md:flex-row gap-3 mb-4">
-        <input id="searchKeyInput" type="text" placeholder="🔍 Buscar por nombre o clave..." class="w-full md:w-1/2 px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400">
-        <select id="filterDateSelect" class="px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-blue-400">
-          <option value="all">📅 Todos</option>
-          <option value="today">Hoy</option>
-          <option value="7days">Últimos 7 días</option>
-          <option value="month">Este mes</option>
-        </select>
-      </div>
-      <div id="myKeysList" class="grid grid-cols-1 gap-4"></div>
-    </section>
-
-    <div id="confirmModal" class="modal-backdrop">
-      <div class="modal">
-        <div id="confirmContent">
-          <div class="text-lg font-semibold mb-2 text-neon-yellow">Confirmar compra</div>
-          <div id="confirmText" class="small-muted">¿Deseas comprar esta key?</div>
-          <div id="finalPriceDisplay" class="text-xl font-bold mt-2"></div>
-        </div>
-        <div class="actions">
-          <button id="confirmCancel" class="py-2 px-4 rounded-lg border border-white/10">Cancelar</button>
-          <button id="confirmOk" class="py-2 px-4 rounded-lg bg-green-500 font-semibold neon-btn">Comprar</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="keyModal" class="modal-backdrop">
-      <div class="modal">
-        <div class="text-lg font-semibold mb-2 text-neon-cyan">Clave entregada</div>
-        <div id="keyModalContent" class="small-muted">Aquí va la clave</div>
-        <div class="actions">
-          <button id="keyCopyBtn" class="py-2 px-4 rounded-lg bg-white text-blue-900 font-semibold">Copiar</button>
-          <button id="keyCloseBtn" class="py-2 px-4 rounded-lg border border-white/10">Cerrar</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="menuRecharge" style="display: none;"></div>
-    
-    <div id="rechargeModal" style="display: none;">
-        <input id="rechargeAmountInput">
-        <div id="rechargeError"></div>
-        <button id="rechargeCancelBtn"></button>
-        <button id="rechargeConfirmBtn"></button>
-    </div>
-    
     <div id="waLinkModal" class="fixed inset-0 bg-black/90 z-[9999] hidden items-center justify-center backdrop-blur-md">
-        <div class="bg-[#141225] border-2 border-cyan-400 p-6 rounded-xl w-[90%] max-w-md relative shadow-[0_0_40px_rgba(0,243,255,0.3)]">
-            <div class="text-center mb-4">
-                <div class="text-4xl animate-bounce mb-2">📲</div>
-                <h2 class="text-2xl font-bold text-neon-cyan mb-2">VINCULACIÓN REQUERIDA</h2>
-                <p class="text-gray-300 text-sm">
-                    Para seguridad de tu cuenta y saldo, debes vincular tu 
-                    <span class="text-green-400 font-bold">WhatsApp Activo</span>.
-                </p>
-            </div>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-pink-500 mb-1 ml-1">PAÍS</label>
-                    <div class="relative">
-                        <select id="waCountryCode" class="w-full text-white rounded-lg p-3 outline-none neon-select font-sans text-sm">
-                            <option value="57">🇨🇴 Colombia (+57)</option>
-                            <option value="52">🇲🇽 México (+52)</option>
-                            <option value="505">🇳🇮 Nicaragua (+505)</option>
-                            <option value="54">🇦🇷 Argentina (+54)</option>
-                            <option value="51">🇵🇪 Perú (+51)</option>
-                            <option value="56">🇨🇱 Chile (+56)</option>
-                            <option value="593">🇪🇨 Ecuador (+593)</option>
-                            <option value="58">🇻🇪 Venezuela (+58)</option>
-                            <option value="1">🇺🇸 Estados Unidos (+1)</option>
-                            <option value="34">🇪🇸 España (+34)</option>
-                            <option value="55">🇧🇷 Brasil (+55)</option>
-                            <option value="502">🇬🇹 Guatemala (+502)</option>
-                            <option value="503">🇸🇻 El Salvador (+503)</option>
-                            <option value="504">🇭🇳 Honduras (+504)</option>
-                            <option value="507">🇵🇦 Panamá (+507)</option>
-                            <option value="591">🇧🇴 Bolivia (+591)</option>
-                            <option value="598">🇺🇾 Uruguay (+598)</option>
-                            <option value="595">🇵🇾 Paraguay (+595)</option>
-                            <option value="809">🇩🇴 Rep. Dominicana (+809)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-green-400 mb-1 ml-1">NÚMERO DE TELÉFONO</label>
-                    <input type="number" id="waPhoneNumber" placeholder="Ej: 3001234567" 
-                           class="w-full bg-[#0f0812] border border-gray-600 text-white rounded-lg p-3 outline-none focus:border-green-400 font-mono text-lg placeholder-gray-600 transition-colors">
-                </div>
-
-                <button id="btnSaveWa" class="w-full py-3 mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg font-bold text-white shadow-[0_0_15px_rgba(0,243,255,0.4)] hover:shadow-[0_0_25px_rgba(0,243,255,0.6)] hover:scale-[1.02] transition-all">
-                    GUARDAR Y CONTINUAR ➔
-                </button>
-                
-                <div id="waErrorMsg" class="text-red-500 text-center text-xs font-bold h-4"></div>
-            </div>
+        <div class="bg-[#141225] border-2 border-cyan-400 p-6 rounded-xl w-[90%] max-w-md">
+            <h2 class="text-2xl font-bold text-neon-cyan text-center mb-4">VINCULACIÓN</h2>
+            <select id="waCountryCode" class="w-full p-3 rounded-lg neon-select mb-4">
+                <option value="57">🇨🇴 Colombia (+57)</option>
+                <option value="52">🇲🇽 México (+52)</option>
+                <option value="1">🇺🇸 USA (+1)</option>
+                <option value="34">🇪🇸 España (+34)</option>
+            </select>
+            <input type="number" id="waPhoneNumber" placeholder="Número WhatsApp" class="w-full bg-[#0f0812] border border-gray-600 p-3 rounded-lg text-white mb-4">
+            <button id="btnSaveWa" class="w-full py-3 bg-cyan-600 rounded-lg font-bold">ENVIAR CÓDIGO ➔</button>
+            <div id="waErrorMsg" class="text-red-500 text-center mt-2 text-xs"></div>
         </div>
     </div>
 
-    <a href="chat.html" class="chat-float-link" title="Abrir Chat Global">
-      <svg viewBox="0 0 24 24">
-        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-      </svg>
-    </a>
-    
-  </div>
-  
-  <script src="https://sevastiancastro92-arch.github.io/Pruevafirebase/script.js"></script>
+    <div id="verifyCodeModal" class="fixed inset-0 bg-black/90 z-[10000] hidden items-center justify-center backdrop-blur-md">
+        <div class="bg-[#141225] border-2 border-pink-500 p-6 rounded-xl w-[90%] max-w-md text-center">
+            <h2 class="text-2xl font-bold text-neon-pink mb-4">VERIFICAR CÓDIGO</h2>
+            <input type="number" id="verificationCodeInput" class="w-full bg-black border border-pink-500 p-3 rounded-lg text-white text-3xl text-center mb-4">
+            <button id="btnVerifyCode" class="w-full py-3 bg-pink-600 rounded-lg font-bold">VERIFICAR</button>
+            <button id="btnCancelVerify" class="mt-4 text-gray-400 text-xs">CANCELAR</button>
+        </div>
+    </div>
 
+    <a href="chat.html" class="chat-float-link"><svg viewBox="0 0 24 24" width="30"><path fill="white" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></a>
+  </div>
+
+  <script src="https://sevastiancastro92-arch.github.io/Pruevafirebase/script.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // Referencias al DOM del nuevo modal
         const waModal = document.getElementById('waLinkModal');
-        const waCountry = document.getElementById('waCountryCode');
-        const waPhone = document.getElementById('waPhoneNumber');
+        const verifyModal = document.getElementById('verifyCodeModal');
         const waBtn = document.getElementById('btnSaveWa');
-        const waError = document.getElementById('waErrorMsg');
+        const verifyBtn = document.getElementById('btnVerifyCode');
+        const editWaBtn = document.getElementById('editWaMenuBtn');
+        
+        let genCode = null, tempNum = null, currentDbRef = null;
 
-        // Función para sanitizar email (por si acaso no existe cuenta previa)
-        function cleanEmail(email) { return email.replace(/\./g, "_"); }
-
-        // Escuchar el estado de autenticación de Firebase
         firebase.auth().onAuthStateChanged((user) => {
-            if (user && user.email) {
-                // --- LÓGICA BOTÓN ADMIN (SEVASTIANCASTRO92) ---
-                if(user.email === "sevastiancastro92@gmail.com") {
-                    const adminBtn = document.getElementById("adminUserBtn");
-                    if(adminBtn) adminBtn.style.display = "flex";
-                }
-                
-                // -------------------------------------------------------------
-                //  CORRECCIÓN FUNDAMENTAL: BUSCAR LA CUENTA REAL DEL USUARIO
-                // -------------------------------------------------------------
-                
-                const usersRef = firebase.database().ref('users');
-                
-                // Buscamos si existe alguna cuenta con este email
-                usersRef.orderByChild('email').equalTo(user.email).once('value').then(snapshot => {
-                    let finalUserKey = null;
-                    let existingWa = null;
-
-                    if (snapshot.exists()) {
-                        // ¡ENCONTRAMOS CUENTA(S)!
-                        // Recorremos para encontrar la "buena" (ej: LK-XT).
-                        // Si hay duplicados, tomaremos la primera que encuentre el sistema.
-                        // (Por eso es importante borrar la duplicada mala en el panel antes)
-                        snapshot.forEach(child => {
-                            finalUserKey = child.key; // Se queda con el Key real (ej: LK-XT)
-                            const userData = child.val();
-                            if(userData.whatsapp) existingWa = userData.whatsapp;
-                        });
-                    } else {
-                        // NO EXISTE CUENTA -> Usamos el método antiguo (crear nueva con email)
-                        finalUserKey = cleanEmail(user.email);
-                    }
-
-                    // Ahora sí tenemos la referencia correcta a la base de datos
-                    const dbRef = firebase.database().ref(`users/${finalUserKey}`);
-                    
-                    console.log("🔑 Usando Key de Usuario:", finalUserKey); // Para depurar
-
-                    if (!existingWa) {
-                        // NO TIENE WA -> MOSTRAR MODAL
-                        waModal.style.display = 'flex';
-                    } else {
-                        // YA TIENE WA -> OCULTAR
-                        waModal.style.display = 'none';
-                        console.log("✅ Usuario verificado con WA:", existingWa);
-                    }
-
-                    // --- LÓGICA DEL BOTÓN GUARDAR (DENTRO DEL HILO CORRECTO) ---
-                    waBtn.onclick = () => {
-                        const country = waCountry.value;
-                        const phone = waPhone.value.trim();
-
-                        if (phone.length < 6) {
-                            waError.innerText = "⚠️ Ingresa un número válido.";
-                            return;
-                        }
-
-                        // Construir número completo
-                        const fullNumber = country + phone;
-
-                        // Efecto de carga
-                        waBtn.innerText = "GUARDANDO...";
-                        waBtn.disabled = true;
-
-                        // Guardar en Firebase (EN LA CUENTA CORRECTA ENCONTRADA)
-                        dbRef.update({
-                            whatsapp: fullNumber,
-                            email: user.email // Nos aseguramos que el email esté ahí
-                        }).then(() => {
-                            // Éxito
-                            waModal.style.display = 'none';
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Vinculado!',
-                                text: 'Tu número ha sido guardado correctamente.',
-                                background: '#141225',
-                                color: '#fff',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                        }).catch((error) => {
-                            console.error(error);
-                            waError.innerText = "Error al guardar. Intenta de nuevo.";
-                            waBtn.innerText = "GUARDAR Y CONTINUAR ➔";
-                            waBtn.disabled = false;
-                        });
-                    };
-
-                }); // Fin del snapshot
+            if (user) {
+                firebase.database().ref('users').orderByChild('email').equalTo(user.email).once('value', snapshot => {
+                    let key = snapshot.exists() ? Object.keys(snapshot.val())[0] : user.email.replace(/\./g, "_");
+                    currentDbRef = firebase.database().ref(`users/${key}`);
+                    if (!snapshot.exists() || !snapshot.val()[key].whatsapp) waModal.style.display = 'flex';
+                });
             }
         });
+
+        editWaBtn.onclick = () => { waModal.style.display = 'flex'; document.getElementById('sideMenu').classList.remove('open'); };
+
+        waBtn.onclick = () => {
+            tempNum = document.getElementById('waCountryCode').value + document.getElementById('waPhoneNumber').value;
+            if (tempNum.length < 8) return;
+            genCode = Math.floor(100000 + Math.random() * 900000);
+            firebase.database().ref('verification_queue').push({ phone: tempNum, code: genCode }).then(() => {
+                waModal.style.display = 'none';
+                verifyModal.style.display = 'flex';
+            });
+        };
+
+        verifyBtn.onclick = () => {
+            if (document.getElementById('verificationCodeInput').value == genCode) {
+                currentDbRef.update({ whatsapp: tempNum }).then(() => {
+                    verifyModal.style.display = 'none';
+                    Swal.fire('¡Listo!', 'WhatsApp vinculado.', 'success');
+                });
+            } else { Swal.fire('Error', 'Código incorrecto.', 'error'); }
+        };
+
+        document.getElementById('btnCancelVerify').onclick = () => verifyModal.style.display = 'none';
     });
   </script>
 </body>
