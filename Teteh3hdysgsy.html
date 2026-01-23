@@ -19,6 +19,7 @@
         --neon-cyan: #00f0ff;
         --neon-pink: #ff4df0;
         --neon-green: #00ff88;
+        --neon-gold: #ffd700;
     }
     body {
       background: linear-gradient(135deg, #0f0812 10%, #141225 50%, #1b1730 100%);
@@ -35,6 +36,7 @@
     .text-neon-cyan { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(0,240,255,0.2); }
     .text-neon-pink { color: var(--neon-pink); text-shadow: 0 0 8px rgba(255,77,240,0.2); }
     .text-neon-green { color: var(--neon-green); text-shadow: 0 0 8px rgba(0,255,136,0.2); }
+    .text-neon-gold { color: var(--neon-gold); text-shadow: 0 0 8px rgba(255,215,0,0.3); }
     
     .neon-input {
         background-color: rgba(255,255,255,0.06);
@@ -71,7 +73,7 @@
       background: rgba(0,0,0,0.6); z-index: 1000;
     }
     .modal {
-        width: 92%; max-width: 400px; padding: 20px; border-radius: 12px;
+        width: 92%; max-width: 450px; padding: 20px; border-radius: 12px;
         background: #141225;
         border: 1px solid rgba(255,255,255,0.1);
         box-shadow: 0 10px 60px rgba(0,0,0,0.7);
@@ -91,7 +93,7 @@
 
     <header class="mb-8 p-4 card rounded-xl">
         <h1 class="text-3xl font-bold text-neon-cyan">Panel de Administración ⚙️</h1>
-        <p class="text-gray-400 mt-1">Gestión de usuarios, saldos y cuentas vinculadas.</p>
+        <p class="text-gray-400 mt-1">Gestión de usuarios, saldos y rankings.</p>
     </header>
     
     <div class="mb-6">
@@ -106,10 +108,10 @@
 
     <div id="balanceModal" class="modal-backdrop">
         <div class="modal">
-            <h2 class="text-xl font-semibold mb-4 text-neon-pink">Gestionar Saldo</h2>
+            <h2 class="text-xl font-semibold mb-4 text-neon-pink">Gestionar Billetera ($)</h2>
             <p id="modalUserEmail" class="text-sm text-gray-400 mb-3"></p>
             
-            <input id="balanceAmountInput" type="number" step="0.01" min="0" placeholder="Ingresa el monto (ej: 10.50)"
+            <input id="balanceAmountInput" type="number" step="0.01" min="0" placeholder="Monto Real (ej: 10.50)"
                    class="w-full px-4 py-3 rounded-lg neon-input text-white focus:outline-none text-lg font-bold">
             
             <div class="actions flex-wrap">
@@ -117,6 +119,57 @@
                 <button id="btnRemoveBalance" class="py-2 px-3 rounded-lg bg-red-600 text-white font-semibold btn-action hover:bg-red-700 flex-1">➖ Quitar</button>
                 <button id="btnAddBalance" class="py-2 px-3 rounded-lg bg-green-600 text-white font-semibold btn-action hover:bg-green-700 flex-1">➕ Agregar</button>
             </div>
+        </div>
+    </div>
+
+    <div id="rankingModal" class="modal-backdrop">
+        <div class="modal border border-yellow-500/30">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-black text-neon-gold uppercase tracking-wider">🏆 Editar Ranking</h2>
+                <span class="text-[10px] bg-yellow-900 text-yellow-200 px-2 py-1 rounded">No afecta Billetera</span>
+            </div>
+            
+            <p id="rankingUserEmail" class="text-xs text-gray-300 mb-4 text-center"></p>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="bg-black/40 p-3 rounded border border-cyan-500/30 text-center">
+                    <p class="text-[10px] text-cyan-400 uppercase">Puntos Recarga</p>
+                    <p id="currentRechargePoints" class="text-xl font-bold text-white">0</p>
+                </div>
+                <div class="bg-black/40 p-3 rounded border border-pink-500/30 text-center">
+                    <p class="text-[10px] text-pink-400 uppercase">Puntos Gastos</p>
+                    <p id="currentSalesPoints" class="text-xl font-bold text-white">0</p>
+                </div>
+            </div>
+
+            <input id="rankingAmountInput" type="number" step="1" placeholder="Ingresa cantidad de puntos..."
+                   class="w-full px-4 py-3 rounded-lg neon-input text-yellow-200 focus:outline-none text-lg font-bold mb-6 border-yellow-500/50">
+
+            <div class="mb-4">
+                <p class="text-xs font-bold text-cyan-400 uppercase mb-2 text-center tracking-widest">--- Top Recargas ---</p>
+                <div class="flex gap-3">
+                    <button onclick="adjustRanking('recharge', false)" class="flex-1 py-2 rounded bg-red-900/50 border border-red-500 text-red-200 font-bold hover:bg-red-600 hover:text-white transition">
+                        ➖ Quitar Puntos
+                    </button>
+                    <button onclick="adjustRanking('recharge', true)" class="flex-1 py-2 rounded bg-cyan-900/50 border border-cyan-500 text-cyan-200 font-bold hover:bg-cyan-600 hover:text-white transition">
+                        ➕ Sumar Puntos
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-xs font-bold text-pink-400 uppercase mb-2 text-center tracking-widest">--- Top Gastos ---</p>
+                <div class="flex gap-3">
+                    <button onclick="adjustRanking('sales', false)" class="flex-1 py-2 rounded bg-red-900/50 border border-red-500 text-red-200 font-bold hover:bg-red-600 hover:text-white transition">
+                        ➖ Quitar Puntos
+                    </button>
+                    <button onclick="adjustRanking('sales', true)" class="flex-1 py-2 rounded bg-pink-900/50 border border-pink-500 text-pink-200 font-bold hover:bg-pink-600 hover:text-white transition">
+                        ➕ Sumar Puntos
+                    </button>
+                </div>
+            </div>
+            
+            <button id="rankingCloseBtn" class="mt-6 w-full py-2 text-gray-500 hover:text-white text-sm border-t border-white/10">Cerrar</button>
         </div>
     </div>
 
@@ -137,7 +190,6 @@
          * LÓGICA DEL PANEL + VINCULACIÓN CON BOT WHATSAPP
          * ================================================================= */
 
-        // 1. Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCr1-2dIqgxoXBTKYgSusnUZorUICX2Too",
             authDomain: "chatglobal-e9370.firebaseapp.com",
@@ -147,7 +199,6 @@
             messagingSenderId: "382420208590",
             appId: "1:382420208590:web:9425fa28c8cdf669adb99f"
         };
-        // Inicializar Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -165,6 +216,14 @@
         const balanceCancelBtn = document.getElementById("balanceCancelBtn");
         const btnAddBalance = document.getElementById("btnAddBalance");
         const btnRemoveBalance = document.getElementById("btnRemoveBalance");
+
+        // Modal Ranking
+        const rankingModal = document.getElementById("rankingModal");
+        const rankingUserEmail = document.getElementById("rankingUserEmail");
+        const currentRechargePoints = document.getElementById("currentRechargePoints");
+        const currentSalesPoints = document.getElementById("currentSalesPoints");
+        const rankingAmountInput = document.getElementById("rankingAmountInput");
+        const rankingCloseBtn = document.getElementById("rankingCloseBtn");
         
         // Modal Borrar
         const deleteModal = document.getElementById("deleteModal");
@@ -216,7 +275,6 @@
             const balance = parseFloat(userData.balance || 0).toFixed(2);
             const waNumber = userData.whatsapp || null;
 
-            // Renderizar botón de WhatsApp o aviso
             let waHtml = "";
             if (waNumber) {
                 waHtml = `
@@ -241,18 +299,21 @@
                     <div class="mt-1">
                         <span class="font-bold text-xl text-neon-pink">$${balance}</span> 
                         <span class="text-sm text-gray-500">Saldo</span>
-                        <span class="mx-3 text-gray-700">|</span>
-                        <span class="text-sm text-gray-500">Gasto Total: $${totalSpent.toFixed(2)}</span>
                     </div>
                 </div>
-                <div class="flex gap-2.5 flex-shrink-0 mt-2 md:mt-0">
-                    <button onclick="openBalanceModal('${userKey}', '${userEmail}', ${balance})"
-                        class="py-2 px-3 rounded-lg bg-blue-600 font-semibold btn-action hover:bg-blue-700 text-sm">
+                <div class="flex gap-2.5 flex-shrink-0 mt-2 md:mt-0 flex-wrap justify-end">
+                    <button onclick="openRankingModal('${userKey}', '${userEmail}')"
+                        class="py-2 px-3 rounded-lg border border-yellow-500/50 text-yellow-300 font-bold hover:bg-yellow-900/30 text-sm shadow-[0_0_10px_rgba(255,215,0,0.2)]">
+                        🏆 Ranking
+                    </button>
+
+                    <button onclick="openBalanceModal('${userKey}', '${userEmail}')"
+                        class="py-2 px-3 rounded-lg bg-blue-600 font-semibold btn-action hover:bg-blue-700 text-white text-sm">
                         Gestionar
                     </button>
                     <button onclick="openDeleteModal('${userKey}', '${userEmail}')"
-                        class="py-2 px-3 rounded-lg bg-red-600 font-semibold btn-action hover:bg-red-700 text-sm">
-                        Eliminar
+                        class="py-2 px-3 rounded-lg bg-red-600 font-semibold btn-action hover:bg-red-700 text-white text-sm">
+                        🗑️
                     </button>
                 </div>
             `;
@@ -260,9 +321,112 @@
         }
 
         /* -------------------------------------------------------------
-           LÓGICA CRÍTICA: ACTUALIZACIÓN DE SALDO Y DISPARADOR DEL BOT
+           LÓGICA RANKING (MODIFICAR PUNTOS CON + Y -)
            ------------------------------------------------------------- */
-        window.openBalanceModal = function(userKey, userEmail, currentBalance) {
+        
+        window.openRankingModal = function(userKey, userEmail) {
+            currentEditingUser = { key: userKey, email: userEmail };
+            rankingUserEmail.textContent = userEmail;
+            rankingAmountInput.value = "";
+            
+            const userData = allUsersData[userKey];
+
+            // Calcular fecha inicio ciclo (Día 11)
+            const now = new Date();
+            let cycleStartDate;
+            if (now.getDate() >= 11) {
+                cycleStartDate = new Date(now.getFullYear(), now.getMonth(), 11, 0, 0, 0);
+            } else {
+                cycleStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 11, 0, 0, 0);
+            }
+
+            // Calcular Recargas del Ciclo
+            let cycleRecharged = 0;
+            if (userData.recharge_history) {
+                Object.values(userData.recharge_history).forEach(r => {
+                    const rDate = new Date(r.date);
+                    if (rDate >= cycleStartDate) cycleRecharged += parseFloat(r.amount || 0);
+                });
+            }
+            
+            // Calcular Gastos del Ciclo
+            let cycleSpent = 0;
+            if (userData.purchases) {
+                Object.values(userData.purchases).forEach(p => {
+                    const pDate = new Date(p.date);
+                    if (pDate >= cycleStartDate) cycleSpent += parseFloat(p.price || 0);
+                });
+            }
+
+            currentRechargePoints.textContent = "$" + cycleRecharged.toFixed(2);
+            currentSalesPoints.textContent = "$" + cycleSpent.toFixed(2);
+
+            rankingModal.style.display = "flex";
+        }
+
+        rankingCloseBtn.onclick = () => { rankingModal.style.display = "none"; currentEditingUser = null; };
+
+        // FUNCION PARA AGREGAR O QUITAR PUNTOS DEL RANKING
+        window.adjustRanking = async function(target, isAdding) {
+            if (!currentEditingUser) return;
+            
+            // Obtener el valor del input
+            let amount = parseFloat(rankingAmountInput.value);
+
+            // Validaciones
+            if (isNaN(amount) || amount === 0) {
+                Swal.fire({ icon: 'warning', title: 'Ingresa un monto válido', background: '#1b1730', color: '#fff' });
+                return;
+            }
+
+            // Si es resta, invertimos el signo
+            let finalAmount = isAdding ? amount : -amount;
+
+            try {
+                const userRef = db.ref(`users/${currentEditingUser.key}`);
+                
+                if (target === 'recharge') {
+                    // Para Recargas: Se añade al historial de recargas
+                    // Si finalAmount es negativo (ej: -50), el ranking lo restará al sumar todo.
+                    await userRef.child("recharge_history").push({
+                        amount: finalAmount, // Positivo o Negativo
+                        date: new Date().toISOString(),
+                        type: "admin_ranking_fix",
+                        note: isAdding ? "Suma Manual Admin" : "Resta Manual Admin"
+                    });
+                } else if (target === 'sales') {
+                    // Para Gastos: Se añade al historial de compras
+                    await userRef.child("purchases").push({
+                        price: finalAmount, // Positivo o Negativo
+                        date: new Date().toISOString(),
+                        item: "Ajuste Ranking Admin",
+                        type: "admin_ranking_fix"
+                    });
+                }
+
+                rankingModal.style.display = "none";
+                
+                const actionText = isAdding ? "Sumado" : "Restado";
+                const targetText = target === 'recharge' ? "Top Recargas" : "Top Gastos";
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Hecho!',
+                    text: `Se han ${actionText} ${amount} puntos al ${targetText}.`,
+                    background: '#1b1730', color: '#fff'
+                });
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire({ icon: 'error', title: 'Error', text: error.message, background: '#1b1730', color: '#fff' });
+            }
+        }
+
+
+        /* -------------------------------------------------------------
+           LÓGICA SALDO REAL (BILLETERA)
+           ------------------------------------------------------------- */
+        window.openBalanceModal = function(userKey, userEmail) {
             currentEditingUser = { key: userKey, email: userEmail };
             modalUserEmail.textContent = `Usuario: ${userEmail}`;
             balanceAmountInput.value = ""; 
@@ -272,7 +436,6 @@
 
         balanceCancelBtn.onclick = () => { balanceModal.style.display = "none"; currentEditingUser = null; };
 
-        // Esta es la función principal que conecta con el Bot
         async function updateBalance(isAddition) {
             if (!currentEditingUser) return;
             
@@ -288,20 +451,16 @@
             const userRef = db.ref(`users/${currentEditingUser.key}`);
 
             try {
-                // 1. LEER DATOS ACTUALES (Para obtener el saldo viejo y el teléfono)
                 const snapshot = await userRef.once('value');
                 const userData = snapshot.val() || {};
                 
                 const oldBalance = parseFloat(userData.balance || 0);
                 const newBalance = Number((oldBalance + changeAmount).toFixed(2));
-                const userPhone = userData.whatsapp || ""; // IMPORTANTE: Debe coincidir con tu campo en BD
+                const userPhone = userData.whatsapp || "";
 
-                // 2. GUARDAR NUEVO SALDO EN FIREBASE
                 await userRef.child("balance").set(newBalance);
 
-                // 3. SI ES RECARGA (ADD), GUARDAMOS HISTORIAL Y AVISAMOS AL BOT
                 if (isAddition) {
-                    // A) Guardar en historial de usuario
                     await userRef.child("recharge_history").push({
                         amount: amount, 
                         date: new Date().toISOString(), 
@@ -309,8 +468,6 @@
                         adminAdded: true
                     });
 
-                    // B) ENVIAR A LA COLA DE MENSAJES (sms_queue)
-                    // El script de Node.js en Termux escuchará esto
                     if (userPhone) {
                         await db.ref('sms_queue').push({
                             phone: userPhone,
@@ -320,17 +477,12 @@
                             addedAmount: amount,
                             timestamp: firebase.database.ServerValue.TIMESTAMP
                         });
-                        console.log("📨 Orden enviada al Bot para: " + userPhone);
                     }
                 }
 
-                // UI Final
                 balanceModal.style.display = "none";
-                let msg = isAddition ? '¡Saldo Agregado!' : '¡Saldo Retirado!';
-                if (isAddition && userPhone) msg += ' y notificación enviada.';
-                
                 Swal.fire({
-                    title: msg,
+                    title: isAddition ? '¡Saldo Agregado!' : '¡Saldo Retirado!',
                     icon: isAddition ? 'success' : 'info',
                     background: '#1b1730', color: '#fff'
                 });
@@ -342,7 +494,6 @@
             }
         }
 
-        // Asignar eventos a los botones del modal
         btnAddBalance.onclick = () => updateBalance(true);
         btnRemoveBalance.onclick = () => updateBalance(false);
 
