@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conexión Telegram - LUCK XIT</title>
+    <title>Vincular Dispositivos - LUCK XIT</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
 
         * { user-select: none; box-sizing: border-box; }
-        :root { --neon-purple: #bc13fe; --neon-blue: #00d2d3; --glass-bg: rgba(20, 0, 30, 0.7); }
+        :root { --neon-purple: #bc13fe; --neon-blue: #00d2d3; --neon-green: #25D366; --glass-bg: rgba(20, 0, 30, 0.7); }
 
         body {
             background-color: #020005; color: white;
@@ -21,87 +21,104 @@
             background: var(--glass-bg); backdrop-filter: blur(12px);
             padding: 2rem; border-radius: 20px;
             box-shadow: 0 0 20px rgba(0, 210, 211, 0.2);
-            width: 100%; max-width: 500px;
-            border: 1px solid rgba(0, 210, 211, 0.3);
+            width: 90%; max-width: 500px;
+            border: 1px solid rgba(188, 19, 254, 0.3);
             text-align: center; position: relative;
         }
 
         h2 {
             font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(90deg, var(--neon-blue), #fff);
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 20px; filter: drop-shadow(0 0 5px var(--neon-blue));
         }
 
-        .input-group {
-            display: flex; gap: 10px; margin-bottom: 20px;
+        /* Selector de Tipo */
+        .type-selector {
+            display: flex; gap: 10px; margin-bottom: 15px;
+        }
+        select {
+            width: 100%; padding: 12px; border-radius: 10px;
+            background: rgba(0,0,0,0.6); border: 1px solid var(--neon-purple);
+            color: white; font-family: 'Orbitron'; cursor: pointer;
         }
 
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
         input {
-            flex: 1; padding: 15px; border-radius: 10px;
+            width: 100%; padding: 15px; border-radius: 10px;
             background: rgba(0,0,0,0.5); border: 1px solid var(--neon-blue);
             color: #fff; text-align: center; font-family: 'Orbitron'; font-size: 1.1rem;
             user-select: text;
         }
 
-        button {
-            padding: 15px 20px; background: linear-gradient(135deg, var(--neon-blue), #0088cc);
+        .btn-auth {
+            padding: 15px; background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
             border: none; border-radius: 10px; color: white; font-weight: bold;
-            cursor: pointer; transition: 0.3s; font-family: 'Orbitron';
+            cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; letter-spacing: 1px;
         }
+        .btn-auth:hover { transform: scale(1.02); box-shadow: 0 0 15px var(--neon-purple); }
 
-        button:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon-blue); }
-
-        /* Lista de autorizados */
-        .id-list { text-align: left; margin-top: 20px; max-height: 250px; overflow-y: auto; }
+        /* Lista */
+        .id-list { text-align: left; margin-top: 20px; max-height: 300px; overflow-y: auto; }
         .id-item {
-            background: rgba(255,255,255,0.05); border-left: 3px solid var(--neon-purple);
+            background: rgba(255,255,255,0.05); border-left: 4px solid var(--neon-blue);
             padding: 15px; margin-bottom: 10px; border-radius: 8px;
             display: flex; justify-content: space-between; align-items: center;
+            animation: fadeIn 0.5s ease;
         }
-        .btn-remove { background: #ff073a; padding: 8px 15px; font-size: 0.8rem; }
+        .item-info strong { font-family: 'Orbitron'; font-size: 0.9rem; }
+        .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 5px; text-transform: uppercase; margin-left: 5px; }
+        .badge-tg { background: #0088cc; }
+        .badge-wa { background: #25D366; }
 
-        /* Pantalla de carga */
+        .btn-remove { background: #ff073a; border: none; padding: 8px 12px; color: white; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        /* Loader */
         #loader {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); border-radius: 20px;
-            justify-content: center; align-items: center; flex-direction: column; z-index: 10;
+            background: rgba(0,0,0,0.9); border-radius: 20px;
+            justify-content: center; align-items: center; flex-direction: column; z-index: 100;
         }
-        .spinner {
-            width: 50px; height: 50px; border: 5px solid rgba(0,210,211,0.3);
-            border-top-color: var(--neon-blue); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 15px;
-        }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(0,210,211,0.2); border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .back-btn { margin-top: 20px; background: transparent; border: 1px solid #fff; width: 100%; }
+        .back-btn { margin-top: 20px; background: transparent; border: 1px solid #444; color: #888; width: 100%; padding: 12px; cursor: pointer; border-radius: 10px; }
     </style>
 </head>
 <body>
+
     <div class="container">
         <div id="loader">
             <div class="spinner"></div>
-            <p id="loaderText" style="font-family:'Orbitron'; color:var(--neon-blue);">Sincronizando con el Bot...</p>
+            <p id="loaderText" style="color: var(--neon-blue); margin-top: 15px; font-family: 'Orbitron'; font-size: 0.8rem;"></p>
         </div>
 
-        <h2>VINCULAR TELEGRAM</h2>
-        <p style="color:#aaa; font-size:0.9rem;">Ingresa el ID que te dio el Bot para autorizarlo a usar tu saldo y cuenta.</p>
+        <h2>CONEXIÓN SUPREMA</h2>
+        
+        <div class="type-selector">
+            <select id="deviceType">
+                <option value="telegram">TELEGRAM (ID)</option>
+                <option value="whatsapp">WHATSAPP (Número)</option>
+            </select>
+        </div>
 
         <div class="input-group">
-            <input type="number" id="tgIdInput" placeholder="Ej: 123456789">
-            <button onclick="authorizeId()">AUTORIZAR</button>
+            <input type="text" id="deviceId" placeholder="Ingresa ID o Número">
+            <button class="btn-auth" onclick="handleAuthorize()">VINCULAR AHORA</button>
         </div>
 
-        <h3 style="text-align: left; font-family:'Orbitron'; font-size: 1rem; color: var(--neon-purple); border-bottom: 1px solid #333; padding-bottom: 5px;">Dispositivos Autorizados</h3>
+        <h3 style="text-align: left; font-family:'Orbitron'; font-size: 0.9rem; color: var(--neon-purple); border-bottom: 1px solid #333; padding-bottom: 8px;">Mis Vínculos Activos</h3>
         
-        <div class="id-list" id="authorizedList">
-            <p style="text-align:center; color:#666;">Cargando red...</p>
+        <div class="id-list" id="deviceList">
+            <p style="text-align:center; color:#444;">Buscando en la red...</p>
         </div>
 
-        <button class="back-btn" onclick="window.location.href='dashboard.html'">Volver al Panel</button>
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">VOLVER AL PANEL</button>
     </div>
 
-                                        <script type="module">
+    <script type="module">
         import { auth, db, onAuthStateChanged, ref, set, get } from './firebase-config.js';
 
         let currentUser = null;
@@ -109,104 +126,91 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                loadAuthorizedIds(); // Carga la lista al iniciar
+                loadDevices();
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        // 1. Mostrar pantalla de carga
-        window.showProcessing = function(text) {
-            document.getElementById('loaderText').innerText = text;
+        const showLoad = (txt) => {
+            document.getElementById('loaderText').innerText = txt;
             document.getElementById('loader').style.display = 'flex';
-        }
-        window.hideProcessing = function() {
-            document.getElementById('loader').style.display = 'none';
-        }
+        };
+        const hideLoad = () => document.getElementById('loader').style.display = 'none';
 
-        // 2. Autorizar un nuevo ID
-        window.authorizeId = async () => {
-            const tgId = document.getElementById('tgIdInput').value.trim();
-            if(!tgId) return alert("Escribe un ID válido");
+        // AUTORIZAR
+        window.handleAuthorize = async () => {
+            const id = document.getElementById('deviceId').value.trim();
+            const type = document.getElementById('deviceType').value;
 
-            showProcessing("Encriptando y Autorizando ID...");
+            if(!id) return alert("Ingresa un dato válido");
 
-            // Retardo para que se vea profesional
+            showLoad("SINCRONIZANDO CON LUCK XIT GALAXY...");
+
             setTimeout(async () => {
                 try {
-                    // Guardamos en la base de datos general para que el bot lo encuentre
-                    await set(ref(db, `telegram_auth/${tgId}`), currentUser.uid);
-                    // Guardamos en el perfil del usuario para el historial web
-                    await set(ref(db, `users/${currentUser.uid}/telegram_ids/${tgId}`), {
-                        date: Date.now(),
-                        status: "Activo"
-                    });
+                    const dbPath = type === 'telegram' ? `telegram_auth/${id}` : `whatsapp_auth/${id}`;
                     
-                    document.getElementById('tgIdInput').value = "";
-                    hideProcessing();
-                    loadAuthorizedIds(); // Recargamos la lista para que aparezca
+                    // 1. Mapeo General
+                    await set(ref(db, dbPath), currentUser.uid);
+                    
+                    // 2. Registro en el usuario
+                    await set(ref(db, `users/${currentUser.uid}/linked_devices/${id}`), {
+                        type: type,
+                        date: Date.now()
+                    });
+
+                    document.getElementById('deviceId').value = "";
+                    hideLoad();
+                    loadDevices();
                 } catch(e) {
-                    console.error(e);
-                    alert("Error de sistema al guardar.");
-                    hideProcessing();
+                    alert("Error de conexión");
+                    hideLoad();
                 }
-            }, 1500);
+            }, 1800);
         };
 
-        // 3. Quitar autorización (Usamos set con null porque no tienes 'remove' exportado)
-        window.revokeId = async (tgId) => {
-            showProcessing("Revocando acceso al Bot...");
+        // REVOCAR
+        window.removeDevice = async (id, type) => {
+            showLoad("ELIMINANDO ACCESO...");
+            const dbPath = type === 'telegram' ? `telegram_auth/${id}` : `whatsapp_auth/${id}`;
             
             setTimeout(async () => {
-                try {
-                    await set(ref(db, `telegram_auth/${tgId}`), null);
-                    await set(ref(db, `users/${currentUser.uid}/telegram_ids/${tgId}`), null);
-                    hideProcessing();
-                    loadAuthorizedIds(); // Recargamos la lista para que desaparezca
-                } catch(e) {
-                    console.error(e);
-                    alert("Error al intentar revocar el ID.");
-                    hideProcessing();
-                }
+                await set(ref(db, dbPath), null);
+                await set(ref(db, `users/${currentUser.uid}/linked_devices/${id}`), null);
+                hideLoad();
+                loadDevices();
             }, 1000);
         };
 
-        // 4. Leer los IDs autorizados
-        window.loadAuthorizedIds = async () => {
-            const container = document.getElementById('authorizedList');
-            container.innerHTML = "<p style='text-align:center; color:#666;'>Cargando red...</p>";
-            
+        // CARGAR LISTA
+        window.loadDevices = async () => {
+            const container = document.getElementById('deviceList');
             try {
-                const listRef = ref(db, `users/${currentUser.uid}/telegram_ids`);
-                const snapshot = await get(listRef);
-                
-                container.innerHTML = ""; // Limpiamos el mensaje de carga
+                const snapshot = await get(ref(db, `users/${currentUser.uid}/linked_devices`));
+                container.innerHTML = "";
 
                 if(snapshot.exists()) {
                     snapshot.forEach(child => {
-                        const tgId = child.key;
+                        const id = child.key;
                         const data = child.val();
-                        const dateStr = new Date(data.date).toLocaleDateString();
+                        const isTG = data.type === 'telegram';
 
                         container.innerHTML += `
-                            <div class="id-item">
-                                <div>
-                                    <strong style="color:var(--neon-blue);">ID: ${tgId}</strong><br>
-                                    <span style="font-size:0.8rem; color:#aaa;">Vinculado: ${dateStr}</span>
+                            <div class="id-item" style="border-color: ${isTG ? '#0088cc' : '#25D366'}">
+                                <div class="item-info">
+                                    <strong style="color:white">${id}</strong>
+                                    <span class="badge ${isTG ? 'badge-tg' : 'badge-wa'}">${data.type}</span>
                                 </div>
-                                <button class="btn-remove" onclick="revokeId('${tgId}')">✖ Revocar</button>
+                                <button class="btn-remove" onclick="removeDevice('${id}', '${data.type}')">✖</button>
                             </div>
                         `;
                     });
                 } else {
-                    container.innerHTML = "<p style='text-align:center; color:#666;'>Ningún dispositivo autorizado aún.</p>";
+                    container.innerHTML = "<p style='text-align:center; color:#555;'>No hay dispositivos.</p>";
                 }
-            } catch(e) {
-                console.error(e);
-                container.innerHTML = "<p style='text-align:center; color:red;'>Error al cargar el historial.</p>";
-            }
-        }
+            } catch(e) { container.innerHTML = "Error al cargar."; }
+        };
     </script>
-
 </body>
 </html>
