@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Reparado y Actualizado</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .debug-box {
+            background: #000;
+            color: #0f0;
+            font-family: monospace;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            display: none; /* Oculto si no hay error */
+        }
+        
+        /* ESTILOS PARA EL PREDICTIVO */
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        #suggestionsList {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1a1a1a; /* Fondo oscuro */
+            border: 1px solid #444;
+            border-radius: 0 0 5px 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none; /* Oculto por defecto */
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            color: #fff;
+        }
+
+        .suggestion-item:hover {
+            background-color: #00d2d3; /* Color al pasar el mouse */
+            color: #000;
+        }
+
+        .suggestion-item small {
+            color: #aaa;
+            margin-left: 5px;
+            font-size: 0.8em;
+        }
+        
+        .suggestion-item:hover small {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 600px;">
+        <h2>Panel Administrador</h2>
+        
+        <div id="debugLog" class="debug-box"></div>
+
+        <p id="loadingMsg">Conectando con base de datos...</p>
+
+        <div class="product-card">
+            <h3>1. Crear Producto</h3>
+            <input type="text" id="prodName" placeholder="Nombre (ej: VIP 1 Día)">
+            <input type="number" id="prodPrice" placeholder="Precio USD (ej: 0.5)" step="0.01">
+            <input type="text" id="prodDur" placeholder="Duración (ej: 24 horas)">
+            <button onclick="addProduct()">Crear Producto</button>
+        </div>
+
+        <div class="product-card">
+            <h3>2. Agregar Stock (Keys)</h3>
+            <p style="font-size:0.8rem">Selecciona producto y pega las keys (separadas por espacio, enter o comas).</p>
+            
+            <select id="prodSelect" onchange="checkStock()"></select>
+            
+            <p id="stockDisplay" style="color: #00d2d3; font-weight: bold; margin: 5px 0;">Esperando selección...</p>
+
+            <textarea id="keysInput" rows="5" placeholder="Pega las keys aquí...
+ABCD-1234
+EFGH-5678, IJKL-9012"></textarea>
+            <button onclick="addKeys()">Cargar Keys al Sistema</button>
+        </div>
+
+        <div class="product-card">
+            <h3>3. Gestionar Usuarios</h3>
+            <div class="search-container">
+                <input type="text" id="userSearch" placeholder="Escribe para buscar usuario..." autocomplete="off">
+                <div id="suggestionsList"></div>
+            </div>
+            
+            <input type="number" id="amountAdd" placeholder="Cantidad a sumar (USD)" step="0.1">
+            <button onclick="addBalance()">Añadir Saldo</button>
+            <p id="adminMsg" style="margin-top: 10px; font-weight: bold;"></p>
+        </div>
+
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">Volver al Dashboard</button>
+    </div>
+
+    <script type="module">
+        import { db, ref, push, set, get, update, auth, onAuthStateChanged } from './firebase-config.js';
+
+        // Variable global para guardar los usuarios temporalmente
+        let cachedUsers = [];
+
+        // --- SISTEMA DE LOGS EN PANTALLA ---
+        function logError(msg) {
+            const box = document.getElementById('debugLog');
+            box.style.display = 'block';
+            box.innerText = "ERROR: " + msg;
+            console.error(msg);
+        }
+
+        // --- 1. INICIALIZACIÓN SEGURA ---
+        onAuthStateChanged(auth, (user) => {
+            const loading = document.getElementById('loadingMsg');
+            if (user) {
+                loading.innerText = "Conectado como: " + user.email;
+                loading.style.color = "#2ecc71";
+                loadProductSelect();
+                loadUsersForSearch(); 
+            } else {
+                loading.innerText = "⚠️ No estás logueado. La base de datos puede rechazar la lectura.";
+                loading.style.color = "#e74c3c";
+                loadProductSelect();
+            }
+        });
+
+        // --- CARGAR USUARIOS PARA EL PREDICTIVO ---
+        window.loadUsersForSearch = function() {
+            get(ref(db, 'users')).then(snap => {
+                cachedUsers = []; 
+                if(snap.exists()){
+                    snap.forEach(childSnap => {
+                        const userData = childSnap.val();
+                        cachedUsers.push({
+                            key: childSnap.key,
+                            username: userData.username || "Sin Nombre",
+                            email: userData.email || ""
+                        });
+                    });
+                }
+            }).catch(error => {
+                console.warn("No se pudo pre-cargar usuarios.");
+            });
+        }
+
+        // --- LÓGICA DE BÚSQUEDA PREDICTIVA ---
+        const searchInput = document.getElementById('userSearch');
+        const suggestionsBox = document.getElementById('suggestionsList');
+
+        searchInput.addEventListener('input', function() {
+            const text = this.value.toLowerCase();
+            suggestionsBox.innerHTML = ''; 
+            
+            if (text.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            const matches = cachedUsers.filter(u => u.username.toLowerCase().startsWith(text));
+
+            if (matches.length > 0) {
+                suggestionsBox.style.display = 'block';
+                matches.forEach(user => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerHTML = `${user.username} <small>(${user.key.substr(0,5)}...)</small>`;
+                    
+                    div.onclick = () => {
+                        searchInput.value = user.username;
+                        suggestionsBox.style.display = 'none';
+                    };
+                    suggestionsBox.appendChild(div);
+                });
+            } else {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target !== searchInput) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+
+        // --- 2. CARGAR LISTA DE PRODUCTOS ---
+        window.loadProductSelect = function() {
+            const sel = document.getElementById('prodSelect');
+            sel.innerHTML = "<option>Cargando lista...</option>"; 
+
+            get(ref(db, 'products')).then(snap => {
+                sel.innerHTML = ""; 
+                
+                if(snap.exists()){
+                    snap.forEach(childSnap => {
+                        const opt = document.createElement('option');
+                        opt.value = childSnap.key;
+                        opt.text = `${childSnap.val().name} - $${childSnap.val().price}`;
+                        sel.add(opt);
+                    });
+                    checkStock();
+                } else {
+                    sel.innerHTML = "<option>No hay productos creados</option>";
+                    document.getElementById('stockDisplay').innerText = "Sin productos";
+                }
+            }).catch(error => {
+                logError("No se pudo leer 'products'. " + error.message);
+            });
+        }
+
+        // --- 3. CREAR PRODUCTO ---
+        window.addProduct = () => {
+            const name = document.getElementById('prodName').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const duration = document.getElementById('prodDur').value;
+
+            if(!name || !price) return alert("Faltan datos");
+
+            const newProdRef = push(ref(db, 'products'));
+            set(newProdRef, {
+                name: name,
+                price: price,
+                duration: duration
+            }).then(() => {
+                alert("Producto creado");
+                document.getElementById('prodName').value = '';
+                document.getElementById('prodPrice').value = '';
+                document.getElementById('prodDur').value = '';
+                loadProductSelect();
+            }).catch(e => logError(e.message));
+        };
+
+        // --- 4. VERIFICAR STOCK ---
+        window.checkStock = function() {
+            const prodId = document.getElementById('prodSelect').value;
+            const display = document.getElementById('stockDisplay');
+            
+            if(!prodId) return;
+
+            display.innerText = "Consultando stock...";
+
+            get(ref(db, `products/${prodId}/keys`)).then(snap => {
+                if(snap.exists()) {
+                    const count = Object.keys(snap.val()).length;
+                    display.innerText = `Stock en DB: ${count} keys`;
+                    display.style.color = "#2ecc71"; 
+                } else {
+                    display.innerText = "Stock en DB: 0 (Agotado)";
+                    display.style.color = "#e74c3c"; 
+                }
+            });
+        }
+
+        // --- 5. AGREGAR KEYS (MODIFICADO) ---
+        window.addKeys = () => {
+            const prodId = document.getElementById('prodSelect').value;
+            const rawText = document.getElementById('keysInput').value;
+            
+            if(!prodId || !rawText) return alert("Selecciona producto y escribe keys");
+
+            const cleanKeys = rawText
+                .split(/[\n,\s]+/) // Divide por Enter, Coma o Espacio
+                .map(k => k.trim()) // Limpia espacios residuales
+                .filter(k => k.length > 0); // Elimina entradas vacías
+
+            if(cleanKeys.length === 0) return alert("No hay keys válidas o solo hay espacios vacíos.");
+
+            const updates = {};
+            const baseRef = `products/${prodId}/keys`;
+
+            cleanKeys.forEach(k => {
+                const newId = push(ref(db, baseRef)).key; 
+                updates[`${baseRef}/${newId}`] = k;
+            });
+
+            update(ref(db), updates)
+                .then(() => {
+                    alert(`¡Listo! Se agregaron ${cleanKeys.length} keys correctamente.`);
+                    document.getElementById('keysInput').value = "";
+                    checkStock();
+                })
+                .catch(e => logError("Error al guardar keys: " + e.message));
+        };
+
+        // --- 6. AÑADIR SALDO (ACTUALIZADO PARA HISTORIAL) ---
+        window.addBalance = async () => {
+            const targetUser = document.getElementById('userSearch').value.trim();
+            const amount = parseFloat(document.getElementById('amountAdd').value);
+            const msg = document.getElementById('adminMsg');
+
+            if(!targetUser || isNaN(amount)) return alert("Datos inválidos");
+
+            msg.innerText = "Buscando usuario...";
+            msg.style.color = "#fff";
+            
+            try {
+                const snapshot = await get(ref(db, 'users'));
+                let foundUid = null;
+                let currentBal = 0;
+
+                // Buscar el ID del usuario predictivo
+                snapshot.forEach(childSnap => {
+                    if(childSnap.val().username === targetUser) {
+                        foundUid = childSnap.key;
+                        currentBal = parseFloat(childSnap.val().balance || 0);
+                    }
+                });
+
+                if(foundUid) {
+                    const newBal = (currentBal + amount).toFixed(2);
+                    
+                    // --- NUEVO: REGISTRO PARA EL HISTORIAL ---
+                    const newRechargeRef = push(ref(db, `users/${foundUid}/recharges`));
+                    
+                    const updates = {};
+                    updates[`users/${foundUid}/balance`] = parseFloat(newBal); // Actualiza el saldo
+                    updates[`users/${foundUid}/recharges/${newRechargeRef.key}`] = { // Guarda el recibo
+                        amount: amount,
+                        date: Date.now()
+                    };
+
+                    await update(ref(db), updates);
+                    // -----------------------------------------
+
+                    msg.innerText = `Saldo actualizado a $${newBal} y registrado en el historial.`;
+                    msg.style.color = "#2ecc71"; // Verde éxito
+                    document.getElementById('amountAdd').value = '';
+                } else {
+                    msg.innerText = "Usuario no encontrado";
+                    msg.style.color = "#e74c3c"; // Rojo error
+                }
+            } catch (e) {
+                logError(e.message);
+                msg.innerText = "Error de conexión";
+                msg.style.color = "#e74c3c";
+            }
+        };
+    </script>
+</body>
+</html>

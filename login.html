@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - LUCK XIT GALAXY</title>
+    <style>
+        /* =========================================
+           1. FUENTES Y PROTECCIÓN
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+
+        /* BLOQUEO DE SELECCIÓN (ANTI-COPIA) */
+        * {
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            box-sizing: border-box;
+        }
+
+        /* Variables de color */
+        :root {
+            --neon-purple: #bc13fe;
+            --neon-red: #ff073a;
+            --glass-bg: rgba(20, 0, 30, 0.7);
+        }
+
+        body {
+            background-color: #020005;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* FONDO DE PARTÍCULAS */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* =========================================
+           2. CONTENEDOR PRINCIPAL
+           ========================================= */
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: 
+                0 0 40px rgba(188, 19, 254, 0.15),
+                inset 0 0 30px rgba(255, 7, 58, 0.05);
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(188, 19, 254, 0.3);
+            text-align: center;
+            animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* TÍTULO */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, var(--neon-purple), #fff, var(--neon-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            filter: drop-shadow(0 0 5px var(--neon-purple));
+        }
+
+        /* =========================================
+           3. INPUTS (CAMPOS DE TEXTO)
+           ========================================= */
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+            text-align: center;
+            /* Permitir seleccionar texto DENTRO del input para poder borrar/editar */
+            -webkit-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+        }
+
+        input:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.3);
+            background: rgba(0, 0, 0, 0.6);
+            transform: scale(1.02);
+        }
+
+        /* =========================================
+           4. BOTONES
+           ========================================= */
+        
+        /* Botón Principal (Entrar) */
+        #actionBtn {
+            width: 100%;
+            padding: 18px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-red) 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+            letter-spacing: 1px;
+        }
+
+        #actionBtn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 0 35px var(--neon-purple);
+        }
+
+        #actionBtn:active {
+            transform: scale(0.95);
+        }
+
+        /* Botón Secundario (Toggle) */
+        .btn-secondary {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-secondary:hover {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red);
+        }
+
+        /* Mensajes de error */
+        .error {
+            color: #ff3333;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            min-height: 20px;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body oncontextmenu="return false;"> <canvas id="particle-canvas"></canvas>
+
+    <div class="container">
+        <h1 id="title">Iniciar Sesión</h1>
+        
+        <input type="text" id="username" placeholder="Usuario" autocomplete="off">
+        <input type="password" id="password" placeholder="Contraseña">
+        
+        <p id="msg" class="error"></p>
+        
+        <button id="actionBtn">Entrar</button>
+        <button id="toggleBtn" class="btn-secondary">No tengo cuenta, Registrarme</button>
+    </div>
+
+    <script>
+        // --- EFECTOS VISUALES (NO TOCAR) ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.size = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.5 ? 'rgba(255, 7, 58, ' : 'rgba(188, 19, 254, ';
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color + this.alpha + ')';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color + '1)';
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 60; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = 'rgba(150, 50, 255, ' + (1 - distance/120) * 0.2 + ')';
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        initParticles();
+        animate();
+    </script>
+
+    <script type="module">
+        import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, set } from './firebase-config.js';
+
+        const userIn = document.getElementById('username');
+        const passIn = document.getElementById('password');
+        const actionBtn = document.getElementById('actionBtn');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const title = document.getElementById('title');
+        const msg = document.getElementById('msg');
+        
+        let isLogin = true;
+
+        // Cambiar entre Login y Registro
+        toggleBtn.addEventListener('click', () => {
+            isLogin = !isLogin;
+            title.innerText = isLogin ? "Iniciar Sesión" : "Crear Cuenta";
+            actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
+            toggleBtn.innerText = isLogin ? "No tengo cuenta, Registrarme" : "Ya tengo cuenta, Iniciar";
+            msg.innerText = "";
+        });
+
+        // Lógica Principal
+        actionBtn.addEventListener('click', async () => {
+            const userRaw = userIn.value.trim();
+            // Quitamos espacios para el email, pero guardamos el original
+            const userClean = userRaw.replace(/\s/g, ''); 
+            const pass = passIn.value;
+
+            // Email falso para que Firebase funcione solo con usuario
+            const fakeEmail = `${userClean}@sistema.local`; 
+
+            if(!userClean || !pass) { 
+                msg.innerText = "LLENA TODOS LOS CAMPOS"; 
+                return; 
+            }
+
+            try {
+                actionBtn.innerText = "PROCESANDO...";
+                actionBtn.disabled = true;
+
+                if(isLogin) {
+                    // --- MODO LOGIN ---
+                    await signInWithEmailAndPassword(auth, fakeEmail, pass);
+                    // Si entra, redirige
+                    window.location.href = "dashboard.html";
+                } else {
+                    // --- MODO REGISTRO ---
+                    const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
+                    const uid = userCredential.user.uid;
+
+                    // AQUÍ ESTÁ LA CLAVE: Guardamos el usuario en la DB
+                    // Esto permite que el Admin Panel lo encuentre luego.
+                    await set(ref(db, 'users/' + uid), {
+                        username: userClean, // Nombre para buscar
+                        balance: 0,          // Saldo inicial
+                        role: 'user',        // Rol normal
+                        email: fakeEmail     // Referencia interna
+                    });
+
+                    window.location.href = "dashboard.html";
+                }
+            } catch (error) {
+                console.error(error);
+                // Manejo de errores traducido
+                if (error.code === 'auth/email-already-in-use') {
+                    msg.innerText = "ESTE NOMBRE DE USUARIO YA EXISTE.";
+                } else if (error.code === 'auth/weak-password') {
+                    msg.innerText = "CONTRASEÑA MUY CORTA (MIN 6).";
+                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    msg.innerText = "USUARIO O CONTRASEÑA INCORRECTOS.";
+                } else {
+                    msg.innerText = "ERROR: " + error.code;
+                }
+                
+                actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
+                actionBtn.disabled = false;
+            }
+        });
+        
+        // Permitir dar ENTER para entrar
+        document.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') actionBtn.click();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recargar con Nequi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #1e1e1e;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        h2 { color: #bb86fc; margin-top: 0; }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background: #333;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .nequi-card {
+            background: #2d004d; /* Color Nequi oscuro */
+            border: 1px solid #da0081; /* Rosa Nequi */
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            display: none; /* Oculto al inicio */
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .number-display {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            letter-spacing: 2px;
+            /* Permitir selección fácil */
+            user-select: all; 
+        }
+
+        .btn-nequi {
+            background: #da0081; /* Rosa Nequi */
+            color: white;
+            font-size: 1.1rem;
+        }
+        .btn-nequi:hover { background: #b00068; }
+
+        .btn-whatsapp {
+            background: #25D366; /* Verde WhatsApp */
+            color: white;
+            margin-top: 15px;
+        }
+        .btn-whatsapp:hover { background: #128C7E; }
+        
+        .btn-secondary {
+            background: #444;
+            color: #ccc;
+        }
+        .back-btn {
+            background: transparent;
+            border: 1px solid #555;
+            color: #aaa;
+            margin-top: 20px;
+        }
+
+        /* Iconos simples con texto */
+        .icon-btn { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        /* Texto de conversión en tiempo real */
+        .conversion-text {
+            font-size: 0.9rem;
+            color: #00d2d3;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            min-height: 1.2em;
+        }
+        
+        #toast {
+            visibility: hidden; 
+            min-width: 250px; 
+            background-color: #333; 
+            color: #fff; 
+            text-align: center; 
+            border-radius: 2px; 
+            padding: 16px; 
+            position: fixed; 
+            z-index: 100; 
+            left: 50%; 
+            bottom: 30px; 
+            transform: translateX(-50%); 
+            font-size: 17px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Recargar Saldo</h2>
+        <p>Ingresa el monto en Dólares (USD).</p>
+
+        <div id="step1">
+            <label>Monto a recargar (USD):</label>
+            <input type="number" id="amountInput" placeholder="Ej: 2.00" step="0.5">
+            
+            <p id="conversionDisplay" class="conversion-text">≈ 0 COP</p>
+            
+            <button onclick="generateOrder()" style="background-color: #6200ea; color: white;">Continuar con Nequi</button>
+        </div>
+
+        <div id="step2" class="nequi-card">
+            <h3>Orden Generada</h3>
+            <p>Debes enviar <strong id="displayAmountCOP" style="color:#00d2d3; font-size: 1.2rem;"></strong> COP</p>
+            <p style="font-size: 0.8rem; margin-top:-10px;">(Equivalente a <span id="displayAmountUSD"></span> USD)</p>
+            
+            <p>Al siguiente Nequi:</p>
+            
+            <div class="number-display" id="nequiNumber">3214701288</div>
+            
+            <button class="btn-nequi icon-btn" onclick="openNequi()">
+                📱 Copiar y Abrir Nequi
+            </button>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin: 20px 0;">
+
+            <p style="font-size: 0.9rem;">¿Ya realizaste el pago?</p>
+            <p style="font-size: 0.8rem; color: #ccc;">Envía el comprobante para que el Admin te asigne el saldo.</p>
+            
+            <button class="btn-whatsapp icon-btn" onclick="sendProof()">
+                💬 Enviar Comprobante (WhatsApp)
+            </button>
+            
+            <button class="btn-secondary" onclick="resetForm()" style="margin-top: 10px; font-size: 0.8rem;">Cancelar / Volver</button>
+        </div>
+
+        <button class="back-btn" onclick="window.location.href='dashboard.html'" id="backBtn">Volver al Inicio</button>
+    </div>
+
+    <div id="toast">Número copiado al portapapeles</div>
+
+    <script type="module">
+        import { auth, onAuthStateChanged, db, ref, get } from './firebase-config.js';
+
+        // --- CONFIGURACIÓN ---
+        const TASA_CAMBIO = 4200; // PRECIO DEL DÓLAR EN PESOS (AJUSTA AQUÍ)
+        const MINIMO_COP = 8000;  // MÍNIMO EN PESOS
+
+        let currentUser = null;
+        let currentUsername = "Usuario";
+        let finalUsd = 0;
+        let finalCop = 0;
+
+        // VERIFICAR USUARIO
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                get(ref(db, `users/${user.uid}`)).then(snap => {
+                    if(snap.exists()) {
+                        currentUsername = snap.val().username;
+                    }
+                });
+            } else {
+                window.location.href = "login.html"; // Redirigir si no hay sesión
+            }
+        });
+
+        // CALCULO EN TIEMPO REAL
+        const input = document.getElementById('amountInput');
+        const display = document.getElementById('conversionDisplay');
+
+        input.addEventListener('input', () => {
+            const val = parseFloat(input.value);
+            if(val > 0) {
+                const cop = val * TASA_CAMBIO;
+                // Formato de moneda: $ 8.000
+                display.innerText = `≈ ${cop.toLocaleString('es-CO', {style:'currency', currency:'COP', minimumFractionDigits: 0})}`;
+                if(cop < MINIMO_COP) {
+                    display.style.color = "#ff4444"; // Rojo si no llega al mínimo
+                } else {
+                    display.style.color = "#00d2d3"; // Verde azulado si está bien
+                }
+            } else {
+                display.innerText = "≈ 0 COP";
+            }
+        });
+
+        // 1. GENERAR ORDEN (Paso 1 -> Paso 2)
+        window.generateOrder = () => {
+            const amountUSD = parseFloat(document.getElementById('amountInput').value);
+            
+            if(!amountUSD || amountUSD <= 0) {
+                alert("Por favor ingresa un monto válido.");
+                return;
+            }
+
+            // Lógica de conversión y validación
+            const amountCOP = amountUSD * TASA_CAMBIO;
+
+            if (amountCOP < MINIMO_COP) {
+                alert(`El monto mínimo de recarga son ${MINIMO_COP.toLocaleString()} pesos (aprox $${(MINIMO_COP/TASA_CAMBIO).toFixed(2)} USD).`);
+                return;
+            }
+
+            // Guardamos valores globales para usar en el mensaje
+            finalUsd = amountUSD;
+            finalCop = amountCOP;
+
+            // Actualizar vista
+            document.getElementById('displayAmountUSD').innerText = `$${finalUsd.toFixed(2)}`;
+            document.getElementById('displayAmountCOP').innerText = finalCop.toLocaleString('es-CO', {style:'currency', currency:'COP', minimumFractionDigits: 0});
+
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        };
+
+        // 2. FUNCION MEJORADA: COPIAR Y ABRIR NEQUI
+        window.openNequi = () => {
+            const number = "3214701288";
+            
+            // Intento 1: Método Moderno (Portapapeles API)
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(number).then(() => {
+                    launchNequiApp();
+                }).catch(() => {
+                    fallbackCopyText(number);
+                });
+            } else {
+                fallbackCopyText(number);
+            }
+        };
+
+        // Función de respaldo para copiar
+        function fallbackCopyText(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) launchNequiApp();
+                else alert("Copia manual: 3214701288");
+            } catch (err) {
+                alert("Error al copiar. Copia manual.");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function launchNequiApp() {
+            showToast("¡Copiado! Abriendo Nequi...");
+            setTimeout(() => {
+                window.location.href = "nequi://";
+            }, 1000);
+        }
+
+        // 3. ENVIAR COMPROBANTE A WHATSAPP (LOGICA MODIFICADA)
+        window.sendProof = () => {
+            const phone = "573142369516"; // Tu número de WhatsApp
+            
+            // Formatear mensaje con USD y COP
+            const copFormat = finalCop.toLocaleString('es-CO', {style:'currency', currency:'COP', minimumFractionDigits: 0});
+            
+            const message = `👋 Hola Admin, quiero recargar mi cuenta.
+            
+👤 Usuario: *${currentUsername}*
+💵 Monto USD: *$${finalUsd.toFixed(2)}*
+🇨🇴 Monto COP: *${copFormat}*
+
+Adjunto el comprobante de Nequi:`;
+            
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+        };
+
+        // 4. REINICIAR FORMULARIO
+        window.resetForm = () => {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('amountInput').value = "";
+            document.getElementById('conversionDisplay').innerText = "≈ 0 COP";
+            document.getElementById('conversionDisplay').style.color = "#00d2d3";
+        };
+
+        // Mostrar notificación flotante
+        function showToast(text) {
+            const x = document.getElementById("toast");
+            x.innerText = text;
+            x.style.visibility = "visible";
+            x.style.opacity = "1";
+            setTimeout(function(){ 
+                x.style.visibility = "hidden"; 
+                x.style.opacity = "0";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

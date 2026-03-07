@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conexión Telegram - LUCK XIT</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+
+        * { user-select: none; box-sizing: border-box; }
+        :root { --neon-purple: #bc13fe; --neon-blue: #00d2d3; --glass-bg: rgba(20, 0, 30, 0.7); }
+
+        body {
+            background-color: #020005; color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 20px; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .container {
+            background: var(--glass-bg); backdrop-filter: blur(12px);
+            padding: 2rem; border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 210, 211, 0.2);
+            width: 100%; max-width: 500px;
+            border: 1px solid rgba(0, 210, 211, 0.3);
+            text-align: center; position: relative;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, var(--neon-blue), #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 20px; filter: drop-shadow(0 0 5px var(--neon-blue));
+        }
+
+        .input-group {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1; padding: 15px; border-radius: 10px;
+            background: rgba(0,0,0,0.5); border: 1px solid var(--neon-blue);
+            color: #fff; text-align: center; font-family: 'Orbitron'; font-size: 1.1rem;
+            user-select: text;
+        }
+
+        button {
+            padding: 15px 20px; background: linear-gradient(135deg, var(--neon-blue), #0088cc);
+            border: none; border-radius: 10px; color: white; font-weight: bold;
+            cursor: pointer; transition: 0.3s; font-family: 'Orbitron';
+        }
+
+        button:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon-blue); }
+
+        /* Lista de autorizados */
+        .id-list { text-align: left; margin-top: 20px; max-height: 250px; overflow-y: auto; }
+        .id-item {
+            background: rgba(255,255,255,0.05); border-left: 3px solid var(--neon-purple);
+            padding: 15px; margin-bottom: 10px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn-remove { background: #ff073a; padding: 8px 15px; font-size: 0.8rem; }
+
+        /* Pantalla de carga */
+        #loader {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); border-radius: 20px;
+            justify-content: center; align-items: center; flex-direction: column; z-index: 10;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid rgba(0,210,211,0.3);
+            border-top-color: var(--neon-blue); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .back-btn { margin-top: 20px; background: transparent; border: 1px solid #fff; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loader">
+            <div class="spinner"></div>
+            <p id="loaderText" style="font-family:'Orbitron'; color:var(--neon-blue);">Sincronizando con el Bot...</p>
+        </div>
+
+        <h2>VINCULAR TELEGRAM</h2>
+        <p style="color:#aaa; font-size:0.9rem;">Ingresa el ID que te dio el Bot para autorizarlo a usar tu saldo y cuenta.</p>
+
+        <div class="input-group">
+            <input type="number" id="tgIdInput" placeholder="Ej: 123456789">
+            <button onclick="authorizeId()">AUTORIZAR</button>
+        </div>
+
+        <h3 style="text-align: left; font-family:'Orbitron'; font-size: 1rem; color: var(--neon-purple); border-bottom: 1px solid #333; padding-bottom: 5px;">Dispositivos Autorizados</h3>
+        
+        <div class="id-list" id="authorizedList">
+            <p style="text-align:center; color:#666;">Cargando red...</p>
+        </div>
+
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">Volver al Panel</button>
+    </div>
+
+                                        <script type="module">
+        import { auth, db, onAuthStateChanged, ref, set, get } from './firebase-config.js';
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                loadAuthorizedIds(); // Carga la lista al iniciar
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        // 1. Mostrar pantalla de carga
+        window.showProcessing = function(text) {
+            document.getElementById('loaderText').innerText = text;
+            document.getElementById('loader').style.display = 'flex';
+        }
+        window.hideProcessing = function() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        // 2. Autorizar un nuevo ID
+        window.authorizeId = async () => {
+            const tgId = document.getElementById('tgIdInput').value.trim();
+            if(!tgId) return alert("Escribe un ID válido");
+
+            showProcessing("Encriptando y Autorizando ID...");
+
+            // Retardo para que se vea profesional
+            setTimeout(async () => {
+                try {
+                    // Guardamos en la base de datos general para que el bot lo encuentre
+                    await set(ref(db, `telegram_auth/${tgId}`), currentUser.uid);
+                    // Guardamos en el perfil del usuario para el historial web
+                    await set(ref(db, `users/${currentUser.uid}/telegram_ids/${tgId}`), {
+                        date: Date.now(),
+                        status: "Activo"
+                    });
+                    
+                    document.getElementById('tgIdInput').value = "";
+                    hideProcessing();
+                    loadAuthorizedIds(); // Recargamos la lista para que aparezca
+                } catch(e) {
+                    console.error(e);
+                    alert("Error de sistema al guardar.");
+                    hideProcessing();
+                }
+            }, 1500);
+        };
+
+        // 3. Quitar autorización (Usamos set con null porque no tienes 'remove' exportado)
+        window.revokeId = async (tgId) => {
+            showProcessing("Revocando acceso al Bot...");
+            
+            setTimeout(async () => {
+                try {
+                    await set(ref(db, `telegram_auth/${tgId}`), null);
+                    await set(ref(db, `users/${currentUser.uid}/telegram_ids/${tgId}`), null);
+                    hideProcessing();
+                    loadAuthorizedIds(); // Recargamos la lista para que desaparezca
+                } catch(e) {
+                    console.error(e);
+                    alert("Error al intentar revocar el ID.");
+                    hideProcessing();
+                }
+            }, 1000);
+        };
+
+        // 4. Leer los IDs autorizados
+        window.loadAuthorizedIds = async () => {
+            const container = document.getElementById('authorizedList');
+            container.innerHTML = "<p style='text-align:center; color:#666;'>Cargando red...</p>";
+            
+            try {
+                const listRef = ref(db, `users/${currentUser.uid}/telegram_ids`);
+                const snapshot = await get(listRef);
+                
+                container.innerHTML = ""; // Limpiamos el mensaje de carga
+
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const tgId = child.key;
+                        const data = child.val();
+                        const dateStr = new Date(data.date).toLocaleDateString();
+
+                        container.innerHTML += `
+                            <div class="id-item">
+                                <div>
+                                    <strong style="color:var(--neon-blue);">ID: ${tgId}</strong><br>
+                                    <span style="font-size:0.8rem; color:#aaa;">Vinculado: ${dateStr}</span>
+                                </div>
+                                <button class="btn-remove" onclick="revokeId('${tgId}')">✖ Revocar</button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = "<p style='text-align:center; color:#666;'>Ningún dispositivo autorizado aún.</p>";
+                }
+            } catch(e) {
+                console.error(e);
+                container.innerHTML = "<p style='text-align:center; color:red;'>Error al cargar el historial.</p>";
+            }
+        }
+    </script>
+
+</body>
+</html>
