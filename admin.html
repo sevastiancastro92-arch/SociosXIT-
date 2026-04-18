@@ -4,221 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin - SociosXIT</title>
-    
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    
     <style>
-        /* =========================================
-           1. FUENTES Y PROTECCIÓN
-           ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
-
         * { user-select: none; box-sizing: border-box; }
-
-        :root {
-            --neon-purple: #bc13fe;
-            --neon-red: #ff073a;
-            --neon-cyan: #00f3ff;
-            --neon-green: #00ffcc;
-            --glass-bg: rgba(15, 0, 25, 0.7);
-            --sidebar-bg: rgba(5, 10, 20, 0.95);
-        }
-
-        body {
-            background-color: #020005;
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            margin: 0; padding: 0;
-            min-height: 100vh; min-height: 100dvh; 
-            display: flex; flex-direction: column;
-            overflow-x: hidden;
-        }
-
+        :root { --neon-purple: #bc13fe; --neon-red: #ff073a; --neon-cyan: #00f3ff; --neon-green: #00ffcc; --glass-bg: rgba(15, 0, 25, 0.7); --sidebar-bg: rgba(5, 10, 20, 0.95); }
+        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* =========================================
-           2. BARRA DE NAVEGACIÓN (INTOCABLE)
-           ========================================= */
-        .top-bar {
-            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 700px;
-            background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px);
-            border: 1px solid var(--neon-cyan); border-radius: 12px;
-            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100;
-        }
-
-        .menu-btn {
-            background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
-            border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
-        }
-
+        /* BARRA SUPERIOR */
+        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100; }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
         .top-bar-right { display: flex; align-items: center; gap: 10px; }
-        
-        .badge {
-            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px;
-            font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap;
-        }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s;}
+        .badge:hover { border-color: var(--neon-cyan); }
         .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
         .badge span { color: #fff; font-weight: 600; }
-        .badge.red { border-color: var(--neon-red); }
+        .badge.red { border-color: var(--neon-red); cursor: default; }
         .badge.red span { color: var(--neon-red); }
 
-        /* =========================================
-           3. MENÚ LATERAL (INTOCABLE)
-           ========================================= */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998;
-            opacity: 0; visibility: hidden; transition: 0.3s;
-        }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
-        .sidebar {
-            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; 
-            background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan);
-            box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999;
-            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
-        }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan); box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; }
         .sidebar.active { left: 0; }
-
-        .sidebar-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px;
-        }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
         .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; }
-
+        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; }
         .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; }
-        
-        .sidebar-item {
-            display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;
-            padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s;
-        }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s; }
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
         .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
-
         .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
-        .logout-btn {
-            width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
-            padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* =========================================
-           4. PANEL ADMIN (ESTRUCTURA VISUAL)
-           ========================================= */
-        .admin-container {
-            width: 95%; max-width: 900px; margin: 90px auto 30px auto;
-            z-index: 10; animation: slideUp 0.6s ease-out;
-        }
-
-        .header-title {
-            font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 5px 0;
-            background: linear-gradient(90deg, var(--neon-red), #fff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase; letter-spacing: 2px;
-        }
-
-        /* Estadísticas */
-        .stats-row {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px; margin-bottom: 25px;
-        }
-        .stat-box {
-            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px; border-radius: 12px; text-align: center;
-        }
+        .admin-container { width: 95%; max-width: 900px; margin: 90px auto 30px auto; z-index: 10; animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .header-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 5px 0; background: linear-gradient(90deg, var(--neon-red), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; text-align: center; }
         .stat-box h4 { margin: 0; font-size: 0.75rem; color: #888; text-transform: uppercase; }
         .stat-box p { margin: 5px 0 0 0; font-family: 'Orbitron'; font-size: 1.2rem; color: var(--neon-cyan); }
-
-        .admin-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 15px;
-        }
-
-        .admin-card {
-            background: var(--glass-bg); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px; border-radius: 15px;
-            display: flex; align-items: center; gap: 15px;
-            cursor: pointer; transition: 0.3s;
-            position: relative; overflow: hidden;
-        }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; }
+        .admin-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
         .admin-card:hover { transform: translateY(-3px); border-color: var(--neon-cyan); box-shadow: 0 5px 20px rgba(0, 243, 255, 0.2); }
-
-        .card-icon {
-            width: 50px; height: 50px; border-radius: 12px;
-            background: rgba(255,255,255,0.05);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 1.8rem; color: var(--neon-cyan);
-        }
+        .card-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; font-size: 1.8rem; color: var(--neon-cyan); }
         .card-info h3 { margin: 0 0 5px 0; font-family: 'Orbitron', sans-serif; font-size: 1rem; color: #fff; }
         .card-info p { margin: 0; font-size: 0.75rem; color: #aaa; }
+        
+        .color-red .card-icon { color: var(--neon-red); background: rgba(255, 7, 58, 0.1); } 
+        .color-red:hover { border-color: var(--neon-red); box-shadow: 0 5px 20px rgba(255, 7, 58, 0.2); }
+        
+        .color-green .card-icon { color: var(--neon-green); background: rgba(0, 255, 204, 0.1); } 
+        .color-green:hover { border-color: var(--neon-green); box-shadow: 0 5px 20px rgba(0, 255, 204, 0.2); }
+        
+        .color-purple .card-icon { color: var(--neon-purple); background: rgba(188, 19, 254, 0.1); }
+        .color-purple:hover { border-color: var(--neon-purple); box-shadow: 0 5px 20px rgba(188, 19, 254, 0.2); }
 
-        /* Colores */
-        .color-red .card-icon { color: var(--neon-red); }
-        .color-green .card-icon { color: var(--neon-green); }
-        .color-purple .card-icon { color: var(--neon-purple); }
-
-        /* =========================================
-           5. MODALES
-           ========================================= */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px);
-            display: none; justify-content: center; align-items: center; z-index: 2000;
-        }
-
-        .modal-box {
-            background: #0a0a0a; padding: 25px; border-radius: 20px;
-            width: 90%; max-width: 450px; border: 1px solid var(--neon-cyan);
-            text-align: center; position: relative;
-            max-height: 90vh; overflow-y: auto;
-        }
-
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
-        .input-group input, .input-group select, .input-group textarea {
-            width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit;
-        }
-
-        .btn-action {
-            width: 100%; padding: 15px; border: none; border-radius: 8px;
-            background: var(--neon-cyan); color: #000; font-family: 'Orbitron';
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        .btn-action:hover { box-shadow: 0 0 15px var(--neon-cyan); transform: scale(1.02); }
-
-        .btn-cancel {
-            width: 100%; background: transparent; border: 1px solid #333; color: #666;
-            padding: 10px; border-radius: 8px; margin-top: 10px; cursor: pointer;
-        }
-
-        #loadingScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #020005; z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-box { background: #0a0a0a; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid var(--neon-cyan); text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
+        .input-group { margin-bottom: 15px; text-align: left; } .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; } .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit; }
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 8px; background: var(--neon-cyan); color: #000; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-cancel { width: 100%; background: transparent; border: 1px solid #333; color: #666; padding: 10px; border-radius: 8px; margin-top: 10px; cursor: pointer; }
+        #loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #020005; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
-    <div id="loadingScreen">
-        <h2 style="font-family: 'Orbitron'; color: var(--neon-red); animation: blink 1s infinite;">VERIFICANDO...</h2>
-    </div>
-
+    <div id="loadingScreen"><h2 style="font-family: 'Orbitron'; color: var(--neon-red); animation: blink 1s infinite;">VERIFICANDO...</h2></div>
     <canvas id="particle-canvas"></canvas>
 
     <div class="top-bar">
-        <div class="top-bar-left">
-            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
-        </div>
+        <div class="top-bar-left"><button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button></div>
         <div class="top-bar-right">
             <div class="badge red"><i class='bx bx-shield-quarter'></i> <span>ADMIN</span></div>
-            <div class="badge green"><i class='bx bx-wallet'></i> $<span id="topBalance">0.00</span></div>
+            <div class="badge" onclick="window.location.href='perfil.html'">
+                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=A" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-cyan);"> 
+                <span id="topUserDisplay">sebasxit</span>
+            </div>
         </div>
     </div>
 
@@ -227,249 +89,208 @@
         <div class="sidebar-header"><h2>ADMIN PANEL</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
         <div class="sidebar-menu">
             <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home'></i> Inicio</a>
+            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
             <a href="index.html" class="sidebar-item"><i class='bx bx-store'></i> Tienda</a>
+            <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
         </div>
         <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Salir</button></div>
     </div>
 
     <div class="admin-container" id="adminMainPanel" style="display: none;">
         <h1 class="header-title">Control Central</h1>
-        
         <div class="stats-row">
             <div class="stat-box"><h4>Usuarios</h4><p id="statUsers">0</p></div>
             <div class="stat-box"><h4>Saldo Global</h4><p id="statBalance">$0.00</p></div>
             <div class="stat-box"><h4>Keys Stock</h4><p id="statKeys">0</p></div>
         </div>
-
         <div class="admin-grid">
-            <div class="admin-card" onclick="openModal('modalCreateProduct')">
-                <div class="card-icon"><i class='bx bx-plus-circle'></i></div>
-                <div class="card-info"><h3>Crear Producto</h3><p>Nuevo ítem en catálogo.</p></div>
+            <div class="admin-card" onclick="openModal('modalCreateProduct')"><div class="card-icon"><i class='bx bx-plus-circle'></i></div><div class="card-info"><h3>Crear Producto</h3><p>Nuevo ítem en catálogo.</p></div></div>
+            <div class="admin-card" onclick="openStockModal()"><div class="card-icon"><i class='bx bx-key'></i></div><div class="card-info"><h3>Añadir Stock</h3><p>Subir llaves a un producto.</p></div></div>
+            <div class="admin-card color-green" onclick="openModal('modalAddBalance')"><div class="card-icon"><i class='bx bx-money-withdraw'></i></div><div class="card-info"><h3>Añadir Saldo</h3><p>Dar USD a un usuario.</p></div></div>
+            
+            <div class="admin-card color-red" onclick="openModal('modalDeleteUser')">
+                <div class="card-icon"><i class='bx bx-user-x'></i></div>
+                <div class="card-info">
+                    <h3>Eliminar Usuario</h3>
+                    <p>Borrar cuenta y datos.</p>
+                </div>
             </div>
 
-            <div class="admin-card" onclick="openStockModal()">
-                <div class="card-icon"><i class='bx bx-key'></i></div>
-                <div class="card-info"><h3>Añadir Stock</h3><p>Subir llaves a un producto.</p></div>
-            </div>
-
-            <div class="admin-card color-green" onclick="openModal('modalAddBalance')">
-                <div class="card-icon"><i class='bx bx-money-withdraw'></i></div>
-                <div class="card-info"><h3>Añadir Saldo</h3><p>Dar USD a un usuario.</p></div>
-            </div>
-
-            <div class="admin-card color-purple" onclick="openModal('modalBroadcast')">
-                <div class="card-icon"><i class='bx bx-broadcast'></i></div>
-                <div class="card-info"><h3>Mensaje Global</h3><p>Notificar a todos.</p></div>
-            </div>
-
-            <div class="admin-card color-red" onclick="toggleMaintenance()">
-                <div class="card-icon"><i class='bx bx-power-off'></i></div>
-                <div class="card-info"><h3>Mantenimiento</h3><p id="maintStatus">Cargando...</p></div>
-            </div>
+            <div class="admin-card color-purple" onclick="openModal('modalBroadcast')"><div class="card-icon"><i class='bx bx-broadcast'></i></div><div class="card-info"><h3>Mensaje Global</h3><p>Notificar a todos.</p></div></div>
+            <div class="admin-card color-red" onclick="toggleMaintenance()"><div class="card-icon"><i class='bx bx-power-off'></i></div><div class="card-info"><h3>Mantenimiento</h3><p id="maintStatus">Cargando...</p></div></div>
         </div>
     </div>
 
     <div class="modal-overlay" id="modalCreateProduct">
         <div class="modal-box">
             <h3 style="font-family:'Orbitron'">📦 Nuevo Producto</h3>
-            <div class="input-group"><label>Nombre</label><input type="text" id="pName" placeholder="Ej: Netflix Premium"></div>
-            <div class="input-group"><label>Categoría</label>
-                <select id="pCat"><option value="Android">Android</option><option value="iPhone">iPhone</option><option value="PC">PC</option></select>
-            </div>
+            <div class="input-group"><label>Nombre</label><input type="text" id="pName"></div>
+            <div class="input-group"><label>Categoría</label><select id="pCat"><option value="Android">Android</option><option value="iPhone">iPhone</option><option value="PC">PC</option></select></div>
             <div class="input-group"><label>Precio (USD)</label><input type="number" id="pPrice" step="0.01"></div>
-            <div class="input-group"><label>Duración</label><input type="text" id="pDur" placeholder="Ej: 30 Días"></div>
+            <div class="input-group"><label>Duración</label><input type="text" id="pDur"></div>
             <div class="input-group"><label>Garantía (Horas)</label><input type="number" id="pWarr" value="0"></div>
-            <button class="btn-action" onclick="funcCreateProduct()">GUARDAR PRODUCTO</button>
+            <button class="btn-action" onclick="funcCreateProduct()">GUARDAR</button>
             <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
         </div>
     </div>
-
     <div class="modal-overlay" id="modalAddStock">
         <div class="modal-box">
             <h3 style="font-family:'Orbitron'">🔑 Cargar Keys</h3>
-            <div class="input-group"><label>Selecciona Producto</label><select id="stockProdSelect"></select></div>
-            <div class="input-group"><label>Pega las Keys (una por línea)</label><textarea id="stockKeysArea" rows="6"></textarea></div>
-            <button class="btn-action" onclick="funcAddStock()">SUBIR KEYS</button>
+            <div class="input-group"><label>Producto</label><select id="stockProdSelect"></select></div>
+            <div class="input-group"><label>Keys (una por línea)</label><textarea id="stockKeysArea" rows="6"></textarea></div>
+            <button class="btn-action" onclick="funcAddStock()">SUBIR</button>
             <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
         </div>
     </div>
-
     <div class="modal-overlay" id="modalAddBalance">
         <div class="modal-box">
             <h3 style="font-family:'Orbitron'">💰 Dar Saldo</h3>
             <div class="input-group"><label>Username</label><input type="text" id="balUser"></div>
             <div class="input-group"><label>Cantidad (USD)</label><input type="number" id="balAmt" step="0.1"></div>
-            <button class="btn-action" onclick="funcAddBalance()">DEPÓSITO DIRECTO</button>
+            <button class="btn-action" onclick="funcAddBalance()">DEPÓSITO</button>
             <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalDeleteUser">
+        <div class="modal-box" style="border-color: var(--neon-red);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-red);">⚠️ Eliminar Usuario</h3>
+            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 15px;">Esta acción es irreversible. Se borrará su saldo, historial y todo rastro de la DB.</p>
+            <div class="input-group">
+                <label>Username Exacto a Eliminar</label>
+                <input type="text" id="delUserUsername" placeholder="Ej: JuanPerez" autocomplete="off">
+            </div>
+            <button class="btn-action" style="background: var(--neon-red); color: white; box-shadow: 0 0 10px var(--neon-red);" onclick="funcDeleteUser()">ELIMINAR PARA SIEMPRE</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="modalBroadcast">
         <div class="modal-box">
-            <h3 style="font-family:'Orbitron'">📢 Mensaje Global</h3>
-            <div class="input-group"><label>Texto del anuncio</label><textarea id="bcText" rows="5"></textarea></div>
-            <button class="btn-action" onclick="funcBroadcast()">ENVIAR A TODOS</button>
+            <h3 style="font-family:'Orbitron'">📢 Anuncio</h3>
+            <div class="input-group"><label>Texto</label><textarea id="bcText" rows="5"></textarea></div>
+            <button class="btn-action" onclick="funcBroadcast()">ENVIAR</button>
             <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
         </div>
     </div>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, push, set } from './firebase-config.js';
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, push, set, remove } from './firebase-config.js';
 
         let adminUser = null;
 
-        // SEGURIDAD SEBASXIT
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     const data = snapshot.val();
                     if (data && data.username && data.username.toLowerCase() === 'sebasxit') {
-                        adminUser = data;
                         document.getElementById('loadingScreen').style.display = 'none';
                         document.getElementById('adminMainPanel').style.display = 'block';
-                        document.getElementById('topBalance').innerText = parseFloat(data.balance || 0).toFixed(2);
-                        loadStats();
-                        checkMaintenance();
+                        document.getElementById('topUserDisplay').innerText = data.username;
+                        if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
+                        
+                        loadStats(); checkMaintenance();
                     } else { window.location.href = "dashboard.html"; }
                 });
             } else { window.location.href = "login.html"; }
         });
 
-        // ESTADÍSTICAS
         async function loadStats() {
-            const uSnap = await get(ref(db, 'users'));
-            const pSnap = await get(ref(db, 'products'));
+            const uSnap = await get(ref(db, 'users')); const pSnap = await get(ref(db, 'products'));
             let totalUsers = 0, globalBal = 0, totalKeys = 0;
-
-            if(uSnap.exists()) {
-                uSnap.forEach(u => {
-                    totalUsers++;
-                    globalBal += parseFloat(u.val().balance || 0);
-                });
-            }
-            if(pSnap.exists()) {
-                pSnap.forEach(p => {
-                    const prod = p.val();
-                    if(prod.keys) totalKeys += Object.keys(prod.keys).length;
-                    if(prod.durations) {
-                        Object.values(prod.durations).forEach(d => {
-                            if(d.keys) totalKeys += Object.keys(d.keys).length;
-                        });
-                    }
-                });
-            }
-            document.getElementById('statUsers').innerText = totalUsers;
-            document.getElementById('statBalance').innerText = `$${globalBal.toFixed(2)}`;
-            document.getElementById('statKeys').innerText = totalKeys;
+            if(uSnap.exists()) { uSnap.forEach(u => { totalUsers++; globalBal += parseFloat(u.val().balance || 0); }); }
+            if(pSnap.exists()) { pSnap.forEach(p => { const prod = p.val(); if(prod.keys) totalKeys += Object.keys(prod.keys).length; if(prod.durations) { Object.values(prod.durations).forEach(d => { if(d.keys) totalKeys += Object.keys(d.keys).length; }); } }); }
+            document.getElementById('statUsers').innerText = totalUsers; document.getElementById('statBalance').innerText = `$${globalBal.toFixed(2)}`; document.getElementById('statKeys').innerText = totalKeys;
         }
 
-        // MANTENIMIENTO
         async function checkMaintenance() {
             const snap = await get(ref(db, 'settings/maintenance'));
-            const active = snap.val() || false;
-            document.getElementById('maintStatus').innerText = active ? "ESTADO: CERRADO 🔴" : "ESTADO: ABIERTO 🟢";
+            document.getElementById('maintStatus').innerText = (snap.val() || false) ? "ESTADO: CERRADO 🔴" : "ESTADO: ABIERTO 🟢";
         }
+        window.toggleMaintenance = async () => { const snap = await get(ref(db, 'settings/maintenance')); await set(ref(db, 'settings/maintenance'), !(snap.val() || false)); checkMaintenance(); alert("Estado actualizado."); };
 
-        window.toggleMaintenance = async () => {
-            const snap = await get(ref(db, 'settings/maintenance'));
-            const current = snap.val() || false;
-            await set(ref(db, 'settings/maintenance'), !current);
-            checkMaintenance();
-            alert("Estado de tienda actualizado.");
-        };
-
-        // CREAR PRODUCTO
         window.funcCreateProduct = async () => {
-            const name = document.getElementById('pName').value.trim();
-            const cat = document.getElementById('pCat').value;
-            const price = parseFloat(document.getElementById('pPrice').value);
-            const dur = document.getElementById('pDur').value.trim();
-            const warr = parseInt(document.getElementById('pWarr').value);
-
-            if(!name || isNaN(price)) return alert("Llena los campos");
-
-            const newProdRef = push(ref(db, 'products'));
-            const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key;
-
-            const data = { name, category: cat };
-            const variant = { duration: dur, price, warranty: warr };
-
-            await set(newProdRef, data);
-            await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), variant);
-            
-            alert("¡Producto creado melo!");
-            location.reload();
+            const name = document.getElementById('pName').value.trim(); const cat = document.getElementById('pCat').value; const price = parseFloat(document.getElementById('pPrice').value); const dur = document.getElementById('pDur').value.trim(); const warr = parseInt(document.getElementById('pWarr').value);
+            if(!name || isNaN(price)) return alert("Datos inválidos");
+            const newProdRef = push(ref(db, 'products')); const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key;
+            await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr });
+            alert("Producto guardado."); location.reload();
         };
 
-        // AÑADIR STOCK
         window.openStockModal = async () => {
-            const select = document.getElementById('stockProdSelect');
-            select.innerHTML = "";
+            const select = document.getElementById('stockProdSelect'); select.innerHTML = "";
             const snap = await get(ref(db, 'products'));
-            snap.forEach(p => {
-                const prod = p.val();
-                if(prod.durations) {
-                    Object.keys(prod.durations).forEach(dId => {
-                        const option = document.createElement('option');
-                        option.value = `${p.key}|${dId}`;
-                        option.text = `${prod.name} (${prod.durations[dId].duration})`;
-                        select.appendChild(option);
-                    });
-                }
-            });
+            snap.forEach(p => { const prod = p.val(); if(prod.durations) { Object.keys(prod.durations).forEach(dId => { const opt = document.createElement('option'); opt.value = `${p.key}|${dId}`; opt.text = `${prod.name} (${prod.durations[dId].duration})`; select.appendChild(opt); }); } });
             openModal('modalAddStock');
         };
 
         window.funcAddStock = async () => {
             const [pId, dId] = document.getElementById('stockProdSelect').value.split('|');
             const keys = document.getElementById('stockKeysArea').value.split('\n').filter(k => k.trim() !== "");
-            if(keys.length === 0) return alert("Pega alguna key");
-
-            const updates = {};
-            keys.forEach(key => {
-                const kId = push(ref(db)).key;
-                updates[`products/${pId}/durations/${dId}/keys/${kId}`] = key.trim();
-            });
-            await update(ref(db), updates);
-            alert(`¡${keys.length} Keys subidas!`);
-            location.reload();
+            if(keys.length === 0) return;
+            const updates = {}; keys.forEach(key => { updates[`products/${pId}/durations/${dId}/keys/${push(ref(db)).key}`] = key.trim(); });
+            await update(ref(db), updates); alert(`Keys guardadas.`); location.reload();
         };
 
-        // AÑADIR SALDO
         window.funcAddBalance = async () => {
-            const user = document.getElementById('balUser').value.trim().toLowerCase();
-            const amt = parseFloat(document.getElementById('balAmt').value);
+            const user = document.getElementById('balUser').value.trim().toLowerCase(); const amt = parseFloat(document.getElementById('balAmt').value);
             if(!user || isNaN(amt)) return;
+            const uSnap = await get(ref(db, 'users')); let foundId = null, currentB = 0;
+            uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === user) { foundId = u.key; currentB = u.val().balance || 0; } });
+            if(foundId) { await update(ref(db), { [`users/${foundId}/balance`]: currentB + amt }); alert("Saldo enviado."); location.reload(); } else { alert("Usuario no encontrado."); }
+        };
+
+        // --- LÓGICA DE ELIMINAR USUARIO ---
+        window.funcDeleteUser = async () => {
+            const userToDelete = document.getElementById('delUserUsername').value.trim().toLowerCase();
+            if(!userToDelete) return alert("❌ Escribe el nombre de usuario.");
+            
+            // Protección contra el borrado del creador
+            if(userToDelete === 'sebasxit') {
+                return alert("❌ ERROR CRÍTICO: No puedes eliminar la cuenta del Super Administrador (Tú).");
+            }
 
             const uSnap = await get(ref(db, 'users'));
-            let foundId = null, currentB = 0;
-            uSnap.forEach(u => { if(u.val().username.toLowerCase() === user) { foundId = u.key; currentB = u.val().balance || 0; } });
+            let foundId = null;
+            
+            uSnap.forEach(u => {
+                if(u.val().username && u.val().username.toLowerCase() === userToDelete) {
+                    foundId = u.key;
+                }
+            });
 
             if(foundId) {
-                await update(ref(db), { [`users/${foundId}/balance`]: currentB + amt });
-                alert("Saldo enviado.");
-                location.reload();
-            } else { alert("Usuario no encontrado."); }
+                const confirmacion = confirm(`⚠️ ALERTA ⚠️\n\n¿Estás 100% seguro de que deseas eliminar a "${userToDelete}"?\n\nEsta acción borrará todo su saldo, sus compras y su acceso al panel. NO SE PUEDE DESHACER.`);
+                
+                if(confirmacion) {
+                    try {
+                        // Borrar nodo completo del usuario
+                        await remove(ref(db, `users/${foundId}`));
+                        alert(`✅ El usuario ${userToDelete} ha sido borrado del sistema exitosamente.`);
+                        location.reload();
+                    } catch (e) {
+                        alert("❌ Error al intentar eliminar el usuario. Revisa los permisos de Firebase.");
+                    }
+                }
+            } else {
+                alert("❌ Usuario no encontrado. Verifica que el nombre esté escrito exactamente igual.");
+            }
         };
 
-        // BROADCAST
-        window.funcBroadcast = async () => {
-            const msg = document.getElementById('bcText').value.trim();
-            if(!msg) return;
-            // Aquí podrías guardar el mensaje en una lista de noticias global en Firebase
-            alert("Mensaje enviado (Simulado para Telegram/WA)");
-            closeAllModals();
-        };
+        window.funcBroadcast = async () => { alert("Mensaje enviado"); closeAllModals(); };
 
-        // HELPERS
-        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
-        window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex'; window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
         
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
         document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=> window.location.href="login.html");
+        
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
 </body>
 </html>

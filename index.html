@@ -4,373 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - SociosXIT</title>
-    
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    
     <style>
-        /* =========================================
-           1. FUENTES Y PROTECCIÓN
-           ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,400;0,700;0,900;1,900&family=Poppins:wght@300;400;600;700&display=swap');
+        * { -webkit-user-select: none; user-select: none; box-sizing: border-box; }
+        :root { --neon-purple: #bc13fe; --neon-red: #ff073a; --neon-cyan: #00f3ff; --neon-green: #00ffcc; --sidebar-bg: rgba(5, 10, 20, 0.95); --card-bg: #12161f; }
+        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100dvh; display: flex; justify-content: flex-start; align-items: center; flex-direction: column; overflow-x: hidden; }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        * {
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --neon-purple: #bc13fe;
-            --neon-red: #ff073a;
-            --neon-cyan: #00f3ff;
-            --neon-green: #00ffcc;
-            --sidebar-bg: rgba(5, 10, 20, 0.95);
-            --card-bg: #12161f; 
-        }
-
-        /* FONDO ESTÁNDAR COMPARTIDO */
-        body {
-            background-color: #020005;
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            min-height: 100dvh; 
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        #particle-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-        }
-
-        /* =========================================
-           2. BARRA DE NAVEGACIÓN SUPERIOR (INTOCABLE)
-           ========================================= */
-        .top-bar {
-            position: fixed;
-            top: 15px; left: 50%;
-            transform: translateX(-50%);
-            width: 95%; max-width: 700px;
-            background: rgba(5, 10, 20, 0.85);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--neon-cyan);
-            border-radius: 12px;
-            padding: 10px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15), inset 0 0 10px rgba(0, 243, 255, 0.05);
-            z-index: 100;
-        }
-
-        .menu-btn {
-            background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
-            border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer;
-            transition: 0.3s; display: flex; align-items: center; justify-content: center;
-        }
+        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100; }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
         .menu-btn:hover { box-shadow: 0 0 10px var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
-
-        .top-bar-right {
-            display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px;
-        }
+        .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
         .top-bar-right::-webkit-scrollbar { display: none; }
-        
-        .badge {
-            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px;
-            font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap;
-        }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s;}
+        .badge:hover { border-color: var(--neon-cyan); }
         .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
         .badge span { color: #fff; font-weight: 600; }
-        .badge.green { border-color: rgba(0, 255, 204, 0.3); }
+        .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default;}
         .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 
-        .bell-btn {
-            background: transparent; border: none; color: var(--neon-green); font-size: 1.4rem;
-            cursor: pointer; padding: 0 5px; transition: 0.3s; display: flex; align-items: center;
-        }
-        .bell-btn:hover { text-shadow: 0 0 15px var(--neon-green); transform: scale(1.1); }
-
-        /* =========================================
-           3. MENÚ LATERAL (SIDEBAR) (INTOCABLE)
-           ========================================= */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998;
-            opacity: 0; visibility: hidden; transition: 0.3s;
-        }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
-        .sidebar {
-            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; 
-            background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan);
-            box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999;
-            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
-        }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan); box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; }
         .sidebar.active { left: 0; }
-
-        .sidebar-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px;
-        }
-        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-cyan); }
-
-        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
-        .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
-
-        .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
-        .sidebar-menu::-webkit-scrollbar { display: none; }
-
-        .sidebar-item {
-            display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;
-            padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px;
-            font-size: 0.95rem; transition: 0.3s; flex-shrink: 0; 
-        }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; }
+        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s; }
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
         .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
-        .sidebar-item:hover i { color: var(--neon-cyan); }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; gap: 8px; }
 
-        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; flex-shrink: 0; }
-
-        .logout-btn {
-            width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
-            padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .logout-btn i { font-size: 1.3rem; }
-        .logout-btn:hover { background: var(--neon-red); color: white; box-shadow: 0 0 20px var(--neon-red); }
-
-
-        /* =========================================
-           4. ESTRUCTURA DEL CATÁLOGO HIGH SOCIETY
-           ========================================= */
-        .catalog-container {
-            width: 95%; max-width: 600px; margin: 90px auto 30px auto;
-            display: flex; flex-direction: column; gap: 15px;
-            z-index: 10;
-        }
-
-        .header-title {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 1.4rem; font-weight: 700; margin: 0;
-            color: #fff;
-        }
+        .catalog-container { width: 95%; max-width: 600px; margin: 90px auto 30px auto; display: flex; flex-direction: column; gap: 15px; z-index: 10; }
+        .header-title { display: flex; align-items: center; gap: 10px; font-size: 1.4rem; font-weight: 700; margin: 0; color: #fff; }
         .header-title i { color: var(--neon-cyan); font-size: 1.8rem; }
-
-        /* Controles de Filtro */
-        .filter-controls {
-            display: flex; gap: 10px; align-items: center; margin-bottom: 10px;
-        }
-        
-        .search-box {
-            flex-grow: 1; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px; padding: 12px 15px; display: flex; align-items: center;
-        }
-        .search-box input {
-            background: transparent; border: none; color: white; width: 100%;
-            outline: none; font-family: 'Poppins', sans-serif; font-size: 0.9rem;
-            -webkit-user-select: text; user-select: text;
-        }
-        .search-box input::placeholder { color: #888; }
-
-        .toggle-stock {
-            background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);
-            color: #aaa; padding: 12px 15px; border-radius: 10px; cursor: pointer;
-            display: flex; align-items: center; gap: 5px; font-size: 0.9rem; transition: 0.3s;
-        }
-        .toggle-stock.active {
-            background: rgba(0, 255, 204, 0.1); border-color: var(--neon-green); color: var(--neon-green);
-        }
-
-        /* =========================================
-           5. TARJETAS DE PRODUCTOS (CARDS)
-           ========================================= */
-        .products-grid {
-            display: flex; flex-direction: column; gap: 20px;
-        }
-
-        .product-card {
-            background: var(--card-bg); border-radius: 15px; overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.3s ease;
-        }
-        .product-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.3); }
-
-        /* Banner de la Tarjeta */
-        .card-banner {
-            height: 150px; position: relative;
-            background: linear-gradient(135deg, #1e0b36, #0b1a30); 
-            background-size: cover; background-position: center;
-        }
-        
-        .card-banner::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
-        }
-
-        .badge-popular {
-            position: absolute; top: 12px; right: 12px;
-            background: var(--neon-cyan); color: #000; font-weight: bold;
-            font-size: 0.7rem; padding: 4px 10px; border-radius: 6px; text-transform: uppercase;
-        }
-        .badge-tag {
-            position: absolute; bottom: 12px; left: 12px;
-            background: rgba(0,0,0,0.8); color: #fff; border-left: 3px solid var(--neon-cyan);
-            font-size: 0.75rem; padding: 4px 8px; font-weight: bold; text-transform: uppercase;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        /* Cuerpo de la Tarjeta */
+        .filter-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .search-box { flex-grow: 1; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 15px; display: flex; align-items: center; }
+        .search-box input { background: transparent; border: none; color: white; width: 100%; outline: none; font-family: 'Poppins', sans-serif; }
+        .toggle-stock { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); color: #aaa; padding: 12px 15px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .toggle-stock.active { background: rgba(0, 255, 204, 0.1); border-color: var(--neon-green); color: var(--neon-green); }
+        .products-grid { display: flex; flex-direction: column; gap: 20px; }
+        .product-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .card-banner { height: 150px; position: relative; background: linear-gradient(135deg, #1e0b36, #0b1a30); }
+        .badge-popular { position: absolute; top: 12px; right: 12px; background: var(--neon-cyan); color: #000; font-weight: bold; font-size: 0.7rem; padding: 4px 10px; border-radius: 6px; }
+        .badge-tag { position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: #fff; border-left: 3px solid var(--neon-cyan); font-size: 0.75rem; padding: 4px 8px; font-family: 'Orbitron'; }
         .card-body { padding: 15px; }
-        
-        .card-title {
-            font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-style: italic;
-            font-weight: 900; color: #fff; margin: 0 0 5px 0; text-transform: uppercase;
-        }
-        .card-sub { color: #888; font-size: 0.8rem; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
-        
+        .card-title { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-style: italic; font-weight: 900; margin: 0 0 5px 0; text-transform: uppercase; }
+        .card-sub { color: #888; font-size: 0.8rem; margin: 0 0 15px 0; text-transform: uppercase; }
         .card-price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        
-        .price-text { color: var(--neon-green); font-size: 1.4rem; font-weight: bold; font-family: 'Orbitron', sans-serif; }
-        
-        .stock-badge {
-            background: rgba(0, 255, 204, 0.1); color: var(--neon-green);
-            border: 1px solid rgba(0, 255, 204, 0.3); padding: 5px 12px;
-            border-radius: 20px; font-size: 0.75rem; font-weight: 600;
-        }
+        .price-text { color: var(--neon-green); font-size: 1.4rem; font-weight: bold; font-family: 'Orbitron'; }
+        .stock-badge { background: rgba(0, 255, 204, 0.1); color: var(--neon-green); border: 1px solid rgba(0, 255, 204, 0.3); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
         .stock-badge.out { color: #ff3333; border-color: #ff3333; background: rgba(255,51,51,0.1); }
+        .btn-select { background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green)); color: #000; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; gap: 8px; }
 
-        .btn-select {
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
-            color: #000; width: 100%; padding: 15px; border: none; border-radius: 10px;
-            font-weight: 700; font-size: 1rem; cursor: pointer;
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            transition: 0.3s;
-        }
-        .btn-select:hover { box-shadow: 0 0 15px rgba(0, 243, 255, 0.5); transform: translateY(-2px); }
-
-        /* =========================================
-           6. MODALES (VENTANAS EMERGENTES)
-           ========================================= */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px);
-            display: none; justify-content: center; align-items: flex-end; 
-            z-index: 2000; animation: fadeIn 0.3s;
-        }
-
-        .modal-box {
-            background: #12161f; padding: 25px; border-top-left-radius: 25px; border-top-right-radius: 25px;
-            width: 100%; max-width: 600px; border-top: 2px solid var(--neon-purple);
-            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-        .modal-title { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; margin: 0 0 15px 0; color: #fff; }
-        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: flex-end; z-index: 2000; animation: fadeIn 0.3s; }
+        .modal-box { background: #12161f; padding: 25px; border-top-left-radius: 25px; border-top-right-radius: 25px; width: 100%; max-width: 600px; border-top: 2px solid var(--neon-purple); animation: slideUp 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-title { font-family: 'Orbitron'; font-size: 1.3rem; margin: 0 0 15px 0; }
         .variant-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
-        .variant-list::-webkit-scrollbar { display: none; }
-
-        .variant-item {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px; border-radius: 12px; display: flex; justify-content: space-between;
-            align-items: center; cursor: pointer; transition: 0.3s;
-        }
-        .variant-item:hover { background: rgba(188, 19, 254, 0.1); border-color: var(--neon-purple); }
-        
-        .var-info strong { display: block; font-size: 1.1rem; color: #fff; }
-        .var-info span { font-size: 0.8rem; color: #aaa; }
-        .var-price { color: var(--neon-green); font-weight: bold; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; }
-
-        .btn-cancel-modal {
-            width: 100%; background: transparent; border: 1px solid #444; color: #aaa;
-            padding: 15px; border-radius: 12px; margin-top: 15px; font-weight: bold; cursor: pointer;
-        }
-
-        /* Modal de Éxito / Key */
+        .variant-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .var-info strong { display: block; font-size: 1.1rem; } .var-info span { font-size: 0.8rem; color: #aaa; }
+        .var-price { color: var(--neon-green); font-weight: bold; font-family: 'Orbitron'; font-size: 1.1rem; }
+        .btn-cancel-modal { width: 100%; background: transparent; border: 1px solid #444; color: #aaa; padding: 15px; border-radius: 12px; margin-top: 15px; font-weight: bold; cursor: pointer; }
         .modal-success { border-top-color: var(--neon-green); text-align: center; }
         .key-box { background: #000; border: 2px dashed #00ff00; color: #00ff00; font-family: monospace; padding: 20px; font-size: 1.3rem; margin: 20px 0; border-radius: 10px; word-break: break-all; }
         .btn-copy { background: #00ff00; color: #000; font-weight: bold; padding: 12px 30px; border: none; border-radius: 20px; cursor: pointer; }
-
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
     <div class="top-bar">
-        <div class="top-bar-left">
-            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
-        </div>
+        <div class="top-bar-left"><button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button></div>
         <div class="top-bar-right">
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
-            <div class="badge"><i class='bx bx-user'></i> <span id="topUserDisplay">...</span></div>
+            <div class="badge" onclick="window.location.href='perfil.html'">
+                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-cyan);"> 
+                <span id="topUserDisplay">...</span>
+            </div>
             <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
-            <button class="bell-btn" onclick="alert('Sin notificaciones')"><i class='bx bxs-bell-ring bx-tada-hover' ></i></button>
         </div>
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>SOCIOS XIT</h2>
-            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
-        </div>
-        
+        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
         <div class="sidebar-menu">
             <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
+            <a href="index.html" class="sidebar-item" style="border-left: 4px solid var(--neon-cyan); background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan);"><i class='bx bx-store-alt' style="color: var(--neon-cyan);"></i> Tienda</a>
+            <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
             <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
-            <a href="#" class="sidebar-item" onclick="alert('Soporte en línea')"><i class='bx bx-headphone'></i> Soporte 24/7</a>
-            
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
         </div>
-
-        <div class="sidebar-footer">
-            <button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
-        </div>
+        <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button></div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
 
     <div class="catalog-container">
-        
         <h2 class="header-title"><i class='bx bx-package'></i> Catálogo de Productos</h2>
-        
         <div class="filter-controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Buscar productos...">
-            </div>
-            <button class="toggle-stock" id="stockToggleBtn">
-                <i class='bx bx-box'></i> Con stock
-            </button>
+            <div class="search-box"><input type="text" id="searchInput" placeholder="Buscar productos..."></div>
+            <button class="toggle-stock" id="stockToggleBtn"><i class='bx bx-box'></i> Con stock</button>
         </div>
-
-        <div class="products-grid" id="productsGrid">
-            <p style="text-align: center; color: #aaa; margin-top: 30px;">Cargando inventario...</p>
-            </div>
-
+        <div class="products-grid" id="productsGrid"><p style="text-align: center; color: #aaa; margin-top: 30px;">Cargando inventario...</p></div>
     </div>
 
     <div id="variantModal" class="modal-overlay">
         <div class="modal-box">
-            <h3 class="modal-title" id="modalProdTitle">Opciones de Producto</h3>
-            <div class="variant-list" id="variantList">
-                </div>
+            <h3 class="modal-title" id="modalProdTitle">Opciones</h3>
+            <div class="variant-list" id="variantList"></div>
             <p id="errorMsg" style="color: #ff3333; text-align: center; display: none; margin-top: 10px;"></p>
             <button class="btn-cancel-modal" onclick="closeVariants()">Cancelar</button>
         </div>
@@ -379,138 +127,30 @@
     <div id="successModal" class="modal-overlay">
         <div class="modal-box modal-success">
             <h2 style="color:#00ff00;">¡TRANSACCIÓN ÉXITOSA!</h2>
-            <p style="color:#ccc;">Tu llave ha sido desencriptada:</p>
-            
             <div id="deliveredKeyNeon" class="key-box">CARGANDO...</div>
-            
             <button class="btn-copy" onclick="copyKey()">COPIAR CÓDIGO</button>
-            <button class="btn-cancel-modal" onclick="location.reload()" style="margin-top: 20px;">Cerrar</button>
+            <button class="btn-cancel-modal" onclick="location.reload()">Cerrar</button>
         </div>
     </div>
-
-    <script>
-        // --- CONTROL DEL MENÚ LATERAL ---
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const openBtn = document.getElementById('openMenuBtn');
-        const closeBtn = document.getElementById('closeMenuBtn');
-
-        function toggleMenu() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-
-        openBtn.addEventListener('click', toggleMenu);
-        closeBtn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
-
-        // --- SCRIPT DE FONDO DE PARTÍCULAS ---
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1.5;
-                this.vy = (Math.random() - 0.5) * 1.5;
-                this.size = Math.random() * 2 + 1;
-                this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, ';
-                this.alpha = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color + this.alpha + ')';
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color + '1)';
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < 60; i++) {
-                particles.push(new Particle());
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-                for (let j = i; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 120) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = 'rgba(0, 243, 255, ' + (1 - distance/120) * 0.15 + ')';
-                        ctx.lineWidth = 1;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-        initParticles();
-        animate();
-    </script>
 
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, update, runTransaction, push, child } from './firebase-config.js';
 
-        // Variables Globales
-        let currentUser = null;
-        let currentBalance = 0;
-        let allProducts = []; 
-        let filterStockOnly = false;
+        let currentUser = null; let currentBalance = 0; let allProducts = []; let filterStockOnly = false;
 
-        // --- FUNCIONES DE ADAPTACIÓN ---
         function adaptarProductoLegacy(p) {
             if (p && !p.durations && p.price !== undefined) {
-                p.durations = {
-                    'legacy_var': {
-                        duration: p.duration || 'Única / Estándar',
-                        price: p.price,
-                        warranty: p.warranty || 0,
-                        keys: p.keys || {}
-                    }
-                };
+                p.durations = { 'legacy_var': { duration: p.duration || 'Única / Estándar', price: p.price, warranty: p.warranty || 0, keys: p.keys || {} } };
                 p.category = p.category || 'Android'; 
             }
             return p;
         }
 
-        // VERIFICAR AUTENTICACIÓN
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                
-                const creationTime = user.metadata.creationTime;
-                const dateObj = new Date(creationTime);
-                const day = String(dateObj.getDate()).padStart(2, '0');
-                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-                const year = dateObj.getFullYear();
-                document.getElementById('joinDateDisplay').innerText = `${day}/${month}/${year}`;
+                const d = new Date(user.metadata.creationTime);
+                document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
@@ -519,40 +159,24 @@
                         currentBalance = data.balance !== undefined ? parseFloat(data.balance) : 0;
                         document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
                         
-                        // VALIDACIÓN ESTRICTA DE ADMIN
-                        if(data.username && data.username.toLowerCase() === 'sebasxit') {
-                            document.getElementById('adminMenuBtn').style.display = 'flex';
-                        }
+                        if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
+                        if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
                     }
                 });
-
                 loadProductsData();
-            } else {
-                window.location.href = "login.html";
-            }
+            } else { window.location.href = "login.html"; }
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = "login.html");
-        });
-
-        // --- CARGAR PRODUCTOS ---
         async function loadProductsData() {
             const container = document.getElementById('productsGrid');
-            const productsRef = ref(db, 'products');
-            
             try {
-                const snapshot = await get(productsRef);
+                const snapshot = await get(ref(db, 'products'));
                 allProducts = []; 
-
                 if (snapshot.exists()) {
                     snapshot.forEach((child) => {
                         const p = adaptarProductoLegacy(child.val());
                         p.id = child.key;
-                        
-                        let totalStock = 0;
-                        let minPrice = Infinity;
-                        
+                        let totalStock = 0, minPrice = Infinity;
                         if (p.durations) {
                             Object.values(p.durations).forEach(dur => {
                                 const stock = dur.keys ? Object.keys(dur.keys).length : 0;
@@ -560,210 +184,111 @@
                                 if(dur.price < minPrice) minPrice = dur.price;
                             });
                         }
-                        
-                        p.totalStock = totalStock;
-                        p.displayPrice = minPrice === Infinity ? 0 : minPrice;
-                        
+                        p.totalStock = totalStock; p.displayPrice = minPrice === Infinity ? 0 : minPrice;
                         allProducts.push(p);
                     });
-                    
                     renderProducts(); 
-                } else {
-                    container.innerHTML = "<p style='text-align:center; color:#888;'>NO HAY SUMINISTROS DISPONIBLES.</p>";
-                }
-            } catch (e) {
-                console.error(e);
-                container.innerHTML = "<p style='color:red; text-align:center;'>ERROR DE CONEXIÓN.</p>";
-            }
+                } else { container.innerHTML = "<p style='text-align:center; color:#888;'>NO HAY SUMINISTROS DISPONIBLES.</p>"; }
+            } catch (e) { container.innerHTML = "<p style='color:red; text-align:center;'>ERROR DE CONEXIÓN.</p>"; }
         }
 
-        // --- RENDERIZAR TARJETAS EN EL GRID ---
         function renderProducts() {
-            const container = document.getElementById('productsGrid');
-            container.innerHTML = '';
-            
+            const container = document.getElementById('productsGrid'); container.innerHTML = '';
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
             const filteredProducts = allProducts.filter(p => {
                 const matchesSearch = p.name.toLowerCase().includes(searchTerm) || p.category.toLowerCase().includes(searchTerm);
                 const matchesStock = filterStockOnly ? p.totalStock > 0 : true;
                 return matchesSearch && matchesStock;
             });
-
-            if(filteredProducts.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#888;'>No se encontraron productos.</p>";
-                return;
-            }
+            if(filteredProducts.length === 0) { container.innerHTML = "<p style='text-align:center; color:#888;'>No se encontraron productos.</p>"; return; }
 
             filteredProducts.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                
+                const card = document.createElement('div'); card.className = 'product-card';
                 const stockClass = p.totalStock > 0 ? '' : 'out';
                 const stockText = p.totalStock > 0 ? `${p.totalStock} disponibles` : 'Agotado';
                 const tagText = p.name.substring(0, 12) + (p.name.length > 12 ? '...' : '');
 
                 card.innerHTML = `
-                    <div class="card-banner">
-                        <span class="badge-popular">Popular</span>
-                        <span class="badge-tag">${tagText}</span>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">${p.name}</h3>
-                        <p class="card-sub">${p.category}</p>
-                        
-                        <div class="card-price-row">
-                            <span class="price-text">$${p.displayPrice.toFixed(2)}</span>
-                            <span class="stock-badge ${stockClass}">${stockText}</span>
-                        </div>
-                        
-                        <button class="btn-select">
-                            <i class='bx bx-cart-add'></i> Selecciona tu duración
-                        </button>
-                    </div>
+                    <div class="card-banner"><span class="badge-popular">Popular</span><span class="badge-tag">${tagText}</span></div>
+                    <div class="card-body"><h3 class="card-title">${p.name}</h3><p class="card-sub">${p.category}</p><div class="card-price-row"><span class="price-text">$${p.displayPrice.toFixed(2)}</span><span class="stock-badge ${stockClass}">${stockText}</span></div><button class="btn-select"><i class='bx bx-cart-add'></i> Selecciona tu duración</button></div>
                 `;
-
                 card.querySelector('.btn-select').onclick = () => openVariants(p);
                 container.appendChild(card);
             });
         }
 
-        // --- BUSCADOR Y FILTROS ---
         document.getElementById('searchInput').addEventListener('input', renderProducts);
-        
-        document.getElementById('stockToggleBtn').addEventListener('click', (e) => {
-            filterStockOnly = !filterStockOnly;
-            e.currentTarget.classList.toggle('active');
-            renderProducts();
-        });
+        document.getElementById('stockToggleBtn').addEventListener('click', (e) => { filterStockOnly = !filterStockOnly; e.currentTarget.classList.toggle('active'); renderProducts(); });
 
-        // --- ABRIR MODAL DE VARIANTES ---
         window.openVariants = (product) => {
             document.getElementById('modalProdTitle').innerText = product.name;
-            const vList = document.getElementById('variantList');
-            vList.innerHTML = '';
+            const vList = document.getElementById('variantList'); vList.innerHTML = '';
             document.getElementById('errorMsg').style.display = 'none';
 
             if(product.durations) {
                 Object.keys(product.durations).forEach(durId => {
-                    const dur = product.durations[durId];
-                    const stock = dur.keys ? Object.keys(dur.keys).length : 0;
-                    
-                    const vItem = document.createElement('div');
-                    vItem.className = 'variant-item';
+                    const dur = product.durations[durId]; const stock = dur.keys ? Object.keys(dur.keys).length : 0;
+                    const vItem = document.createElement('div'); vItem.className = 'variant-item';
                     
                     if(stock > 0) {
-                        vItem.innerHTML = `
-                            <div class="var-info">
-                                <strong>${dur.duration}</strong>
-                                <span>${stock} en stock</span>
-                            </div>
-                            <div class="var-price">$${dur.price.toFixed(2)}</div>
-                        `;
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>${stock} en stock</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
                         vItem.onclick = () => executePurchase(product.id, durId, dur, product.name);
                     } else {
-                        vItem.style.opacity = '0.5';
-                        vItem.style.cursor = 'not-allowed';
-                        vItem.innerHTML = `
-                            <div class="var-info">
-                                <strong>${dur.duration}</strong>
-                                <span style="color:#ff3333">Agotado</span>
-                            </div>
-                            <div class="var-price">$${dur.price.toFixed(2)}</div>
-                        `;
+                        vItem.style.opacity = '0.5'; vItem.style.cursor = 'not-allowed';
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span style="color:#ff3333">Agotado</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
                     }
-                    
                     vList.appendChild(vItem);
                 });
             }
-            
             document.getElementById('variantModal').style.display = 'flex';
         };
 
-        window.closeVariants = () => {
-            document.getElementById('variantModal').style.display = 'none';
-        };
+        window.closeVariants = () => document.getElementById('variantModal').style.display = 'none';
 
-        // --- EJECUTAR LA COMPRA ---
         async function executePurchase(productId, durId, durInfo, prodName) {
-            const errorEl = document.getElementById('errorMsg');
-            const fPrice = durInfo.price;
+            const errorEl = document.getElementById('errorMsg'); const fPrice = durInfo.price;
+            if (currentBalance < fPrice) { errorEl.innerText = `Saldo insuficiente.`; errorEl.style.display = 'block'; return; }
 
-            if (currentBalance < fPrice) {
-                errorEl.innerText = `Saldo insuficiente. Cuentas con $${currentBalance.toFixed(2)} y cuesta $${fPrice.toFixed(2)}`;
-                errorEl.style.display = 'block';
-                return;
-            }
-
-            errorEl.style.color = "var(--neon-cyan)";
-            errorEl.innerText = "Procesando...";
-            errorEl.style.display = 'block';
+            errorEl.style.color = "var(--neon-cyan)"; errorEl.innerText = "Procesando..."; errorEl.style.display = 'block';
             
             try {
-                const productRef = ref(db, 'products/' + productId);
-                let keyToDeliver = null;
-
+                const productRef = ref(db, 'products/' + productId); let keyToDeliver = null;
                 const result = await runTransaction(productRef, (product) => {
                     if (product === null) return product;
-
                     let targetDur = product.durations ? product.durations[durId] : null;
                     if(durId === 'legacy_var' && product.keys) targetDur = { keys: product.keys };
-
                     if (targetDur && targetDur.keys) {
                         const keyIds = Object.keys(targetDur.keys);
-                        if (keyIds.length > 0) {
-                            const firstKeyId = keyIds[0];
-                            keyToDeliver = targetDur.keys[firstKeyId]; 
-                            delete targetDur.keys[firstKeyId]; 
-                            return product; 
-                        }
+                        if (keyIds.length > 0) { const firstKeyId = keyIds[0]; keyToDeliver = targetDur.keys[firstKeyId]; delete targetDur.keys[firstKeyId]; return product; }
                     }
                     return; 
                 });
 
                 if (result.committed && keyToDeliver) {
                     const newBalance = parseFloat((currentBalance - fPrice).toFixed(2));
-                    
                     const updates = { [`users/${currentUser.uid}/balance`]: newBalance };
-                    
                     const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
-                    updates[`users/${currentUser.uid}/history/${historyRef.key}`] = {
-                        product: `${prodName} - ${durInfo.duration}`,
-                        key: keyToDeliver,
-                        price: fPrice,
-                        date: Date.now()
-                    };
-
+                    updates[`users/${currentUser.uid}/history/${historyRef.key}`] = { product: `${prodName} - ${durInfo.duration}`, key: keyToDeliver, price: fPrice, date: Date.now() };
                     await update(ref(db), updates);
-
-                    currentBalance = newBalance;
-                    document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
-                    
-                    closeVariants();
-                    document.getElementById('deliveredKeyNeon').innerText = keyToDeliver;
-                    document.getElementById('successModal').style.display = 'flex';
-
-                } else {
-                    errorEl.style.color = "#ff3333";
-                    errorEl.innerText = "Error: Alguien compró la última unidad justo ahora.";
-                }
-
-            } catch (error) {
-                console.error(error);
-                errorEl.style.color = "#ff3333";
-                errorEl.innerText = "Error de conexión con el servidor.";
-            }
+                    currentBalance = newBalance; document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
+                    closeVariants(); document.getElementById('deliveredKeyNeon').innerText = keyToDeliver; document.getElementById('successModal').style.display = 'flex';
+                } else { errorEl.style.color = "#ff3333"; errorEl.innerText = "Error: Stock agotado."; }
+            } catch (error) { errorEl.style.color = "#ff3333"; errorEl.innerText = "Error de conexión."; }
         }
 
-        // --- UTILIDADES ---
-        window.copyKey = () => {
-            const keyText = document.getElementById('deliveredKeyNeon').innerText;
-            navigator.clipboard.writeText(keyText).then(() => {
-                const btn = document.querySelector('.btn-copy');
-                btn.innerText = "¡COPIADO!";
-                setTimeout(() => btn.innerText = "COPIAR CÓDIGO", 2000);
-            });
-        };
+        window.copyKey = () => { navigator.clipboard.writeText(document.getElementById('deliveredKeyNeon').innerText).then(() => { const btn = document.querySelector('.btn-copy'); btn.innerText = "¡COPIADO!"; setTimeout(() => btn.innerText = "COPIAR CÓDIGO", 2000); }); };
+
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
+        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=>window.location.href="login.html");
+        
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
 </body>
 </html>

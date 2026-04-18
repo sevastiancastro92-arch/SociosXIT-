@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking & Premios - SociosXIT</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <style>
+        /* =========================================
+           1. FUENTES Y PROTECCIÓN
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700;800&display=swap');
+
+        * { user-select: none; box-sizing: border-box; }
+
+        :root {
+            --neon-purple: #bc13fe;
+            --neon-red: #ff073a;
+            --neon-cyan: #00f3ff;
+            --neon-green: #00ffcc;
+            --glass-bg: rgba(15, 0, 25, 0.7);
+            --sidebar-bg: rgba(5, 10, 20, 0.95);
+        }
+
+        body {
+            background-color: #020005;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0;
+            min-height: 100dvh; 
+            display: flex; flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar Neon */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020202; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* =========================================
+           2. BARRA DE NAVEGACIÓN Y MENÚ (ESTÁNDAR)
+           ========================================= */
+        .top-bar {
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 700px;
+            background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px);
+            border: 1px solid var(--neon-cyan); border-radius: 12px;
+            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100;
+        }
+
+        .menu-btn {
+            background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
+            border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+        }
+        .menu-btn:hover { box-shadow: 0 0 10px var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
+
+        .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
+        .top-bar-right::-webkit-scrollbar { display: none; }
+        
+        .badge {
+            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s;
+        }
+        .badge:hover { border-color: var(--neon-cyan); }
+        .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
+        .badge span { color: #fff; font-weight: 600; }
+        .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default;}
+        .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+
+        /* Sidebar */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998;
+            opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; 
+            background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan);
+            box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999;
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
+        }
+        .sidebar.active { left: 0; }
+
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-cyan); }
+        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
+
+        .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        .sidebar-menu::-webkit-scrollbar { display: none; }
+
+        .sidebar-item {
+            display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;
+            padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px;
+            font-size: 0.95rem; transition: 0.3s; flex-shrink: 0; 
+        }
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
+        .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
+        
+        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; flex-shrink: 0; }
+        .logout-btn {
+            width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
+            padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .logout-btn:hover { background: var(--neon-red); color: white; box-shadow: 0 0 20px var(--neon-red); }
+
+
+        /* =========================================
+           3. ESTILOS DE RANKING Y TOP 1
+           ========================================= */
+        .ranking-wrapper {
+            width: 95%; max-width: 900px; margin: 90px auto 30px auto;
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 10;
+        }
+
+        .title-container { text-align: center; margin-bottom: 20px; position: relative; }
+        
+        .title-blur {
+            position: absolute; inset: 0; display: flex; justify-content: center; align-items: center;
+            filter: blur(20px); opacity: 0.4;
+            font-size: 4rem; font-weight: 900; color: var(--neon-purple);
+        }
+        
+        .main-title {
+            font-size: 3rem; font-weight: 900; font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(to right, var(--neon-cyan), #fff, var(--neon-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase; font-style: italic; letter-spacing: 2px;
+            filter: drop-shadow(0 0 10px rgba(0,243,255,0.6)); margin: 0; position: relative; z-index: 1;
+        }
+        
+        .sub-title {
+            color: var(--neon-cyan); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px;
+            text-transform: uppercase; margin-top: 5px; text-shadow: 0 0 5px var(--neon-cyan);
+        }
+
+        /* --- TARJETA SUPREMA TOP 1 --- */
+        .top1-showcase {
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.15) 0%, rgba(0,0,0,0.8) 100%);
+            border: 2px solid #FFD700; border-radius: 20px;
+            padding: 35px 20px 20px 20px; text-align: center;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.1);
+            position: relative; margin-bottom: 40px;
+            width: 100%; max-width: 400px;
+            animation: floatTop1 4s ease-in-out infinite;
+        }
+        
+        @keyframes floatTop1 {
+            0%, 100% { transform: translateY(0); box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
+            50% { transform: translateY(-10px); box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); }
+        }
+
+        .crown-icon {
+            font-size: 4rem; position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            filter: drop-shadow(0 0 15px gold); animation: pulseGold 2s infinite alternate;
+        }
+
+        #top1Avatar {
+            width: 110px; height: 110px; border-radius: 50%; border: 3px solid #FFD700;
+            object-fit: cover; box-shadow: 0 0 25px gold; margin-bottom: 15px; background: #111;
+        }
+
+        #top1Name {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff;
+            margin: 0 0 15px 0; text-shadow: 0 0 15px gold; text-transform: uppercase;
+        }
+
+        .top1-badges {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;
+        }
+
+        .badge-rank {
+            background: rgba(188, 19, 254, 0.2); border: 1px solid var(--neon-purple);
+            color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem;
+            font-weight: bold; text-shadow: 0 0 5px var(--neon-purple);
+        }
+
+        .badge-spent {
+            background: rgba(0, 255, 204, 0.2); border: 1px solid var(--neon-green);
+            color: var(--neon-green); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem;
+            font-weight: bold; text-shadow: 0 0 5px var(--neon-green); font-family: 'Orbitron', sans-serif;
+        }
+
+        .top1-label {
+            color: #FFD700; font-size: 0.8rem; font-weight: bold; letter-spacing: 3px;
+            text-transform: uppercase; margin: 0; padding-top: 15px; border-top: 1px solid rgba(255,215,0,0.3);
+        }
+
+        /* Countdown */
+        .timer-card {
+            background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(188,19,254,0.5);
+            border-radius: 15px; padding: 15px; max-width: 400px; width: 100%; margin: 0 auto 30px auto;
+            text-align: center; box-shadow: 0 0 20px rgba(188,19,254,0.2);
+        }
+        .timer-title { color: var(--neon-purple); font-size: 0.8rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; border-bottom: 1px solid rgba(188,19,254,0.3); padding-bottom: 8px; margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-purple);}
+        .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .timer-item span.num { font-size: 1.5rem; font-weight: 900; font-family: 'Orbitron', sans-serif; color: white; text-shadow: 0 0 10px var(--neon-purple); display: block; }
+        .timer-item span.label { font-size: 0.6rem; color: #ff88ff; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Contenedores de Listas (Solo 1 Columna Centrada) */
+        .lists-wrapper {
+            display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 600px;
+        }
+
+        .rank-list-card {
+            background: var(--glass-bg); backdrop-filter: blur(10px);
+            border-radius: 15px; overflow: hidden; display: flex; flex-direction: column;
+            height: 600px; border: 1px solid rgba(188,19,254,0.3);
+            box-shadow: 0 0 15px rgba(188,19,254,0.15);
+        }
+
+        .list-header { 
+            padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative;
+            background: linear-gradient(to bottom, rgba(188,19,254,0.2), transparent); border-bottom-color: rgba(188,19,254,0.3);
+        }
+
+        .list-title { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: #fbe0ff; text-shadow: 0 0 10px var(--neon-purple); }
+
+        .my-rank-badge {
+            display: none; margin-top: 10px; padding: 6px 15px; border-radius: 20px;
+            background: #000; font-weight: bold; font-size: 0.8rem; font-family: 'Orbitron', sans-serif;
+            border: 1px solid var(--neon-purple); color: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        .list-content { flex-grow: 1; padding: 10px 15px; overflow-y: auto; font-family: 'Rajdhani', sans-serif;}
+
+        /* Elementos de la Lista (MAGIA NEON) */
+        .rank-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px; margin-bottom: 10px; border-radius: 10px; font-size: 1rem;
+            transition: 0.3s;
+        }
+        .rank-row:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
+
+        .rank-circle {
+            width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-weight: 900; font-size: 1rem; margin-right: 15px; flex-shrink: 0; font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Top 1 Oro */
+        .row-top-1 { background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent); border: 1px solid #FFD700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); animation: pulseGold 2s infinite alternate; }
+        .circle-top-1 { background: #FFD700; color: black; box-shadow: 0 0 15px #FFD700; border: 2px solid white; }
+        @keyframes pulseGold { from { box-shadow: 0 0 10px rgba(255,215,0,0.2); } to { box-shadow: 0 0 20px rgba(255,215,0,0.5); } }
+        .text-top-1 { color: #fff9c4; font-weight: 900; text-shadow: 0 0 8px gold; }
+
+        /* Top 2 Plata */
+        .row-top-2 { background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent); border: 1px solid #00f3ff; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+        .circle-top-2 { background: #e0e0e0; color: black; box-shadow: 0 0 10px white; }
+        .text-top-2 { color: #fff; font-weight: bold; text-shadow: 0 0 5px white; }
+
+        /* Top 3 Bronce */
+        .row-top-3 { background: linear-gradient(90deg, rgba(255, 80, 0, 0.1), transparent); border: 1px solid #ff5500; box-shadow: 0 0 10px rgba(255, 80, 0, 0.2); }
+        .circle-top-3 { background: #ff7b00; color: white; box-shadow: 0 0 10px #ff7b00; }
+        .text-top-3 { color: #ffccaa; font-weight: bold; text-shadow: 0 0 5px #ff5500; }
+
+        /* Normales */
+        .row-other { background: rgba(0, 0, 0, 0.4); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .circle-other { background: #222; color: #888; border: 1px solid #444; }
+        .text-other { color: #ccc; font-weight: 600; }
+
+        /* Yo */
+        .is-me-row { background: rgba(188, 19, 254, 0.15) !important; border: 1px solid var(--neon-purple) !important; box-shadow: 0 0 15px rgba(188, 19, 254, 0.3) !important; }
+        .text-me { color: #fbe0ff !important; font-weight: 900 !important; text-shadow: 0 0 8px var(--neon-purple) !important; }
+
+        .rank-info { flex-grow: 1; display: flex; align-items: center; overflow: hidden; }
+        .rank-name { text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
+        
+        .rank-amount { font-family: 'Orbitron', sans-serif; font-weight: bold; text-align: right; font-size: 1.1rem; }
+        .amount-purple { color: var(--neon-purple); text-shadow: 0 0 8px rgba(188,19,254,0.6); }
+
+    </style>
+</head>
+<body oncontextmenu="return false;"> 
+
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
+        </div>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
+            <div class="badge" onclick="window.location.href='perfil.html'">
+                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-cyan);"> 
+                <span id="topUserDisplay">...</span>
+            </div>
+            <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
+            <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
+            <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
+            <a href="ranking.html" class="sidebar-item" style="border-left: 4px solid var(--neon-purple); background: rgba(188, 19, 254, 0.1); color: var(--neon-purple);"><i class='bx bx-trophy' style="color: var(--neon-purple);"></i> Rankings</a>
+            <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
+            <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="ranking-wrapper">
+        
+        <div class="title-container">
+            <div class="title-blur">RANKINGS</div>
+            <h1 class="main-title">RANKINGS</h1>
+            <div class="sub-title">🏆 Gana $5 USD - Top 1 🏆</div>
+        </div>
+
+        <div style="background: rgba(188,19,254,0.2); border: 1px solid var(--neon-purple); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; box-shadow: 0 0 15px rgba(188,19,254,0.4);">
+            <i class='bx bx-radio-circle-marked bx-burst' style="color: var(--neon-purple); font-size: 1rem; vertical-align: middle;"></i> ACTUALIZACIÓN EN VIVO
+        </div>
+
+        <div class="top1-showcase" id="top1Container" style="display: none;">
+            <div class="crown-icon">👑</div>
+            <img id="top1Avatar" src="" alt="Top 1 Avatar">
+            <h2 id="top1Name">Cargando...</h2>
+            
+            <div class="top1-badges">
+                <span id="top1Rank" class="badge-rank">Miembro</span>
+                <span id="top1Spent" class="badge-spent">$0.00 USD</span>
+            </div>
+            
+            <p class="top1-label">Mayor Inversor Global</p>
+        </div>
+
+        <div class="timer-card">
+            <div class="timer-title">⏰ TIEMPO RESTANTE DEL CICLO</div>
+            <div class="timer-grid" id="countdownTimer">
+                <p style="grid-column: span 4; color: #888; font-size: 0.8rem;">Calculando tiempo...</p>
+            </div>
+        </div>
+
+        <div class="lists-wrapper">
+            
+            <div class="rank-list-card purple">
+                <div class="list-header">
+                    <h2 class="list-title">Mejores Compradores</h2>
+                    <div id="myRankSales" class="my-rank-badge"></div>
+                </div>
+                <div class="list-content" id="listSales">
+                    <p style="text-align: center; color: #aaa; margin-top: 30px; font-family: 'Orbitron'; font-size: 0.8rem; animation: blink 1s infinite;">OBTENIENDO DATOS DE COMPRAS...</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- CONTROL DEL MENÚ LATERAL ---
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
+        document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+
+        // --- SCRIPT DE FONDO DE PARTÍCULAS ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height; let particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width; this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1.5; this.vy = (Math.random() - 0.5) * 1.5;
+                this.size = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, ';
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill();
+            }
+        }
+        function initParticles() { particles = []; for (let i = 0; i < 60; i++) { particles.push(new Particle()); } }
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 120) {
+                        ctx.beginPath(); ctx.strokeStyle = 'rgba(150, 50, 255, ' + (1 - distance/120) * 0.15 + ')';
+                        ctx.lineWidth = 1; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        initParticles(); animate();
+    </script>
+
+    <script type="module">
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
+
+        let currentUserUid = null;
+        let currentUserName = null;
+
+        // VERIFICAR AUTENTICACIÓN
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserUid = user.uid;
+                
+                const d = new Date(user.metadata.creationTime);
+                document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        currentUserName = data.username;
+                        
+                        document.getElementById('topUserDisplay').innerText = currentUserName;
+                        document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
+                        if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
+                        
+                        // Validar si es SEBASXIT
+                        if(currentUserName.toLowerCase() === 'sebasxit') {
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
+                    }
+                });
+
+                loadRankings();
+                startCountdown();
+                setInterval(loadRankings, 30000); // Act. cada 30s
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "login.html");
+        });
+
+        // --- LÓGICA DE RANKINGS (SOLO GASTOS) ---
+        async function loadRankings() {
+            const now = new Date();
+            const currentDay = now.getDate();
+            
+            let cycleStartDate;
+            if (currentDay >= 11) {
+                cycleStartDate = new Date(now.getFullYear(), now.getMonth(), 11, 0, 0, 0);
+            } else {
+                cycleStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 11, 0, 0, 0);
+            }
+
+            try {
+                const snapshot = await get(ref(db, 'users'));
+                if (!snapshot.exists()) return;
+
+                const rankingData = [];
+
+                snapshot.forEach(childSnapshot => {
+                    const uid = childSnapshot.key;
+                    const u = childSnapshot.val();
+                    let dName = u.username || "Desconocido";
+                    
+                    // Excluir al admin del ranking público para que sea justo
+                    if (dName.toLowerCase() === "sebasxit") return;
+
+                    let cycleSpent = 0; 
+                    let allTimeSpent = 0;
+
+                    if (u.history) {
+                        Object.values(u.history).forEach(p => {
+                            const price = parseFloat(p.price || 0);
+                            if (!p.refunded) {
+                                allTimeSpent += price; // Histórico Total para el Rango
+                                if (p.date >= cycleStartDate.getTime()) {
+                                    cycleSpent += price; // Del ciclo actual para el Ranking
+                                }
+                            }
+                        });
+                    }
+
+                    // Calcular Rango Histórico
+                    let rankName = "Miembro";
+                    if(allTimeSpent >= 200) rankName = "🌟 Élite";
+                    else if(allTimeSpent >= 150) rankName = "🔥 Deluxe";
+                    else if(allTimeSpent >= 100) rankName = "💎 Diamante";
+                    else if(allTimeSpent >= 50) rankName = "✨ Premium";
+                    else if(allTimeSpent >= 10) rankName = "🎫 VIP";
+
+                    if(dName.length > 12) dName = dName.substring(0, 12) + "..";
+
+                    // Default Avatar si no tiene
+                    const avatarUrl = u.avatar || `https://via.placeholder.com/150/14001e/bc13fe?text=${dName.charAt(0).toUpperCase()}`;
+
+                    rankingData.push({
+                        id: uid,
+                        name: dName,
+                        avatar: avatarUrl,
+                        cycleSpent: cycleSpent,
+                        allTimeSpent: allTimeSpent,
+                        rankName: rankName,
+                        isMe: uid === currentUserUid
+                    });
+                });
+
+                // Ordenar por Gasto del Ciclo (Top Ventas)
+                const sortSales = [...rankingData].sort((a, b) => b.cycleSpent - a.cycleSpent);
+
+                // ACTUALIZAR LA TARJETA DEL TOP 1
+                const top1Container = document.getElementById('top1Container');
+                if(sortSales.length > 0 && sortSales[0].cycleSpent > 0) {
+                    const top1 = sortSales[0];
+                    document.getElementById('top1Avatar').src = top1.avatar;
+                    document.getElementById('top1Name').innerText = top1.name;
+                    document.getElementById('top1Rank').innerText = top1.rankName;
+                    document.getElementById('top1Spent').innerText = `$${top1.allTimeSpent.toFixed(2)} USD`;
+                    top1Container.style.display = 'block';
+                } else {
+                    top1Container.style.display = 'none';
+                }
+
+                // Renderizar Lista
+                renderList(sortSales, document.getElementById("listSales"), 'cycleSpent', document.getElementById("myRankSales"), 'amount-purple');
+
+            } catch (error) {
+                console.error("Error al cargar rankings:", error);
+            }
+        }
+
+        // --- RENDERIZAR LISTA NEON ---
+        function renderList(data, container, valueKey, myAlert, amountClass) {
+            container.innerHTML = "";
+            const topData = data.slice(0, 50); // Mostrar Top 50 
+            
+            if(topData.length === 0 || topData[0][valueKey] === 0) {
+                container.innerHTML = "<p style='text-align: center; color: #666; margin-top: 30px;'>Aún no hay compras en este ciclo.</p>";
+                myAlert.style.display = "none";
+                return;
+            }
+
+            topData.forEach((user, index) => {
+                if(user[valueKey] <= 0) return; // No mostrar a los de $0
+
+                const rank = index + 1;
+                let rowClass = "row-other"; let circleClass = "circle-other"; let textClass = "text-other"; let icon = "";
+
+                if (rank === 1) { rowClass = "row-top-1"; circleClass = "circle-top-1"; textClass = "text-top-1"; icon = "👑"; } 
+                else if (rank === 2) { rowClass = "row-top-2"; circleClass = "circle-top-2"; textClass = "text-top-2"; icon = "🥈"; } 
+                else if (rank === 3) { rowClass = "row-top-3"; circleClass = "circle-top-3"; textClass = "text-top-3"; icon = "🥉"; }
+
+                if (user.isMe) { rowClass += " is-me-row"; textClass = "text-me"; }
+
+                const html = `
+                    <div class="rank-row ${rowClass}">
+                        <div class="rank-info">
+                            <div class="rank-circle ${circleClass}">${rank}</div>
+                            <span class="rank-name ${textClass}">
+                                ${user.name} <span style="font-size: 0.8rem;">${icon}</span>
+                            </span>
+                        </div>
+                        <div class="rank-amount ${amountClass}">
+                            $${user[valueKey].toFixed(2)}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+
+            // Encontrar puesto del usuario actual
+            const myIndex = data.findIndex(u => u.isMe);
+            if (myIndex !== -1 && data[myIndex][valueKey] > 0) {
+                const val = data[myIndex][valueKey];
+                myAlert.innerHTML = `MI PUESTO #${myIndex + 1} <span style="color: #fff; font-weight: 300;">($${val.toFixed(2)})</span>`;
+                myAlert.style.display = "inline-block";
+            } else {
+                myAlert.style.display = "none";
+            }
+        }
+
+        // --- TEMPORIZADOR ---
+        function startCountdown() {
+            const container = document.getElementById("countdownTimer");
+            const updateTimer = () => {
+                const now = new Date();
+                let nextReset;
+                if (now.getDate() < 11) nextReset = new Date(now.getFullYear(), now.getMonth(), 11, 0, 0, 0);
+                else nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 11, 0, 0, 0);
+
+                const diff = nextReset - now;
+                if (diff <= 0) { container.innerHTML = "<div style='grid-column: span 4; color: var(--neon-purple); font-weight: bold; animation: blink 1s infinite;'>¡CERRANDO CICLO Y ENTREGANDO PREMIOS!</div>"; return; }
+
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                const item = (num, label) => `
+                    <div class="timer-item">
+                        <span class="num">${num<10?'0'+num:num}</span>
+                        <span class="label">${label}</span>
+                    </div>`;
+                container.innerHTML = item(d,"DÍAS") + item(h,"HRS") + item(m,"MIN") + item(s,"SEG");
+            };
+            updateTimer(); setInterval(updateTimer, 1000);
+        }
+    </script>
+</body>
+</html>
