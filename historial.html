@@ -3,112 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial - LUCK XIT GALAXY</title>
+    <title>Historial - SociosXIT</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
+        /* =========================================
+           1. FUENTES Y PROTECCIÓN
+           ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
 
-        * {
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            box-sizing: border-box;
-        }
+        * { user-select: none; box-sizing: border-box; }
 
         :root {
             --neon-purple: #bc13fe;
             --neon-red: #ff073a;
-            --neon-green: #00ff00;
-            --glass-bg: rgba(20, 0, 30, 0.7);
+            --neon-cyan: #00f3ff;
+            --neon-green: #00ffcc;
+            --glass-bg: rgba(15, 0, 25, 0.7);
+            --sidebar-bg: rgba(5, 10, 20, 0.95);
         }
 
         body {
             background-color: #020005;
             color: white;
             font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            margin: 0; padding: 0;
+            min-height: 100dvh; 
+            display: flex; flex-direction: column; align-items: center;
             overflow-x: hidden;
         }
 
-        #particle-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020202; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
+
+        /* =========================================
+           2. BARRA DE NAVEGACIÓN Y MENÚ (ESTÁNDAR)
+           ========================================= */
+        .top-bar {
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 700px;
+            background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px);
+            border: 1px solid var(--neon-cyan); border-radius: 12px;
+            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100;
         }
 
-        .container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(188, 19, 254, 0.2);
-            width: 100%;
-            max-width: 600px;
-            border: 1px solid rgba(188, 19, 254, 0.3);
-            animation: slideIn 0.5s ease-out;
-            margin-top: 20px;
+        .menu-btn {
+            background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
+            border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+        }
+        .menu-btn:hover { box-shadow: 0 0 10px var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
+
+        .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
+        .top-bar-right::-webkit-scrollbar { display: none; }
+        
+        .badge {
+            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s;
+        }
+        .badge:hover { border-color: var(--neon-cyan); }
+        .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
+        .badge span { color: #fff; font-weight: 600; }
+        .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default;}
+        .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+
+        /* Sidebar */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998;
+            opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; 
+            background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan);
+            box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999;
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
+        }
+        .sidebar.active { left: 0; }
+
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-cyan); }
+        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
+
+        .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        .sidebar-menu::-webkit-scrollbar { display: none; }
+
+        .sidebar-item {
+            display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;
+            padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px;
+            font-size: 0.95rem; transition: 0.3s; flex-shrink: 0; 
+        }
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
+        .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
+        
+        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; flex-shrink: 0; }
+        .logout-btn {
+            width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
+            padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .logout-btn:hover { background: var(--neon-red); color: white; box-shadow: 0 0 20px var(--neon-red); }
+
+        /* =========================================
+           3. ESTILOS DEL HISTORIAL
+           ========================================= */
+        .history-container {
+            background: var(--glass-bg); backdrop-filter: blur(12px);
+            padding: 2rem; border-radius: 20px;
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.15), inset 0 0 20px rgba(255, 7, 58, 0.05);
+            width: 95%; max-width: 600px; border: 1px solid rgba(188, 19, 254, 0.3);
+            animation: slideIn 0.5s ease-out; margin-top: 90px; margin-bottom: 30px;
+            display: flex; flex-direction: column; max-height: 80dvh;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { 
-            font-family: 'Orbitron', sans-serif;
-            text-align: center;
-            background: linear-gradient(90deg, var(--neon-purple), #fff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-top: 0;
-            margin-bottom: 20px; 
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .header-title {
+            display: flex; align-items: center; gap: 10px; justify-content: center;
+            font-size: 1.4rem; font-weight: 700; margin: 0 0 20px 0; color: #fff;
+            font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--neon-purple), #fff, var(--neon-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 5px var(--neon-purple));
         }
 
         /* --- PESTAÑAS (Filtros) --- */
         .tabs {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 10px;
-            padding: 5px;
-            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; margin-bottom: 20px;
+            background: rgba(0,0,0,0.5); border-radius: 10px; padding: 5px;
+            border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
         }
 
         .tab-btn {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #aaa;
-            padding: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.3s;
-            font-size: 0.9rem;
+            flex: 1; background: transparent; border: none; color: #aaa;
+            padding: 10px; font-family: 'Orbitron', sans-serif; font-weight: bold;
+            cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 0.8rem;
         }
+        @media (min-width: 480px) { .tab-btn { font-size: 0.9rem; } }
 
         .tab-btn.active {
-            background: rgba(188, 19, 254, 0.2);
-            color: #fff;
-            text-shadow: 0 0 8px var(--neon-purple);
-            box-shadow: inset 0 0 10px rgba(188, 19, 254, 0.5);
+            background: rgba(188, 19, 254, 0.2); color: #fff;
+            text-shadow: 0 0 8px var(--neon-purple); box-shadow: inset 0 0 10px rgba(188, 19, 254, 0.5);
         }
 
         /* --- LISTA DE HISTORIAL --- */
         .history-list {
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 5px;
+            flex-grow: 1; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 15px;
         }
 
         .history-list::-webkit-scrollbar { width: 6px; }
@@ -116,105 +163,110 @@
         .history-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
 
         .history-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            position: relative;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px; border-radius: 12px; position: relative; transition: 0.3s;
         }
+        .history-item:hover { background: rgba(255,255,255,0.05); transform: translateX(3px); }
 
         .history-item.purchase { border-left: 4px solid var(--neon-red); }
+        .history-item.purchase:hover { box-shadow: -5px 0 15px rgba(255, 7, 58, 0.2); border-color: rgba(255, 7, 58, 0.5); }
+
         .history-item.recharge { border-left: 4px solid var(--neon-green); }
+        .history-item.recharge:hover { box-shadow: -5px 0 15px rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.5); }
 
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .item-title-box { display: flex; flex-direction: column; }
+        .item-title { font-weight: bold; font-size: 1.05rem; color: #fff; display: flex; align-items: center; gap: 5px; }
+        .item-date { font-size: 0.75rem; color: #888; margin-top: 3px; }
 
-        .item-title {
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #fff;
-        }
-
-        .item-date {
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        .item-amount.negative { color: var(--neon-red); text-shadow: 0 0 5px rgba(255,7,58,0.5); font-family: 'Orbitron', sans-serif; font-weight: bold; }
-        .item-amount.positive { color: var(--neon-green); text-shadow: 0 0 5px rgba(0,255,0,0.5); font-family: 'Orbitron', sans-serif; font-weight: bold; }
+        .item-amount { font-family: 'Orbitron', sans-serif; font-weight: bold; font-size: 1.1rem; }
+        .item-amount.negative { color: var(--neon-red); text-shadow: 0 0 5px rgba(255,7,58,0.5); }
+        .item-amount.positive { color: var(--neon-green); text-shadow: 0 0 5px rgba(0,255,204,0.5); }
 
         .item-key {
-            background: #000;
-            padding: 8px;
-            border-radius: 5px;
-            font-family: monospace;
-            color: var(--neon-purple);
-            font-size: 0.9rem;
-            margin-top: 10px;
-            word-break: break-all;
-            border: 1px dashed rgba(188, 19, 254, 0.4);
+            background: #000; padding: 10px; border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace; color: var(--neon-cyan);
+            font-size: 0.9rem; margin-top: 12px; word-break: break-all;
+            border: 1px dashed rgba(0, 243, 255, 0.4); text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
         }
 
-        .empty-msg {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 20px;
-        }
+        .empty-msg { text-align: center; color: #666; font-style: italic; padding: 20px; font-size: 0.9rem; }
 
         .back-btn {
-            width: 100%;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc;
-            padding: 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 20px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
+            width: 100%; background: transparent; border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s;
+            margin-top: 20px; font-family: 'Orbitron', sans-serif; font-weight: bold; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
         }
+        .back-btn:hover { border-color: var(--neon-cyan); color: white; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); background: rgba(0, 243, 255, 0.1); }
 
-        .back-btn:hover { 
-            border-color: var(--neon-purple); 
-            color: white; 
-            box-shadow: 0 0 15px rgba(188, 19, 254, 0.4);
-        }
-
-        /* Ajustes Mobile */
-        @media (max-width: 480px) {
-            .container { padding: 1.5rem; }
-            .tab-btn { font-size: 0.8rem; padding: 8px 5px; }
-        }
     </style>
 </head>
-<body oncontextmenu="return false;"> <canvas id="particle-canvas"></canvas>
+<body oncontextmenu="return false;"> 
 
-    <div class="container">
-        <h2>REGISTRO DE DATOS</h2>
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
+        </div>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
+            <div class="badge" onclick="window.location.href='perfil.html'">
+                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-cyan);"> 
+                <span id="topUserDisplay">...</span>
+            </div>
+            <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
+            <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
+            <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
+            <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
+            <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
+            <a href="historial.html" class="sidebar-item" style="border-left: 4px solid var(--neon-purple); background: rgba(188, 19, 254, 0.1); color: var(--neon-purple);"><i class='bx bx-history' style="color: var(--neon-purple);"></i> Mis Compras</a>
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="history-container">
+        <h2 class="header-title"><i class='bx bx-data'></i> REGISTRO DE DATOS</h2>
 
         <div class="tabs">
             <button class="tab-btn active" onclick="setFilter('all', this)">TODO</button>
-            <button class="tab-btn" onclick="setFilter('purchase', this)">COMPRAS / KEYS</button>
+            <button class="tab-btn" onclick="setFilter('purchase', this)">COMPRAS</button>
             <button class="tab-btn" onclick="setFilter('recharge', this)">RECARGAS</button>
         </div>
 
         <div class="history-list" id="historyContainer">
-            <div class="empty-msg">Sincronizando con la red...</div>
+            <div class="empty-msg" style="animation: blink 1s infinite;">Sincronizando con la red...</div>
         </div>
 
         <button class="back-btn" onclick="window.location.href='index.html'">
-            VOLVER A LA TIENDA
+            <i class='bx bx-store-alt'></i> VOLVER A LA TIENDA
         </button>
     </div>
 
     <script>
+        // --- CONTROL DEL MENÚ LATERAL ---
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
+        document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+
+        // --- SCRIPT DE FONDO DE PARTÍCULAS ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let width, height; let particles = [];
@@ -223,44 +275,75 @@
         class Particle {
             constructor() {
                 this.x = Math.random() * width; this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1; this.vy = (Math.random() - 0.5) * 1;
+                this.vx = (Math.random() - 0.5) * 1.5; this.vy = (Math.random() - 0.5) * 1.5;
                 this.size = Math.random() * 2 + 1;
-                this.color = Math.random() > 0.5 ? 'rgba(255, 7, 58, ' : 'rgba(188, 19, 254, ';
-                this.alpha = Math.random() * 0.5 + 0.1;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, ';
+                this.alpha = Math.random() * 0.5 + 0.2;
             }
             update() {
                 this.x += this.vx; this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
+                if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1;
             }
             draw() {
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill();
             }
         }
-        function init() { for (let i = 0; i < 50; i++) particles.push(new Particle()); }
+        function initParticles() { particles = []; for (let i = 0; i < 60; i++) { particles.push(new Particle()); } }
         function animate() {
             ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => { p.update(); p.draw(); });
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 120) {
+                        ctx.beginPath(); ctx.strokeStyle = 'rgba(150, 50, 255, ' + (1 - distance/120) * 0.15 + ')';
+                        ctx.lineWidth = 1; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                    }
+                }
+            }
             requestAnimationFrame(animate);
         }
-        init(); animate();
+        initParticles(); animate();
     </script>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, ref, get } from './firebase-config.js';
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
 
         let allRecords = [];
         let currentFilter = 'all';
 
-        onAuthStateChanged(auth, async (user) => {
+        // VERIFICAR AUTENTICACIÓN
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                await fetchHistoryData(user.uid);
+                const d = new Date(user.metadata.creationTime);
+                document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        document.getElementById('topUserDisplay').innerText = data.username;
+                        document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
+                        if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
+                        
+                        if(data.username && data.username.toLowerCase() === 'sebasxit') {
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
+                    }
+                });
+
+                fetchHistoryData(user.uid);
             } else {
                 window.location.href = "login.html";
             }
         });
 
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "login.html");
+        });
+
+        // OBTENER DATOS DE FIREBASE
         async function fetchHistoryData(uid) {
             const userRef = ref(db, 'users/' + uid);
             
@@ -269,7 +352,6 @@
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     const purchases = data.history || {};
-                    // Asumimos que las recargas se guardan en el nodo 'recharges' del usuario
                     const recharges = data.recharges || {}; 
 
                     allRecords = [];
@@ -279,7 +361,7 @@
                         allRecords.push({
                             id: key,
                             type: 'purchase',
-                            title: `Key: ${purchases[key].product}`,
+                            title: purchases[key].product,
                             amount: purchases[key].price,
                             date: purchases[key].date,
                             secretKey: purchases[key].key
@@ -291,9 +373,9 @@
                         allRecords.push({
                             id: key,
                             type: 'recharge',
-                            title: 'Saldo Agregado',
+                            title: 'Saldo Añadido',
                             amount: recharges[key].amount,
-                            date: recharges[key].date || recharges[key].timestamp, // Depende de cómo lo guardes
+                            date: recharges[key].date || recharges[key].timestamp || Date.now(), 
                         });
                     }
 
@@ -302,14 +384,15 @@
                     renderHistory();
 
                 } else {
-                    document.getElementById('historyContainer').innerHTML = `<div class="empty-msg">No se encontraron registros.</div>`;
+                    document.getElementById('historyContainer').innerHTML = `<div class="empty-msg">No se encontraron registros en tu cuenta.</div>`;
                 }
             } catch (error) {
                 console.error("Error al obtener historial:", error);
-                document.getElementById('historyContainer').innerHTML = `<div class="empty-msg" style="color:red;">Error de conexión.</div>`;
+                document.getElementById('historyContainer').innerHTML = `<div class="empty-msg" style="color:var(--neon-red);">Error de conexión con el servidor.</div>`;
             }
         }
 
+        // RENDERIZAR LISTA
         function renderHistory() {
             const container = document.getElementById('historyContainer');
             container.innerHTML = '';
@@ -326,19 +409,22 @@
 
             filteredRecords.forEach(record => {
                 const dateObj = new Date(record.date);
-                const dateString = dateObj.toLocaleDateString('es-ES') + ' ' + dateObj.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
+                const dateString = dateObj.toLocaleDateString('es-ES') + ' - ' + dateObj.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
                 
                 const isPurchase = record.type === 'purchase';
                 const amountClass = isPurchase ? 'negative' : 'positive';
                 const amountPrefix = isPurchase ? '-' : '+';
+                const icon = isPurchase ? "<i class='bx bx-cart'></i>" : "<i class='bx bx-money-withdraw'></i>";
                 
                 let html = `
                     <div class="history-item ${record.type}">
                         <div class="item-header">
-                            <span class="item-title">${record.title}</span>
-                            <span class="item-amount ${amountClass}">${amountPrefix}$${record.amount}</span>
+                            <div class="item-title-box">
+                                <span class="item-title">${icon} ${record.title}</span>
+                                <span class="item-date">${dateString}</span>
+                            </div>
+                            <div class="item-amount ${amountClass}">${amountPrefix}$${parseFloat(record.amount).toFixed(2)}</div>
                         </div>
-                        <div class="item-date">${dateString}</div>
                 `;
 
                 if (isPurchase && record.secretKey) {
@@ -350,11 +436,10 @@
             });
         }
 
-        // Función global para los botones de pestañas
+        // FILTROS
         window.setFilter = (filterType, btnElement) => {
             currentFilter = filterType;
             
-            // Actualizar clases de los botones
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
             
