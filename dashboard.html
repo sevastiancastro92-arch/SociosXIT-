@@ -26,7 +26,7 @@
             --neon-red: #ff073a;
             --neon-cyan: #00f3ff;
             --neon-green: #00ffcc;
-            --glass-bg: rgba(20, 0, 30, 0.6);
+            --glass-bg: rgba(15, 0, 25, 0.6);
             --sidebar-bg: rgba(5, 10, 20, 0.95);
         }
 
@@ -81,7 +81,7 @@
             color: var(--neon-cyan);
             border-radius: 8px;
             padding: 6px 10px;
-            font-size: 1.5rem; /* Tamaño del icono */
+            font-size: 1.5rem; 
             cursor: pointer;
             transition: 0.3s;
             display: flex;
@@ -119,14 +119,13 @@
 
         .badge i {
             font-size: 1.1rem;
-            color: var(--neon-purple); /* Color general de los iconos en la barra */
+            color: var(--neon-cyan); 
         }
 
         .badge span { color: #fff; font-weight: 600; }
         
         .badge.green { border-color: rgba(0, 255, 204, 0.3); }
-        .badge.green i { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
-        .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+        .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 
         .bell-btn {
             background: transparent;
@@ -159,7 +158,7 @@
 
         .sidebar {
             position: fixed;
-            top: 0; left: -300px; /* Oculto a la izquierda */
+            top: 0; left: -300px;
             width: 260px;
             height: 100vh;
             background: var(--sidebar-bg);
@@ -188,6 +187,7 @@
             color: var(--neon-cyan);
             font-size: 1.2rem;
             text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-cyan);
         }
 
         .close-btn {
@@ -204,6 +204,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            flex-grow: 1; /* Empuja el footer hacia abajo */
         }
 
         .sidebar-item {
@@ -228,115 +229,24 @@
         }
         .sidebar-item:hover i { color: var(--neon-cyan); }
 
-        /* =========================================
-           4. CONTENEDOR PRINCIPAL
-           ========================================= */
-        .container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 
-                0 0 30px rgba(188, 19, 254, 0.2),
-                inset 0 0 20px rgba(255, 7, 58, 0.1);
-            width: 90%;
-            max-width: 400px;
-            border: 1px solid rgba(188, 19, 254, 0.3);
-            text-align: center;
-            animation: fadeIn 1s ease-out;
-            display: flex;
-            flex-direction: column;
-            gap: 20px; 
-            margin-top: 70px; 
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #fff;
-            text-shadow: 0 0 10px var(--neon-purple);
-            line-height: 1.4; 
-        }
-
-        h1 span {
-            color: var(--neon-red);
-            text-shadow: 0 0 15px var(--neon-red);
-            display: block; 
-            font-size: 1.3em;
-            margin-top: 10px; 
-            min-height: 1.3em; 
-        }
-
-        /* BOTONES DEL DASHBOARD */
-        .neon-btn {
-            padding: 18px;
-            background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-red) 100%);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 1rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(188, 19, 254, 0.3);
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 1px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .neon-btn i { font-size: 1.5rem; }
-
-        .neon-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
-        }
-
-        .neon-btn:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 0 25px var(--neon-purple), 0 0 5px #fff;
-        }
-
-        .neon-btn:hover::before { left: 100%; }
-        .neon-btn:active { transform: scale(0.98); }
-
-        #adminBtn {
-            background: linear-gradient(135deg, #8e44ad 0%, #3498db 100%);
-            border: 1px solid #fff;
+        /* Botón de cerrar sesión al fondo del menú */
+        .sidebar-footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
         }
 
         .logout-btn {
+            width: 100%;
             background: transparent;
-            border: 2px solid rgba(255, 7, 58, 0.5);
-            color: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 12px;
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 12px;
+            border-radius: 10px;
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -349,9 +259,128 @@
             background: var(--neon-red);
             color: white;
             box-shadow: 0 0 20px var(--neon-red);
-            border-color: var(--neon-red);
-            transform: scale(1.02);
         }
+
+        /* =========================================
+           4. CONTENEDOR CENTRAL "MELO" (NUEVO)
+           ========================================= */
+        .hub-container {
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            margin-top: 60px;
+            animation: slideUp 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ícono central flotante */
+        .center-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+            animation: floatIcon 4s ease-in-out infinite;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 0 30px rgba(0, 243, 255, 0.4); }
+            50% { transform: translateY(-10px) scale(1.05); box-shadow: 0 0 50px var(--neon-purple); }
+        }
+
+        .hub-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 10px 0;
+            filter: drop-shadow(0 0 8px rgba(188, 19, 254, 0.5));
+        }
+
+        .hub-desc {
+            color: #ccc;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        /* Botones del Hub */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .neon-btn {
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 1.05rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        /* Botón 1: Explorar Tienda (Verde/Cian estilo High Society) */
+        .btn-store {
+            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-green) 100%);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+        .btn-store:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 30px var(--neon-cyan); }
+
+        /* Botón 2: Mis Compras (Morado/Rojo oscuro) */
+        .btn-history {
+            background: linear-gradient(135deg, var(--neon-purple) 0%, #8e44ad 100%);
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+        }
+        .btn-history:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 30px var(--neon-purple); }
+
+        .neon-btn i { font-size: 1.5rem; }
+
+        /* Efecto luz en botones */
+        .neon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+            transform: skewX(-20deg);
+        }
+        .neon-btn:hover::before { left: 150%; }
+
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -366,16 +395,17 @@
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
             <div class="badge"><i class='bx bx-user'></i> <span id="topUserDisplay">...</span></div>
             <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
-            <button class="bell-btn" onclick="alert('Sin notificaciones')"><i class='bx bxs-bell'></i></button>
+            <button class="bell-btn" onclick="alert('Sin notificaciones')"><i class='bx bxs-bell-ring bx-tada-hover' ></i></button>
         </div>
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>SociosXIT</h2>
+            <h2>SOCIOS XIT</h2>
             <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
         </div>
+        
         <div class="sidebar-menu">
             <a href="recarga.html" class="sidebar-item">
                 <i class='bx bx-plus-circle'></i> Recargar Saldo
@@ -383,28 +413,45 @@
             <a href="bot.html" class="sidebar-item">
                 <i class='bx bxl-telegram'></i> Autorizar ID
             </a>
-            <a href="#" class="sidebar-item" onclick="alert('Sección en construcción')">
-                <i class='bx bx-support'></i> Soporte 24/7
+            <a href="#" class="sidebar-item" onclick="alert('Soporte en línea')">
+                <i class='bx bx-headphone'></i> Soporte 24/7
             </a>
+            
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);">
+                <i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutBtn">
+                <i class='bx bx-log-out'></i> Cerrar Sesión
+            </button>
         </div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
 
-    <div class="container">
-        <h1>Bienvenido <span id="userDisplay">...</span></h1>
+    <div class="hub-container">
         
-        <button class="neon-btn" onclick="window.location.href='index.html'">
-            <i class='bx bx-store'></i> Explorar Tienda
-        </button>
-        
-        <button id="adminBtn" class="neon-btn" style="display:none;" onclick="window.location.href='admin.html'">
-            <i class='bx bx-shield-quarter'></i> Panel Admin
-        </button>
+        <div class="center-icon">
+            <i class='bx bx-game'></i>
+        </div>
 
-        <button class="logout-btn" id="logoutBtn">
-            <i class='bx bx-log-out'></i> Cerrar Sesión
-        </button>
+        <h1 class="hub-title">SOCIOS XIT</h1>
+        <p class="hub-desc">
+            La mejor tienda de productos y llaves digitales. Compra rápido, seguro y al instante con soporte 24/7.
+        </p>
+        
+        <div class="action-buttons">
+            <button class="neon-btn btn-store" onclick="window.location.href='index.html'">
+                <i class='bx bx-store-alt'></i> Explorar Tienda
+            </button>
+            
+            <button class="neon-btn btn-history" onclick="window.location.href='historial.html'">
+                <i class='bx bx-history'></i> Mis Compras
+            </button>
+        </div>
+
     </div>
 
     <script>
@@ -422,7 +469,6 @@
         openBtn.addEventListener('click', toggleMenu);
         closeBtn.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
-
 
         // --- SCRIPT DE FONDO DE PARTÍCULAS ---
         const canvas = document.getElementById('particle-canvas');
@@ -444,7 +490,7 @@
                 this.vx = (Math.random() - 0.5) * 1.5;
                 this.vy = (Math.random() - 0.5) * 1.5;
                 this.size = Math.random() * 2 + 1;
-                this.color = Math.random() > 0.5 ? 'rgba(255, 7, 58, ' : 'rgba(188, 19, 254, ';
+                this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, ';
                 this.alpha = Math.random() * 0.5 + 0.2;
             }
             update() {
@@ -481,7 +527,7 @@
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     if (distance < 120) {
                         ctx.beginPath();
-                        ctx.strokeStyle = 'rgba(150, 50, 255, ' + (1 - distance/120) * 0.2 + ')';
+                        ctx.strokeStyle = 'rgba(0, 243, 255, ' + (1 - distance/120) * 0.15 + ')';
                         ctx.lineWidth = 1;
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
@@ -500,7 +546,7 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Formatear la fecha de creación
+                // Fecha de creación
                 const creationTime = user.metadata.creationTime;
                 const dateObj = new Date(creationTime);
                 const day = String(dateObj.getDate()).padStart(2, '0');
@@ -509,19 +555,19 @@
                 
                 document.getElementById('joinDateDisplay').innerText = `${day}/${month}/${year}`;
 
-                // Obtener datos desde DB
+                // Datos BD
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
                         
-                        document.getElementById('userDisplay').innerText = data.username;
                         document.getElementById('topUserDisplay').innerText = data.username;
                         
                         const balance = data.balance !== undefined ? parseFloat(data.balance).toFixed(2) : "0.00";
                         document.getElementById('balanceDisplay').innerText = balance;
                         
+                        // Panel de Admin en el Menú
                         if(data.role === 'admin') {
-                            document.getElementById('adminBtn').style.display = 'flex'; // Usar flex para alinear iconos
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
                         }
                     }
                 });
