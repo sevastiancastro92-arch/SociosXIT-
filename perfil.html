@@ -6,20 +6,50 @@
     <title>Mi Perfil - SociosXIT</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
+        /* =========================================
+           1. FUENTES Y PROTECCIÓN
+           ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+        
         * { user-select: none; box-sizing: border-box; }
-        :root { --neon-purple: #bc13fe; --neon-red: #ff073a; --neon-cyan: #00f3ff; --neon-green: #00ffcc; --glass-bg: rgba(15, 0, 25, 0.7); --sidebar-bg: rgba(5, 10, 20, 0.95); }
-        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100dvh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow-x: hidden; }
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        
+        :root { 
+            --neon-purple: #bc13fe; 
+            --neon-red: #ff073a; 
+            --neon-cyan: #00f3ff; 
+            --neon-green: #00ffcc; 
+            --glass-bg: rgba(15, 0, 25, 0.7); 
+            --sidebar-bg: rgba(5, 10, 20, 0.95); 
+        }
+        
+        body { 
+            background-color: #020005; color: white; 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; padding: 0; min-height: 100dvh; 
+            display: flex; justify-content: center; align-items: flex-start; 
+            flex-direction: column; overflow-x: hidden; 
+        }
+        
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;}
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020202; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 4px; box-shadow: 0 0 10px var(--neon-purple); }
 
+        /* =========================================
+           2. BARRA SUPERIOR Y MENÚ (ESTÁNDAR)
+           ========================================= */
         .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100; }
-        .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
-        .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; flex-shrink: 0;}
+        .top-bar-right { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-bottom: 2px; width: 100%; justify-content: flex-end;}
         .top-bar-right::-webkit-scrollbar { display: none; }
-        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s; flex-shrink: 0;}
         .badge:hover { border-color: var(--neon-cyan); }
         .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
         .badge span { color: #fff; font-weight: 600; }
+        .badge img { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--neon-cyan); object-fit: cover; flex-shrink: 0; }
+        
         .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default; }
         .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 
@@ -31,31 +61,84 @@
         .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; }
         .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; }
         .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
-        .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s; }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s; flex-shrink: 0;}
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
         .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
         .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
-        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        .profile-container { width: 90%; max-width: 450px; background: var(--glass-bg); backdrop-filter: blur(12px); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(0, 243, 255, 0.3); text-align: center; margin-top: 80px; box-shadow: 0 0 30px rgba(0, 243, 255, 0.1); animation: zoomIn 0.5s ease; }
+        /* =========================================
+           3. CONTENEDOR DEL PERFIL
+           ========================================= */
+        .profile-container { 
+            width: 90%; max-width: 500px; 
+            background: var(--glass-bg); backdrop-filter: blur(12px); 
+            padding: 2.5rem 2rem; border-radius: 20px; 
+            border: 1px solid rgba(188, 19, 254, 0.3); 
+            text-align: center; margin: 90px auto 40px auto; 
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.15); 
+            animation: zoomIn 0.5s ease; 
+        }
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
         .avatar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto 20px auto; }
-        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); background: #111; }
-        .btn-upload { position: absolute; bottom: 0; right: 0; background: var(--neon-purple); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #000; box-shadow: 0 0 10px var(--neon-purple); transition: 0.3s; }
-        .btn-upload:hover { transform: scale(1.1); background: var(--neon-cyan); }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon-purple); box-shadow: 0 0 20px rgba(188, 19, 254, 0.4); background: #111; }
+        .btn-upload { position: absolute; bottom: 0; right: 0; background: var(--neon-cyan); color: #000; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #000; box-shadow: 0 0 10px var(--neon-cyan); transition: 0.3s; }
+        .btn-upload:hover { transform: scale(1.1); background: #fff; }
         
-        .username-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-cyan); }
+        .username-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-purple); }
         .user-email { color: #888; font-size: 0.9rem; margin-bottom: 25px; }
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .stat-card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .stat-card h4 { margin: 0; color: #aaa; font-size: 0.8rem; text-transform: uppercase; }
-        .stat-card p { margin: 5px 0 0 0; font-size: 1.1rem; font-weight: bold; font-family: 'Orbitron'; color: var(--neon-green); }
-        .stat-card.purple p { color: var(--neon-purple); }
+        .stat-card h4 { margin: 0; color: #aaa; font-size: 0.75rem; text-transform: uppercase; }
+        .stat-card p { margin: 5px 0 0 0; font-size: 1.1rem; font-weight: bold; font-family: 'Orbitron'; color: var(--neon-green); text-shadow: 0 0 5px rgba(0,255,204,0.4);}
+        .stat-card.purple p { color: var(--neon-purple); text-shadow: 0 0 5px rgba(188,19,254,0.4);}
 
-        .action-btn { width: 100%; padding: 15px; background: transparent; border: 1px solid var(--neon-red); color: white; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; gap: 10px; align-items: center; }
-        .action-btn:hover { background: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); }
+        /* =========================================
+           4. CONFIGURACIÓN DE CUENTA
+           ========================================= */
+        .settings-card {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .settings-card h3 { 
+            font-family: 'Orbitron'; color: var(--neon-cyan); 
+            font-size: 1.1rem; margin-top: 0; 
+            border-bottom: 1px dashed rgba(0,243,255,0.3); 
+            padding-bottom: 10px; margin-bottom: 15px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
+        
+        .input-row { display: flex; gap: 10px; }
+        .input-row input { 
+            flex-grow: 1; padding: 12px 15px; border-radius: 10px; 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); 
+            color: white; outline: none; font-family: 'Poppins'; transition: 0.3s;
+            width: 100%;
+        }
+        .input-row input:focus { border-color: var(--neon-purple); box-shadow: 0 0 10px rgba(188,19,254,0.2); }
+        
+        .btn-save { 
+            background: var(--neon-purple); color: white; border: none; 
+            padding: 0 15px; border-radius: 10px; font-weight: bold; 
+            cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; 
+            display: flex; align-items: center; justify-content: center;
+            min-width: 50px;
+        }
+        .btn-save:hover { box-shadow: 0 0 15px var(--neon-purple); transform: scale(1.05);}
+
+        .security-msg { font-size: 0.8rem; text-align: center; margin-top: 15px; font-weight: bold; min-height: 1.2em;}
+
+        .action-btn { width: 100%; padding: 15px; background: transparent; border: 1px solid var(--neon-cyan); color: white; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; gap: 10px; align-items: center; }
+        .action-btn:hover { background: rgba(0,243,255,0.1); box-shadow: 0 0 15px var(--neon-cyan); }
 
         #uploadLoader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(0, 243, 255, 0.2); border-top-color: var(--neon-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
@@ -66,15 +149,15 @@
 
     <div id="uploadLoader">
         <div class="spinner"></div>
-        <p style="color: var(--neon-cyan); font-family: 'Orbitron'; margin-top: 15px;">ACTUALIZANDO AVATAR...</p>
+        <p style="color: var(--neon-cyan); font-family: 'Orbitron'; margin-top: 15px; letter-spacing: 1px;">PROCESANDO...</p>
     </div>
 
     <div class="top-bar">
         <div class="top-bar-left"><button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button></div>
         <div class="top-bar-right">
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
-            <div class="badge" onclick="window.location.href='perfil.html'">
-                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-cyan);"> 
+            <div class="badge">
+                <img id="topAvatar" src="https://via.placeholder.com/30?text=U" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-cyan);"> 
                 <span id="topUserDisplay">...</span>
             </div>
             <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
@@ -86,23 +169,24 @@
         <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
         <div class="sidebar-menu">
             <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
-            <a href="perfil.html" class="sidebar-item" style="border-left: 4px solid var(--neon-cyan); background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan);"><i class='bx bx-user-circle' style="color: var(--neon-cyan);"></i> Mi Perfil</a>
+            <a href="perfil.html" class="sidebar-item" style="border-left: 4px solid var(--neon-purple); background: rgba(188, 19, 254, 0.1); color: var(--neon-purple);"><i class='bx bx-user-circle' style="color: var(--neon-purple);"></i> Mi Perfil</a>
             <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
             <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
             <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
+            <a href="#" class="sidebar-item" id="logoutMenuBtn" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; color: var(--neon-red);"><i class='bx bx-log-out' style="color: var(--neon-red);"></i> Cerrar Sesión</a>
         </div>
-        <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button></div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
 
     <div class="profile-container">
+        
         <div class="avatar-wrapper">
             <img id="mainAvatar" src="https://via.placeholder.com/150/14001e/bc13fe?text=USER" class="avatar-img" alt="Avatar">
-            <label for="avatarInput" class="btn-upload"><i class='bx bx-camera'></i></label>
+            <label for="avatarInput" class="btn-upload" title="Cambiar foto"><i class='bx bx-camera'></i></label>
             <input type="file" id="avatarInput" accept="image/*" style="display: none;">
         </div>
 
@@ -110,37 +194,74 @@
         <p class="user-email" id="profileEmail">Cargando datos...</p>
 
         <div class="stats-grid">
-            <div class="stat-card"><h4>Total Gastado</h4><p id="totalSpent">$0.00</p></div>
-            <div class="stat-card purple"><h4>Nivel VIP</h4><p id="userRank">Miembro</p></div>
+            <div class="stat-card"><h4>Total Invertido</h4><p id="totalSpent">$0.00</p></div>
+            <div class="stat-card purple"><h4>Nivel de Cuenta</h4><p id="userRank">Miembro</p></div>
+        </div>
+
+        <div class="settings-card">
+            <h3><i class='bx bx-lock-alt'></i> Seguridad y Acceso</h3>
+            
+            <div class="input-group">
+                <label>Cambiar Nombre de Usuario</label>
+                <div class="input-row">
+                    <input type="text" id="newUsername" placeholder="Nuevo usuario..." autocomplete="off">
+                    <button class="btn-save" onclick="updateUsername()"><i class='bx bx-check'></i></button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Cambiar Contraseña</label>
+                <div class="input-row" style="margin-bottom: 10px;">
+                    <input type="password" id="oldPassword" placeholder="Confirma tu contraseña actual..." autocomplete="off">
+                </div>
+                <div class="input-row">
+                    <input type="password" id="newPassword" placeholder="Nueva contraseña (mínimo 6 caracteres)...">
+                    <button class="btn-save" onclick="updateUserPassword()" title="Guardar Contraseña"><i class='bx bx-check'></i></button>
+                </div>
+            </div>
+
+            <div id="securityMessage" class="security-msg"></div>
         </div>
 
         <button class="action-btn" onclick="window.location.href='historial.html'">
-            <i class='bx bx-receipt'></i> Ver Historial de Compras
+            <i class='bx bx-receipt'></i> Ver Historial Completo
         </button>
     </div>
 
+    <script>
+        // --- CONTROL DEL MENÚ LATERAL Y PARTÍCULAS ---
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
+        document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 1.5; this.vy = (Math.random() - 0.5) * 1.5; this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+    </script>
+
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, child, update } from './firebase-config.js';
+        
+        // IMPORTAMOS LAS HERRAMIENTAS PARA RE-AUTENTICAR AL USUARIO SIN SACARLO
+        import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const IMGBB_KEY = 'fd76f06048b34773ba64f11cc4535ff4';
         let currentUserUid = null;
 
-        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
-        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
-        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
-        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
-        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=>window.location.href="login.html");
+        document.getElementById('logoutMenuBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth).then(()=>window.location.href="login.html");
+        });
 
-        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
-        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
-        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
-        for (let i = 0; i < 50; i++) particles.push(new Particle());
-        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
-
+        // CARGA DE DATOS DEL USUARIO
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserUid = user.uid;
                 document.getElementById('profileEmail').innerText = user.email || 'Usuario registrado';
+                
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
@@ -151,37 +272,137 @@
                         document.getElementById('profileName').innerText = data.username;
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         
-                        if (data.avatar) { document.getElementById('topAvatar').src = data.avatar; document.getElementById('mainAvatar').src = data.avatar; }
+                        if (data.avatar) { 
+                            document.getElementById('topAvatar').src = data.avatar; 
+                            document.getElementById('mainAvatar').src = data.avatar; 
+                        }
 
                         let totalGastado = 0;
-                        if(data.history) { Object.values(data.history).forEach(h => { if(!h.refunded) totalGastado += parseFloat(h.price||0); }); }
+                        if(data.history) { 
+                            Object.values(data.history).forEach(h => { 
+                                if(!h.refunded) totalGastado += parseFloat(h.price||0); 
+                            }); 
+                        }
                         document.getElementById('totalSpent').innerText = `$${totalGastado.toFixed(2)}`;
 
                         let rank = "Miembro";
-                        if(totalGastado >= 200) rank = "🌟 Élite"; else if(totalGastado >= 150) rank = "🔥 Deluxe"; else if(totalGastado >= 100) rank = "💎 Diamante"; else if(totalGastado >= 50) rank = "✨ Premium"; else if(totalGastado >= 10) rank = "🎫 VIP";
+                        if(totalGastado >= 200) rank = "🌟 Élite"; 
+                        else if(totalGastado >= 150) rank = "🔥 Deluxe"; 
+                        else if(totalGastado >= 100) rank = "💎 Diamante"; 
+                        else if(totalGastado >= 50) rank = "✨ Premium"; 
+                        else if(totalGastado >= 10) rank = "🎫 VIP";
+                        
                         document.getElementById('userRank').innerText = rank;
 
-                        if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
+                        if(data.username.toLowerCase() === 'sebasxit') {
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
                     }
                 });
             } else { window.location.href = "login.html"; }
         });
 
+        // 1. SUBIR AVATAR A IMGBB
         document.getElementById('avatarInput').addEventListener('change', async (e) => {
             const file = e.target.files[0]; if(!file || !currentUserUid) return;
+            
             document.getElementById('uploadLoader').style.display = 'flex';
             const formData = new FormData(); formData.append('image', file);
+            
             try {
                 const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: formData });
                 const json = await res.json();
                 if(json.success) {
                     const avatarUrl = json.data.url;
                     await update(ref(db, `users/${currentUserUid}`), { avatar: avatarUrl });
-                    document.getElementById('mainAvatar').src = avatarUrl; document.getElementById('topAvatar').src = avatarUrl;
-                } else { alert("Error de la API de imágenes."); }
-            } catch (err) { alert("Error de conexión al subir la imagen."); }
+                    document.getElementById('mainAvatar').src = avatarUrl; 
+                    document.getElementById('topAvatar').src = avatarUrl;
+                } else { alert("Error al procesar la imagen."); }
+            } catch (err) { alert("Error de red al subir la foto."); }
             document.getElementById('uploadLoader').style.display = 'none';
         });
+
+        // 2. FUNCIÓN PARA CAMBIAR USERNAME
+        window.updateUsername = async () => {
+            const newNameInput = document.getElementById('newUsername');
+            const newName = newNameInput.value.trim();
+            const msgBox = document.getElementById('securityMessage');
+            
+            if(newName.length < 3) {
+                msgBox.style.color = "var(--neon-red)";
+                msgBox.innerText = "❌ El usuario debe tener al menos 3 letras.";
+                return;
+            }
+
+            try {
+                document.getElementById('uploadLoader').style.display = 'flex';
+                await update(ref(db, `users/${currentUserUid}`), { username: newName });
+                
+                document.getElementById('profileName').innerText = newName;
+                document.getElementById('topUserDisplay').innerText = newName;
+                newNameInput.value = '';
+                
+                document.getElementById('uploadLoader').style.display = 'none';
+                msgBox.style.color = "var(--neon-green)";
+                msgBox.innerText = "✅ ¡Nombre de usuario actualizado con éxito!";
+                setTimeout(() => { msgBox.innerText = ""; }, 4000);
+            } catch (error) {
+                document.getElementById('uploadLoader').style.display = 'none';
+                msgBox.style.color = "var(--neon-red)";
+                msgBox.innerText = "❌ Error de red al actualizar.";
+            }
+        };
+
+        // 3. FUNCIÓN PARA CAMBIAR CONTRASEÑA (RE-AUTENTICACIÓN INVISIBLE)
+        window.updateUserPassword = async () => {
+            const oldPassInput = document.getElementById('oldPassword');
+            const newPassInput = document.getElementById('newPassword');
+            const oldPass = oldPassInput.value;
+            const newPass = newPassInput.value;
+            const msgBox = document.getElementById('securityMessage');
+
+            if(!oldPass) {
+                msgBox.style.color = "var(--neon-red)";
+                msgBox.innerText = "❌ Ingresa tu contraseña actual por seguridad.";
+                return;
+            }
+
+            if(newPass.length < 6) {
+                msgBox.style.color = "var(--neon-red)";
+                msgBox.innerText = "❌ La nueva contraseña debe tener mínimo 6 caracteres.";
+                return;
+            }
+
+            try {
+                document.getElementById('uploadLoader').style.display = 'flex';
+                
+                // 1. Re-autenticamos al usuario usando su correo y la contraseña vieja
+                const credential = EmailAuthProvider.credential(auth.currentUser.email, oldPass);
+                await reauthenticateWithCredential(auth.currentUser, credential);
+
+                // 2. Si la validación es correcta, cambiamos a la nueva contraseña
+                await updatePassword(auth.currentUser, newPass);
+                
+                oldPassInput.value = '';
+                newPassInput.value = '';
+                document.getElementById('uploadLoader').style.display = 'none';
+                
+                msgBox.style.color = "var(--neon-green)";
+                msgBox.innerText = "✅ ¡Contraseña cambiada con éxito!";
+                setTimeout(() => { msgBox.innerText = ""; }, 4000);
+                
+            } catch (error) {
+                document.getElementById('uploadLoader').style.display = 'none';
+                msgBox.style.color = "var(--neon-red)";
+                
+                // Validamos si el error fue porque se equivocó en la clave vieja
+                if(error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                    msgBox.innerText = "❌ La contraseña actual es incorrecta.";
+                } else {
+                    msgBox.innerText = "❌ Error al cambiar clave: " + error.message;
+                }
+            }
+        };
     </script>
 </body>
 </html>
