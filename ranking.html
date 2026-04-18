@@ -36,7 +36,6 @@
             overflow-x: hidden;
         }
 
-        /* Scrollbar Neon */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #020202; }
         ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
@@ -44,7 +43,7 @@
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
         /* =========================================
-           2. BARRA DE NAVEGACIÓN Y MENÚ (ESTÁNDAR)
+           2. BARRA DE NAVEGACIÓN Y MENÚ
            ========================================= */
         .top-bar {
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
@@ -75,7 +74,6 @@
         .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default;}
         .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 
-        /* Sidebar */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998;
@@ -118,7 +116,7 @@
 
 
         /* =========================================
-           3. ESTILOS DE RANKING Y TOP 1
+           3. ESTILOS DE RANKING
            ========================================= */
         .ranking-wrapper {
             width: 95%; max-width: 900px; margin: 90px auto 30px auto;
@@ -127,117 +125,43 @@
         }
 
         .title-container { text-align: center; margin-bottom: 20px; position: relative; }
-        
-        .title-blur {
-            position: absolute; inset: 0; display: flex; justify-content: center; align-items: center;
-            filter: blur(20px); opacity: 0.4;
-            font-size: 4rem; font-weight: 900; color: var(--neon-purple);
-        }
-        
-        .main-title {
-            font-size: 3rem; font-weight: 900; font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(to right, var(--neon-cyan), #fff, var(--neon-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase; font-style: italic; letter-spacing: 2px;
-            filter: drop-shadow(0 0 10px rgba(0,243,255,0.6)); margin: 0; position: relative; z-index: 1;
-        }
-        
-        .sub-title {
-            color: var(--neon-cyan); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px;
-            text-transform: uppercase; margin-top: 5px; text-shadow: 0 0 5px var(--neon-cyan);
-        }
+        .title-blur { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; filter: blur(20px); opacity: 0.4; font-size: 4rem; font-weight: 900; color: var(--neon-purple); }
+        .main-title { font-size: 3rem; font-weight: 900; font-family: 'Orbitron', sans-serif; background: linear-gradient(to right, var(--neon-cyan), #fff, var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; font-style: italic; letter-spacing: 2px; filter: drop-shadow(0 0 10px rgba(0,243,255,0.6)); margin: 0; position: relative; z-index: 1; }
+        .sub-title { color: var(--neon-cyan); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; margin-top: 5px; text-shadow: 0 0 5px var(--neon-cyan); }
 
-        /* --- TARJETA SUPREMA TOP 1 --- */
         .top1-showcase {
             background: linear-gradient(180deg, rgba(255, 215, 0, 0.15) 0%, rgba(0,0,0,0.8) 100%);
             border: 2px solid #FFD700; border-radius: 20px;
             padding: 35px 20px 20px 20px; text-align: center;
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.1);
-            position: relative; margin-bottom: 40px;
-            width: 100%; max-width: 400px;
+            position: relative; margin-bottom: 40px; width: 100%; max-width: 400px;
             animation: floatTop1 4s ease-in-out infinite;
         }
-        
-        @keyframes floatTop1 {
-            0%, 100% { transform: translateY(0); box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
-            50% { transform: translateY(-10px); box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); }
-        }
+        @keyframes floatTop1 { 0%, 100% { transform: translateY(0); box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); } 50% { transform: translateY(-10px); box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); } }
+        .crown-icon { font-size: 4rem; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); filter: drop-shadow(0 0 15px gold); animation: pulseGold 2s infinite alternate; }
 
-        .crown-icon {
-            font-size: 4rem; position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-            filter: drop-shadow(0 0 15px gold); animation: pulseGold 2s infinite alternate;
-        }
+        #top1Avatar { width: 110px; height: 110px; border-radius: 50%; border: 3px solid #FFD700; object-fit: cover; box-shadow: 0 0 25px gold; margin-bottom: 15px; background: #111; }
+        #top1Name { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; margin: 0 0 15px 0; text-shadow: 0 0 15px gold; text-transform: uppercase; }
+        .top1-badges { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .badge-rank { background: rgba(188, 19, 254, 0.2); border: 1px solid var(--neon-purple); color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; text-shadow: 0 0 5px var(--neon-purple); }
+        .badge-spent { background: rgba(0, 255, 204, 0.2); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; text-shadow: 0 0 5px var(--neon-green); font-family: 'Orbitron', sans-serif; }
+        .top1-label { color: #FFD700; font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; margin: 0; padding-top: 15px; border-top: 1px solid rgba(255,215,0,0.3); }
 
-        #top1Avatar {
-            width: 110px; height: 110px; border-radius: 50%; border: 3px solid #FFD700;
-            object-fit: cover; box-shadow: 0 0 25px gold; margin-bottom: 15px; background: #111;
-        }
-
-        #top1Name {
-            font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff;
-            margin: 0 0 15px 0; text-shadow: 0 0 15px gold; text-transform: uppercase;
-        }
-
-        .top1-badges {
-            display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;
-        }
-
-        .badge-rank {
-            background: rgba(188, 19, 254, 0.2); border: 1px solid var(--neon-purple);
-            color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem;
-            font-weight: bold; text-shadow: 0 0 5px var(--neon-purple);
-        }
-
-        .badge-spent {
-            background: rgba(0, 255, 204, 0.2); border: 1px solid var(--neon-green);
-            color: var(--neon-green); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem;
-            font-weight: bold; text-shadow: 0 0 5px var(--neon-green); font-family: 'Orbitron', sans-serif;
-        }
-
-        .top1-label {
-            color: #FFD700; font-size: 0.8rem; font-weight: bold; letter-spacing: 3px;
-            text-transform: uppercase; margin: 0; padding-top: 15px; border-top: 1px solid rgba(255,215,0,0.3);
-        }
-
-        /* Countdown */
-        .timer-card {
-            background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(188,19,254,0.5);
-            border-radius: 15px; padding: 15px; max-width: 400px; width: 100%; margin: 0 auto 30px auto;
-            text-align: center; box-shadow: 0 0 20px rgba(188,19,254,0.2);
-        }
+        .timer-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(188,19,254,0.5); border-radius: 15px; padding: 15px; max-width: 400px; width: 100%; margin: 0 auto 30px auto; text-align: center; box-shadow: 0 0 20px rgba(188,19,254,0.2); }
         .timer-title { color: var(--neon-purple); font-size: 0.8rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; border-bottom: 1px solid rgba(188,19,254,0.3); padding-bottom: 8px; margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-purple);}
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .timer-item span.num { font-size: 1.5rem; font-weight: 900; font-family: 'Orbitron', sans-serif; color: white; text-shadow: 0 0 10px var(--neon-purple); display: block; }
         .timer-item span.label { font-size: 0.6rem; color: #ff88ff; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Contenedores de Listas (Solo 1 Columna Centrada) */
-        .lists-wrapper {
-            display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 600px;
-        }
-
-        .rank-list-card {
-            background: var(--glass-bg); backdrop-filter: blur(10px);
-            border-radius: 15px; overflow: hidden; display: flex; flex-direction: column;
-            height: 600px; border: 1px solid rgba(188,19,254,0.3);
-            box-shadow: 0 0 15px rgba(188,19,254,0.15);
-        }
-
-        .list-header { 
-            padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative;
-            background: linear-gradient(to bottom, rgba(188,19,254,0.2), transparent); border-bottom-color: rgba(188,19,254,0.3);
-        }
-
+        .lists-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 600px; }
+        .rank-list-card { background: var(--glass-bg); backdrop-filter: blur(10px); border-radius: 15px; overflow: hidden; display: flex; flex-direction: column; height: 600px; border: 1px solid rgba(188,19,254,0.3); box-shadow: 0 0 15px rgba(188,19,254,0.15); }
+        .list-header { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; background: linear-gradient(to bottom, rgba(188,19,254,0.2), transparent); border-bottom-color: rgba(188,19,254,0.3); }
         .list-title { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: #fbe0ff; text-shadow: 0 0 10px var(--neon-purple); }
-
-        .my-rank-badge {
-            display: none; margin-top: 10px; padding: 6px 15px; border-radius: 20px;
-            background: #000; font-weight: bold; font-size: 0.8rem; font-family: 'Orbitron', sans-serif;
-            border: 1px solid var(--neon-purple); color: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple);
-        }
+        .my-rank-badge { display: none; margin-top: 10px; padding: 6px 15px; border-radius: 20px; background: #000; font-weight: bold; font-size: 0.8rem; font-family: 'Orbitron', sans-serif; border: 1px solid var(--neon-purple); color: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple); }
 
         .list-content { flex-grow: 1; padding: 10px 15px; overflow-y: auto; font-family: 'Rajdhani', sans-serif;}
 
-        /* Elementos de la Lista (MAGIA NEON) */
+        /* ELEMENTOS DE LA LISTA CON AVATAR */
         .rank-row {
             display: flex; align-items: center; justify-content: space-between;
             padding: 12px; margin-bottom: 10px; border-radius: 10px; font-size: 1rem;
@@ -245,39 +169,51 @@
         }
         .rank-row:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
 
+        /* Contenedor del Avatar y el Número superpuesto */
+        .rank-avatar-wrapper {
+            position: relative; width: 45px; height: 45px; margin-right: 15px; flex-shrink: 0;
+        }
+        .rank-avatar-img {
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            border: 2px solid transparent; background: #111;
+        }
         .rank-circle {
-            width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-weight: 900; font-size: 1rem; margin-right: 15px; flex-shrink: 0; font-family: 'Orbitron', sans-serif;
+            position: absolute; top: -5px; left: -5px;
+            width: 20px; height: 20px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 900; font-size: 0.7rem; font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 5;
         }
 
-        /* Top 1 Oro */
-        .row-top-1 { background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent); border: 1px solid #FFD700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); animation: pulseGold 2s infinite alternate; }
-        .circle-top-1 { background: #FFD700; color: black; box-shadow: 0 0 15px #FFD700; border: 2px solid white; }
-        @keyframes pulseGold { from { box-shadow: 0 0 10px rgba(255,215,0,0.2); } to { box-shadow: 0 0 20px rgba(255,215,0,0.5); } }
+        /* Estilos por posición */
+        .row-top-1 { background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent); border: 1px solid #FFD700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); animation: pulseGoldRow 2s infinite alternate; }
+        .row-top-1 .rank-avatar-img { border-color: #FFD700; box-shadow: 0 0 10px gold; }
+        .circle-top-1 { background: #FFD700; color: black; border: 1px solid white; }
         .text-top-1 { color: #fff9c4; font-weight: 900; text-shadow: 0 0 8px gold; }
 
-        /* Top 2 Plata */
         .row-top-2 { background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent); border: 1px solid #00f3ff; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
-        .circle-top-2 { background: #e0e0e0; color: black; box-shadow: 0 0 10px white; }
+        .row-top-2 .rank-avatar-img { border-color: #00f3ff; box-shadow: 0 0 10px #00f3ff; }
+        .circle-top-2 { background: #e0e0e0; color: black; border: 1px solid white; }
         .text-top-2 { color: #fff; font-weight: bold; text-shadow: 0 0 5px white; }
 
-        /* Top 3 Bronce */
         .row-top-3 { background: linear-gradient(90deg, rgba(255, 80, 0, 0.1), transparent); border: 1px solid #ff5500; box-shadow: 0 0 10px rgba(255, 80, 0, 0.2); }
-        .circle-top-3 { background: #ff7b00; color: white; box-shadow: 0 0 10px #ff7b00; }
+        .row-top-3 .rank-avatar-img { border-color: #ff5500; box-shadow: 0 0 10px #ff5500; }
+        .circle-top-3 { background: #ff7b00; color: white; border: 1px solid white; }
         .text-top-3 { color: #ffccaa; font-weight: bold; text-shadow: 0 0 5px #ff5500; }
 
-        /* Normales */
         .row-other { background: rgba(0, 0, 0, 0.4); border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .circle-other { background: #222; color: #888; border: 1px solid #444; }
+        .row-other .rank-avatar-img { border-color: #555; }
+        .circle-other { background: #222; color: #aaa; border: 1px solid #555; }
         .text-other { color: #ccc; font-weight: 600; }
 
-        /* Yo */
         .is-me-row { background: rgba(188, 19, 254, 0.15) !important; border: 1px solid var(--neon-purple) !important; box-shadow: 0 0 15px rgba(188, 19, 254, 0.3) !important; }
+        .is-me-row .rank-avatar-img { border-color: var(--neon-purple) !important; box-shadow: 0 0 10px var(--neon-purple) !important; }
         .text-me { color: #fbe0ff !important; font-weight: 900 !important; text-shadow: 0 0 8px var(--neon-purple) !important; }
+
+        @keyframes pulseGoldRow { from { box-shadow: 0 0 10px rgba(255,215,0,0.2); } to { box-shadow: 0 0 20px rgba(255,215,0,0.5); } }
 
         .rank-info { flex-grow: 1; display: flex; align-items: center; overflow: hidden; }
         .rank-name { text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
-        
         .rank-amount { font-family: 'Orbitron', sans-serif; font-weight: bold; text-align: right; font-size: 1.1rem; }
         .amount-purple { color: var(--neon-purple); text-shadow: 0 0 8px rgba(188,19,254,0.6); }
 
@@ -322,7 +258,6 @@
     <canvas id="particle-canvas"></canvas>
 
     <div class="ranking-wrapper">
-        
         <div class="title-container">
             <div class="title-blur">RANKINGS</div>
             <h1 class="main-title">RANKINGS</h1>
@@ -337,12 +272,10 @@
             <div class="crown-icon">👑</div>
             <img id="top1Avatar" src="" alt="Top 1 Avatar">
             <h2 id="top1Name">Cargando...</h2>
-            
             <div class="top1-badges">
                 <span id="top1Rank" class="badge-rank">Miembro</span>
                 <span id="top1Spent" class="badge-spent">$0.00 USD</span>
             </div>
-            
             <p class="top1-label">Mayor Inversor Global</p>
         </div>
 
@@ -354,7 +287,6 @@
         </div>
 
         <div class="lists-wrapper">
-            
             <div class="rank-list-card purple">
                 <div class="list-header">
                     <h2 class="list-title">Mejores Compradores</h2>
@@ -364,19 +296,16 @@
                     <p style="text-align: center; color: #aaa; margin-top: 30px; font-family: 'Orbitron'; font-size: 0.8rem; animation: blink 1s infinite;">OBTENIENDO DATOS DE COMPRAS...</p>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script>
-        // --- CONTROL DEL MENÚ LATERAL ---
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
         document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
 
-        // --- SCRIPT DE FONDO DE PARTÍCULAS ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let width, height; let particles = [];
@@ -424,11 +353,9 @@
         let currentUserUid = null;
         let currentUserName = null;
 
-        // VERIFICAR AUTENTICACIÓN
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserUid = user.uid;
-                
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
@@ -441,7 +368,6 @@
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         
-                        // Validar si es SEBASXIT
                         if(currentUserName.toLowerCase() === 'sebasxit') {
                             document.getElementById('adminMenuBtn').style.display = 'flex';
                         }
@@ -450,7 +376,7 @@
 
                 loadRankings();
                 startCountdown();
-                setInterval(loadRankings, 30000); // Act. cada 30s
+                setInterval(loadRankings, 30000);
             } else {
                 window.location.href = "login.html";
             }
@@ -460,7 +386,6 @@
             signOut(auth).then(() => window.location.href = "login.html");
         });
 
-        // --- LÓGICA DE RANKINGS (SOLO GASTOS) ---
         async function loadRankings() {
             const now = new Date();
             const currentDay = now.getDate();
@@ -483,7 +408,6 @@
                     const u = childSnapshot.val();
                     let dName = u.username || "Desconocido";
                     
-                    // Excluir al admin del ranking público para que sea justo
                     if (dName.toLowerCase() === "sebasxit") return;
 
                     let cycleSpent = 0; 
@@ -493,15 +417,14 @@
                         Object.values(u.history).forEach(p => {
                             const price = parseFloat(p.price || 0);
                             if (!p.refunded) {
-                                allTimeSpent += price; // Histórico Total para el Rango
+                                allTimeSpent += price; 
                                 if (p.date >= cycleStartDate.getTime()) {
-                                    cycleSpent += price; // Del ciclo actual para el Ranking
+                                    cycleSpent += price; 
                                 }
                             }
                         });
                     }
 
-                    // Calcular Rango Histórico
                     let rankName = "Miembro";
                     if(allTimeSpent >= 200) rankName = "🌟 Élite";
                     else if(allTimeSpent >= 150) rankName = "🔥 Deluxe";
@@ -511,7 +434,6 @@
 
                     if(dName.length > 12) dName = dName.substring(0, 12) + "..";
 
-                    // Default Avatar si no tiene
                     const avatarUrl = u.avatar || `https://via.placeholder.com/150/14001e/bc13fe?text=${dName.charAt(0).toUpperCase()}`;
 
                     rankingData.push({
@@ -525,10 +447,8 @@
                     });
                 });
 
-                // Ordenar por Gasto del Ciclo (Top Ventas)
                 const sortSales = [...rankingData].sort((a, b) => b.cycleSpent - a.cycleSpent);
 
-                // ACTUALIZAR LA TARJETA DEL TOP 1
                 const top1Container = document.getElementById('top1Container');
                 if(sortSales.length > 0 && sortSales[0].cycleSpent > 0) {
                     const top1 = sortSales[0];
@@ -541,7 +461,6 @@
                     top1Container.style.display = 'none';
                 }
 
-                // Renderizar Lista
                 renderList(sortSales, document.getElementById("listSales"), 'cycleSpent', document.getElementById("myRankSales"), 'amount-purple');
 
             } catch (error) {
@@ -549,10 +468,10 @@
             }
         }
 
-        // --- RENDERIZAR LISTA NEON ---
+        // --- RENDER CON AVATARES SUPERPUESTOS ---
         function renderList(data, container, valueKey, myAlert, amountClass) {
             container.innerHTML = "";
-            const topData = data.slice(0, 50); // Mostrar Top 50 
+            const topData = data.slice(0, 50); 
             
             if(topData.length === 0 || topData[0][valueKey] === 0) {
                 container.innerHTML = "<p style='text-align: center; color: #666; margin-top: 30px;'>Aún no hay compras en este ciclo.</p>";
@@ -561,7 +480,7 @@
             }
 
             topData.forEach((user, index) => {
-                if(user[valueKey] <= 0) return; // No mostrar a los de $0
+                if(user[valueKey] <= 0) return;
 
                 const rank = index + 1;
                 let rowClass = "row-other"; let circleClass = "circle-other"; let textClass = "text-other"; let icon = "";
@@ -575,7 +494,10 @@
                 const html = `
                     <div class="rank-row ${rowClass}">
                         <div class="rank-info">
-                            <div class="rank-circle ${circleClass}">${rank}</div>
+                            <div class="rank-avatar-wrapper">
+                                <img src="${user.avatar}" alt="${user.name}" class="rank-avatar-img">
+                                <div class="rank-circle ${circleClass}">${rank}</div>
+                            </div>
                             <span class="rank-name ${textClass}">
                                 ${user.name} <span style="font-size: 0.8rem;">${icon}</span>
                             </span>
@@ -588,7 +510,6 @@
                 container.innerHTML += html;
             });
 
-            // Encontrar puesto del usuario actual
             const myIndex = data.findIndex(u => u.isMe);
             if (myIndex !== -1 && data[myIndex][valueKey] > 0) {
                 const val = data[myIndex][valueKey];
@@ -599,7 +520,6 @@
             }
         }
 
-        // --- TEMPORIZADOR ---
         function startCountdown() {
             const container = document.getElementById("countdownTimer");
             const updateTimer = () => {
