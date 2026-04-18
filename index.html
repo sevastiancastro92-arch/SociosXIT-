@@ -3,28 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda de Keys - LUCK XIT GALAXY</title>
+    <title>Tienda de Keys - SociosXIT</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
     <style>
         /* =========================================
            1. FUENTES Y PROTECCIÓN
            ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
 
-        /* BLOQUEO DE SELECCIÓN DE TEXTO (ANTI-COPIA) */
         * {
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10 and IE 11 */
-            user-select: none; /* Standard syntax */
-            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-purple: #bc13fe;
+            --neon-red: #ff073a;
+            --neon-cyan: #00f3ff;
+            --neon-green: #00ffcc;
+            --glass-bg: rgba(15, 0, 25, 0.6);
+            --sidebar-bg: rgba(5, 10, 20, 0.95);
         }
 
         body {
-            background-color: #020005; /* Fondo casi negro */
+            background-color: #020005;
             color: white;
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            min-height: 100dvh; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -32,37 +45,120 @@
             overflow-x: hidden;
         }
 
-        /* FONDO DE PARTÍCULAS */
         #particle-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Detrás de todo */
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
         }
 
         /* =========================================
-           2. ESTILOS DEL CONTENEDOR Y NEÓN
+           2. BARRA DE NAVEGACIÓN SUPERIOR
            ========================================= */
-        
-        /* Variables de color Morado/Rojo Fluorescente */
-        :root {
-            --neon-purple: #bc13fe;
-            --neon-red: #ff073a;
-            --neon-glow: #ff00de;
-            --glass-bg: rgba(20, 0, 30, 0.6);
+        .top-bar {
+            position: fixed;
+            top: 15px; left: 50%;
+            transform: translateX(-50%);
+            width: 95%; max-width: 700px;
+            background: rgba(5, 10, 20, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15), inset 0 0 10px rgba(0, 243, 255, 0.05);
+            z-index: 100;
         }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
+        .menu-btn {
+            background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
+            border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .menu-btn:hover { box-shadow: 0 0 10px var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
+
+        .top-bar-right {
+            display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px;
+        }
+        .top-bar-right::-webkit-scrollbar { display: none; }
+        
+        .badge {
+            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap;
+        }
+        .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
+        .badge span { color: #fff; font-weight: 600; }
+        .badge.green { border-color: rgba(0, 255, 204, 0.3); }
+        .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+
+        .bell-btn {
+            background: transparent; border: none; color: var(--neon-green); font-size: 1.4rem;
+            cursor: pointer; padding: 0 5px; transition: 0.3s; display: flex; align-items: center;
+        }
+        .bell-btn:hover { text-shadow: 0 0 15px var(--neon-green); transform: scale(1.1); }
+
+        /* =========================================
+           3. MENÚ LATERAL (SIDEBAR)
+           ========================================= */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998;
+            opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; 
+            background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan);
+            box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999;
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
+        }
+        .sidebar.active { left: 0; }
+
+        .sidebar-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px;
+        }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-cyan); }
+
+        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
+
+        .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        .sidebar-menu::-webkit-scrollbar { display: none; }
+
+        .sidebar-item {
+            display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;
+            padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px;
+            font-size: 0.95rem; transition: 0.3s; flex-shrink: 0; 
+        }
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
+        .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .sidebar-item:hover i { color: var(--neon-cyan); }
+
+        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; flex-shrink: 0; }
+
+        .logout-btn {
+            width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
+            padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .logout-btn i { font-size: 1.3rem; }
+        .logout-btn:hover { background: var(--neon-red); color: white; box-shadow: 0 0 20px var(--neon-red); }
+
+        /* =========================================
+           4. CONTENEDOR DE LA TIENDA
+           ========================================= */
         .container {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
             padding: 2.5rem;
             border-radius: 20px;
-            box-shadow: 
-                0 0 20px rgba(188, 19, 254, 0.2),
-                inset 0 0 20px rgba(255, 7, 58, 0.1);
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.2), inset 0 0 20px rgba(255, 7, 58, 0.1);
             width: 90%;
             max-width: 420px;
             border: 1px solid rgba(188, 19, 254, 0.3);
@@ -70,6 +166,7 @@
             text-align: center;
             position: relative;
             z-index: 10;
+            margin-top: 80px; /* Separación de la barra superior */
         }
 
         @keyframes slideIn {
@@ -78,342 +175,197 @@
         }
 
         h2 { 
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
+            font-family: 'Orbitron', sans-serif; font-weight: 900;
             background: linear-gradient(90deg, var(--neon-purple), #fff, var(--neon-red));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem; 
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px;
             filter: drop-shadow(0 0 5px var(--neon-purple));
         }
 
-        /* --- DISPLAY DE SALDO --- */
         .balance-display {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            color: #fff;
-            margin-bottom: 30px;
-            text-shadow: 
-                0 0 10px var(--neon-red),
-                0 0 20px var(--neon-purple);
-            font-weight: bold;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px;
-            border-radius: 10px;
-            background: rgba(0,0,0,0.3);
+            font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: #fff;
+            margin-bottom: 25px; text-shadow: 0 0 10px var(--neon-red), 0 0 20px var(--neon-purple);
+            font-weight: bold; border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.4);
+            display: flex; justify-content: center; align-items: center; gap: 10px;
         }
 
-        /* --- BOTÓN PRINCIPAL CON ANIMACIÓN CHIDA --- */
         .main-select-btn {
-            width: 100%;
-            padding: 20px;
+            width: 100%; padding: 20px; border: none; border-radius: 15px; color: white;
             background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-red) 100%);
-            border: none;
-            border-radius: 15px;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 15px rgba(255, 7, 58, 0.4);
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 1.1rem;
+            text-transform: uppercase; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(255, 7, 58, 0.4); margin-bottom: 15px;
+            position: relative; overflow: hidden; letter-spacing: 1px;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
         }
+
+        .main-select-btn i { font-size: 1.5rem; }
 
         .main-select-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s;
+        }
+        .main-select-btn:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 0 35px var(--neon-purple), 0 0 10px #fff; }
+        .main-select-btn:hover::before { left: 100%; }
+        .main-select-btn:active { transform: scale(0.95); }
+
+        .secondary-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .main-select-btn:hover {
-            transform: scale(1.05) translateY(-3px);
-            box-shadow: 0 0 35px var(--neon-purple), 0 0 10px #fff;
-        }
-        
-        .main-select-btn:hover::before {
-            left: 100%;
-        }
-
-        .main-select-btn:active {
-            transform: scale(0.95);
-        }
-
-        .back-btn {
+        .btn-history-bottom, .back-btn {
+            flex: 1;
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #ccc;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 10px;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 10px;
             font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
         }
+
+        .btn-history-bottom:hover { 
+            border-color: var(--neon-cyan); color: white; 
+            text-shadow: 0 0 8px var(--neon-cyan); background: rgba(0, 243, 255, 0.1);
+        }
+
         .back-btn:hover { 
-            border-color: var(--neon-purple); 
-            color: white; 
-            text-shadow: 0 0 8px var(--neon-purple);
-            background: rgba(188, 19, 254, 0.1);
-        }
-
-        /* --- BOTÓN HISTORIAL (NUEVO) --- */
-        .btn-history {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(20, 0, 30, 0.8);
-            border: 1px solid var(--neon-purple);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(188, 19, 254, 0.3);
-            transition: all 0.3s ease;
-            z-index: 100;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-history:hover {
-            background: rgba(188, 19, 254, 0.2);
-            box-shadow: 0 0 20px var(--neon-purple);
-            transform: scale(1.05);
+            border-color: var(--neon-purple); color: white; 
+            text-shadow: 0 0 8px var(--neon-purple); background: rgba(188, 19, 254, 0.1);
         }
 
         /* =========================================
-           3. ESTILOS DE LOS MODALES
+           5. ESTILOS DE LOS MODALES DE TIENDA
            ========================================= */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(8px);
-            display: none; 
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            animation: fadeIn 0.3s;
+        .store-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000; animation: fadeIn 0.3s;
         }
 
         .modal-box {
-            background: #0a0a0a;
-            padding: 30px;
-            border-radius: 25px;
-            width: 85%;
-            max-width: 450px;
-            border: 2px solid #333;
-            box-shadow: 0 0 50px rgba(188, 19, 254, 0.15);
-            position: relative;
-            text-align: center;
+            background: #0a0a0a; padding: 30px; border-radius: 25px; width: 85%; max-width: 450px;
+            border: 2px solid #333; box-shadow: 0 0 50px rgba(188, 19, 254, 0.15);
+            position: relative; text-align: center;
             background-image: linear-gradient(rgba(20, 0, 30, 0.9), rgba(20, 0, 30, 0.9)), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMTExIj48L3JlY3Q+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMzMzMiPjwvcmVjdD4KPC9zdmc+');
         }
 
-        .neon-title {
-            color: #fff;
-            text-shadow: 0 0 15px var(--neon-purple), 0 0 5px var(--neon-red);
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            font-family: 'Orbitron', sans-serif;
-        }
+        .neon-title { color: #fff; text-shadow: 0 0 15px var(--neon-purple), 0 0 5px var(--neon-red); margin-bottom: 20px; font-size: 1.5rem; font-family: 'Orbitron', sans-serif; }
 
-        /* --- LISTA DE PRODUCTOS --- */
-        #products-list-container {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            text-align: left; 
-            padding-right: 5px;
-        }
-        
-        /* Scrollbar neón */
+        #products-list-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; text-align: left; padding-right: 5px; }
         #products-list-container::-webkit-scrollbar { width: 6px; }
         #products-list-container::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 3px; }
         #products-list-container::-webkit-scrollbar-track { background: #111; }
 
         .product-item {
             background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 18px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1); padding: 18px; margin-bottom: 12px; border-radius: 12px;
+            cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: space-between;
+            align-items: center; position: relative; overflow: hidden;
         }
-
-        .product-item::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 0%; height: 2px;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-red));
-            transition: 0.4s;
-        }
-
-        .product-item:hover {
-            border-color: var(--neon-red);
-            background: rgba(255, 7, 58, 0.05);
-            transform: translateX(8px);
-            box-shadow: 0 0 15px rgba(255, 7, 58, 0.2);
-        }
-
+        .product-item::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 2px; background: linear-gradient(90deg, var(--neon-purple), var(--neon-red)); transition: 0.4s; }
+        .product-item:hover { border-color: var(--neon-red); background: rgba(255, 7, 58, 0.05); transform: translateX(8px); box-shadow: 0 0 15px rgba(255, 7, 58, 0.2); }
         .product-item:hover::after { width: 100%; }
 
-        .prod-name {
-            color: #fff;
-            font-weight: 700;
-            font-size: 1.05rem;
-        }
-        .prod-duration {
-            color: #aaa;
-            font-size: 0.85rem;
-            font-style: italic;
-            display: block;
-        }
-        .prod-price {
-            color: var(--neon-purple);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-shadow: 0 0 8px rgba(188, 19, 254, 0.6);
-        }
+        .prod-name { color: #fff; font-weight: 700; font-size: 1.05rem; }
+        .prod-duration { color: #aaa; font-size: 0.85rem; font-style: italic; display: block; }
+        .prod-price { color: var(--neon-purple); font-family: 'Orbitron', sans-serif; font-weight: bold; font-size: 1.2rem; text-shadow: 0 0 8px rgba(188, 19, 254, 0.6); }
 
-        /* --- MODAL DETALLES --- */
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px dashed #444;
-            font-size: 1.1rem;
-            color: #ddd;
-        }
-        .detail-row span { 
-            color: var(--neon-purple); 
-            font-weight: bold; 
-            text-shadow: 0 0 5px rgba(188, 19, 254, 0.4);
-        }
+        .detail-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px dashed #444; font-size: 1.1rem; color: #ddd; }
+        .detail-row span { color: var(--neon-purple); font-weight: bold; text-shadow: 0 0 5px rgba(188, 19, 254, 0.4); }
 
         .btn-buy {
-            width: 100%;
-            padding: 18px;
-            margin-top: 25px;
-            background: transparent;
-            color: var(--neon-red);
-            font-weight: bold;
-            border: 2px solid var(--neon-red);
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            font-family: 'Orbitron', sans-serif;
-            box-shadow: 0 0 10px rgba(255, 7, 58, 0.2);
-            transition: 0.3s;
-            text-transform: uppercase;
+            width: 100%; padding: 18px; margin-top: 25px; background: transparent; color: var(--neon-red);
+            font-weight: bold; border: 2px solid var(--neon-red); border-radius: 50px; cursor: pointer;
+            font-size: 1.2rem; font-family: 'Orbitron', sans-serif; box-shadow: 0 0 10px rgba(255, 7, 58, 0.2);
+            transition: 0.3s; text-transform: uppercase;
         }
-        
-        .btn-buy:disabled {
-            border-color: #555;
-            color: #555;
-            box-shadow: none;
-            cursor: not-allowed;
-            background: transparent;
-        }
+        .btn-buy:disabled { border-color: #555; color: #555; box-shadow: none; cursor: not-allowed; background: transparent; }
+        .btn-buy:hover:not(:disabled) { background: var(--neon-red); color: white; box-shadow: 0 0 30px var(--neon-red); transform: scale(1.05); }
 
-        .btn-buy:hover:not(:disabled) {
-            background: var(--neon-red);
-            color: white;
-            box-shadow: 0 0 30px var(--neon-red);
-            transform: scale(1.05);
-        }
-
-        /* --- MODAL DE ÉXITO --- */
-        .modal-success {
-            border: 2px solid #00ff00;
-            box-shadow: 0 0 30px #00ff00;
-        }
-        .key-box {
-            background: #000;
-            border: 2px dashed #00ff00;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            padding: 20px;
-            font-size: 1.3rem;
-            margin: 25px 0;
-            border-radius: 10px;
-            word-break: break-all;
-            text-shadow: 0 0 8px #00ff00;
-            position: relative;
-        }
-        .btn-copy {
-            background: #00ff00;
-            border: none;
-            color: black;
-            font-weight: bold;
-            padding: 12px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-        .btn-copy:hover { 
-            background: white; 
-            box-shadow: 0 0 20px #00ff00; 
-            transform: scale(1.1);
-        }
+        .modal-success { border: 2px solid #00ff00; box-shadow: 0 0 30px #00ff00; }
+        .key-box { background: #000; border: 2px dashed #00ff00; color: #00ff00; font-family: 'Courier New', monospace; padding: 20px; font-size: 1.3rem; margin: 25px 0; border-radius: 10px; word-break: break-all; text-shadow: 0 0 8px #00ff00; }
+        .btn-copy { background: #00ff00; border: none; color: black; font-weight: bold; padding: 12px 30px; border-radius: 25px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .btn-copy:hover { background: white; box-shadow: 0 0 20px #00ff00; transform: scale(1.1); }
 
         #statusMsg { font-size: 0.95rem; margin-top: 15px; font-weight: 500; }
         .error-text { color: #ff3333; text-shadow: 0 0 5px #ff0000; }
 
-        /* Ajustes Mobile */
-        @media (max-width: 480px) {
-            .container { padding: 1.5rem; width: 85%; }
-            h2 { font-size: 1.4rem; }
-            .balance-display { font-size: 1.6rem; }
-        }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
-    <canvas id="particle-canvas"></canvas>
 
-    <button class="btn-history" onclick="window.location.href='historial.html'">
-        📜 Historial
-    </button>
-
-    <div class="container">
-        <h2>Tienda de Keys<br><span style="font-size:0.6em; color:#fff; opacity:0.8;">LUCK XIT</span></h2>
-        
-        <div class="balance-display">
-            $<span id="balance">0.00</span>
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="menu-btn" id="openMenuBtn">
+                <i class='bx bx-menu'></i>
+            </button>
         </div>
-
-        <p id="statusMsg"></p>
-
-        <button class="main-select-btn" onclick="openSelector()">
-            Seleccionar Producto
-        </button>
-
-        <button class="back-btn" onclick="window.location.href='dashboard.html'">
-            Volver al Panel
-        </button>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
+            <div class="badge"><i class='bx bx-user'></i> <span id="topUserDisplay">...</span></div>
+            <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
+            <button class="bell-btn" onclick="alert('Sin notificaciones')"><i class='bx bxs-bell-ring bx-tada-hover' ></i></button>
+        </div>
     </div>
 
-    <div id="selectorModal" class="modal-overlay">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>SOCIOS XIT</h2>
+            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
+            <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
+            <a href="#" class="sidebar-item" onclick="alert('Soporte en línea')"><i class='bx bx-headphone'></i> Soporte 24/7</a>
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="container">
+        <h2>Tienda de Keys<br><span style="font-size:0.6em; color:#fff; opacity:0.8;">SOCIOS XIT</span></h2>
+        
+        <div class="balance-display">
+            <i class='bx bx-dollar-circle' style="color: var(--neon-green);"></i> <span id="balanceMain">0.00</span>
+        </div>
+
+        <button class="main-select-btn" onclick="openSelector()">
+            <i class='bx bx-crosshair'></i> Seleccionar Producto
+        </button>
+
+        <div class="secondary-btn-group">
+            <a href="historial.html" class="btn-history-bottom">
+                <i class='bx bx-history'></i> Mis Compras
+            </a>
+            <button class="back-btn" onclick="window.location.href='dashboard.html'" style="margin: 0; width: 100%;">
+                <i class='bx bx-left-arrow-alt'></i> Volver
+            </button>
+        </div>
+        
+        <p id="statusMsg"></p>
+    </div>
+
+    <div id="selectorModal" class="store-modal-overlay">
         <div class="modal-box">
             <h3 class="neon-title">ARSENAL DISPONIBLE</h3>
             
@@ -421,30 +373,24 @@
                 <p style="color:#aaa; animation: blink 1s infinite;">Conectando con el servidor...</p>
             </div>
 
-            <button class="back-btn" onclick="closeSelector()">CANCELAR</button>
+            <button class="back-btn" onclick="closeSelector()" style="width: 100%;">CANCELAR</button>
         </div>
     </div>
 
-    <div id="productDetailModal" class="modal-overlay">
+    <div id="productDetailModal" class="store-modal-overlay">
         <div class="modal-box">
             <h2 id="detailName" class="neon-title" style="font-size: 1.6rem;">Nombre</h2>
             
-            <div class="detail-row">
-                Duración: <span id="detailDuration">--</span>
-            </div>
-            <div class="detail-row">
-                Precio: <span id="detailPrice">--</span>
-            </div>
-            <div class="detail-row">
-                Stock: <span id="detailStock">--</span>
-            </div>
+            <div class="detail-row">Duración: <span id="detailDuration">--</span></div>
+            <div class="detail-row">Precio: <span id="detailPrice">--</span></div>
+            <div class="detail-row">Stock: <span id="detailStock">--</span></div>
 
             <button id="btnBuyConfirm" class="btn-buy">Comprar</button>
             <button class="back-btn" onclick="backToSelector()" style="margin-top:15px; width:100%">Volver</button>
         </div>
     </div>
 
-    <div id="neonModal" class="modal-overlay">
+    <div id="neonModal" class="store-modal-overlay">
         <div class="modal-box modal-success">
             <h2 style="color:#00ff00; margin-bottom:5px; text-shadow: 0 0 10px #00ff00;">¡TRANSACCIÓN ÉXITOSA!</h2>
             <p style="color:#ccc; font-size:0.9rem;">Tu acceso ha sido desencriptado:</p>
@@ -453,11 +399,27 @@
             
             <button class="btn-copy" onclick="copyKey()">Copiar Código</button>
             <br><br>
-            <button class="back-btn" onclick="location.reload()">Cerrar y Actualizar</button>
+            <button class="back-btn" onclick="location.reload()" style="width: 100%;">Cerrar y Actualizar</button>
         </div>
     </div>
 
     <script>
+        // --- CONTROL DEL MENÚ LATERAL ---
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const openBtn = document.getElementById('openMenuBtn');
+        const closeBtn = document.getElementById('closeMenuBtn');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        openBtn.addEventListener('click', toggleMenu);
+        closeBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // --- SCRIPT DE FONDO DE PARTÍCULAS ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -477,8 +439,7 @@
                 this.vx = (Math.random() - 0.5) * 1.5;
                 this.vy = (Math.random() - 0.5) * 1.5;
                 this.size = Math.random() * 2 + 1;
-                // Alternar entre rojo neon y morado neon
-                this.color = Math.random() > 0.5 ? 'rgba(255, 7, 58, ' : 'rgba(188, 19, 254, ';
+                this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, ';
                 this.alpha = Math.random() * 0.5 + 0.2;
             }
             update() {
@@ -499,15 +460,13 @@
 
         function initParticles() {
             particles = [];
-            for (let i = 0; i < 70; i++) {
+            for (let i = 0; i < 60; i++) {
                 particles.push(new Particle());
             }
         }
 
         function animate() {
             ctx.clearRect(0, 0, width, height);
-            
-            // Dibujar líneas de conexión
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
@@ -517,7 +476,7 @@
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     if (distance < 120) {
                         ctx.beginPath();
-                        ctx.strokeStyle = 'rgba(150, 50, 255, ' + (1 - distance/120) * 0.2 + ')';
+                        ctx.strokeStyle = 'rgba(0, 243, 255, ' + (1 - distance/120) * 0.15 + ')';
                         ctx.lineWidth = 1;
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
@@ -527,54 +486,67 @@
             }
             requestAnimationFrame(animate);
         }
-
         initParticles();
         animate();
     </script>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, ref, get, update, runTransaction, push } from './firebase-config.js';
+        import { auth, db, onAuthStateChanged, signOut, ref, get, update, runTransaction, push, child } from './firebase-config.js';
 
-        // Variables Globales
+        // Variables Globales de Tienda
         let currentUser = null;
         let currentBalance = 0;
-        
-        // Variables de la selección actual
         let selectedProductId = null;
         let selectedProductPrice = 0;
         let selectedProductName = "";
 
-        // VERIFICAR AUTENTICACIÓN
+        // VERIFICAR AUTENTICACIÓN Y CARGAR DATOS
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                loadUserData();
-                loadProductsData(); // Precargar lista
+                
+                // Formatear la fecha de creación
+                const creationTime = user.metadata.creationTime;
+                const dateObj = new Date(creationTime);
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const year = dateObj.getFullYear();
+                document.getElementById('joinDateDisplay').innerText = `${day}/${month}/${year}`;
+
+                // Obtener datos desde DB (Nombre y Saldo)
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        
+                        document.getElementById('topUserDisplay').innerText = data.username;
+                        
+                        currentBalance = data.balance !== undefined ? parseFloat(data.balance) : 0;
+                        const formattedBalance = currentBalance.toFixed(2);
+                        
+                        // Actualizamos en las DOS partes (Barra superior y Centro)
+                        document.getElementById('balanceDisplay').innerText = formattedBalance;
+                        document.getElementById('balanceMain').innerText = formattedBalance;
+                        
+                        if(data.role === 'admin') {
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
+                    }
+                });
+
+                loadProductsData(); // Precargar lista de productos
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        // CARGAR SALDO
-        function loadUserData() {
-            const userRef = ref(db, 'users/' + currentUser.uid);
-            get(userRef).then((snapshot) => {
-                if(snapshot.exists()) {
-                    currentBalance = parseFloat(snapshot.val().balance || 0);
-                    document.getElementById('balance').innerText = currentBalance.toFixed(2);
-                }
-            });
-        }
+        // Botón de cerrar sesión del Menú
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "login.html");
+        });
 
-        // --- FUNCIONES DE VENTANAS (MODALES) ---
-        window.openSelector = () => {
-            document.getElementById('selectorModal').style.display = 'flex';
-        };
-
-        window.closeSelector = () => {
-            document.getElementById('selectorModal').style.display = 'none';
-        };
-
+        // --- FUNCIONES DE VENTANAS (MODALES) DE LA TIENDA ---
+        window.openSelector = () => document.getElementById('selectorModal').style.display = 'flex';
+        window.closeSelector = () => document.getElementById('selectorModal').style.display = 'none';
         window.backToSelector = () => {
             document.getElementById('productDetailModal').style.display = 'none';
             document.getElementById('selectorModal').style.display = 'flex';
@@ -587,7 +559,7 @@
             
             try {
                 const snapshot = await get(productsRef);
-                container.innerHTML = ""; // Limpiar
+                container.innerHTML = ""; 
 
                 if (snapshot.exists()) {
                     snapshot.forEach((child) => {
@@ -595,7 +567,6 @@
                         const id = child.key;
                         const stock = p.keys ? Object.keys(p.keys).length : 0;
 
-                        // Crear el elemento visual del producto
                         const item = document.createElement('div');
                         item.className = 'product-item';
 
@@ -607,7 +578,6 @@
                             <div class="prod-price">$${p.price}</div>
                         `;
 
-                        // Evento Click: Abre detalles
                         item.onclick = () => {
                             closeSelector(); 
                             showDetails(id, p.name, p.duration, p.price, stock); 
@@ -630,7 +600,6 @@
             selectedProductPrice = price;
             selectedProductName = name;
 
-            // Rellenar datos en el modal
             document.getElementById('detailName').innerText = name;
             document.getElementById('detailDuration').innerText = duration;
             document.getElementById('detailPrice').innerText = "$" + price;
@@ -638,10 +607,9 @@
             const stockEl = document.getElementById('detailStock');
             const buyBtn = document.getElementById('btnBuyConfirm');
 
-            // Lógica de Stock
             if (stock > 0) {
                 stockEl.innerText = stock + " DISPONIBLES";
-                stockEl.style.color = "#bc13fe";
+                stockEl.style.color = "#00f3ff"; // Cian Neon
                 buyBtn.disabled = false;
                 buyBtn.innerText = `ADQUIRIR POR $${price}`;
                 buyBtn.onclick = executePurchase; 
@@ -703,10 +671,15 @@
 
                     await update(ref(db), updates);
 
+                    // Actualizar saldos en pantalla
                     currentBalance = newBalance;
-                    document.getElementById('balance').innerText = currentBalance.toFixed(2);
+                    const formattedNewBalance = currentBalance.toFixed(2);
+                    document.getElementById('balanceMain').innerText = formattedNewBalance;
+                    document.getElementById('balanceDisplay').innerText = formattedNewBalance;
+                    
                     msg.innerText = "";
 
+                    // Mostrar modal de éxito
                     document.getElementById('deliveredKeyNeon').innerText = keyToDeliver;
                     document.getElementById('neonModal').style.display = 'flex';
 
