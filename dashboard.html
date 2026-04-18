@@ -350,6 +350,7 @@
             <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="#" class="sidebar-item" onclick="alert('Soporte en línea')"><i class='bx bx-headphone'></i> Soporte 24/7</a>
+            
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
         </div>
 
@@ -372,6 +373,33 @@
     </div>
 
     <script>
+        // --- LÓGICA DEL MODAL DE BIENVENIDA ---
+        function triggerWelcomeModal() {
+            const welcomeModal = document.getElementById('welcomeModal');
+            const closeWelcomeBtn = document.getElementById('closeWelcomeBtn');
+
+            welcomeModal.classList.add('active');
+            let timeLeft = 5;
+            closeWelcomeBtn.innerText = `Cerrar y no mostrar más (${timeLeft}s)`;
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    closeWelcomeBtn.innerText = `Cerrar y no mostrar más (${timeLeft}s)`;
+                } else {
+                    clearInterval(timer);
+                    closeWelcomeBtn.innerText = "Cerrar y no mostrar más";
+                    closeWelcomeBtn.disabled = false;
+                    closeWelcomeBtn.classList.add('ready');
+                }
+            }, 1000);
+
+            closeWelcomeBtn.addEventListener('click', () => {
+                localStorage.setItem('welcomeXITDismissed', 'true'); 
+                welcomeModal.classList.remove('active'); 
+            });
+        }
+
         // --- CONTROL DEL MENÚ LATERAL ---
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -461,33 +489,6 @@
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
 
-        // LÓGICA INTELIGENTE DEL MODAL
-        function triggerWelcomeModal() {
-            const welcomeModal = document.getElementById('welcomeModal');
-            const closeWelcomeBtn = document.getElementById('closeWelcomeBtn');
-
-            welcomeModal.classList.add('active');
-            let timeLeft = 5;
-            closeWelcomeBtn.innerText = `Cerrar y no mostrar más (${timeLeft}s)`;
-            
-            const timer = setInterval(() => {
-                timeLeft--;
-                if (timeLeft > 0) {
-                    closeWelcomeBtn.innerText = `Cerrar y no mostrar más (${timeLeft}s)`;
-                } else {
-                    clearInterval(timer);
-                    closeWelcomeBtn.innerText = "Cerrar y no mostrar más";
-                    closeWelcomeBtn.disabled = false;
-                    closeWelcomeBtn.classList.add('ready');
-                }
-            }, 1000);
-
-            closeWelcomeBtn.addEventListener('click', () => {
-                localStorage.setItem('welcomeXITDismissed', 'true'); 
-                welcomeModal.classList.remove('active'); 
-            });
-        }
-
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 // Fechas
@@ -499,7 +500,7 @@
                 
                 document.getElementById('joinDateDisplay').innerText = `${day}/${month}/${year}`;
 
-                // Base de datos (Trae datos del usuario + dispositivos vinculados)
+                // Base de datos
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
@@ -509,16 +510,14 @@
                         const balance = data.balance !== undefined ? parseFloat(data.balance).toFixed(2) : "0.00";
                         document.getElementById('balanceDisplay').innerText = balance;
                         
-                        if(data.role === 'admin') {
+                        // VALIDACIÓN ESTRICTA: SOLO EL USUARIO 'sebasxit' PUEDE VER EL BOTÓN
+                        if(data.username && data.username.toLowerCase() === 'sebasxit') {
                             document.getElementById('adminMenuBtn').style.display = 'flex';
                         }
 
-                        // VALIDACIÓN PARA MOSTRAR EL MODAL
-                        // Si 'linked_devices' no existe o está vacío, significa que no ha autorizado nada
                         const hasLinkedDevices = data.linked_devices && Object.keys(data.linked_devices).length > 0;
                         const dismissed = localStorage.getItem('welcomeXITDismissed');
 
-                        // Solo muestra el modal si NO tiene dispositivos Y NO lo ha cerrado para siempre
                         if (!hasLinkedDevices && !dismissed) {
                             triggerWelcomeModal();
                         }

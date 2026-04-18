@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda de Keys - SociosXIT</title>
+    <title>Catálogo - SociosXIT</title>
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
@@ -11,7 +11,7 @@
         /* =========================================
            1. FUENTES Y PROTECCIÓN
            ========================================= */
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,400;0,700;0,900;1,900&family=Poppins:wght@300;400;600;700&display=swap');
 
         * {
             -webkit-user-select: none;
@@ -26,12 +26,11 @@
             --neon-red: #ff073a;
             --neon-cyan: #00f3ff;
             --neon-green: #00ffcc;
-            --glass-bg: rgba(15, 0, 25, 0.6);
             --sidebar-bg: rgba(5, 10, 20, 0.95);
-            --card-bg: #12161f; /* Fondo de las tarjetas High Society */
+            --card-bg: #12161f; 
         }
 
-        /* FONDO Y BODY EXACTAMENTE COMO EN EL DASHBOARD */
+        /* FONDO ESTÁNDAR COMPARTIDO */
         body {
             background-color: #020005;
             color: white;
@@ -41,7 +40,7 @@
             min-height: 100vh;
             min-height: 100dvh; 
             display: flex;
-            justify-content: flex-start; /* Ajustado para que el catálogo baje normal */
+            justify-content: flex-start;
             align-items: center;
             flex-direction: column;
             overflow-x: hidden;
@@ -151,6 +150,7 @@
         }
         .logout-btn i { font-size: 1.3rem; }
         .logout-btn:hover { background: var(--neon-red); color: white; box-shadow: 0 0 20px var(--neon-red); }
+
 
         /* =========================================
            4. ESTRUCTURA DEL CATÁLOGO HIGH SOCIETY
@@ -302,7 +302,7 @@
             padding: 15px; border-radius: 12px; margin-top: 15px; font-weight: bold; cursor: pointer;
         }
 
-        /* Modal de Éxito */
+        /* Modal de Éxito / Key */
         .modal-success { border-top-color: var(--neon-green); text-align: center; }
         .key-box { background: #000; border: 2px dashed #00ff00; color: #00ff00; font-family: monospace; padding: 20px; font-size: 1.3rem; margin: 20px 0; border-radius: 10px; word-break: break-all; }
         .btn-copy { background: #00ff00; color: #000; font-weight: bold; padding: 12px 30px; border: none; border-radius: 20px; cursor: pointer; }
@@ -313,9 +313,7 @@
 
     <div class="top-bar">
         <div class="top-bar-left">
-            <button class="menu-btn" id="openMenuBtn">
-                <i class='bx bx-menu'></i>
-            </button>
+            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
         </div>
         <div class="top-bar-right">
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
@@ -486,7 +484,7 @@
         let allProducts = []; 
         let filterStockOnly = false;
 
-        // --- FUNCIONES DE ADAPTACIÓN DE TU BOT DE TELEGRAM ---
+        // --- FUNCIONES DE ADAPTACIÓN ---
         function adaptarProductoLegacy(p) {
             if (p && !p.durations && p.price !== undefined) {
                 p.durations = {
@@ -521,7 +519,10 @@
                         currentBalance = data.balance !== undefined ? parseFloat(data.balance) : 0;
                         document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
                         
-                        if(data.role === 'admin') document.getElementById('adminMenuBtn').style.display = 'flex';
+                        // VALIDACIÓN ESTRICTA DE ADMIN
+                        if(data.username && data.username.toLowerCase() === 'sebasxit') {
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
                     }
                 });
 
