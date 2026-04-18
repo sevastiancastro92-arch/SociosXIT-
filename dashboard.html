@@ -26,6 +26,7 @@
             --neon-red: #ff073a;
             --neon-cyan: #00f3ff;
             --neon-green: #00ffcc;
+            --telegram-blue: #0088cc;
             --glass-bg: rgba(15, 0, 25, 0.6);
             --sidebar-bg: rgba(5, 10, 20, 0.95);
         }
@@ -37,6 +38,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            min-height: 100dvh; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -89,10 +91,7 @@
             justify-content: center;
         }
 
-        .menu-btn:hover {
-            box-shadow: 0 0 10px var(--neon-cyan);
-            background: rgba(0, 243, 255, 0.1);
-        }
+        .menu-btn:hover { box-shadow: 0 0 10px var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
 
         .top-bar-right {
             display: flex;
@@ -116,14 +115,8 @@
             color: #aaa;
             white-space: nowrap;
         }
-
-        .badge i {
-            font-size: 1.1rem;
-            color: var(--neon-cyan); 
-        }
-
+        .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
         .badge span { color: #fff; font-weight: 600; }
-        
         .badge.green { border-color: rgba(0, 255, 204, 0.3); }
         .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 
@@ -145,251 +138,197 @@
            ========================================= */
         .sidebar-overlay {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(3px);
             z-index: 998;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s;
+            opacity: 0; visibility: hidden; transition: 0.3s;
         }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
 
         .sidebar {
             position: fixed;
             top: 0; left: -300px;
-            width: 260px;
-            height: 100vh;
+            width: 260px; height: 100%; height: 100dvh; 
             background: var(--sidebar-bg);
             border-right: 1px solid var(--neon-cyan);
             box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1);
             z-index: 999;
             transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
+            display: flex; flex-direction: column;
+            padding: 20px; padding-bottom: 40px; 
         }
         .sidebar.active { left: 0; }
 
         .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            padding-bottom: 15px; margin-bottom: 20px;
         }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-cyan); }
 
-        .sidebar-header h2 {
-            margin: 0;
-            font-family: 'Orbitron', sans-serif;
-            color: var(--neon-cyan);
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px var(--neon-cyan);
-        }
-
-        .close-btn {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
         .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
 
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex-grow: 1; /* Empuja el footer hacia abajo */
-        }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        .sidebar-menu::-webkit-scrollbar { display: none; }
 
         .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: white;
-            text-decoration: none;
-            padding: 12px 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            font-size: 0.95rem;
-            transition: 0.3s;
+            display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;
+            padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px;
+            font-size: 0.95rem; transition: 0.3s; flex-shrink: 0; 
         }
-
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
-
-        .sidebar-item:hover {
-            background: rgba(0, 243, 255, 0.1);
-            border-left: 4px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-        }
+        .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
         .sidebar-item:hover i { color: var(--neon-cyan); }
 
-        /* Botón de cerrar sesión al fondo del menú */
-        .sidebar-footer {
-            margin-top: auto;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px;
-        }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; flex-shrink: 0; }
 
         .logout-btn {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--neon-red);
-            color: var(--neon-red);
-            padding: 12px;
-            border-radius: 10px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
+            padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-
         .logout-btn i { font-size: 1.3rem; }
-
-        .logout-btn:hover {
-            background: var(--neon-red);
-            color: white;
-            box-shadow: 0 0 20px var(--neon-red);
-        }
+        .logout-btn:hover { background: var(--neon-red); color: white; box-shadow: 0 0 20px var(--neon-red); }
 
         /* =========================================
-           4. CONTENEDOR CENTRAL "MELO" (NUEVO)
+           4. CONTENEDOR CENTRAL
            ========================================= */
         .hub-container {
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            margin-top: 60px;
-            animation: slideUp 0.8s ease-out;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            width: 90%; max-width: 450px; text-align: center;
+            margin-top: 60px; animation: slideUp 0.8s ease-out;
+            display: flex; flex-direction: column; align-items: center;
         }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Ícono central flotante */
         .center-icon {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-            border-radius: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3rem;
-            color: white;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(255,255,255,0.5);
-            margin-bottom: 20px;
-            animation: floatIcon 4s ease-in-out infinite;
-            border: 2px solid rgba(255,255,255,0.2);
+            width: 90px; height: 90px; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 25px; display: flex; justify-content: center; align-items: center;
+            font-size: 3rem; color: white; box-shadow: 0 0 30px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(255,255,255,0.5);
+            margin-bottom: 20px; animation: floatIcon 4s ease-in-out infinite; border: 2px solid rgba(255,255,255,0.2);
         }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 0 30px rgba(0, 243, 255, 0.4); } 50% { transform: translateY(-10px) scale(1.05); box-shadow: 0 0 50px var(--neon-purple); } }
 
-        @keyframes floatIcon {
-            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 0 30px rgba(0, 243, 255, 0.4); }
-            50% { transform: translateY(-10px) scale(1.05); box-shadow: 0 0 50px var(--neon-purple); }
-        }
+        .hub-title { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; background: linear-gradient(to right, var(--neon-cyan), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 10px 0; filter: drop-shadow(0 0 8px rgba(188, 19, 254, 0.5)); }
+        .hub-desc { color: #ccc; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; padding: 0 10px; }
 
-        .hub-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: linear-gradient(to right, var(--neon-cyan), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0 0 10px 0;
-            filter: drop-shadow(0 0 8px rgba(188, 19, 254, 0.5));
-        }
-
-        .hub-desc {
-            color: #ccc;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
-            padding: 0 10px;
-        }
-
-        /* Botones del Hub */
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-        }
+        .action-buttons { display: flex; flex-direction: column; gap: 15px; width: 100%; }
 
         .neon-btn {
-            padding: 18px;
-            border: none;
-            border-radius: 15px;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 1.05rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
+            padding: 18px; border: none; border-radius: 15px; color: white; font-family: 'Orbitron', sans-serif; font-weight: 800;
+            font-size: 1.05rem; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
+            letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; text-decoration: none;
         }
 
-        /* Botón 1: Explorar Tienda (Verde/Cian estilo High Society) */
-        .btn-store {
-            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-green) 100%);
-            color: #000;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
-        }
+        .btn-store { background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-green) 100%); color: #000; box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
         .btn-store:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 30px var(--neon-cyan); }
 
-        /* Botón 2: Mis Compras (Morado/Rojo oscuro) */
-        .btn-history {
-            background: linear-gradient(135deg, var(--neon-purple) 0%, #8e44ad 100%);
-            box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
-        }
+        .btn-history { background: linear-gradient(135deg, var(--neon-purple) 0%, #8e44ad 100%); box-shadow: 0 0 20px rgba(188, 19, 254, 0.4); }
         .btn-history:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 30px var(--neon-purple); }
 
         .neon-btn i { font-size: 1.5rem; }
-
-        /* Efecto luz en botones */
-        .neon-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
-            transform: skewX(-20deg);
-        }
+        .neon-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s; transform: skewX(-20deg); }
         .neon-btn:hover::before { left: 150%; }
+
+        /* =========================================
+           5. MODAL DE BIENVENIDA ÉPICO
+           ========================================= */
+        .welcome-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.4s ease;
+        }
+        .welcome-overlay.active { opacity: 1; visibility: visible; }
+
+        .welcome-modal {
+            background: var(--glass-bg);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 20px;
+            padding: 30px 25px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.2), inset 0 0 20px rgba(188, 19, 254, 0.1);
+            transform: scale(0.8);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        .welcome-overlay.active .welcome-modal { transform: scale(1); }
+
+        .welcome-icon {
+            font-size: 3.5rem;
+            color: var(--neon-cyan);
+            margin-bottom: 10px;
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow { 0%, 100% { text-shadow: 0 0 15px var(--neon-cyan); } 50% { text-shadow: 0 0 30px var(--neon-cyan); transform: scale(1.1); } }
+
+        .welcome-modal h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .welcome-modal p {
+            font-size: 0.95rem;
+            color: #ccc;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        .welcome-modal p strong { color: var(--neon-green); }
+
+        .btn-tg { background: linear-gradient(135deg, #00d2d3, var(--telegram-blue)); box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4); margin-bottom: 15px; }
+        .btn-tg:hover { box-shadow: 0 5px 25px var(--telegram-blue); transform: translateY(-2px); }
+
+        .btn-auth { background: transparent; border: 2px solid var(--neon-purple); box-shadow: inset 0 0 10px rgba(188, 19, 254, 0.2); margin-bottom: 25px; }
+        .btn-auth:hover { background: rgba(188, 19, 254, 0.2); box-shadow: 0 0 20px var(--neon-purple); transform: translateY(-2px); }
+
+        .btn-never-show {
+            width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #777; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600;
+            cursor: not-allowed; transition: 0.3s;
+        }
+        .btn-never-show.ready { color: var(--neon-red); border-color: var(--neon-red); cursor: pointer; background: transparent; }
+        .btn-never-show.ready:hover { background: rgba(255, 7, 58, 0.1); box-shadow: 0 0 15px rgba(255, 7, 58, 0.3); }
 
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
+    <div class="welcome-overlay" id="welcomeModal">
+        <div class="welcome-modal">
+            <i class='bx bxl-telegram welcome-icon'></i>
+            <h2>¡Sincroniza tu cuenta! 🚀</h2>
+            <p>Si deseas realizar compras automáticas y más rápidas directamente desde <strong>Telegram</strong>, necesitas vincular tu cuenta ahora mismo.</p>
+            
+            <a href="https://t.me/Socios66_bot" target="_blank" class="neon-btn btn-tg">
+                <i class='bx bx-bot'></i> 1. Ir al Bot Oficial
+            </a>
+            
+            <a href="bot.html" class="neon-btn btn-auth">
+                <i class='bx bx-link'></i> 2. Autorizar mi ID
+            </a>
+
+            <button class="btn-never-show" id="closeWelcomeBtn" disabled>
+                Cerrar y no mostrar más (5s)
+            </button>
+        </div>
+    </div>
+
     <div class="top-bar">
         <div class="top-bar-left">
-            <button class="menu-btn" id="openMenuBtn">
-                <i class='bx bx-menu'></i>
-            </button>
+            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
         </div>
         <div class="top-bar-right">
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
@@ -407,51 +346,29 @@
         </div>
         
         <div class="sidebar-menu">
-            <a href="recarga.html" class="sidebar-item">
-                <i class='bx bx-plus-circle'></i> Recargar Saldo
-            </a>
-            <a href="bot.html" class="sidebar-item">
-                <i class='bx bxl-telegram'></i> Autorizar ID
-            </a>
-            <a href="#" class="sidebar-item" onclick="alert('Soporte en línea')">
-                <i class='bx bx-headphone'></i> Soporte 24/7
-            </a>
-            
-            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);">
-                <i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin
-            </a>
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
+            <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
+            <a href="#" class="sidebar-item" onclick="alert('Soporte en línea')"><i class='bx bx-headphone'></i> Soporte 24/7</a>
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
         </div>
 
         <div class="sidebar-footer">
-            <button class="logout-btn" id="logoutBtn">
-                <i class='bx bx-log-out'></i> Cerrar Sesión
-            </button>
+            <button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
         </div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
 
     <div class="hub-container">
-        
-        <div class="center-icon">
-            <i class='bx bx-game'></i>
-        </div>
-
+        <div class="center-icon"><i class='bx bx-game'></i></div>
         <h1 class="hub-title">SOCIOS XIT</h1>
-        <p class="hub-desc">
-            La mejor tienda de productos y llaves digitales. Compra rápido, seguro y al instante con soporte 24/7.
-        </p>
+        <p class="hub-desc">La mejor tienda de productos y llaves digitales. Compra rápido, seguro y al instante con soporte 24/7.</p>
         
         <div class="action-buttons">
-            <button class="neon-btn btn-store" onclick="window.location.href='index.html'">
-                <i class='bx bx-store-alt'></i> Explorar Tienda
-            </button>
-            
-            <button class="neon-btn btn-history" onclick="window.location.href='historial.html'">
-                <i class='bx bx-history'></i> Mis Compras
-            </button>
+            <a href="index.html" class="neon-btn btn-store"><i class='bx bx-store-alt'></i> Explorar Tienda</a>
+            <a href="historial.html" class="neon-btn btn-history"><i class='bx bx-history'></i> Mis Compras</a>
         </div>
-
     </div>
 
     <script>
@@ -544,9 +461,36 @@
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
 
+        // LÓGICA INTELIGENTE DEL MODAL
+        function triggerWelcomeModal() {
+            const welcomeModal = document.getElementById('welcomeModal');
+            const closeWelcomeBtn = document.getElementById('closeWelcomeBtn');
+
+            welcomeModal.classList.add('active');
+            let timeLeft = 5;
+            closeWelcomeBtn.innerText = `Cerrar y no mostrar más (${timeLeft}s)`;
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    closeWelcomeBtn.innerText = `Cerrar y no mostrar más (${timeLeft}s)`;
+                } else {
+                    clearInterval(timer);
+                    closeWelcomeBtn.innerText = "Cerrar y no mostrar más";
+                    closeWelcomeBtn.disabled = false;
+                    closeWelcomeBtn.classList.add('ready');
+                }
+            }, 1000);
+
+            closeWelcomeBtn.addEventListener('click', () => {
+                localStorage.setItem('welcomeXITDismissed', 'true'); 
+                welcomeModal.classList.remove('active'); 
+            });
+        }
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Fecha de creación
+                // Fechas
                 const creationTime = user.metadata.creationTime;
                 const dateObj = new Date(creationTime);
                 const day = String(dateObj.getDate()).padStart(2, '0');
@@ -555,7 +499,7 @@
                 
                 document.getElementById('joinDateDisplay').innerText = `${day}/${month}/${year}`;
 
-                // Datos BD
+                // Base de datos (Trae datos del usuario + dispositivos vinculados)
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
@@ -565,9 +509,18 @@
                         const balance = data.balance !== undefined ? parseFloat(data.balance).toFixed(2) : "0.00";
                         document.getElementById('balanceDisplay').innerText = balance;
                         
-                        // Panel de Admin en el Menú
                         if(data.role === 'admin') {
                             document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
+
+                        // VALIDACIÓN PARA MOSTRAR EL MODAL
+                        // Si 'linked_devices' no existe o está vacío, significa que no ha autorizado nada
+                        const hasLinkedDevices = data.linked_devices && Object.keys(data.linked_devices).length > 0;
+                        const dismissed = localStorage.getItem('welcomeXITDismissed');
+
+                        // Solo muestra el modal si NO tiene dispositivos Y NO lo ha cerrado para siempre
+                        if (!hasLinkedDevices && !dismissed) {
+                            triggerWelcomeModal();
                         }
                     }
                 });
