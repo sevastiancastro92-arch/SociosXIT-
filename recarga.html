@@ -3,334 +3,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recargar con Nequi</title>
+    <title>Recargas - SociosXIT</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: #1e1e1e;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-        h2 { color: #bb86fc; margin-top: 0; }
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 15px 0;
-            border-radius: 5px;
-            border: 1px solid #333;
-            background: #333;
-            color: white;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-            transition: 0.3s;
-        }
-        .nequi-card {
-            background: #2d004d; /* Color Nequi oscuro */
-            border: 1px solid #da0081; /* Rosa Nequi */
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-top: 20px;
-            display: none; /* Oculto al inicio */
-            animation: fadeIn 0.5s;
-        }
+        /* =========================================
+           1. FUENTES Y VARIABLES
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+        * { user-select: none; box-sizing: border-box; }
+        :root { --neon-purple: #bc13fe; --neon-red: #ff073a; --neon-cyan: #00f3ff; --neon-green: #00ffcc; --glass-bg: rgba(15, 0, 25, 0.7); --sidebar-bg: rgba(5, 10, 20, 0.95); }
         
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .number-display {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #fff;
-            margin: 10px 0;
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
-            border-radius: 8px;
-            letter-spacing: 2px;
-            /* Permitir selección fácil */
-            user-select: all; 
-        }
-
-        .btn-nequi {
-            background: #da0081; /* Rosa Nequi */
-            color: white;
-            font-size: 1.1rem;
-        }
-        .btn-nequi:hover { background: #b00068; }
-
-        .btn-whatsapp {
-            background: #25D366; /* Verde WhatsApp */
-            color: white;
-            margin-top: 15px;
-        }
-        .btn-whatsapp:hover { background: #128C7E; }
+        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
-        .btn-secondary {
-            background: #444;
-            color: #ccc;
+        /* 🚨 SOLUCIÓN A LOS CLICS: pointer-events: none hace que el fondo no estorbe */
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020202; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
+
+        /* =========================================
+           2. BARRA SUPERIOR Y MENÚ
+           ========================================= */
+        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100; }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
+        
+        .top-bar-right { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-bottom: 2px; width: 100%; justify-content: flex-end; }
+        .top-bar-right::-webkit-scrollbar { display: none; }
+        
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; color: #aaa; white-space: nowrap; cursor: pointer; flex-shrink: 0; position: relative; z-index: 10;}
+        .badge img { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--neon-cyan); }
+        .badge i { color: var(--neon-cyan); font-size: 1rem; }
+        .badge span { color: #fff; font-weight: 600; }
+        .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default; }
+        .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+
+        /* MENÚ LATERAL */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan); box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-cyan); }
+        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; margin-bottom: 10px; transition: 0.3s; }
+        .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* =========================================
+           3. TABS (PESTAÑAS) Y CONTENEDOR
+           ========================================= */
+        .tabs-container {
+            display: flex; gap: 10px; width: 95%; max-width: 600px;
+            margin: 90px auto 20px auto; overflow-x: auto; padding-bottom: 5px;
+            position: relative; z-index: 10; /* Evita que el fondo bloquee los clics */
         }
-        .back-btn {
-            background: transparent;
-            border: 1px solid #555;
-            color: #aaa;
-            margin-top: 20px;
+        .tabs-container::-webkit-scrollbar { display: none; }
+        
+        .tab-btn {
+            background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 15px; border-radius: 10px; color: #aaa; cursor: pointer;
+            white-space: nowrap; font-family: 'Poppins', sans-serif; font-weight: bold; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+        }
+        .tab-btn.active {
+            background: rgba(0, 243, 255, 0.1); border-color: var(--neon-cyan); color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
         }
 
-        /* Iconos simples con texto */
-        .icon-btn { display: flex; align-items: center; justify-content: center; gap: 10px; }
-        
-        /* Texto de conversión en tiempo real */
-        .conversion-text {
-            font-size: 0.9rem;
-            color: #00d2d3;
-            margin-top: -10px;
-            margin-bottom: 15px;
-            min-height: 1.2em;
-        }
-        
-        #toast {
-            visibility: hidden; 
-            min-width: 250px; 
-            background-color: #333; 
-            color: #fff; 
-            text-align: center; 
-            border-radius: 2px; 
-            padding: 16px; 
-            position: fixed; 
-            z-index: 100; 
-            left: 50%; 
-            bottom: 30px; 
-            transform: translateX(-50%); 
-            font-size: 17px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
+        .main-container { width: 95%; max-width: 600px; position: relative; z-index: 10; animation: fadeIn 0.5s ease; padding-bottom: 40px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* PASO 1: SELECTOR (NUEVA RECARGA) */
+        .card-setup { background: var(--glass-bg); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 20px rgba(0,0,0,0.5); text-align: center; }
+        .setup-title { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 20px; color: #fff; }
+        .input-box { margin-bottom: 20px; text-align: left; }
+        .input-box label { display: block; font-size: 0.75rem; color: #aaa; font-family: 'Orbitron'; margin-bottom: 8px; letter-spacing: 1px; }
+        .input-box select, .input-box input { width: 100%; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: white; outline: none; font-size: 1.2rem; font-family: 'Orbitron'; transition: 0.3s; text-align: center; }
+        .input-box select:focus, .input-box input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,243,255,0.2); }
+        .rate-info { font-size: 1.2rem; color: var(--neon-cyan); font-family: 'Orbitron'; margin-bottom: 20px; display: block; text-shadow: 0 0 5px rgba(0,243,255,0.5); }
+        .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan)); border: none; border-radius: 12px; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer; font-family: 'Orbitron'; letter-spacing: 1px; display: flex; justify-content: center; gap: 8px; transition: 0.3s; }
+        .btn-primary:hover { box-shadow: 0 0 20px var(--neon-cyan); transform: scale(1.02); }
+
+        /* HISTORIAL DE RECARGAS */
+        .history-list { display: flex; flex-direction: column; gap: 20px; }
+        .history-card { background: #0f111a; border-radius: 15px; border: 1px solid #1e2230; padding: 20px; position: relative; font-family: 'Poppins', sans-serif; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .hc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .hc-id { font-weight: 900; font-family: 'Orbitron', sans-serif; color: #fff; font-size: 1.1rem; }
+        .hc-date { font-size: 0.75rem; color: #666; margin-bottom: 15px; }
+
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+        .status-waiting { background: rgba(255, 193, 7, 0.1); border: 1px solid #ffc107; color: #ffc107; }
+        .status-pending { background: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .status-approved { background: rgba(0, 255, 0, 0.1); border: 1px solid #00ff00; color: #00ff00; }
+        .status-rejected { background: rgba(255, 7, 58, 0.1); border: 1px solid var(--neon-red); color: var(--neon-red); }
+
+        .hc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .hc-item label { display: block; font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .hc-item span { display: block; font-size: 1rem; color: #fff; font-weight: bold; }
+        .text-green { color: var(--neon-green) !important; font-family: 'Orbitron', sans-serif; }
+
+        .hc-actions { display: flex; flex-direction: column; gap: 10px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; }
+        .hc-btn-group { display: flex; gap: 10px; }
+        .hc-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; font-family: 'Poppins'; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.85rem; transition: 0.3s; }
+        .hc-btn-copy { background: #5d35b0; color: white; }
+        .hc-btn-wa { background: #25D366; color: white; }
+        .hc-btn-upload { background: #0088cc; color: white; width: 100%; box-shadow: 0 0 10px rgba(0, 136, 204, 0.4); }
+        .hc-btn-upload:hover { background: #00aaff; box-shadow: 0 0 15px #00aaff; }
+        .hc-btn-success { background: rgba(0,255,0,0.1); color: #00ff00; border: 1px solid #00ff00; width: 100%; cursor: default; }
+        .hc-btn-error { background: rgba(255,7,58,0.1); color: var(--neon-red); border: 1px solid var(--neon-red); width: 100%; cursor: default; }
+
+        /* LOADER */
+        #globalLoader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(0, 243, 255, 0.1); border-top-color: var(--neon-cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h2>Recargar Saldo</h2>
-        <p>Ingresa el monto en Dólares (USD).</p>
+<body oncontextmenu="return false;">
 
-        <div id="step1">
-            <label>Monto a recargar (USD):</label>
-            <input type="number" id="amountInput" placeholder="Ej: 2.00" step="0.5">
-            
-            <p id="conversionDisplay" class="conversion-text">≈ 0 COP</p>
-            
-            <button onclick="generateOrder()" style="background-color: #6200ea; color: white;">Continuar con Nequi</button>
-        </div>
-
-        <div id="step2" class="nequi-card">
-            <h3>Orden Generada</h3>
-            <p>Debes enviar <strong id="displayAmountCOP" style="color:#00d2d3; font-size: 1.2rem;"></strong> COP</p>
-            <p style="font-size: 0.8rem; margin-top:-10px;">(Equivalente a <span id="displayAmountUSD"></span> USD)</p>
-            
-            <p>Al siguiente Nequi:</p>
-            
-            <div class="number-display" id="nequiNumber">3214701288</div>
-            
-            <button class="btn-nequi icon-btn" onclick="openNequi()">
-                📱 Copiar y Abrir Nequi
-            </button>
-
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin: 20px 0;">
-
-            <p style="font-size: 0.9rem;">¿Ya realizaste el pago?</p>
-            <p style="font-size: 0.8rem; color: #ccc;">Envía el comprobante para que el Admin te asigne el saldo.</p>
-            
-            <button class="btn-whatsapp icon-btn" onclick="sendProof()">
-                💬 Enviar Comprobante (WhatsApp)
-            </button>
-            
-            <button class="btn-secondary" onclick="resetForm()" style="margin-top: 10px; font-size: 0.8rem;">Cancelar / Volver</button>
-        </div>
-
-        <button class="back-btn" onclick="window.location.href='dashboard.html'" id="backBtn">Volver al Inicio</button>
+    <div id="globalLoader">
+        <div class="spinner"></div>
+        <p id="loaderText" style="font-family:'Orbitron'; letter-spacing:1px; color: var(--neon-cyan);">ENVIANDO COMPROBANTE...</p>
     </div>
 
-    <div id="toast">Número copiado al portapapeles</div>
+    <div class="top-bar">
+        <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
+            <div class="badge" onclick="window.location.href='perfil.html'">
+                <img id="topAvatar" src="https://via.placeholder.com/30?text=U"> 
+                <span id="topUserDisplay">...</span>
+            </div>
+            <div class="badge green"><span>$</span><span id="balanceDisplay">0.00</span></div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home'></i> Inicio</a>
+            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user'></i> Mi Perfil</a>
+            <a href="index.html" class="sidebar-item"><i class='bx bx-store'></i> Tienda</a>
+            <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
+            <a href="recarga.html" class="sidebar-item" style="border-left: 4px solid var(--neon-cyan); background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan);"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
+            <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
+            <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none;"><i class='bx bx-shield'></i> Panel Admin</a>
+        </div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="tabs-container">
+        <button class="tab-btn active" id="tabNew" onclick="switchTab('new')"><i class='bx bx-plus'></i> Nueva recarga</button>
+        <button class="tab-btn" id="tabHistory" onclick="switchTab('history')"><i class='bx bx-history'></i> Historial de Recargas</button>
+    </div>
+
+    <div class="main-container">
+        <div class="card-setup" id="viewNew">
+            <h2 class="setup-title">GENERAR PEDIDO</h2>
+            <div class="input-box"><label>PAÍS DE PAGO</label><select id="countrySelect"></select></div>
+            <div class="input-box"><label>MONTO A RECARGAR (USD)</label><input type="number" id="amountUSD" placeholder="0.00" step="0.5"></div>
+            <span id="rateDisplay" class="rate-info">≈ 0 COP</span>
+            <button class="btn-primary" onclick="generateOrder()">CREAR ORDEN <i class='bx bx-right-arrow-alt'></i></button>
+        </div>
+
+        <div class="history-list" id="viewHistory" style="display: none;">
+            <p style="text-align: center; color: #888;">Cargando historial...</p>
+        </div>
+
+        <input type="file" id="globalReceiptInput" accept="image/*" style="display:none;">
+    </div>
 
     <script type="module">
-        import { auth, onAuthStateChanged, db, ref, get } from './firebase-config.js';
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child, push, set, update } from './firebase-config.js';
 
-        // --- CONFIGURACIÓN ---
-        const TASA_CAMBIO = 4200; // PRECIO DEL DÓLAR EN PESOS (AJUSTA AQUÍ)
-        const MINIMO_COP = 8000;  // MÍNIMO EN PESOS
-
+        const IMGBB_KEY = 'fd76f06048b34773ba64f11cc4535ff4';
         let currentUser = null;
-        let currentUsername = "Usuario";
-        let finalUsd = 0;
-        let finalCop = 0;
+        let countriesData = {};
+        let selectedCountryCode = null;
+        let currentUploadOrderId = null; 
 
-        // VERIFICAR USUARIO
-        onAuthStateChanged(auth, (user) => {
+        // 1. CARGAR DATOS INICIALES
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                get(ref(db, `users/${user.uid}`)).then(snap => {
-                    if(snap.exists()) {
-                        currentUsername = snap.val().username;
+                const d = new Date(user.metadata.creationTime);
+                document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        document.getElementById('topUserDisplay').innerText = data.username;
+                        document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
+                        if (data.avatar) document.getElementById('topAvatar').src = data.avatar;
+                        if (data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
                     }
                 });
-            } else {
-                window.location.href = "login.html"; // Redirigir si no hay sesión
-            }
+                
+                await loadCountries();
+                loadHistory();
+            } else { window.location.href = "login.html"; }
         });
 
-        // CALCULO EN TIEMPO REAL
-        const input = document.getElementById('amountInput');
-        const display = document.getElementById('conversionDisplay');
-
-        input.addEventListener('input', () => {
-            const val = parseFloat(input.value);
-            if(val > 0) {
-                const cop = val * TASA_CAMBIO;
-                // Formato de moneda: $ 8.000
-                display.innerText = `≈ ${cop.toLocaleString('es-CO', {style:'currency', currency:'COP', minimumFractionDigits: 0})}`;
-                if(cop < MINIMO_COP) {
-                    display.style.color = "#ff4444"; // Rojo si no llega al mínimo
-                } else {
-                    display.style.color = "#00d2d3"; // Verde azulado si está bien
+        // 2. LÓGICA DE PAÍSES Y CALCULADORA
+        async function loadCountries() {
+            try {
+                const snap = await get(ref(db, 'config/countries'));
+                if (snap.exists()) {
+                    countriesData = snap.val();
+                    const select = document.getElementById('countrySelect');
+                    select.innerHTML = '<option value="" disabled selected>Selecciona país...</option>';
+                    Object.keys(countriesData).forEach(code => {
+                        const opt = document.createElement('option');
+                        opt.value = code; opt.innerText = `${countriesData[code].flag} ${countriesData[code].name}`;
+                        select.appendChild(opt);
+                    });
                 }
-            } else {
-                display.innerText = "≈ 0 COP";
+            } catch (e) {
+                console.error("Error al cargar países:", e);
             }
-        });
+        }
 
-        // 1. GENERAR ORDEN (Paso 1 -> Paso 2)
-        window.generateOrder = () => {
-            const amountUSD = parseFloat(document.getElementById('amountInput').value);
+        const inputUSD = document.getElementById('amountUSD');
+        const displayRate = document.getElementById('rateDisplay');
+        const selectCountry = document.getElementById('countrySelect');
+
+        function updateCalculator() {
+            const amt = parseFloat(inputUSD.value);
+            const countryCode = selectCountry.value;
+            if(!countryCode) return;
             
-            if(!amountUSD || amountUSD <= 0) {
-                alert("Por favor ingresa un monto válido.");
-                return;
-            }
+            const pais = countriesData[countryCode];
+            selectedCountryCode = countryCode;
 
-            // Lógica de conversión y validación
-            const amountCOP = amountUSD * TASA_CAMBIO;
-
-            if (amountCOP < MINIMO_COP) {
-                alert(`El monto mínimo de recarga son ${MINIMO_COP.toLocaleString()} pesos (aprox $${(MINIMO_COP/TASA_CAMBIO).toFixed(2)} USD).`);
-                return;
-            }
-
-            // Guardamos valores globales para usar en el mensaje
-            finalUsd = amountUSD;
-            finalCop = amountCOP;
-
-            // Actualizar vista
-            document.getElementById('displayAmountUSD').innerText = `$${finalUsd.toFixed(2)}`;
-            document.getElementById('displayAmountCOP').innerText = finalCop.toLocaleString('es-CO', {style:'currency', currency:'COP', minimumFractionDigits: 0});
-
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('step2').style.display = 'block';
-        };
-
-        // 2. FUNCION MEJORADA: COPIAR Y ABRIR NEQUI
-        window.openNequi = () => {
-            const number = "3214701288";
-            
-            // Intento 1: Método Moderno (Portapapeles API)
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(number).then(() => {
-                    launchNequiApp();
-                }).catch(() => {
-                    fallbackCopyText(number);
-                });
+            if(amt > 0) {
+                const local = amt * pais.rate;
+                displayRate.innerText = `≈ ${pais.currency} ${local.toLocaleString('es-CO')}`;
+                displayRate.style.color = "var(--neon-green)";
             } else {
-                fallbackCopyText(number);
+                displayRate.innerText = `1 USD = ${pais.rate.toLocaleString('es-CO')} ${pais.currency}`;
+                displayRate.style.color = "#aaa";
+            }
+        }
+
+        inputUSD.addEventListener('input', updateCalculator);
+        selectCountry.addEventListener('change', updateCalculator);
+
+        // 3. TABS MÚLTIPLES VINCULADOS GLOBALMENTE PARA QUE FUNCIONEN EN EL ONCLICK DEL HTML
+        window.switchTab = (tab) => {
+            document.getElementById('tabNew').classList.remove('active');
+            document.getElementById('tabHistory').classList.remove('active');
+            document.getElementById('viewNew').style.display = 'none';
+            document.getElementById('viewHistory').style.display = 'none';
+
+            if(tab === 'new') {
+                document.getElementById('tabNew').classList.add('active');
+                document.getElementById('viewNew').style.display = 'block';
+            } else {
+                document.getElementById('tabHistory').classList.add('active');
+                document.getElementById('viewHistory').style.display = 'flex';
+                loadHistory();
             }
         };
 
-        // Función de respaldo para copiar
-        function fallbackCopyText(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+        // 4. GENERAR ORDEN EN BASE DE DATOS
+        window.generateOrder = async () => {
+            const amt = parseFloat(inputUSD.value);
+            if (!amt || amt < 1 || !selectedCountryCode) return alert("Ingresa un monto y selecciona un país.");
+
+            const pais = countriesData[selectedCountryCode];
+            const localAmt = amt * pais.rate;
+
+            document.getElementById('globalLoader').style.display = 'flex';
+            document.getElementById('loaderText').innerText = "CREANDO ORDEN...";
 
             try {
-                const successful = document.execCommand('copy');
-                if(successful) launchNequiApp();
-                else alert("Copia manual: 3214701288");
-            } catch (err) {
-                alert("Error al copiar. Copia manual.");
+                const orderRef = push(ref(db, `users/${currentUser.uid}/recharges`));
+                await set(orderRef, {
+                    amount: amt,
+                    amountLocal: `${pais.currency} ${localAmt.toLocaleString('es-CO')}`,
+                    countryCode: selectedCountryCode,
+                    countryName: pais.name,
+                    date: Date.now(),
+                    status: 'waiting_proof'
+                });
+
+                inputUSD.value = ""; displayRate.innerText = "≈ 0";
+                document.getElementById('globalLoader').style.display = 'none';
+                switchTab('history');
+
+            } catch (e) {
+                document.getElementById('globalLoader').style.display = 'none';
+                alert("Error al crear la orden: " + e.message);
             }
-            document.body.removeChild(textArea);
-        }
-
-        function launchNequiApp() {
-            showToast("¡Copiado! Abriendo Nequi...");
-            setTimeout(() => {
-                window.location.href = "nequi://";
-            }, 1000);
-        }
-
-        // 3. ENVIAR COMPROBANTE A WHATSAPP (LOGICA MODIFICADA)
-        window.sendProof = () => {
-            const phone = "573142369516"; // Tu número de WhatsApp
-            
-            // Formatear mensaje con USD y COP
-            const copFormat = finalCop.toLocaleString('es-CO', {style:'currency', currency:'COP', minimumFractionDigits: 0});
-            
-            const message = `👋 Hola Admin, quiero recargar mi cuenta.
-            
-👤 Usuario: *${currentUsername}*
-💵 Monto USD: *$${finalUsd.toFixed(2)}*
-🇨🇴 Monto COP: *${copFormat}*
-
-Adjunto el comprobante de Nequi:`;
-            
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
         };
 
-        // 4. REINICIAR FORMULARIO
-        window.resetForm = () => {
-            document.getElementById('step1').style.display = 'block';
-            document.getElementById('backBtn').style.display = 'block';
-            document.getElementById('step2').style.display = 'none';
-            document.getElementById('amountInput').value = "";
-            document.getElementById('conversionDisplay').innerText = "≈ 0 COP";
-            document.getElementById('conversionDisplay').style.color = "#00d2d3";
+        // 5. CARGAR HISTORIAL DE RECARGAS
+        async function loadHistory() {
+            const container = document.getElementById('viewHistory');
+            try {
+                const snap = await get(ref(db, `users/${currentUser.uid}/recharges`));
+                container.innerHTML = "";
+                
+                if (!snap.exists()) {
+                    container.innerHTML = "<p style='text-align:center; color:#888;'>No tienes recargas aún.</p>";
+                    return;
+                }
+
+                let records = [];
+                snap.forEach(child => { records.push({ id: child.key, ...child.val() }); });
+                records.sort((a, b) => b.date - a.date);
+
+                records.forEach(rec => {
+                    const dateObj = new Date(rec.date);
+                    const dateStr = dateObj.toLocaleDateString() + ", " + dateObj.toLocaleTimeString();
+                    const shortId = rec.id.substring(1, 6).toUpperCase();
+
+                    let badgeHtml = ""; let actionsHtml = "";
+
+                    if(rec.status === 'waiting_proof') {
+                        badgeHtml = `<div class="status-badge status-waiting">⏳ Pagado (Falta Comprobante)</div>`;
+                        actionsHtml = `
+                            <div class="hc-btn-group">
+                                <button class="hc-btn hc-btn-copy" onclick="copyOrder('${rec.countryCode}', '${rec.amountLocal}', '${shortId}')"><i class='bx bx-copy'></i> Copiar Orden</button>
+                                <button class="hc-btn hc-btn-wa" onclick="shareWa('${rec.amountLocal}', '${shortId}')"><i class='bx bxl-whatsapp'></i> WhatsApp</button>
+                            </div>
+                            <button class="hc-btn hc-btn-upload" onclick="triggerUpload('${rec.id}')"><i class='bx bx-cloud-upload'></i> Subir Comprobante</button>
+                        `;
+                    } else if (rec.status === 'pending_approval') {
+                        badgeHtml = `<div class="status-badge status-pending">⏳ En revisión por Admin</div>`;
+                        actionsHtml = `<button class="hc-btn" style="background:#333; color:#aaa; cursor:not-allowed;"><i class='bx bx-time'></i> Comprobante en revisión...</button>`;
+                    } else if (rec.status === 'approved') {
+                        badgeHtml = `<div class="status-badge status-approved">✅ Completada</div>`;
+                        actionsHtml = `<button class="hc-btn hc-btn-success"><i class='bx bx-check-double'></i> Saldo agregado exitosamente</button>`;
+                    } else if (rec.status === 'rejected') {
+                        badgeHtml = `<div class="status-badge status-rejected">❌ Rechazada</div>`;
+                        actionsHtml = `<button class="hc-btn hc-btn-error"><i class='bx bx-x'></i> Comprobante rechazado</button>`;
+                    }
+
+                    container.innerHTML += `
+                        <div class="history-card">
+                            <div class="hc-header"><span class="hc-id">💰 Recarga #${shortId}</span>${badgeHtml}</div>
+                            <div class="hc-date">${dateStr}</div>
+                            <div class="hc-grid">
+                                <div class="hc-item"><label>País:</label><span>${rec.countryName}</span></div>
+                                <div class="hc-item"><label>Monto USD:</label><span class="text-green">$${rec.amount.toFixed(2)}</span></div>
+                                <div class="hc-item"><label>Bono USD:</label><span class="text-green">+$0.00</span></div>
+                                <div class="hc-item"><label>Total a Acreditar:</label><span>$${rec.amount.toFixed(2)}</span></div>
+                                <div class="hc-item" style="grid-column: span 2;"><label>Monto Local:</label><span>${rec.amountLocal}</span></div>
+                            </div>
+                            <div class="hc-actions">${actionsHtml}</div>
+                        </div>
+                    `;
+                });
+
+            } catch (e) {
+                container.innerHTML = `<p style="color:red; text-align:center;">Error: ${e.message}</p>`;
+            }
+        }
+
+        // 6. ACCIONES DE LAS TARJETAS PENDIENTES
+        window.copyOrder = (cCode, localAmt, shortId) => {
+            const pais = countriesData[cCode];
+            let text = `📌 ORDEN #${shortId}\n💵 Monto a transferir: ${localAmt}\n\n💳 CUENTAS HABILITADAS:\n`;
+            if(pais && pais.paymentMethods) {
+                pais.paymentMethods.forEach(m => { text += `🏦 ${m.bankName}: ${m.accountNumber}\n`; });
+            } else { text += "Habla con el admin para los métodos de pago."; }
+            navigator.clipboard.writeText(text);
+            alert("¡Datos de banco copiados!");
         };
 
-        // Mostrar notificación flotante
-        function showToast(text) {
-            const x = document.getElementById("toast");
-            x.innerText = text;
-            x.style.visibility = "visible";
-            x.style.opacity = "1";
-            setTimeout(function(){ 
-                x.style.visibility = "hidden"; 
-                x.style.opacity = "0";
-            }, 3000);
-        }
+        window.shareWa = (localAmt, shortId) => {
+            const msg = encodeURIComponent(`Hola Admin, acabo de crear la Recarga #${shortId} por ${localAmt}. ¿Me confirmas métodos de pago para enviar comprobante?`);
+            window.open(`https://wa.me/573142369516?text=${msg}`);
+        };
+
+        // 7. SISTEMA DE SUBIDA A IMGBB
+        window.triggerUpload = (orderId) => {
+            currentUploadOrderId = orderId;
+            document.getElementById('globalReceiptInput').click();
+        };
+
+        document.getElementById('globalReceiptInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file || !currentUploadOrderId) return;
+
+            document.getElementById('globalLoader').style.display = 'flex';
+            document.getElementById('loaderText').innerText = "ENVIANDO FOTO...";
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: formData });
+                const json = await res.json();
+
+                if (json.success) {
+                    const imageUrl = json.data.url;
+                    
+                    const orderSnap = await get(ref(db, `users/${currentUser.uid}/recharges/${currentUploadOrderId}`));
+                    const orderData = orderSnap.val();
+
+                    await update(ref(db), {
+                        [`users/${currentUser.uid}/recharges/${currentUploadOrderId}/status`]: 'pending_approval',
+                        [`users/${currentUser.uid}/recharges/${currentUploadOrderId}/receiptUrl`]: imageUrl
+                    });
+
+                    await set(ref(db, `pending_receipts/${currentUploadOrderId}`), {
+                        uid: currentUser.uid,
+                        username: document.getElementById('topUserDisplay').innerText,
+                        amountUsd: orderData.amount,
+                        amountLocal: orderData.amountLocal,
+                        countryName: orderData.countryName,
+                        receiptUrl: imageUrl,
+                        date: Date.now()
+                    });
+
+                    document.getElementById('globalLoader').style.display = 'none';
+                    alert("✅ ¡Comprobante enviado al Admin! En breve será revisado.");
+                    loadHistory(); 
+                } else {
+                    throw new Error("Fallo la subida a ImgBB");
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('globalLoader').style.display = 'none';
+                alert("❌ Ocurrió un error. Intenta enviarlo por WhatsApp.");
+            }
+        });
+
+    </script>
+
+    <script>
+        // CONTROLES DE LA INTERFAZ (FUERA DEL MÓDULO PARA QUE FUNCIONEN EN EL HTML)
+        const sidebar = document.getElementById('sidebar'); 
+        const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
+        document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+
+        // SISTEMA DE PARTÍCULAS
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let w, h, pts = [];
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Pt { constructor() { this.x=Math.random()*w; this.y=Math.random()*h; this.v=Math.random()*0.5; } update(){ this.y-=this.v; if(this.y<0)this.y=h; } draw(){ ctx.fillStyle="rgba(0,243,255,0.3)"; ctx.beginPath(); ctx.arc(this.x,this.y,1,0,Math.PI*2); ctx.fill(); } }
+        for(let i=0; i<50; i++) pts.push(new Pt());
+        function anim() { ctx.clearRect(0,0,w,h); pts.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(anim); } anim();
     </script>
 </body>
 </html>
