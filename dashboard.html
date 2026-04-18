@@ -3,27 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - LUCK XIT GALAXY</title>
+    <title>Dashboard - SociosXIT</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
     <style>
         /* =========================================
            1. FUENTES Y PROTECCIÓN
            ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
 
-        /* BLOQUEO DE SELECCIÓN (ANTI-COPIA) */
         * {
             -webkit-user-select: none;
             -ms-user-select: none;
             user-select: none;
             -webkit-touch-callout: none;
+            box-sizing: border-box;
         }
 
-        /* Variables de color */
         :root {
             --neon-purple: #bc13fe;
             --neon-red: #ff073a;
-            --telegram-blue: #0088cc; /* Color oficial de Telegram */
+            --neon-cyan: #00f3ff;
+            --neon-green: #00ffcc;
             --glass-bg: rgba(20, 0, 30, 0.6);
+            --sidebar-bg: rgba(5, 10, 20, 0.95);
         }
 
         body {
@@ -40,7 +44,6 @@
             overflow: hidden; 
         }
 
-        /* FONDO DE PARTÍCULAS */
         #particle-canvas {
             position: fixed;
             top: 0;
@@ -51,7 +54,182 @@
         }
 
         /* =========================================
-           2. CONTENEDOR TIPO CRISTAL
+           2. BARRA DE NAVEGACIÓN SUPERIOR
+           ========================================= */
+        .top-bar {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 700px;
+            background: rgba(5, 10, 20, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15), inset 0 0 10px rgba(0, 243, 255, 0.05);
+            z-index: 100;
+        }
+
+        .menu-btn {
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 1.5rem; /* Tamaño del icono */
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-btn:hover {
+            box-shadow: 0 0 10px var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+        .top-bar-right::-webkit-scrollbar { display: none; }
+        
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: 'Poppins', sans-serif;
+            color: #aaa;
+            white-space: nowrap;
+        }
+
+        .badge i {
+            font-size: 1.1rem;
+            color: var(--neon-purple); /* Color general de los iconos en la barra */
+        }
+
+        .badge span { color: #fff; font-weight: 600; }
+        
+        .badge.green { border-color: rgba(0, 255, 204, 0.3); }
+        .badge.green i { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+        .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+
+        .bell-btn {
+            background: transparent;
+            border: none;
+            color: var(--neon-green);
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0 5px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .bell-btn:hover { text-shadow: 0 0 15px var(--neon-green); transform: scale(1.1); }
+
+        /* =========================================
+           3. MENÚ LATERAL (SIDEBAR)
+           ========================================= */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            position: fixed;
+            top: 0; left: -300px; /* Oculto a la izquierda */
+            width: 260px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--neon-cyan);
+            box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1);
+            z-index: 999;
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .sidebar.active { left: 0; }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-cyan);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
+
+        .sidebar-item:hover {
+            background: rgba(0, 243, 255, 0.1);
+            border-left: 4px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+        .sidebar-item:hover i { color: var(--neon-cyan); }
+
+        /* =========================================
+           4. CONTENEDOR PRINCIPAL
            ========================================= */
         .container {
             background: var(--glass-bg);
@@ -69,6 +247,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px; 
+            margin-top: 70px; 
         }
 
         @keyframes fadeIn {
@@ -76,7 +255,6 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* TÍTULO DE BIENVENIDA */
         h1 {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.8rem;
@@ -88,7 +266,6 @@
             line-height: 1.4; 
         }
 
-        /* ESTILO DEL NOMBRE DE USUARIO (DEBAJO DE BIENVENIDO) */
         h1 span {
             color: var(--neon-red);
             text-shadow: 0 0 15px var(--neon-red);
@@ -98,10 +275,7 @@
             min-height: 1.3em; 
         }
 
-        /* =========================================
-           3. BOTONES ANIMADOS
-           ========================================= */
-        
+        /* BOTONES DEL DASHBOARD */
         .neon-btn {
             padding: 18px;
             background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-red) 100%);
@@ -119,7 +293,13 @@
             overflow: hidden;
             letter-spacing: 1px;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
+
+        .neon-btn i { font-size: 1.5rem; }
 
         .neon-btn::before {
             content: '';
@@ -135,35 +315,14 @@
             box-shadow: 0 0 25px var(--neon-purple), 0 0 5px #fff;
         }
 
-        .neon-btn:hover::before {
-            left: 100%;
-        }
+        .neon-btn:hover::before { left: 100%; }
+        .neon-btn:active { transform: scale(0.98); }
 
-        .neon-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* --- NUEVO: BOTÓN TELEGRAM --- */
-        #telegramBtn {
-            background: linear-gradient(135deg, #00d2d3 0%, var(--telegram-blue) 100%);
-            box-shadow: 0 0 15px rgba(0, 136, 204, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        #telegramBtn:hover {
-            box-shadow: 0 0 25px var(--telegram-blue), 0 0 5px #fff;
-        }
-
-        /* Botón Admin */
         #adminBtn {
             background: linear-gradient(135deg, #8e44ad 0%, #3498db 100%);
             border: 1px solid #fff;
         }
 
-        /* Botón Cerrar Sesión */
         .logout-btn {
             background: transparent;
             border: 2px solid rgba(255, 7, 58, 0.5);
@@ -178,7 +337,13 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+
+        .logout-btn i { font-size: 1.3rem; }
 
         .logout-btn:hover {
             background: var(--neon-red);
@@ -187,37 +352,79 @@
             border-color: var(--neon-red);
             transform: scale(1.02);
         }
-
     </style>
 </head>
-<body oncontextmenu="return false;"> <canvas id="particle-canvas"></canvas>
+<body oncontextmenu="return false;"> 
+
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="menu-btn" id="openMenuBtn">
+                <i class='bx bx-menu'></i>
+            </button>
+        </div>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
+            <div class="badge"><i class='bx bx-user'></i> <span id="topUserDisplay">...</span></div>
+            <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
+            <button class="bell-btn" onclick="alert('Sin notificaciones')"><i class='bx bxs-bell'></i></button>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>SociosXIT</h2>
+            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
+        </div>
+        <div class="sidebar-menu">
+            <a href="recarga.html" class="sidebar-item">
+                <i class='bx bx-plus-circle'></i> Recargar Saldo
+            </a>
+            <a href="bot.html" class="sidebar-item">
+                <i class='bx bxl-telegram'></i> Autorizar ID
+            </a>
+            <a href="#" class="sidebar-item" onclick="alert('Sección en construcción')">
+                <i class='bx bx-support'></i> Soporte 24/7
+            </a>
+        </div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
 
     <div class="container">
         <h1>Bienvenido <span id="userDisplay">...</span></h1>
         
-        <button class="neon-btn" onclick="window.location.href='recarga.html'">
-            Recargar Saldo
-        </button>
-        
         <button class="neon-btn" onclick="window.location.href='index.html'">
-            Comprar Productos
-        </button>
-
-        <button id="telegramBtn" class="neon-btn" onclick="window.location.href='bot.html'">
-            ✈️ Autorizar ID (Telegram)
+            <i class='bx bx-store'></i> Explorar Tienda
         </button>
         
         <button id="adminBtn" class="neon-btn" style="display:none;" onclick="window.location.href='admin.html'">
-            Panel Admin
+            <i class='bx bx-shield-quarter'></i> Panel Admin
         </button>
 
         <button class="logout-btn" id="logoutBtn">
-            Cerrar Sesión
+            <i class='bx bx-log-out'></i> Cerrar Sesión
         </button>
     </div>
 
     <script>
-        /* SCRIPT DE FONDO DE PARTÍCULAS */
+        // --- CONTROL DEL MENÚ LATERAL ---
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const openBtn = document.getElementById('openMenuBtn');
+        const closeBtn = document.getElementById('closeMenuBtn');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        openBtn.addEventListener('click', toggleMenu);
+        closeBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+
+        // --- SCRIPT DE FONDO DE PARTÍCULAS ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -293,21 +500,32 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Buscamos los datos tal cual como en tu código de muestra
+                // Formatear la fecha de creación
+                const creationTime = user.metadata.creationTime;
+                const dateObj = new Date(creationTime);
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const year = dateObj.getFullYear();
+                
+                document.getElementById('joinDateDisplay').innerText = `${day}/${month}/${year}`;
+
+                // Obtener datos desde DB
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        // Asignamos el nombre al span
-                        document.getElementById('userDisplay').innerText = data.username;
                         
-                        // Verificamos si es admin
+                        document.getElementById('userDisplay').innerText = data.username;
+                        document.getElementById('topUserDisplay').innerText = data.username;
+                        
+                        const balance = data.balance !== undefined ? parseFloat(data.balance).toFixed(2) : "0.00";
+                        document.getElementById('balanceDisplay').innerText = balance;
+                        
                         if(data.role === 'admin') {
-                            document.getElementById('adminBtn').style.display = 'block';
+                            document.getElementById('adminBtn').style.display = 'flex'; // Usar flex para alinear iconos
                         }
                     }
                 });
             } else {
-                // Si no hay usuario, redirige
                 window.location.href = "login.html";
             }
         });
