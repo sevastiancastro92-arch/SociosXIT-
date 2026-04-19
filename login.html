@@ -379,6 +379,9 @@
         const loaderOverlay = document.getElementById('loader-overlay');
         const loaderMsg = document.getElementById('loader-msg');
         
+        // --- AUDIO DE BIENVENIDA ---
+        const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
+        
         let isLogin = true;
 
         // Cambiar entre Login y Registro
@@ -432,6 +435,10 @@
                 if(isLogin) {
                     // Solo usa usuario y contraseña
                     await signInWithEmailAndPassword(auth, fakeEmail, pass);
+                    
+                    // --- REPRODUCIR AUDIO SI EL LOGIN ES EXITOSO ---
+                    audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
+                    
                 } else {
                     // Crea la cuenta con el correo falso para mantener el login fácil
                     const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
@@ -452,6 +459,8 @@
                 loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
+                // Nota: Si tu audio dura más de 2 segundos y quieres que se escuche completo 
+                // antes de redirigir, puedes aumentar este número (2000 = 2 segundos).
                 setTimeout(() => {
                     window.location.href = "dashboard.html";
                 }, 2000);
