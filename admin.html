@@ -153,6 +153,9 @@
         .color-blue .card-icon { color: #3b3dff; background: rgba(59, 61, 255, 0.1); }
         .color-blue:hover { border-color: #3b3dff; box-shadow: 0 5px 20px rgba(59, 61, 255, 0.2); }
 
+        .color-gold .card-icon { color: #ffd700; background: rgba(255, 215, 0, 0.1); }
+        .color-gold:hover { border-color: #ffd700; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2); }
+
         /* =========================================
            5. MODALES
            ========================================= */
@@ -185,6 +188,11 @@
             border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit; transition: 0.3s;
         }
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--neon-cyan); }
+        .input-group input:read-only { background: rgba(255,255,255,0.02); color: #888; cursor: not-allowed; }
+
+        /* Checkboxes Personalizados */
+        .perm-checkbox { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.9rem; cursor: pointer; }
+        .perm-checkbox input { accent-color: var(--neon-cyan); width: 18px; height: 18px; cursor: pointer; }
 
         .btn-action { width: 100%; padding: 15px; border: none; border-radius: 8px; background: var(--neon-cyan); color: #000; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
         .btn-action:hover { box-shadow: 0 0 15px var(--neon-cyan); transform: scale(1.02); }
@@ -239,6 +247,15 @@
         </div>
 
         <div class="admin-grid">
+
+            <div class="admin-card color-gold" id="cardManageAdmins" style="display: none;" onclick="openManageAdminsModal()">
+                <div class="card-icon"><i class='bx bx-shield-alt-2'></i></div>
+                <div class="card-info">
+                    <h3>Gestión de Admins</h3>
+                    <p>Dar permisos a tu equipo.</p>
+                </div>
+            </div>
+
             <div class="admin-card color-cyan" onclick="openRechargesModal()">
                 <div class="card-icon"><i class='bx bx-receipt'></i></div>
                 <div class="card-info">
@@ -251,7 +268,7 @@
                 <div class="card-icon"><i class='bx bx-credit-card-front'></i></div>
                 <div class="card-info">
                     <h3>Métodos de Pago</h3>
-                    <p>Configurar bancos y países.</p>
+                    <p>Añadir, editar o borrar bancos.</p>
                 </div>
             </div>
 
@@ -268,6 +285,11 @@
             <div class="admin-card color-green" onclick="openModal('modalAddBalance')">
                 <div class="card-icon"><i class='bx bx-money-withdraw'></i></div>
                 <div class="card-info"><h3>Añadir Saldo</h3><p>Dar USD directo a un usuario.</p></div>
+            </div>
+
+            <div class="admin-card color-purple" onclick="openModal('modalTransferUser')">
+                <div class="card-icon"><i class='bx bx-transfer'></i></div>
+                <div class="card-info"><h3>Transferir Datos</h3><p>Mover 100% a cuenta nueva.</p></div>
             </div>
 
             <div class="admin-card color-red" onclick="openModal('modalDeleteUser')">
@@ -287,48 +309,60 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalManagePayments">
-        <div class="modal-box" style="max-width: 500px;">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);">💳 Configurar Pagos</h3>
-            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 20px;">Añade un país o actualiza uno existente escribiendo su código.</p>
+    <div class="modal-overlay" id="modalManageAdmins">
+        <div class="modal-box" style="border-color: #ffd700;">
+            <h3 style="font-family:'Orbitron'; color: #ffd700;">🛡️ Gestión de Admins</h3>
+            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 20px;">Asigna o remueve permisos a los usuarios de tu equipo.</p>
+            
+            <div class="input-group">
+                <label>Username del Usuario</label>
+                <input type="text" id="adminTargetUser" autocomplete="off" placeholder="Ej: adminJuan">
+            </div>
 
-            <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;">
-                    <label>Cód (Ej: CO)</label>
-                    <input type="text" id="payCode" maxlength="2" style="text-transform: uppercase;" autocomplete="off">
-                </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>Bandera (Ej: 🇨🇴)</label>
-                    <input type="text" id="payFlag" autocomplete="off">
-                </div>
-                <div class="input-group" style="flex: 2;">
-                    <label>País (Ej: Colombia)</label>
-                    <input type="text" id="payName" autocomplete="off">
+            <div style="text-align: left; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                <label style="color: var(--neon-cyan); font-size: 0.9rem; display: block; margin-bottom: 10px; font-family:'Orbitron';">PERMISOS:</label>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label class="perm-checkbox"><input type="checkbox" id="permRecharges"> Validar Recargas</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permBalance"> Añadir Saldo Manual</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permProducts"> Gestionar Productos y Stock</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permUsers"> Eliminar y Transferir Usuarios</label>
                 </div>
             </div>
 
+            <button class="btn-action" style="background: #ffd700; color: #000;" onclick="funcSetAdmin()">GUARDAR ADMIN</button>
+            <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none;" onclick="funcRemoveAdmin()">QUITAR TODOS LOS PERMISOS</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalManagePayments">
+        <div class="modal-box" style="max-width: 550px;">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);">💳 Configurar Pagos</h3>
+            <h4 style="color: #aaa; font-family: 'Orbitron'; text-align: left; margin-bottom: 5px; font-size: 0.85rem;">PAÍSES CONFIGURADOS</h4>
+            <div id="existingCountriesList" style="margin-bottom: 15px; max-height: 160px; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 8px;"></div>
+            <div style="border-top: 1px solid rgba(0, 243, 255, 0.3); margin: 15px 0;"></div>
+            <p id="payModeText" style="color:var(--neon-green); font-size: 0.85rem; margin-bottom: 15px; font-weight: bold;">MODO: CREAR NUEVO PAÍS</p>
+
             <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;">
-                    <label>Moneda (Ej: COP)</label>
-                    <input type="text" id="payCurr" style="text-transform: uppercase;" autocomplete="off">
-                </div>
-                <div class="input-group" style="flex: 2;">
-                    <label>Tasa (1 USD = X Local)</label>
-                    <input type="number" id="payRate" placeholder="Ej: 4200" step="0.01">
-                </div>
+                <div class="input-group" style="flex: 1;"><label>Cód (Ej: CO)</label><input type="text" id="payCode" maxlength="2" style="text-transform: uppercase;" autocomplete="off"></div>
+                <div class="input-group" style="flex: 1;"><label>Bandera (Ej: 🇨🇴)</label><input type="text" id="payFlag" autocomplete="off"></div>
+                <div class="input-group" style="flex: 2;"><label>País (Ej: Colombia)</label><input type="text" id="payName" autocomplete="off"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;"><label>Moneda (Ej: COP)</label><input type="text" id="payCurr" style="text-transform: uppercase;" autocomplete="off"></div>
+                <div class="input-group" style="flex: 2;"><label>Tasa (1 USD = X Local)</label><input type="number" id="payRate" placeholder="Ej: 4200" step="0.01"></div>
             </div>
 
             <h4 style="color: var(--neon-purple); font-family: 'Orbitron'; text-align: left; margin-bottom: 10px; border-bottom: 1px solid rgba(188, 19, 254, 0.3); padding-bottom: 5px;">BANCOS DISPONIBLES</h4>
-            
-            <div id="banksContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
-                </div>
-            
-            <button class="btn-action" style="background: rgba(188, 19, 254, 0.2); border: 1px solid var(--neon-purple); color: white; box-shadow: none;" onclick="addBankField()">
-                <i class='bx bx-plus'></i> AÑADIR OTRO BANCO
-            </button>
+            <div id="banksContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <button class="btn-action" style="background: rgba(188, 19, 254, 0.2); border: 1px solid var(--neon-purple); color: white; box-shadow: none;" onclick="addBankField()"><i class='bx bx-plus'></i> AÑADIR OTRO BANCO</button>
 
-            <button class="btn-action" onclick="savePaymentConfig()" style="margin-top: 15px;">GUARDAR PAÍS</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-action" onclick="savePaymentConfig()" style="flex: 2; margin-bottom: 0;">GUARDAR DATOS</button>
+                <button class="btn-action" onclick="clearPaymentInputs()" style="flex: 1; background: #222; border: 1px solid #555; color: white; margin-bottom: 0; box-shadow: none;"><i class='bx bx-reset'></i> NUEVO</button>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 10px;">Cerrar</button>
         </div>
     </div>
 
@@ -373,6 +407,17 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="modalTransferUser">
+        <div class="modal-box" style="border-color: var(--neon-purple);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-purple);">🔄 Transferir Cuenta</h3>
+            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 15px;">Mueve historial, saldo y compras de una cuenta perdida a una nueva. La cuenta antigua se eliminará de la BD.</p>
+            <div class="input-group"><label>Username ANTIGUO (El que perdió acceso)</label><input type="text" id="transferOldUser" autocomplete="off" placeholder="Ej: olduser123"></div>
+            <div class="input-group"><label>Username NUEVO (La cuenta recién creada)</label><input type="text" id="transferNewUser" autocomplete="off" placeholder="Ej: newuser456"></div>
+            <button class="btn-action" style="background: var(--neon-purple); color: white; box-shadow: 0 0 10px var(--neon-purple);" onclick="funcTransferUser()">TRANSFERIR DATOS 100%</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="modalDeleteUser">
         <div class="modal-box" style="border-color: var(--neon-red);">
             <h3 style="font-family:'Orbitron'; color: var(--neon-red);">⚠️ Eliminar Usuario</h3>
@@ -395,7 +440,8 @@
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, push, set } from './firebase-config.js';
 
-        let adminUser = null;
+        let adminUser = null; 
+        let isSuperAdmin = false;
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -403,12 +449,20 @@
                     const data = snapshot.val();
                     const safeUsername = data && data.username ? data.username.trim().toLowerCase() : '';
 
-                    if (safeUsername === 'sebasxit') {
+                    isSuperAdmin = (safeUsername === 'sebasxit');
+                    const isAdmin = data && data.role === 'admin';
+
+                    if (isSuperAdmin || isAdmin) {
                         adminUser = data;
                         document.getElementById('loadingScreen').style.display = 'none';
                         document.getElementById('adminMainPanel').style.display = 'block';
                         document.getElementById('topBalance').innerText = parseFloat(data.balance || 0).toFixed(2);
                         
+                        // Mostrar tarjeta de gestión de admins SOLO al dueño
+                        if (isSuperAdmin) {
+                            document.getElementById('cardManageAdmins').style.display = 'flex';
+                        }
+
                         loadStats();
                         checkMaintenance();
                     } else { 
@@ -422,92 +476,136 @@
             } else { window.location.href = "login.html"; }
         });
 
+        // --- MÓDULO: GESTIÓN DE ADMINS Y PERMISOS ---
+        window.openManageAdminsModal = () => {
+            if(!isSuperAdmin) return;
+            document.getElementById('adminTargetUser').value = "";
+            document.getElementById('permRecharges').checked = false;
+            document.getElementById('permBalance').checked = false;
+            document.getElementById('permProducts').checked = false;
+            document.getElementById('permUsers').checked = false;
+            openModal('modalManageAdmins');
+        };
+
+        window.funcSetAdmin = async () => {
+            if(!isSuperAdmin) return;
+            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase();
+            if(!targetUser) return alert("❌ Escribe el username.");
+            
+            const perms = {
+                recharges: document.getElementById('permRecharges').checked,
+                balance: document.getElementById('permBalance').checked,
+                products: document.getElementById('permProducts').checked,
+                users: document.getElementById('permUsers').checked
+            };
+
+            try {
+                const uSnap = await get(ref(db, 'users')); let foundId = null;
+                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
+                
+                if(foundId) {
+                    await update(ref(db, `users/${foundId}`), { role: 'admin', permissions: perms });
+                    alert(`✅ ${targetUser} actualizado como Admin.`);
+                    closeAllModals();
+                } else { alert("❌ Usuario no encontrado."); }
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        window.funcRemoveAdmin = async () => {
+            if(!isSuperAdmin) return;
+            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase();
+            if(!targetUser) return alert("❌ Escribe el username.");
+            
+            try {
+                const uSnap = await get(ref(db, 'users')); let foundId = null;
+                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
+                
+                if(foundId) {
+                    await update(ref(db, `users/${foundId}`), { role: 'user', permissions: null });
+                    alert(`✅ Privilegios removidos a ${targetUser}. Ahora es un usuario normal.`);
+                    closeAllModals();
+                } else { alert("❌ Usuario no encontrado."); }
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+
         // --- MÓDULO: MÉTODOS DE PAGO ---
         let banksList = [];
 
-        window.openPaymentsModal = () => {
-            banksList = []; 
-            document.getElementById('payCode').value = "";
-            document.getElementById('payFlag').value = "";
-            document.getElementById('payName').value = "";
-            document.getElementById('payCurr').value = "";
-            document.getElementById('payRate').value = "";
-            addBankField(); 
+        window.openPaymentsModal = async () => {
+            if(!isSuperAdmin) return alert("❌ Solo el administrador principal puede editar métodos de pago.");
+            clearPaymentInputs();
             openModal('modalManagePayments');
+            await loadConfiguredCountries();
         };
 
-        window.addBankField = () => {
-            banksList.push({ bankName: "", accountNumber: "", description: "" });
-            renderBanks();
+        window.clearPaymentInputs = () => {
+            document.getElementById('payCode').value = ""; document.getElementById('payCode').readOnly = false;
+            document.getElementById('payFlag').value = ""; document.getElementById('payName').value = "";
+            document.getElementById('payCurr').value = ""; document.getElementById('payRate').value = "";
+            const modeText = document.getElementById('payModeText'); modeText.innerText = "MODO: CREAR NUEVO PAÍS"; modeText.style.color = "var(--neon-green)";
+            banksList = []; addBankField(); renderBanks();
         };
 
-        window.removeBankField = (index) => {
-            banksList.splice(index, 1);
-            renderBanks();
+        window.loadConfiguredCountries = async () => {
+            const container = document.getElementById('existingCountriesList'); container.innerHTML = "<p style='color:#aaa; text-align:center; font-size: 0.8rem;'>Cargando países...</p>";
+            try {
+                const snap = await get(ref(db, 'config/countries'));
+                if(!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size: 0.8rem; text-align:center;'>No hay países configurados aún.</p>"; return; }
+                container.innerHTML = "";
+                snap.forEach(child => {
+                    const code = child.key; const data = child.val();
+                    container.innerHTML += `<div style="background: rgba(0,0,0,0.6); border: 1px solid rgba(0,243,255,0.2); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;"><span style="color: white; font-size: 0.9rem;">${data.flag} <strong>${data.name}</strong> (${code})</span><div style="display:flex; gap: 8px;"><button onclick="editCountry('${code}')" style="background:rgba(0,243,255,0.2); color:var(--neon-cyan); border:1px solid var(--neon-cyan); padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold; transition: 0.3s;"><i class='bx bx-edit-alt'></i></button><button onclick="deleteCountry('${code}', '${data.name}')" style="background:rgba(255,7,58,0.2); color:var(--neon-red); border:1px solid var(--neon-red); padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold; transition: 0.3s;"><i class='bx bx-trash'></i></button></div></div>`;
+                });
+            } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
         };
 
-        window.updateBankField = (index, field, value) => {
-            banksList[index][field] = value;
+        window.editCountry = async (code) => {
+            try {
+                const snap = await get(ref(db, `config/countries/${code}`));
+                if(snap.exists()) {
+                    const data = snap.val();
+                    document.getElementById('payCode').value = code; document.getElementById('payCode').readOnly = true; 
+                    document.getElementById('payFlag').value = data.flag || ""; document.getElementById('payName').value = data.name || "";
+                    document.getElementById('payCurr').value = data.currency || ""; document.getElementById('payRate').value = data.rate || "";
+                    const modeText = document.getElementById('payModeText'); modeText.innerText = `MODO: EDITANDO ${data.name.toUpperCase()}`; modeText.style.color = "var(--neon-cyan)";
+                    banksList = data.paymentMethods || []; if(banksList.length === 0) addBankField(); renderBanks();
+                }
+            } catch(e) { alert("❌ Error cargando país: " + e.message); }
         };
+
+        window.deleteCountry = async (code, name) => {
+            if(confirm(`⚠️ ¿Seguro que quieres eliminar la configuración de pagos para ${name} (${code})?`)) {
+                try { await set(ref(db, `config/countries/${code}`), null); alert(`✅ ${name} eliminado correctamente.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error al eliminar: " + e.message); }
+            }
+        };
+
+        window.addBankField = () => { banksList.push({ bankName: "", accountNumber: "", description: "" }); renderBanks(); };
+        window.removeBankField = (index) => { banksList.splice(index, 1); renderBanks(); };
+        window.updateBankField = (index, field, value) => { banksList[index][field] = value; };
 
         function renderBanks() {
-            const container = document.getElementById('banksContainer');
-            container.innerHTML = "";
+            const container = document.getElementById('banksContainer'); container.innerHTML = "";
             banksList.forEach((bank, index) => {
-                container.innerHTML += `
-                    <div class="bank-field">
-                        <div class="bank-field-header">
-                            <strong><i class='bx bxs-bank'></i> Banco #${index + 1}</strong>
-                            <button onclick="removeBankField(${index})" class="btn-trash"><i class='bx bx-trash'></i></button>
-                        </div>
-                        <input type="text" placeholder="Nombre (Ej: Nequi)" value="${bank.bankName}" onchange="updateBankField(${index}, 'bankName', this.value)" style="width:100%; margin-bottom:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;">
-                        <input type="text" placeholder="N° Cuenta o Número" value="${bank.accountNumber}" onchange="updateBankField(${index}, 'accountNumber', this.value)" style="width:100%; margin-bottom:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;">
-                        <input type="text" placeholder="Descripción (Opcional)" value="${bank.description}" onchange="updateBankField(${index}, 'description', this.value)" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;">
-                    </div>
-                `;
+                container.innerHTML += `<div class="bank-field"><div class="bank-field-header"><strong><i class='bx bxs-bank'></i> Banco #${index + 1}</strong><button onclick="removeBankField(${index})" class="btn-trash"><i class='bx bx-trash'></i></button></div><input type="text" placeholder="Nombre (Ej: Nequi)" value="${bank.bankName}" onchange="updateBankField(${index}, 'bankName', this.value)" style="width:100%; margin-bottom:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;"><input type="text" placeholder="N° Cuenta o Número" value="${bank.accountNumber}" onchange="updateBankField(${index}, 'accountNumber', this.value)" style="width:100%; margin-bottom:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;"><input type="text" placeholder="Descripción (Opcional)" value="${bank.description}" onchange="updateBankField(${index}, 'description', this.value)" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;"></div>`;
             });
         }
 
         window.savePaymentConfig = async () => {
-            const code = document.getElementById('payCode').value.trim().toUpperCase();
-            const flag = document.getElementById('payFlag').value.trim();
-            const name = document.getElementById('payName').value.trim();
-            const currency = document.getElementById('payCurr').value.trim().toUpperCase();
-            const rate = parseFloat(document.getElementById('payRate').value);
-
-            if(!code || !flag || !name || !currency || isNaN(rate)) {
-                return alert("❌ Llena todos los datos principales del país.");
-            }
-
-            if(banksList.length === 0) return alert("❌ Debes agregar al menos un banco.");
-
-            for(let i=0; i<banksList.length; i++) {
-                if(!banksList[i].bankName || !banksList[i].accountNumber) {
-                    return alert(`❌ Completa el Nombre y Cuenta del Banco #${i+1}`);
-                }
-            }
-
+            const code = document.getElementById('payCode').value.trim().toUpperCase(); const flag = document.getElementById('payFlag').value.trim(); const name = document.getElementById('payName').value.trim(); const currency = document.getElementById('payCurr').value.trim().toUpperCase(); const rate = parseFloat(document.getElementById('payRate').value);
+            if(!code || !flag || !name || !currency || isNaN(rate)) return alert("❌ Llena todos los datos principales.");
+            const cleanBanksList = banksList.filter(b => b.bankName.trim() !== "" && b.accountNumber.trim() !== "");
+            if(cleanBanksList.length === 0) return alert("❌ Asegúrate de completar el Nombre y Número de cuenta de los bancos.");
             try {
-                const countryData = {
-                    name: name,
-                    flag: flag,
-                    currency: currency,
-                    rate: rate,
-                    paymentMethods: banksList
-                };
-
-                await set(ref(db, `config/countries/${code}`), countryData);
-                alert(`✅ País ${name} (${code}) guardado correctamente con ${banksList.length} métodos de pago.`);
-                closeAllModals();
-            } catch(e) {
-                alert("❌ Error al guardar en base de datos: " + e.message);
-            }
+                const countryData = { name: name, flag: flag, currency: currency, rate: rate, paymentMethods: cleanBanksList };
+                await set(ref(db, `config/countries/${code}`), countryData); alert(`✅ Datos guardados para ${name}.`); loadConfiguredCountries(); clearPaymentInputs();
+            } catch(e) { alert("❌ Error al guardar: " + e.message); }
         };
 
+        // --- FUNCIONES COMUNES ---
         async function loadStats() {
             try {
-                const uSnap = await get(ref(db, 'users')); const pSnap = await get(ref(db, 'products'));
-                let totalUsers = 0, globalBal = 0, totalKeys = 0;
+                const uSnap = await get(ref(db, 'users')); const pSnap = await get(ref(db, 'products')); let totalUsers = 0, globalBal = 0, totalKeys = 0;
                 if(uSnap.exists()) { uSnap.forEach(u => { totalUsers++; globalBal += parseFloat(u.val().balance || 0); }); }
                 if(pSnap.exists()) { pSnap.forEach(p => { const prod = p.val(); if(prod.keys) totalKeys += Object.keys(prod.keys).length; if(prod.durations) { Object.values(prod.durations).forEach(d => { if(d.keys) totalKeys += Object.keys(d.keys).length; }); } }); }
                 document.getElementById('statUsers').innerText = totalUsers; document.getElementById('statBalance').innerText = `$${globalBal.toFixed(2)}`; document.getElementById('statKeys').innerText = totalKeys;
@@ -515,103 +613,52 @@
         }
 
         async function checkMaintenance() {
-            const snap = await get(ref(db, 'settings/maintenance'));
-            document.getElementById('maintStatus').innerText = (snap.val() || false) ? "ESTADO: CERRADO 🔴" : "ESTADO: ABIERTO 🟢";
+            const snap = await get(ref(db, 'settings/maintenance')); document.getElementById('maintStatus').innerText = (snap.val() || false) ? "ESTADO: CERRADO 🔴" : "ESTADO: ABIERTO 🟢";
         }
-        window.toggleMaintenance = async () => { const snap = await get(ref(db, 'settings/maintenance')); await set(ref(db, 'settings/maintenance'), !(snap.val() || false)); checkMaintenance(); alert("Estado actualizado."); };
+        window.toggleMaintenance = async () => { 
+            if(!isSuperAdmin) return alert("❌ Solo Super Admin puede hacer esto.");
+            const snap = await get(ref(db, 'settings/maintenance')); await set(ref(db, 'settings/maintenance'), !(snap.val() || false)); checkMaintenance(); alert("Estado actualizado."); 
+        };
 
-        // --- VALIDAR RECARGAS PENDIENTES ---
+        // --- VALIDAR RECARGAS ---
         window.openRechargesModal = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return alert("❌ No tienes permisos para validar recargas.");
             openModal('modalRecharges');
-            const container = document.getElementById('rechargesList');
-            container.innerHTML = "<p style='text-align:center; color:#aaa;'>Cargando comprobantes...</p>";
+            const container = document.getElementById('rechargesList'); container.innerHTML = "<p style='text-align:center; color:#aaa;'>Cargando comprobantes...</p>";
             try {
                 const snap = await get(ref(db, 'pending_receipts'));
-                if (!snap.exists()) { container.innerHTML = "<p style='text-align:center; color:#888; font-style:italic;'>No hay recargas pendientes de revisión. ¡Todo al día! 😎</p>"; return; }
-                
+                if (!snap.exists()) { container.innerHTML = "<p style='text-align:center; color:#888; font-style:italic;'>No hay recargas pendientes.</p>"; return; }
                 container.innerHTML = "";
                 snap.forEach(childSnap => {
-                    const id = childSnap.key; const data = childSnap.val();
-                    const dateString = new Date(data.date).toLocaleString('es-ES');
-                    container.innerHTML += `
-                        <div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,243,255,0.2);">
-                            <p style="margin: 0 0 5px 0; font-size: 0.8rem; color:#888;">ID Ticket: ${id.substring(1,8)}</p>
-                            <p style="margin: 0 0 5px 0;"><strong>Usuario:</strong> <span style="color:var(--neon-cyan);">${data.username}</span></p>
-                            <p style="margin: 0 0 5px 0;"><strong>Monto USD:</strong> $${data.amountUsd.toFixed(2)}</p>
-                            <p style="margin: 0 0 5px 0;"><strong>País:</strong> <span style="color:#fff;">${data.countryName || 'No registrado'}</span></p>
-                            <p style="margin: 0 0 5px 0;"><strong>Monto Local:</strong> ${data.amountLocal || 'No registrado'}</p>
-                            <p style="margin: 0 0 10px 0; font-size: 0.8rem; color:#aaa;">Fecha: ${dateString}</p>
-                            
-                            <a href="${data.receiptUrl}" target="_blank" style="display:inline-block; padding: 10px; background: rgba(188,19,254,0.2); color: #fff; text-decoration: none; border-radius: 8px; border: 1px solid var(--neon-purple); width: 100%; text-align: center; margin-bottom: 10px; font-weight:bold;">
-                                <i class='bx bx-image-alt'></i> Ver Comprobante 📸
-                            </a>
-                            
-                            <div style="display:flex; gap:10px;">
-                                <button onclick="approveRecharge('${id}', '${data.uid}', ${data.amountUsd}, '${data.username}')" style="flex:1; background:var(--neon-green); color:#000; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-                                    <i class='bx bx-check'></i> Aprobar
-                                </button>
-                                <button onclick="rejectRecharge('${id}', '${data.uid}')" style="flex:1; background:var(--neon-red); color:#fff; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-                                    <i class='bx bx-x'></i> Rechazar
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                    const id = childSnap.key; const data = childSnap.val(); const dateString = new Date(data.date).toLocaleString('es-ES');
+                    container.innerHTML += `<div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,243,255,0.2);"><p style="margin: 0 0 5px 0; font-size: 0.8rem; color:#888;">ID Ticket: ${id.substring(1,8)}</p><p style="margin: 0 0 5px 0;"><strong>Usuario:</strong> <span style="color:var(--neon-cyan);">${data.username}</span></p><p style="margin: 0 0 5px 0;"><strong>Monto USD:</strong> $${data.amountUsd.toFixed(2)}</p><p style="margin: 0 0 5px 0;"><strong>País:</strong> <span style="color:#fff;">${data.countryName || 'No registrado'}</span></p><p style="margin: 0 0 5px 0;"><strong>Monto Local:</strong> ${data.amountLocal || 'No registrado'}</p><p style="margin: 0 0 10px 0; font-size: 0.8rem; color:#aaa;">Fecha: ${dateString}</p><a href="${data.receiptUrl}" target="_blank" style="display:inline-block; padding: 10px; background: rgba(188,19,254,0.2); color: #fff; text-decoration: none; border-radius: 8px; border: 1px solid var(--neon-purple); width: 100%; text-align: center; margin-bottom: 10px; font-weight:bold;"><i class='bx bx-image-alt'></i> Ver Comprobante 📸</a><div style="display:flex; gap:10px;"><button onclick="approveRecharge('${id}', '${data.uid}', ${data.amountUsd}, '${data.username}')" style="flex:1; background:var(--neon-green); color:#000; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;"><i class='bx bx-check'></i> Aprobar</button><button onclick="rejectRecharge('${id}', '${data.uid}')" style="flex:1; background:var(--neon-red); color:#fff; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;"><i class='bx bx-x'></i> Rechazar</button></div></div>`;
                 });
-            } catch(e) {
-                container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`;
-            }
+            } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
         };
 
-        // 🔥 CORRECCIÓN DEL PARCHE DE APROBACIÓN 🔥
         window.approveRecharge = async (receiptId, uid, amountUsd, username) => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
             if(!confirm(`¿Estás seguro de aprobar y darle $${amountUsd} USD a ${username}?`)) return;
-            
             try {
-                const uSnap = await get(ref(db, `users/${uid}`));
-                let currentBal = 0;
-                if(uSnap.exists()) {
-                    currentBal = parseFloat(uSnap.val().balance || 0);
-                }
-                
-                const updates = {};
-                // Sumar Saldo
-                updates[`users/${uid}/balance`] = currentBal + amountUsd;
-                // ACTUALIZAR EL ESTADO DE LA RECARGA SIN BORRAR LA INFO DE PAÍS
-                updates[`users/${uid}/recharges/${receiptId}/status`] = 'approved';
-                updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); // Actualiza fecha de aprobación
-                
-                // Eliminar el ticket de comprobantes pendientes
-                updates[`pending_receipts/${receiptId}`] = null; 
-                
-                await update(ref(db), updates);
-                alert(`✅ Recarga Aprobada. Se enviaron $${amountUsd} USD a ${username}.`);
-                openRechargesModal(); // Recargar la lista visual
-            } catch(e) {
-                alert("❌ Error: " + e.message);
-            }
+                const uSnap = await get(ref(db, `users/${uid}`)); let currentBal = 0;
+                if(uSnap.exists()) currentBal = parseFloat(uSnap.val().balance || 0);
+                const updates = {}; updates[`users/${uid}/balance`] = currentBal + amountUsd; updates[`users/${uid}/recharges/${receiptId}/status`] = 'approved'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
+                await update(ref(db), updates); alert(`✅ Recarga Aprobada.`); openRechargesModal();
+            } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // 🔥 CORRECCIÓN DEL PARCHE DE RECHAZO 🔥
         window.rejectRecharge = async (receiptId, uid) => {
-            if(!confirm("¿Rechazar este comprobante? El usuario no recibirá saldo y el ticket será borrado.")) return;
-            
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
+            if(!confirm("¿Rechazar este comprobante?")) return;
             try {
-                const updates = {};
-                // ACTUALIZAR EL ESTADO SIN BORRAR INFO DE PAÍS
-                updates[`users/${uid}/recharges/${receiptId}/status`] = 'rejected';
-                updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); // Fecha del rechazo
-                // Borrar de pendientes
-                updates[`pending_receipts/${receiptId}`] = null; 
-                
-                await update(ref(db), updates);
-                alert("❌ Recarga Rechazada y borrada.");
-                openRechargesModal(); 
-            } catch(e) {
-                alert("❌ Error: " + e.message);
-            }
+                const updates = {}; updates[`users/${uid}/recharges/${receiptId}/status`] = 'rejected'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
+                await update(ref(db), updates); alert("❌ Recarga Rechazada."); openRechargesModal(); 
+            } catch(e) { alert("❌ Error: " + e.message); }
         };
 
+        // --- PRODUCTOS Y STOCK ---
         window.funcCreateProduct = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para productos.");
             const name = document.getElementById('pName').value.trim(); const cat = document.getElementById('pCat').value; const price = parseFloat(document.getElementById('pPrice').value); const dur = document.getElementById('pDur').value.trim(); const warr = parseInt(document.getElementById('pWarr').value);
             if(!name || isNaN(price)) return alert("Llena los campos");
             try {
@@ -622,6 +669,7 @@
         };
 
         window.openStockModal = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para stock.");
             const select = document.getElementById('stockProdSelect'); select.innerHTML = "";
             const snap = await get(ref(db, 'products'));
             if(snap.exists()) {
@@ -631,6 +679,7 @@
         };
 
         window.funcAddStock = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
             const selectVal = document.getElementById('stockProdSelect').value; if(!selectVal) return alert("❌ Selecciona un producto.");
             const [pId, dId] = selectVal.split('|'); const keys = document.getElementById('stockKeysArea').value.split('\n').filter(k => k.trim() !== "");
             if(keys.length === 0) return alert("Pega alguna key");
@@ -640,9 +689,21 @@
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
+        // --- DAR SALDO CON TRAMPA ---
         window.funcAddBalance = async () => {
-            const user = document.getElementById('balUser').value.trim().toLowerCase(); const amt = parseFloat(document.getElementById('balAmt').value);
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.balance)) return alert("❌ No tienes permisos para añadir saldo.");
+            
+            const user = document.getElementById('balUser').value.trim().toLowerCase(); 
+            const amt = parseFloat(document.getElementById('balAmt').value);
+            
             if(!user || isNaN(amt)) return;
+
+            // 🔥 LA TRAMPA: Si intenta darse saldo a sí mismo y no es SuperAdmin, tira Error 404
+            if (!isSuperAdmin && user === adminUser.username.toLowerCase()) {
+                alert("Error 404");
+                return;
+            }
+
             try {
                 const uSnap = await get(ref(db, 'users')); let foundId = null, currentB = 0;
                 uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === user) { foundId = u.key; currentB = u.val().balance || 0; } });
@@ -650,18 +711,52 @@
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
+        // --- GESTIÓN DE USUARIOS ---
+        window.funcTransferUser = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("❌ No tienes permisos para transferir usuarios.");
+            const oldUsername = document.getElementById('transferOldUser').value.trim().toLowerCase(); const newUsername = document.getElementById('transferNewUser').value.trim().toLowerCase();
+            if(!oldUsername || !newUsername) return alert("❌ Por favor llena ambos campos.");
+            if(oldUsername === newUsername) return alert("❌ Los usuarios no pueden ser iguales.");
+            try {
+                const loading = document.getElementById('loadingScreen'); loading.style.display = 'flex'; loading.innerHTML = `<h2 style="font-family: 'Orbitron'; color: var(--neon-purple); animation: blink 1s infinite;">TRANSFIRIENDO...</h2>`;
+                const uSnap = await get(ref(db, 'users')); let oldUid = null, newUid = null; let oldData = null, newDataInfo = null;
+                uSnap.forEach(u => { const uData = u.val(); if(uData.username && uData.username.toLowerCase() === oldUsername) { oldUid = u.key; oldData = uData; } if(uData.username && uData.username.toLowerCase() === newUsername) { newUid = u.key; newDataInfo = uData; } });
+                if(!oldUid) { loading.style.display = 'none'; return alert("❌ Usuario ANTIGUO no encontrado."); }
+                if(!newUid) { loading.style.display = 'none'; return alert("❌ Usuario NUEVO no encontrado. Dile al usuario que se registre primero."); }
+                if(confirm(`⚠️ ¿Transferir TODO de "${oldUsername}" a "${newUsername}"?`)) {
+                    const clonedData = { ...oldData }; clonedData.username = newDataInfo.username; if(newDataInfo.email) clonedData.email = newDataInfo.email; if(newDataInfo.uid) clonedData.uid = newDataInfo.uid; 
+                    const updates = {}; updates[`users/${newUid}`] = clonedData; updates[`users/${oldUid}`] = null;
+                    await update(ref(db), updates); loading.style.display = 'none'; alert(`✅ Transferencia completada.`); closeAllModals(); location.reload();
+                } else { loading.style.display = 'none'; }
+            } catch(e) { document.getElementById('loadingScreen').style.display = 'none'; alert("❌ Error en la transferencia: " + e.message); }
+        };
+
         window.funcDeleteUser = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("❌ No tienes permisos para borrar usuarios.");
             const userToDelete = document.getElementById('delUserUsername').value.trim().toLowerCase();
             if(!userToDelete) return alert("❌ Escribe el nombre de usuario.");
             if(userToDelete === 'sebasxit') return alert("❌ ERROR: No puedes eliminar la cuenta del Administrador.");
+            
+            // Un admin normal tampoco debería poder borrar a otro admin (seguridad extra)
             try {
-                const uSnap = await get(ref(db, 'users')); let foundId = null;
-                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === userToDelete) foundId = u.key; });
+                const uSnap = await get(ref(db, 'users')); let foundId = null; let targetIsAdmin = false;
+                uSnap.forEach(u => { 
+                    if(u.val().username && u.val().username.toLowerCase() === userToDelete) {
+                        foundId = u.key; 
+                        if(u.val().role === 'admin') targetIsAdmin = true;
+                    } 
+                });
+
+                if(!isSuperAdmin && targetIsAdmin) return alert("❌ No tienes permisos para eliminar a otro Administrador.");
+
                 if(foundId) { if(confirm(`⚠️ ALERTA ⚠️\n\n¿Deseas eliminar a "${userToDelete}"?`)) { await set(ref(db, `users/${foundId}`), null); alert("✅ Usuario borrado."); location.reload(); } } else { alert("❌ Usuario no encontrado."); }
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        window.funcBroadcast = async () => { alert("Mensaje enviado (Simulado)"); closeAllModals(); };
+        window.funcBroadcast = async () => { 
+            if(!isSuperAdmin) return alert("❌ Solo Super Admin.");
+            alert("Mensaje enviado (Simulado)"); closeAllModals(); 
+        };
 
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
