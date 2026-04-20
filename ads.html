@@ -3,18 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desbloqueando Enlace...</title>
+    <title>Desbloqueando Enlace... - LUCK XIT OFC</title>
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2505548585376357" crossorigin="anonymous"></script>
+
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
         * { box-sizing: border-box; }
-        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100dvh; }
+        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100dvh; text-align: center; }
         
-        .ad-container { width: 90%; max-width: 728px; height: 90px; background: #111; border: 1px dashed #333; margin: 20px 0; display: flex; align-items: center; justify-content: center; color: #555; }
+        /* TÍTULOS DEL ARCHIVO */
+        .header-title { font-family: 'Orbitron'; color: #00f3ff; margin-bottom: 5px; font-size: 1.5rem; text-shadow: 0 0 10px rgba(0,243,255,0.3); }
+        .file-name { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 20px; font-size: 1.1rem; color: #fff; margin-top: 0; margin-bottom: 20px; display: inline-block; }
+
+        /* CONTENEDORES PARA MANTENER LA ESTRUCTURA */
+        .ad-container { width: 90%; max-width: 728px; min-height: 90px; margin: 20px 0; display: flex; align-items: center; justify-content: center; }
         
-        .timer-box { font-family: 'Orbitron'; font-size: 3rem; color: #00f3ff; text-shadow: 0 0 15px rgba(0,243,255,0.5); margin: 30px 0; }
+        .timer-box { font-family: 'Orbitron'; font-size: 3.5rem; color: #00f3ff; text-shadow: 0 0 15px rgba(0,243,255,0.5); margin: 20px 0; }
         
-        .btn-continue { padding: 15px 40px; background: rgba(0,243,255,0.1); border: 1px solid #00f3ff; border-radius: 12px; color: #00f3ff; font-weight: bold; font-family: 'Orbitron'; font-size: 1.2rem; cursor: not-allowed; opacity: 0.5; transition: 0.3s; }
+        .btn-continue { padding: 15px 40px; background: rgba(0,243,255,0.1); border: 1px solid #00f3ff; border-radius: 12px; color: #00f3ff; font-weight: bold; font-family: 'Orbitron'; font-size: 1.2rem; cursor: not-allowed; opacity: 0.5; transition: 0.3s; display: flex; align-items: center; gap: 10px; margin: 0 auto; }
         .btn-continue.active { background: #00f3ff; color: #000; cursor: pointer; opacity: 1; box-shadow: 0 0 20px #00f3ff; }
 
         /* AD-BLOCKER SCREEN */
@@ -22,7 +30,8 @@
         .adblock-overlay i { font-size: 5rem; color: #ff073a; margin-bottom: 20px; text-shadow: 0 0 20px #ff073a; }
         .adblock-overlay h1 { font-family: 'Orbitron'; color: white; margin-bottom: 10px; }
         .adblock-overlay p { color: #aaa; max-width: 400px; margin-bottom: 20px; }
-        .btn-reload { padding: 12px 25px; background: #ff073a; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Poppins'; }
+        .btn-reload { padding: 12px 25px; background: #ff073a; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Poppins'; transition: 0.3s; }
+        .btn-reload:hover { box-shadow: 0 0 15px #ff073a; transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -30,28 +39,25 @@
     <div class="adblock-overlay" id="adblockScreen" style="display: none;">
         <i class='bx bx-shield-x'></i>
         <h1>ADBLOCK DETECTADO</h1>
-        <p>Para acceder al archivo, necesitamos que desactives tu bloqueador de anuncios. Nuestros creadores mantienen este servicio gracias a la publicidad.</p>
+        <p>Para acceder al archivo, necesitamos que desactives tu bloqueador de anuncios. Nuestro servicio funciona gracias a la publicidad.</p>
         <button class="btn-reload" onclick="location.reload()">Ya lo desactivé</button>
     </div>
 
-    <h2>Preparando tu enlace...</h2>
+    <h2 class="header-title"><i class='bx bx-lock-open-alt'></i> Desbloqueando Archivo</h2>
+    <div class="file-name" id="linkNameDisplay">Cargando información...</div>
     
-    <div class="ad-container adsbox">
-        ESPACIO PARA ANUNCIO 1 (Pega aquí el código de tu red publicitaria)
-    </div>
+    <div class="ad-container adsbox"></div>
 
     <div class="timer-box" id="timer">15</div>
 
-    <button class="btn-continue" id="btnContinue" disabled>ESPERA...</button>
+    <button class="btn-continue" id="btnContinue" disabled><i class='bx bx-time'></i> ESPERA...</button>
 
-    <div class="ad-container adsbox">
-        ESPACIO PARA ANUNCIO 2
-    </div>
+    <div class="ad-container adsbox"></div>
 
     <script type="module">
         import { db, ref, get, update, increment } from './firebase-config.js';
 
-        const REWARD_AMOUNT = 0.005; // Ajusta el pago real por vista aquí
+        const REWARD_AMOUNT = 0.005; 
         let targetUrl = "";
         let linkOwnerId = "";
         let isValidated = false;
@@ -83,7 +89,8 @@
             const linkId = urlParams.get('l');
             
             if (!linkId) {
-                document.body.innerHTML = "<h2 style='color:red;'>Enlace Inválido</h2>";
+                document.getElementById('linkNameDisplay').innerText = "Enlace Inválido";
+                document.getElementById('timer').innerText = "X";
                 return;
             }
 
@@ -93,18 +100,23 @@
                     const data = linkSnap.val();
                     targetUrl = data.target;
                     linkOwnerId = data.owner;
-                    checkAdBlock(); // Solo iniciar si el link existe
+                    
+                    document.getElementById('linkNameDisplay').innerHTML = `<i class='bx bx-file'></i> ${data.name || 'Archivo Protegido'}`;
+                    
+                    checkAdBlock();
                 } else {
-                    document.body.innerHTML = "<h2 style='color:red;'>Enlace no encontrado o eliminado.</h2>";
+                    document.getElementById('linkNameDisplay').innerText = "El enlace no existe o fue eliminado.";
+                    document.getElementById('timer').innerText = "X";
                 }
             } catch (e) {
-                console.error(e);
+                console.error("Error cargando datos:", e);
+                document.getElementById('linkNameDisplay').innerText = "Error de conexión.";
             }
         }
 
         // 3. Temporizador y activación del botón
         function startTimer() {
-            let timeLeft = 15; // Segundos obligatorios
+            let timeLeft = 15; 
             const timerDisplay = document.getElementById('timer');
             const btn = document.getElementById('btnContinue');
 
@@ -115,7 +127,7 @@
                 if (timeLeft <= 0) {
                     clearInterval(interval);
                     timerDisplay.innerText = "0";
-                    btn.innerText = "CONTINUAR AL ARCHIVO";
+                    btn.innerHTML = "IR AL ARCHIVO <i class='bx bx-download'></i>";
                     btn.classList.add('active');
                     btn.removeAttribute('disabled');
                     isValidated = true;
@@ -128,29 +140,25 @@
             if (!isValidated) return;
             
             const btn = document.getElementById('btnContinue');
-            btn.innerText = "REDIRIGIENDO...";
+            btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> REDIRIGIENDO...";
             btn.classList.remove('active');
 
             try {
-                const updates = {};
-                // Sumar visita al link
                 const urlParams = new URLSearchParams(window.location.search);
-                updates[`monetized_links/${urlParams.get('l')}/views`] = increment(1);
+                const linkId = urlParams.get('l');
                 
-                // Sumar saldo al dueño (ADVERTENCIA: Para producción masiva, esto debe ir en backend)
+                const updates = {};
+                updates[`monetized_links/${linkId}/views`] = increment(1);
                 updates[`users/${linkOwnerId}/balance`] = increment(REWARD_AMOUNT);
 
                 await update(ref(db), updates);
-                
-                // Redirigir al archivo
                 window.location.href = targetUrl;
             } catch (e) {
                 console.error("Error validando click:", e);
-                window.location.href = targetUrl; // Redirige igual para no penalizar al visitante
+                window.location.href = targetUrl; 
             }
         });
 
-        // Iniciar flujo
         loadLinkData();
     </script>
 </body>
