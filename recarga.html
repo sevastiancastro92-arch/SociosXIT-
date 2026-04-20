@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recargas - SociosXIT</title>
+    <title>Recargas y Monetización - LUCK XIT OFC</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* =========================================
@@ -15,7 +15,6 @@
         
         body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
-        /* 🚨 SOLUCIÓN A LOS CLICS: pointer-events: none hace que el fondo no estorbe */
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
         ::-webkit-scrollbar { width: 6px; }
@@ -52,12 +51,12 @@
         .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
         /* =========================================
-           3. TABS (PESTAÑAS) Y CONTENEDOR
+           3. TABS Y CONTENEDOR
            ========================================= */
         .tabs-container {
             display: flex; gap: 10px; width: 95%; max-width: 600px;
             margin: 90px auto 20px auto; overflow-x: auto; padding-bottom: 5px;
-            position: relative; z-index: 10; /* Evita que el fondo bloquee los clics */
+            position: relative; z-index: 10;
         }
         .tabs-container::-webkit-scrollbar { display: none; }
         
@@ -75,22 +74,22 @@
         .main-container { width: 95%; max-width: 600px; position: relative; z-index: 10; animation: fadeIn 0.5s ease; padding-bottom: 40px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* PASO 1: SELECTOR (NUEVA RECARGA) */
+        /* TARJETAS DE INTERFAZ */
         .card-setup { background: var(--glass-bg); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 20px rgba(0,0,0,0.5); text-align: center; }
-        .setup-title { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 20px; color: #fff; }
+        .setup-title { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 20px; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .input-box { margin-bottom: 20px; text-align: left; }
         .input-box label { display: block; font-size: 0.75rem; color: #aaa; font-family: 'Orbitron'; margin-bottom: 8px; letter-spacing: 1px; }
         .input-box select, .input-box input { width: 100%; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: white; outline: none; font-size: 1.2rem; font-family: 'Orbitron'; transition: 0.3s; text-align: center; }
         .input-box select:focus, .input-box input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,243,255,0.2); }
         .rate-info { font-size: 1.2rem; color: var(--neon-cyan); font-family: 'Orbitron'; margin-bottom: 20px; display: block; text-shadow: 0 0 5px rgba(0,243,255,0.5); }
-        .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan)); border: none; border-radius: 12px; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer; font-family: 'Orbitron'; letter-spacing: 1px; display: flex; justify-content: center; gap: 8px; transition: 0.3s; }
+        .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan)); border: none; border-radius: 12px; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer; font-family: 'Orbitron'; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; }
         .btn-primary:hover { box-shadow: 0 0 20px var(--neon-cyan); transform: scale(1.02); }
 
-        /* HISTORIAL DE RECARGAS */
+        /* HISTORIAL */
         .history-list { display: flex; flex-direction: column; gap: 20px; }
         .history-card { background: #0f111a; border-radius: 15px; border: 1px solid #1e2230; padding: 20px; position: relative; font-family: 'Poppins', sans-serif; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .hc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .hc-id { font-weight: 900; font-family: 'Orbitron', sans-serif; color: #fff; font-size: 1.1rem; }
+        .hc-id { font-weight: 900; font-family: 'Orbitron', sans-serif; color: #fff; font-size: 1.1rem; display: flex; align-items: center; gap: 5px;}
         .hc-date { font-size: 0.75rem; color: #666; margin-bottom: 15px; }
 
         .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
@@ -124,7 +123,7 @@
 
     <div id="globalLoader">
         <div class="spinner"></div>
-        <p id="loaderText" style="font-family:'Orbitron'; letter-spacing:1px; color: var(--neon-cyan);">ENVIANDO COMPROBANTE...</p>
+        <p id="loaderText" style="font-family:'Orbitron'; letter-spacing:1px; color: var(--neon-cyan);">PROCESANDO...</p>
     </div>
 
     <div class="top-bar">
@@ -141,7 +140,7 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        <div class="sidebar-header"><h2>LUCK XIT OFC</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
         <div class="sidebar-menu">
             <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home'></i> Inicio</a>
             <a href="perfil.html" class="sidebar-item"><i class='bx bx-user'></i> Mi Perfil</a>
@@ -158,12 +157,13 @@
 
     <div class="tabs-container">
         <button class="tab-btn active" id="tabNew" onclick="switchTab('new')"><i class='bx bx-plus'></i> Nueva recarga</button>
-        <button class="tab-btn" id="tabHistory" onclick="switchTab('history')"><i class='bx bx-history'></i> Historial de Recargas</button>
+        <button class="tab-btn" id="tabHistory" onclick="switchTab('history')"><i class='bx bx-history'></i> Historial</button>
+        <button class="tab-btn" id="tabAds" onclick="switchTab('ads')"><i class='bx bx-link-alt'></i> Ganar Saldo</button>
     </div>
 
     <div class="main-container">
         <div class="card-setup" id="viewNew">
-            <h2 class="setup-title">GENERAR PEDIDO</h2>
+            <h2 class="setup-title"><i class='bx bx-money'></i> GENERAR PEDIDO</h2>
             <div class="input-box"><label>PAÍS DE PAGO</label><select id="countrySelect"></select></div>
             <div class="input-box"><label>MONTO A RECARGAR (USD)</label><input type="number" id="amountUSD" placeholder="0.00" step="0.5"></div>
             <span id="rateDisplay" class="rate-info">≈ 0 COP</span>
@@ -172,6 +172,22 @@
 
         <div class="history-list" id="viewHistory" style="display: none;">
             <p style="text-align: center; color: #888;">Cargando historial...</p>
+        </div>
+
+        <div class="card-setup" id="viewAds" style="display: none;">
+            <h2 class="setup-title"><i class='bx bx-share-alt'></i> MONETIZAR ENLACES</h2>
+            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5;">Convierte tus links de descarga en saldo. Por cada usuario que pase la publicidad de tu enlace generado, sumarás dinero a tu cuenta automáticamente.</p>
+            
+            <div class="input-box">
+                <label>URL DEL ARCHIVO ORIGINAL (Ej. Mega, Mediafire)</label>
+                <input type="url" id="targetUrl" placeholder="https://..." style="font-size: 1rem;">
+            </div>
+            <button class="btn-primary" onclick="generateAdLink()">GENERAR LINK <i class='bx bx-link'></i></button>
+            
+            <div class="result-box" id="resultContainer" style="display:none; margin-top: 20px; background: rgba(0, 243, 255, 0.05); border: 1px solid var(--neon-cyan); padding: 15px; border-radius: 12px;">
+                <span id="shortLinkDisplay" style="font-family: 'Orbitron'; color: var(--neon-cyan); word-break: break-all; display: block; margin-bottom: 15px; font-size: 0.9rem;"></span>
+                <button class="hc-btn hc-btn-upload" style="width: 100%;" onclick="copyShortLink()"><i class='bx bx-copy'></i> Copiar Enlace Generado</button>
+            </div>
         </div>
 
         <input type="file" id="globalReceiptInput" accept="image/*" style="display:none;">
@@ -199,12 +215,13 @@
                         document.getElementById('topUserDisplay').innerText = data.username;
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         if (data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                        if (data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
+                        if (data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'luck xit ofc') {
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
                     }
                 });
                 
                 await loadCountries();
-                loadHistory();
             } else { window.location.href = "login.html"; }
         });
 
@@ -218,7 +235,7 @@
                     select.innerHTML = '<option value="" disabled selected>Selecciona país...</option>';
                     Object.keys(countriesData).forEach(code => {
                         const opt = document.createElement('option');
-                        opt.value = code; opt.innerText = `${countriesData[code].flag} ${countriesData[code].name}`;
+                        opt.value = code; opt.innerText = `${countriesData[code].name}`;
                         select.appendChild(opt);
                     });
                 }
@@ -252,20 +269,25 @@
         inputUSD.addEventListener('input', updateCalculator);
         selectCountry.addEventListener('change', updateCalculator);
 
-        // 3. TABS MÚLTIPLES VINCULADOS GLOBALMENTE PARA QUE FUNCIONEN EN EL ONCLICK DEL HTML
+        // 3. TABS MÚLTIPLES VINCULADOS GLOBALMENTE
         window.switchTab = (tab) => {
             document.getElementById('tabNew').classList.remove('active');
             document.getElementById('tabHistory').classList.remove('active');
+            document.getElementById('tabAds').classList.remove('active');
             document.getElementById('viewNew').style.display = 'none';
             document.getElementById('viewHistory').style.display = 'none';
+            document.getElementById('viewAds').style.display = 'none';
 
             if(tab === 'new') {
                 document.getElementById('tabNew').classList.add('active');
                 document.getElementById('viewNew').style.display = 'block';
-            } else {
+            } else if(tab === 'history') {
                 document.getElementById('tabHistory').classList.add('active');
                 document.getElementById('viewHistory').style.display = 'flex';
                 loadHistory();
+            } else if(tab === 'ads') {
+                document.getElementById('tabAds').classList.add('active');
+                document.getElementById('viewAds').style.display = 'block';
             }
         };
 
@@ -325,7 +347,7 @@
                     let badgeHtml = ""; let actionsHtml = "";
 
                     if(rec.status === 'waiting_proof') {
-                        badgeHtml = `<div class="status-badge status-waiting">⏳ Pagado (Falta Comprobante)</div>`;
+                        badgeHtml = `<div class="status-badge status-waiting"><i class='bx bx-time'></i> Pagado (Falta Comprobante)</div>`;
                         actionsHtml = `
                             <div class="hc-btn-group">
                                 <button class="hc-btn hc-btn-copy" onclick="copyOrder('${rec.countryCode}', '${rec.amountLocal}', '${shortId}')"><i class='bx bx-copy'></i> Copiar Orden</button>
@@ -334,19 +356,19 @@
                             <button class="hc-btn hc-btn-upload" onclick="triggerUpload('${rec.id}')"><i class='bx bx-cloud-upload'></i> Subir Comprobante</button>
                         `;
                     } else if (rec.status === 'pending_approval') {
-                        badgeHtml = `<div class="status-badge status-pending">⏳ En revisión por Admin</div>`;
+                        badgeHtml = `<div class="status-badge status-pending"><i class='bx bx-search-alt'></i> En revisión por Admin</div>`;
                         actionsHtml = `<button class="hc-btn" style="background:#333; color:#aaa; cursor:not-allowed;"><i class='bx bx-time'></i> Comprobante en revisión...</button>`;
                     } else if (rec.status === 'approved') {
-                        badgeHtml = `<div class="status-badge status-approved">✅ Completada</div>`;
+                        badgeHtml = `<div class="status-badge status-approved"><i class='bx bx-check-circle'></i> Completada</div>`;
                         actionsHtml = `<button class="hc-btn hc-btn-success"><i class='bx bx-check-double'></i> Saldo agregado exitosamente</button>`;
                     } else if (rec.status === 'rejected') {
-                        badgeHtml = `<div class="status-badge status-rejected">❌ Rechazada</div>`;
+                        badgeHtml = `<div class="status-badge status-rejected"><i class='bx bx-x-circle'></i> Rechazada</div>`;
                         actionsHtml = `<button class="hc-btn hc-btn-error"><i class='bx bx-x'></i> Comprobante rechazado</button>`;
                     }
 
                     container.innerHTML += `
                         <div class="history-card">
-                            <div class="hc-header"><span class="hc-id">💰 Recarga #${shortId}</span>${badgeHtml}</div>
+                            <div class="hc-header"><span class="hc-id"><i class='bx bx-wallet'></i> Recarga #${shortId}</span>${badgeHtml}</div>
                             <div class="hc-date">${dateStr}</div>
                             <div class="hc-grid">
                                 <div class="hc-item"><label>País:</label><span>${rec.countryName}</span></div>
@@ -368,9 +390,9 @@
         // 6. ACCIONES DE LAS TARJETAS PENDIENTES
         window.copyOrder = (cCode, localAmt, shortId) => {
             const pais = countriesData[cCode];
-            let text = `📌 ORDEN #${shortId}\n💵 Monto a transferir: ${localAmt}\n\n💳 CUENTAS HABILITADAS:\n`;
+            let text = `ORDEN #${shortId}\nMonto a transferir: ${localAmt}\n\nCUENTAS HABILITADAS:\n`;
             if(pais && pais.paymentMethods) {
-                pais.paymentMethods.forEach(m => { text += `🏦 ${m.bankName}: ${m.accountNumber}\n`; });
+                pais.paymentMethods.forEach(m => { text += `Banco ${m.bankName}: ${m.accountNumber}\n`; });
             } else { text += "Habla con el admin para los métodos de pago."; }
             navigator.clipboard.writeText(text);
             alert("¡Datos de banco copiados!");
@@ -378,7 +400,7 @@
 
         window.shareWa = (localAmt, shortId) => {
             const msg = encodeURIComponent(`Hola Admin, acabo de crear la Recarga #${shortId} por ${localAmt}. ¿Me confirmas métodos de pago para enviar comprobante?`);
-            window.open(`https://wa.me/573142369516?text=${msg}`);
+            window.open(`https://wa.me/?text=${msg}`);
         };
 
         // 7. SISTEMA DE SUBIDA A IMGBB
@@ -423,7 +445,7 @@
                     });
 
                     document.getElementById('globalLoader').style.display = 'none';
-                    alert("✅ ¡Comprobante enviado al Admin! En breve será revisado.");
+                    alert("¡Comprobante enviado al Admin! En breve será revisado.");
                     loadHistory(); 
                 } else {
                     throw new Error("Fallo la subida a ImgBB");
@@ -431,14 +453,54 @@
             } catch (err) {
                 console.error(err);
                 document.getElementById('globalLoader').style.display = 'none';
-                alert("❌ Ocurrió un error. Intenta enviarlo por WhatsApp.");
+                alert("Ocurrió un error. Intenta enviarlo manualmente.");
             }
         });
+
+        // 8. LÓGICA DE GENERADOR DE ENLACES CON ANUNCIOS
+        window.generateAdLink = async () => {
+            const urlInput = document.getElementById('targetUrl').value;
+            if (!urlInput.startsWith('http')) return alert("Ingresa una URL válida (Ej: https://...).");
+
+            document.getElementById('globalLoader').style.display = 'flex';
+            document.getElementById('loaderText').innerText = "GENERANDO...";
+
+            try {
+                const linksRef = ref(db, 'monetized_links');
+                const newLinkRef = push(linksRef);
+                const linkId = newLinkRef.key;
+
+                await set(newLinkRef, {
+                    owner: currentUser.uid,
+                    target: urlInput,
+                    views: 0,
+                    createdAt: Date.now()
+                });
+
+                const currentDomain = window.location.origin;
+                const finalUrl = `${currentDomain}/ads.html?l=${linkId}`;
+                
+                document.getElementById('shortLinkDisplay').innerText = finalUrl;
+                document.getElementById('resultContainer').style.display = 'block';
+                document.getElementById('targetUrl').value = '';
+                document.getElementById('globalLoader').style.display = 'none';
+
+            } catch (error) {
+                document.getElementById('globalLoader').style.display = 'none';
+                alert("Error al generar enlace: " + error.message);
+            }
+        };
+
+        window.copyShortLink = () => {
+            const text = document.getElementById('shortLinkDisplay').innerText;
+            navigator.clipboard.writeText(text);
+            alert("¡Enlace copiado al portapapeles!");
+        };
 
     </script>
 
     <script>
-        // CONTROLES DE LA INTERFAZ (FUERA DEL MÓDULO PARA QUE FUNCIONEN EN EL HTML)
+        // CONTROLES DE LA INTERFAZ
         const sidebar = document.getElementById('sidebar'); 
         const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
