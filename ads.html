@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desbloqueando Enlace... - LUCK XIT OFC</title>
+    <title>Artículo y Descarga - LUCK XIT OFC</title>
     
     <script async src="https://pl29214375.profitablecpmratenetwork.com/db/b0/5e/dbb05ec9f27434170d1aa9bc6d35f7b9.js"></script>
 
@@ -64,7 +64,7 @@
         <i class='bx bx-shield-x'></i>
         <h1>ADBLOCK DETECTADO</h1>
         <p>Para proteger nuestros servidores y acceder al archivo, por favor desactiva tu bloqueador de anuncios (AdBlock/Brave).</p>
-        <button class="btn-reload" onclick="location.reload()">Ya lo desactivé, REINTENTAR</button>
+        <button class="btn-reload" onclick="location.reload()">Ya lo desactivé, CONTINUAR</button>
     </div>
 
     <div class="top-header">
@@ -101,7 +101,7 @@
                 </div>
 
                 <h3>La importancia de la paciencia</h3>
-                <p>Sabemos que quieres tu archivo de inmediato, pero estos breves pasos de 10 segundos nos ayudan a mantener los servidores en línea. Asegúrate de no tener activado ningún bloqueador de anuncios (AdBlock), ya que el sistema congelará el temporizador por seguridad.</p>
+                <p>Sabemos que quieres tu archivo de inmediato, pero estos breves pasos nos ayudan a mantener los servidores en línea. Asegúrate de no tener activado ningún bloqueador de anuncios (AdBlock), ya que el sistema congelará el temporizador por seguridad.</p>
                 
                 <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Technology" class="article-image">
             </div>
@@ -131,10 +131,9 @@
                 </div>
 
                 <h3>¿Por qué usamos este sistema?</h3>
-                <p>Los enlaces directos suelen ser eliminados rápidamente por las plataformas de alojamiento como Mega o Mediafire debido al exceso de tráfico automatizado. Al usar este puente de 3 pasos, disfrazamos el tráfico y mantenemos vivos los aportes de LUCK XIT OFC por mucho más tiempo.</p>
+                <p>Los enlaces directos suelen ser eliminados rápidamente por las plataformas de alojamiento como Mega o Mediafire. Al usar este puente de 3 pasos, disfrazamos el tráfico y mantenemos vivos los aportes de LUCK XIT OFC por mucho más tiempo.</p>
                 
                 <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Abstract Tech" class="article-image">
-                <p>Sigue bajando para encontrar el botón del paso 2. Ya falta muy poco para llegar al destino final.</p>
             </div>
         </div>
 
@@ -145,7 +144,7 @@
             <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Coding" class="article-image">
             
             <div class="article-text">
-                <p>¡Felicidades! Has llegado al final del proceso. El token de seguridad ha sido validado con éxito y la redirección hacia tu archivo alojado (Mega, Mediafire, Drive, etc.) ya ha sido desbloqueada en nuestros servidores.</p>
+                <p>¡Felicidades! Has llegado al final del proceso. El token de seguridad ha sido validado con éxito y la redirección hacia tu archivo alojado ya ha sido desbloqueada en nuestros servidores.</p>
                 
                 <div class="ad-container adsbox">
                     <script type="text/javascript">
@@ -160,7 +159,7 @@
                         <li>Baja hasta el final de la pantalla.</li>
                         <li>Espera los últimos 10 segundos.</li>
                         <li>El botón cambiará a color verde y dirá <strong>"OBTENER ARCHIVO"</strong>.</li>
-                        <li>Al hacer clic, serás llevado directamente a la página de descarga real. ¡Gracias por usar nuestro sistema!</li>
+                        <li>Al hacer clic, serás llevado directamente a la página de descarga real.</li>
                     </ul>
                 </div>
 
@@ -194,49 +193,61 @@
         let currentViews = 0;
         let currentInterval = null;
 
-        // Mostrar el artículo correspondiente al paso actual
         function showArticleStep(step) {
             document.getElementById('article-step-1').classList.remove('active');
             document.getElementById('article-step-2').classList.remove('active');
             document.getElementById('article-step-3').classList.remove('active');
-            
             if(step <= 3) {
                 document.getElementById(`article-step-${step}`).classList.add('active');
             }
         }
 
-        // DETECTOR DE ADBLOCK NIVEL DIOS
+        // DETECTOR DE ADBLOCK REFORZADO (Red + CSS)
         function checkAdBlock(callback) {
-            let adBlockDetected = false;
+            let isBlocked = false;
 
-            const baitScript = document.createElement('script');
-            baitScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
-            baitScript.async = true;
-            baitScript.onerror = () => { adBlockDetected = true; showBlocker(); };
-            document.head.appendChild(baitScript);
+            // TRAMPA 1: Verificación de Red (Detecta Brave y extensiones estrictas)
+            const checkNetwork = async () => {
+                try {
+                    await fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
+                        method: 'HEAD',
+                        mode: 'no-cors',
+                        cache: 'no-store'
+                    });
+                } catch (error) {
+                    isBlocked = true; // Si da error, el AdBlock cortó la conexión
+                }
+            };
 
-            const baitDiv = document.createElement('div');
-            baitDiv.className = 'adBanner doubleclick sponsor post-ads adsbox';
-            baitDiv.style.height = '1px'; baitDiv.style.width = '1px';
-            baitDiv.style.position = 'absolute'; baitDiv.style.left = '-9999px';
-            document.body.appendChild(baitDiv);
+            // TRAMPA 2: Verificación Visual (Clases prohibidas)
+            const checkDOM = () => {
+                const bait = document.createElement('div');
+                bait.innerHTML = '&nbsp;';
+                bait.className = 'pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads text-ad-links ad-text adSense adBlock adContent adBanner ads-google';
+                bait.style.width = '10px';
+                bait.style.height = '10px';
+                bait.style.position = 'absolute';
+                bait.style.left = '-9999px';
+                document.body.appendChild(bait);
 
-            setTimeout(() => {
-                if (!adBlockDetected) {
-                    if (baitDiv.offsetHeight === 0 || window.getComputedStyle(baitDiv).display === 'none') {
-                        adBlockDetected = true; showBlocker();
+                setTimeout(() => {
+                    const styles = window.getComputedStyle(bait);
+                    if (bait.offsetHeight === 0 || bait.clientHeight === 0 || styles.display === 'none' || styles.visibility === 'hidden' || styles.opacity === '0') {
+                        isBlocked = true;
+                    }
+                    bait.remove();
+
+                    if (isBlocked) {
+                        if (currentInterval) clearInterval(currentInterval);
+                        document.getElementById('adblockScreen').style.display = 'flex';
+                        document.body.style.overflow = 'hidden'; 
                     } else {
                         if (callback) callback();
                     }
-                }
-                baitDiv.remove();
-            }, 600);
+                }, 500);
+            };
 
-            function showBlocker() {
-                if (currentInterval) clearInterval(currentInterval);
-                document.getElementById('adblockScreen').style.display = 'flex';
-                document.body.style.overflow = 'hidden'; 
-            }
+            checkNetwork().then(checkDOM);
         }
 
         async function loadLinkData() {
@@ -277,7 +288,7 @@
             
             btn.disabled = true;
             btn.classList.remove('active');
-            btn.innerHTML = `<i class='bx bx-loader-alt bx-spin'></i> LEE LAS INSTRUCCIONES...`;
+            btn.innerHTML = `<i class='bx bx-loader-alt bx-spin'></i> LEYENDO ARTÍCULO...`;
 
             if (currentInterval) clearInterval(currentInterval);
 
@@ -304,7 +315,6 @@
         document.getElementById('btnContinue').addEventListener('click', () => {
             if (!isValidated) return;
             
-            // DIRECT LINK ADSTERRA (Abre la publicidad en pestaña nueva)
             window.open("https://www.profitablecpmratenetwork.com/fih9wq1r?key=fd29c0187465b25cfc9e9a49133c1a53", "_blank");
 
             checkAdBlock(async () => {
@@ -312,7 +322,6 @@
                     currentStep++;
                     isValidated = false;
                     
-                    // Cambiamos el artículo visible y subimos la pantalla
                     showArticleStep(currentStep);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     
@@ -320,7 +329,6 @@
                     return;
                 }
 
-                // FINAL: Redirección y Pago a la base de datos
                 const btn = document.getElementById('btnContinue');
                 btn.innerHTML = "<i class='bx bx-cloud-download bx-fade-down'></i> PREPARANDO DESCARGA...";
                 btn.classList.remove('active');
