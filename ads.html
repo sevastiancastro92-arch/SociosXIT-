@@ -13,12 +13,10 @@
         * { box-sizing: border-box; }
         body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 20px 0; display: flex; flex-direction: column; align-items: center; min-height: 100dvh; }
         
-        /* CABECERA MINIMALISTA */
         .top-header { width: 95%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(0, 243, 255, 0.2); margin-bottom: 20px; }
         .header-title { font-family: 'Orbitron'; color: #00f3ff; font-size: 1.2rem; margin: 0; text-shadow: 0 0 10px rgba(0,243,255,0.3); display: flex; align-items: center; gap: 8px; }
         .file-badge { background: rgba(0,0,0,0.8); border: 1px solid var(--neon-cyan); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; color: #fff; font-family: 'Orbitron'; max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
-        /* CONTENEDOR DEL BLOG / ARTÍCULOS */
         .blog-container { width: 95%; max-width: 800px; background: rgba(15, 0, 25, 0.6); padding: 30px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: left; margin-bottom: 30px; }
         
         .article-step { display: none; animation: fadeIn 0.5s; }
@@ -31,13 +29,11 @@
         .article-text { color: #ccc; line-height: 1.8; font-size: 1rem; margin-bottom: 20px; text-align: justify; }
         .article-text h3 { color: #00f3ff; font-family: 'Orbitron'; margin-top: 25px; margin-bottom: 15px; font-size: 1.3rem; }
 
-        /* CAJAS DE INSTRUCCIONES PARA EL USUARIO */
         .tutorial-box { background: rgba(0, 255, 204, 0.05); border-left: 4px solid var(--neon-green); padding: 15px; margin: 20px 0; border-radius: 0 10px 10px 0; }
         .tutorial-box h4 { color: var(--neon-green); margin: 0 0 10px 0; font-family: 'Orbitron'; display: flex; align-items: center; gap: 8px; }
         .tutorial-box ul { margin: 0; padding-left: 20px; color: #ddd; }
         .tutorial-box li { margin-bottom: 8px; }
 
-        /* SECCIÓN DEL TEMPORIZADOR AL FINAL DEL ARTÍCULO */
         .action-section { background: rgba(0,0,0,0.8); padding: 30px 20px; border-radius: 15px; border: 1px dashed var(--neon-cyan); text-align: center; margin-top: 30px; }
         .step-indicator { font-family: 'Orbitron'; color: #00ffcc; font-size: 1.1rem; margin-bottom: 15px; font-weight: bold; display: inline-block; background: rgba(0, 255, 204, 0.1); padding: 5px 15px; border-radius: 10px; }
         .timer-box { font-family: 'Orbitron'; font-size: 4rem; color: #00f3ff; text-shadow: 0 0 15px rgba(0,243,255,0.5); margin: 10px 0; }
@@ -47,10 +43,10 @@
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* BANNERS VISUALES 468x60 - Adaptado para Móviles */
-        .ad-container { width: 100%; max-width: 468px; min-height: 60px; margin: 15px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 8px; overflow-x: auto; overflow-y: hidden; }
+        /* Estilos combinados para los banners (evita que el grande rompa la pantalla del celular) */
+        .ad-container-small { width: 100%; max-width: 320px; min-height: 50px; margin: 15px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 8px; }
+        .ad-container-large { width: 100%; max-width: 468px; min-height: 60px; margin: 15px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 8px; overflow-x: auto; overflow-y: hidden; }
 
-        /* BLOQUEO TOTAL POR ADBLOCK */
         .adblock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #020005; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .adblock-overlay i { font-size: 5rem; color: #ff073a; margin-bottom: 20px; text-shadow: 0 0 20px #ff073a; }
         .adblock-overlay h1 { font-family: 'Orbitron'; color: white; margin-bottom: 10px; }
@@ -77,34 +73,27 @@
         <div class="article-step active" id="article-step-1">
             <h2 class="article-title">Guía Rápida: Cómo obtener tu archivo de forma segura</h2>
             <div class="article-meta"><span><i class='bx bx-info-circle'></i> Instrucciones</span> <span><i class='bx bx-time'></i> Paso 1 de 3</span></div>
-            
             <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cyber Security" class="article-image">
-            
             <div class="article-text">
-                <p>Estás a punto de acceder al contenido solicitado. Nuestro sistema de enlaces protegidos garantiza que los archivos estén libres de software malicioso y que los creadores de contenido reciban el apoyo necesario para seguir compartiendo material de calidad.</p>
-                
+                <p>Estás a punto de acceder al contenido solicitado. Nuestro sistema de enlaces protegidos garantiza que los archivos estén libres de software malicioso.</p>
                 <div class="tutorial-box">
                     <h4><i class='bx bx-check-circle'></i> ¿Cómo avanzar al siguiente paso?</h4>
                     <ul>
-                        <li>Desplázate hasta el <strong>final de esta página</strong>.</li>
-                        <li>Espera a que el temporizador azul llegue a <strong>cero (0)</strong>.</li>
-                        <li>Haz clic en el botón que dice <strong>"CONTINUAR"</strong>.</li>
-                        <li><strong>IMPORTANTE:</strong> Si al hacer clic se abre una pestaña nueva con publicidad, <strong>simplemente ciérrala</strong>, regresa a esta pestaña original y vuelve a hacer clic.</li>
+                        <li>Desplázate hasta el final de esta página.</li>
+                        <li>Espera a que el temporizador llegue a cero (0).</li>
+                        <li>Si se abre una pestaña nueva, ciérrala y regresa aquí.</li>
                     </ul>
                 </div>
 
                 <h3>¿Por qué es tan popular?</h3>
-                <div class="ad-container adsbox">
+                <div class="ad-container-small adsbox">
                     <script type="text/javascript">
-                        atOptions = { 'key' : '3cbb8200c79f3518e3eed391c2c7cb90', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+                        atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
                     </script>
-                    <script type="text/javascript" src="https://www.highperformanceformat.com/3cbb8200c79f3518e3eed391c2c7cb90/invoke.js"></script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
                 </div>
 
-                <p>Abunda en alimentos de origen vegetal, como verduras, frutas, granos enteros, legumbres y frutos secos. El aceite de oliva extra virgen es la principal fuente de grasa, reemplazando a la mantequilla y otros aceites procesados. Además, promueve el consumo moderado de pescado y aves, dejando las carnes rojas para ocasiones especiales.</p>
-                
-                <p>Sabemos que quieres tu archivo de inmediato, pero estos breves pasos nos ayudan a mantener los servidores en línea. Asegúrate de no tener activado ningún bloqueador de anuncios (AdBlock), ya que el sistema congelará el temporizador por seguridad.</p>
-                
+                <p>Abunda en alimentos de origen vegetal, como verduras, frutas, granos enteros, legumbres y frutos secos. El aceite de oliva extra virgen es la principal fuente de grasa.</p>
                 <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Technology" class="article-image">
             </div>
         </div>
@@ -112,39 +101,34 @@
         <div class="article-step" id="article-step-2">
             <h2 class="article-title">Paso 2: Verificación y Cifrado de Conexión</h2>
             <div class="article-meta"><span><i class='bx bx-lock'></i> Seguridad</span> <span><i class='bx bx-time'></i> Paso 2 de 3</span></div>
-            
             <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Matrix Code" class="article-image">
-            
             <div class="article-text">
-                <p>¡Excelente! Has superado el primer filtro. En este momento, nuestros servidores están generando un token único para tu dirección IP. Esto evita que los bots saturen nuestros enlaces de descarga y garantiza que el archivo siempre esté disponible.</p>
+                <p>Nuestros servidores están generando un token único para tu dirección IP. Esto evita que los bots saturen nuestros enlaces de descarga.</p>
                 
                 <h3>Tostadas de Aguacate y Huevo</h3>
-                <div class="ad-container adsbox">
+                <div class="ad-container-small adsbox">
                     <script type="text/javascript">
-                        atOptions = { 'key' : '3cbb8200c79f3518e3eed391c2c7cb90', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+                        atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
                     </script>
-                    <script type="text/javascript" src="https://www.highperformanceformat.com/3cbb8200c79f3518e3eed391c2c7cb90/invoke.js"></script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
                 </div>
                 
-                <p>Una rebanada de pan integral tostado, medio aguacate triturado con unas gotas de limón, sal y pimienta. Coronamos con un huevo escalfado o a la plancha. Es la combinación perfecta de carbohidratos complejos, grasas saludables y proteínas de alto valor biológico.</p>
+                <p>Una rebanada de pan integral tostado, medio aguacate triturado con unas gotas de limón. Es la combinación perfecta de carbohidratos complejos.</p>
 
                 <div class="tutorial-box">
                     <h4><i class='bx bx-error'></i> Atención a las ventanas emergentes</h4>
-                    <p style="margin: 0; color: #ddd; font-size: 0.95rem;">
-                        Es completamente normal que la plataforma abra anuncios en ventanas nuevas. <strong>No descargues nada de esas ventanas.</strong> Tu archivo real solo se entregará al completar el paso 3 en esta misma pantalla negra. Si se abre algo raro, ciérralo y vuelve aquí.
-                    </p>
+                    <p style="margin: 0; color: #ddd; font-size: 0.95rem;">Es normal que se abran anuncios. <strong>No descargues nada de esas ventanas.</strong> Tu archivo real está al final de esta página.</p>
                 </div>
 
                 <h3>Bowl de Avena con Frutos Rojos</h3>
-                <div class="ad-container adsbox">
+                <div class="ad-container-small adsbox">
                     <script type="text/javascript">
-                        atOptions = { 'key' : '3cbb8200c79f3518e3eed391c2c7cb90', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+                        atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
                     </script>
-                    <script type="text/javascript" src="https://www.highperformanceformat.com/3cbb8200c79f3518e3eed391c2c7cb90/invoke.js"></script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
                 </div>
                 
-                <p>Prepara avena en hojuelas cocida con leche de almendras. Añade un puñado de arándanos, fresas picadas y una cucharada de semillas de chía. Este desayuno está repleto de antioxidantes y fibra, lo que te mantendrá saciado durante horas y mejorará tu digestión.</p>
-                
+                <p>Avena en hojuelas cocida con leche de almendras. Añade arándanos, fresas picadas y semillas de chía.</p>
                 <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Abstract Tech" class="article-image">
             </div>
         </div>
@@ -152,32 +136,27 @@
         <div class="article-step" id="article-step-3">
             <h2 class="article-title">Último Paso: Tu enlace está listo</h2>
             <div class="article-meta"><span><i class='bx bx-check-double'></i> Finalizado</span> <span><i class='bx bx-time'></i> Paso 3 de 3</span></div>
-            
             <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Coding" class="article-image">
-            
             <div class="article-text">
-                <p>¡Felicidades! Has llegado al final del proceso. El token de seguridad ha sido validado con éxito y la redirección hacia tu archivo alojado ya ha sido desbloqueada en nuestros servidores.</p>
+                <p>El token de seguridad ha sido validado con éxito y la redirección hacia tu archivo alojado ya ha sido desbloqueada en nuestros servidores.</p>
                 
-                <h3>¿Realmente funciona para bajar de peso?</h3>
-                <div class="ad-container adsbox">
+                <h3>¿Funciona el ayuno intermitente?</h3>
+                <div class="ad-container-small adsbox">
                     <script type="text/javascript">
-                        atOptions = { 'key' : '3cbb8200c79f3518e3eed391c2c7cb90', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+                        atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
                     </script>
-                    <script type="text/javascript" src="https://www.highperformanceformat.com/3cbb8200c79f3518e3eed391c2c7cb90/invoke.js"></script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
                 </div>
 
-                <p>La respuesta corta es sí. Al restringir tu ventana de alimentación, naturalmente tiendes a consumir menos calorías totales. Además, los períodos de ayuno reducen los niveles de insulina, lo que facilita que el cuerpo utilice la grasa almacenada como energía.</p>
-
+                <p>Al restringir tu ventana de alimentación, naturalmente tiendes a consumir menos calorías totales.</p>
                 <div class="tutorial-box">
                     <h4><i class='bx bx-download'></i> Instrucción Final</h4>
                     <ul>
                         <li>Baja hasta el final de la pantalla.</li>
                         <li>Espera los últimos 10 segundos.</li>
-                        <li>El botón cambiará a color verde y dirá <strong>"OBTENER ARCHIVO"</strong>.</li>
-                        <li>Al hacer clic, serás llevado directamente a la página de descarga real.</li>
+                        <li>Haz clic en <strong>"OBTENER ARCHIVO"</strong>.</li>
                     </ul>
                 </div>
-
                 <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Data Transfer" class="article-image">
             </div>
         </div>
@@ -185,7 +164,7 @@
         <div class="action-section">
             <div class="step-indicator" id="stepDisplay">PASO 1 DE 3</div>
             
-            <div class="ad-container adsbox">
+            <div class="ad-container-large adsbox">
                 <script type="text/javascript">
                     atOptions = { 'key' : '3cbb8200c79f3518e3eed391c2c7cb90', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
                 </script>
@@ -193,9 +172,7 @@
             </div>
 
             <div class="timer-box" id="timer">10</div>
-            
             <p style="color: #888; font-size: 0.85rem; margin-bottom: 5px;">Por favor, desplázate y lee las instrucciones arriba.</p>
-            
             <button class="btn-continue" id="btnContinue" disabled><i class='bx bx-loader-alt bx-spin'></i> ESPERANDO...</button>
         </div>
 
@@ -224,16 +201,13 @@
             }
         }
 
-        // DETECTOR DE ADBLOCK REFORZADO (Red + CSS)
         function checkAdBlock(callback) {
             let isBlocked = false;
 
             const checkNetwork = async () => {
                 try {
                     await fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
-                        method: 'HEAD',
-                        mode: 'no-cors',
-                        cache: 'no-store'
+                        method: 'HEAD', mode: 'no-cors', cache: 'no-store'
                     });
                 } catch (error) {
                     isBlocked = true; 
@@ -244,10 +218,8 @@
                 const bait = document.createElement('div');
                 bait.innerHTML = '&nbsp;';
                 bait.className = 'pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads text-ad-links ad-text adSense adBlock adContent adBanner ads-google';
-                bait.style.width = '10px';
-                bait.style.height = '10px';
-                bait.style.position = 'absolute';
-                bait.style.left = '-9999px';
+                bait.style.width = '10px'; bait.style.height = '10px';
+                bait.style.position = 'absolute'; bait.style.left = '-9999px';
                 document.body.appendChild(bait);
 
                 setTimeout(() => {
@@ -341,10 +313,8 @@
                 if (currentStep < TOTAL_STEPS) {
                     currentStep++;
                     isValidated = false;
-                    
                     showArticleStep(currentStep);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                    
                     startTimer();
                     return;
                 }
