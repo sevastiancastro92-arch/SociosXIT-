@@ -40,7 +40,7 @@
     <div class="adblock-overlay" id="adblockScreen" style="display: none;">
         <i class='bx bx-shield-x'></i>
         <h1>ADBLOCK DETECTADO</h1>
-        <p>Detectamos que usas un bloqueador de anuncios. Para proteger el trabajo de nuestros socios y acceder al archivo, debes desactivarlo.</p>
+        <p>Detectamos que usas un bloqueador de anuncios o el navegador Brave. Para proteger el trabajo de nuestros socios y acceder al archivo, debes desactivar la protección.</p>
         <button class="btn-reload" onclick="location.reload()">Ya lo desactivé, REINTENTAR</button>
     </div>
 
@@ -68,7 +68,6 @@
     <script type="module">
         import { db, ref, get, update } from './firebase-config.js';
 
-        // PAGO: 4.00 / 1000 = 0.004 USD por persona que complete los 3 pasos
         const REWARD_PER_COMPLETION = 0.004; 
         const SECONDS_PER_STEP = 10; 
         const TOTAL_STEPS = 3;
@@ -80,28 +79,49 @@
         let currentViews = 0;
         let currentInterval = null;
 
-        // DETECTOR DE ADBLOCK REFORZADO (Ejecuta una función de callback si está limpio)
+        // DETECTOR DE ADBLOCK NIVEL DIOS (Trampa de Red + Trampa CSS)
         function checkAdBlock(callback) {
-            const testAd = document.createElement('div');
-            testAd.innerHTML = '&nbsp;';
-            testAd.className = 'adsbox ad-unit ad-zone ads-google publicidade';
-            testAd.style.position = 'absolute';
-            testAd.style.left = '-9999px';
-            document.body.appendChild(testAd);
-            
-            window.setTimeout(() => {
-                const isBlocked = (testAd.offsetHeight === 0 || window.getComputedStyle(testAd).display === 'none');
-                testAd.remove();
-                
-                if (isBlocked) {
-                    // Si detecta AdBlock, congela temporizadores y muestra pantalla roja
-                    if (currentInterval) clearInterval(currentInterval);
-                    document.getElementById('adblockScreen').style.display = 'flex';
-                } else {
-                    // Si todo está bien, continúa con el proceso
-                    if (callback) callback();
+            let adBlockDetected = false;
+
+            // Trampa 1: Petición de red fantasma. Todos los AdBlocks bloquean esto.
+            const baitScript = document.createElement('script');
+            baitScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+            baitScript.async = true;
+
+            baitScript.onerror = () => {
+                adBlockDetected = true;
+                showBlocker();
+            };
+
+            document.head.appendChild(baitScript);
+
+            // Trampa 2: Clases CSS prohibidas (Respaldo por si el AdBlock es básico)
+            const baitDiv = document.createElement('div');
+            baitDiv.className = 'adBanner doubleclick sponsor post-ads adsbox';
+            baitDiv.style.height = '1px';
+            baitDiv.style.width = '1px';
+            baitDiv.style.position = 'absolute';
+            baitDiv.style.left = '-9999px';
+            document.body.appendChild(baitDiv);
+
+            setTimeout(() => {
+                if (!adBlockDetected) {
+                    // Verificamos si el div fue ocultado por CSS
+                    if (baitDiv.offsetHeight === 0 || window.getComputedStyle(baitDiv).display === 'none') {
+                        adBlockDetected = true;
+                        showBlocker();
+                    } else {
+                        // Si sobrevive a ambas trampas, el usuario está limpio
+                        if (callback) callback();
+                    }
                 }
-            }, 400);
+                baitDiv.remove();
+            }, 600);
+
+            function showBlocker() {
+                if (currentInterval) clearInterval(currentInterval);
+                document.getElementById('adblockScreen').style.display = 'flex';
+            }
         }
 
         async function loadLinkData() {
