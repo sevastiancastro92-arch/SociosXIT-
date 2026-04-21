@@ -79,11 +79,9 @@
         let currentViews = 0;
         let currentInterval = null;
 
-        // DETECTOR DE ADBLOCK NIVEL DIOS (Trampa de Red + Trampa CSS)
         function checkAdBlock(callback) {
             let adBlockDetected = false;
 
-            // Trampa 1: Petición de red fantasma. Todos los AdBlocks bloquean esto.
             const baitScript = document.createElement('script');
             baitScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
             baitScript.async = true;
@@ -95,7 +93,6 @@
 
             document.head.appendChild(baitScript);
 
-            // Trampa 2: Clases CSS prohibidas (Respaldo por si el AdBlock es básico)
             const baitDiv = document.createElement('div');
             baitDiv.className = 'adBanner doubleclick sponsor post-ads adsbox';
             baitDiv.style.height = '1px';
@@ -106,12 +103,10 @@
 
             setTimeout(() => {
                 if (!adBlockDetected) {
-                    // Verificamos si el div fue ocultado por CSS
                     if (baitDiv.offsetHeight === 0 || window.getComputedStyle(baitDiv).display === 'none') {
                         adBlockDetected = true;
                         showBlocker();
                     } else {
-                        // Si sobrevive a ambas trampas, el usuario está limpio
                         if (callback) callback();
                     }
                 }
@@ -143,7 +138,6 @@
                     
                     document.getElementById('linkNameDisplay').innerHTML = `<i class='bx bx-file'></i> ${data.name || 'Archivo Protegido'}`;
                     
-                    // Primera validación al entrar a la página
                     checkAdBlock(startTimer);
                 } else {
                     document.getElementById('linkNameDisplay').innerText = "El enlace no existe.";
@@ -190,7 +184,9 @@
         document.getElementById('btnContinue').addEventListener('click', () => {
             if (!isValidated) return;
             
-            // Re-validar AdBlock cada vez que hacen clic para avanzar de paso
+            // INYECCIÓN DEL ENLACE INTELIGENTE: Abre la publicidad en una pestaña nueva
+            window.open("https://www.profitablecpmratenetwork.com/fih9wq1r?key=fd29c0187465b25cfc9e9a49133c1a53", "_blank");
+
             checkAdBlock(async () => {
                 if (currentStep < TOTAL_STEPS) {
                     currentStep++;
@@ -200,7 +196,6 @@
                     return;
                 }
 
-                // FINAL: Pagar al socio y redirigir
                 const btn = document.getElementById('btnContinue');
                 btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> VALIDANDO...";
                 btn.classList.remove('active');
