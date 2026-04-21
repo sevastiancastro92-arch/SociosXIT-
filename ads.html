@@ -14,22 +14,30 @@
         body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100dvh; text-align: center; }
         
         .header-title { font-family: 'Orbitron'; color: #00f3ff; margin-bottom: 5px; font-size: 1.5rem; text-shadow: 0 0 10px rgba(0,243,255,0.3); }
-        .file-name { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 20px; font-size: 1.1rem; color: #fff; margin-top: 0; margin-bottom: 20px; display: inline-block; }
+        .file-name { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 20px; font-size: 1.1rem; color: #fff; margin-top: 0; margin-bottom: 10px; display: inline-block; }
 
-        /* CONTENEDORES INVISIBLES (Mantienen vivo el Anti-Adblock) */
-        .ad-container { width: 90%; max-width: 728px; min-height: 20px; margin: 10px 0; }
+        /* INDICADOR DE PASOS */
+        .step-indicator { font-family: 'Orbitron'; color: var(--neon-green); font-size: 1.2rem; margin-bottom: 20px; font-weight: bold; background: rgba(0, 255, 204, 0.1); padding: 5px 15px; border-radius: 10px; border: 1px solid rgba(0, 255, 204, 0.3); }
+
+        /* CONTENEDORES PARA TUS BANNERS VISUALES */
+        .ad-container { width: 100%; max-width: 320px; min-height: 50px; margin: 15px auto; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; }
         
-        .timer-box { font-family: 'Orbitron'; font-size: 3.5rem; color: #00f3ff; text-shadow: 0 0 15px rgba(0,243,255,0.5); margin: 20px 0; }
+        .timer-box { font-family: 'Orbitron'; font-size: 4rem; color: #00f3ff; text-shadow: 0 0 15px rgba(0,243,255,0.5); margin: 10px 0; }
         
-        .btn-continue { padding: 15px 40px; background: rgba(0,243,255,0.1); border: 1px solid #00f3ff; border-radius: 12px; color: #00f3ff; font-weight: bold; font-family: 'Orbitron'; font-size: 1.2rem; cursor: not-allowed; opacity: 0.5; transition: 0.3s; display: flex; align-items: center; gap: 10px; margin: 0 auto; }
-        .btn-continue.active { background: #00f3ff; color: #000; cursor: pointer; opacity: 1; box-shadow: 0 0 20px #00f3ff; }
+        .btn-continue { padding: 15px 30px; background: rgba(0,243,255,0.1); border: 1px solid #00f3ff; border-radius: 12px; color: #00f3ff; font-weight: bold; font-family: 'Orbitron'; font-size: 1.1rem; cursor: not-allowed; opacity: 0.5; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 auto; width: 90%; max-width: 300px; }
+        .btn-continue.active { background: #00f3ff; color: #000; cursor: pointer; opacity: 1; box-shadow: 0 0 20px #00f3ff; animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
         .adblock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #020005; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .adblock-overlay i { font-size: 5rem; color: #ff073a; margin-bottom: 20px; text-shadow: 0 0 20px #ff073a; }
         .adblock-overlay h1 { font-family: 'Orbitron'; color: white; margin-bottom: 10px; }
         .adblock-overlay p { color: #aaa; max-width: 400px; margin-bottom: 20px; }
         .btn-reload { padding: 12px 25px; background: #ff073a; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Poppins'; transition: 0.3s; }
-        .btn-reload:hover { box-shadow: 0 0 15px #ff073a; transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -43,21 +51,50 @@
 
     <h2 class="header-title"><i class='bx bx-lock-open-alt'></i> Desbloqueando Archivo</h2>
     <div class="file-name" id="linkNameDisplay">Cargando información...</div>
+    <div class="step-indicator" id="stepDisplay">PASO 1 DE 3</div>
     
-    <div class="ad-container adsbox"></div>
-    <div class="timer-box" id="timer">15</div>
+    <div class="ad-container adsbox">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '22131686a5bfbef1dbd17962fb7e46a4',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
+    </div>
+
+    <div class="timer-box" id="timer">10</div>
     <button class="btn-continue" id="btnContinue" disabled><i class='bx bx-time'></i> ESPERA...</button>
-    <div class="ad-container adsbox"></div>
+
+    <div class="ad-container adsbox">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '22131686a5bfbef1dbd17962fb7e46a4',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
+    </div>
 
     <script type="module">
-        // QUITÉ "increment" PARA QUE NO CRASHEE TU FIREBASE-CONFIG
         import { db, ref, get, update } from './firebase-config.js';
 
         const REWARD_AMOUNT = 0.005; 
+        const SECONDS_PER_STEP = 10; // Tiempo que esperan en cada uno de los 3 pasos
+        const TOTAL_STEPS = 3;
+
+        let currentStep = 1;
         let targetUrl = "";
         let linkOwnerId = "";
         let isValidated = false;
         let currentViews = 0;
+        let currentInterval = null;
 
         function checkAdBlock() {
             const ad = document.createElement('div');
@@ -95,10 +132,9 @@
                     const data = linkSnap.val();
                     targetUrl = data.target;
                     linkOwnerId = data.owner;
-                    currentViews = data.views || 0; // Guardamos las vistas actuales
+                    currentViews = data.views || 0; 
                     
                     document.getElementById('linkNameDisplay').innerHTML = `<i class='bx bx-file'></i> ${data.name || 'Archivo Protegido'}`;
-                    
                     checkAdBlock();
                 } else {
                     document.getElementById('linkNameDisplay').innerText = "El enlace no existe o fue eliminado.";
@@ -106,26 +142,40 @@
                 }
             } catch (e) {
                 console.error("Error cargando datos:", e);
-                // Si sale esto, es porque Firebase bloquea a usuarios sin cuenta
                 document.getElementById('linkNameDisplay').innerText = "Error de Permisos en BD.";
             }
         }
 
         function startTimer() {
-            let timeLeft = 15; 
+            let timeLeft = SECONDS_PER_STEP; 
             const timerDisplay = document.getElementById('timer');
             const btn = document.getElementById('btnContinue');
+            
+            // Actualizar interfaz para el nuevo paso
+            document.getElementById('stepDisplay').innerText = `PASO ${currentStep} DE ${TOTAL_STEPS}`;
+            timerDisplay.innerText = timeLeft;
+            
+            btn.disabled = true;
+            btn.classList.remove('active');
+            btn.innerHTML = `<i class='bx bx-time'></i> ESPERA...`;
 
-            const interval = setInterval(() => {
+            if (currentInterval) clearInterval(currentInterval);
+
+            currentInterval = setInterval(() => {
                 timeLeft--;
                 timerDisplay.innerText = timeLeft;
                 
                 if (timeLeft <= 0) {
-                    clearInterval(interval);
+                    clearInterval(currentInterval);
                     timerDisplay.innerText = "0";
-                    btn.innerHTML = "IR AL ARCHIVO <i class='bx bx-download'></i>";
-                    btn.classList.add('active');
                     btn.removeAttribute('disabled');
+                    btn.classList.add('active');
+                    
+                    if (currentStep < TOTAL_STEPS) {
+                        btn.innerHTML = `CONTINUAR A PASO ${currentStep + 1} <i class='bx bx-right-arrow-alt'></i>`;
+                    } else {
+                        btn.innerHTML = `OBTENER ENLACE FINAL <i class='bx bx-download'></i>`;
+                    }
                     isValidated = true;
                 }
             }, 1000);
@@ -134,6 +184,16 @@
         document.getElementById('btnContinue').addEventListener('click', async () => {
             if (!isValidated) return;
             
+            // Si aún no hemos llegado al paso 3, sumamos un paso y reiniciamos temporizador
+            if (currentStep < TOTAL_STEPS) {
+                currentStep++;
+                isValidated = false;
+                window.scrollTo(0, 0); // Sube la pantalla simulando que cargó algo nuevo
+                startTimer();
+                return;
+            }
+
+            // Si llegamos al final del paso 3, ejecutamos la descarga y el pago
             const btn = document.getElementById('btnContinue');
             btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> REDIRIGIENDO...";
             btn.classList.remove('active');
@@ -142,11 +202,9 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const linkId = urlParams.get('l');
                 
-                // 1. Sumamos la vista al link manualmente
                 const updates = {};
                 updates[`monetized_links/${linkId}/views`] = currentViews + 1;
 
-                // 2. Buscamos el saldo actual del creador del link y le sumamos el premio
                 const userSnap = await get(ref(db, `users/${linkOwnerId}`));
                 if (userSnap.exists()) {
                     let balanceActual = parseFloat(userSnap.val().balance) || 0;
