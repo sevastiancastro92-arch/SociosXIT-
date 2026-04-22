@@ -23,7 +23,6 @@
         .article-step { display: none; animation: fadeIn 0.6s ease-in-out; }
         .article-step.active { display: block; }
         
-        /* DISEÑOS CAMBIANTES PARA CADA PASO */
         .layout-1 { text-align: left; }
         .layout-2 { text-align: right; background: rgba(0, 255, 204, 0.02); padding: 15px; border-radius: 15px; border-right: 4px solid #00ffcc; }
         .layout-3 { text-align: center; background: rgba(255, 7, 58, 0.02); padding: 15px; border-radius: 15px; border-top: 4px solid #00f3ff; }
@@ -50,9 +49,11 @@
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* BANNERS VISUALES */
+        /* BANNERS VISUALES MULTIFORMATO */
         .ad-container-small { width: 100%; max-width: 320px; min-height: 50px; margin: 20px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 8px; }
         .ad-container-large { width: 100%; max-width: 468px; min-height: 60px; margin: 15px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 8px; overflow-x: auto; overflow-y: hidden; }
+        /* NUEVO BANNER RECTÁNGULO 300x250 */
+        .ad-container-medium { width: 100%; max-width: 300px; min-height: 250px; margin: 20px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
 
         /* EL JEFE FINAL: PANTALLA DE VIDEO OBLIGATORIA */
         .rewarded-ad-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
@@ -84,11 +85,11 @@
         <h2>Patrocinador</h2>
         <p>Tu enlace se desbloqueará cuando finalice este anuncio.</p>
         
-        <div class="ad-container-small adsbox">
+        <div class="ad-container-medium adsbox">
             <script type="text/javascript">
-                atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
+                atOptions = { 'key' : 'cee8e337a4322443b8513b91f8f6f91e', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
             </script>
-            <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/cee8e337a4322443b8513b91f8f6f91e/invoke.js"></script>
         </div>
 
         <div class="rewarded-timer" id="rewardedTimer">8</div>
@@ -127,6 +128,13 @@
                 <h3 style="color:#00f3ff; font-family:'Orbitron';">Cifrado de extremo a extremo</h3>
                 <p>Nuestros enlaces están protegidos. Ayúdanos a mantener el servidor en línea esperando los segundos correspondientes. Desactiva cualquier bloqueador.</p>
             </div>
+            
+            <div class="ad-container-medium adsbox">
+                <script type="text/javascript">
+                    atOptions = { 'key' : 'cee8e337a4322443b8513b91f8f6f91e', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+                </script>
+                <script type="text/javascript" src="https://www.highperformanceformat.com/cee8e337a4322443b8513b91f8f6f91e/invoke.js"></script>
+            </div>
         </div>
 
         <div class="article-step layout-2" id="article-step-2">
@@ -138,11 +146,11 @@
                 <p>El sistema está limpiando el tráfico. Las ventanas emergentes protegen tu enlace real de ser eliminado en los servidores de MEGA/Mediafire.</p>
             </div>
 
-            <div class="ad-container-small adsbox">
+            <div class="ad-container-medium adsbox">
                 <script type="text/javascript">
-                    atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
+                    atOptions = { 'key' : 'cee8e337a4322443b8513b91f8f6f91e', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
                 </script>
-                <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
+                <script type="text/javascript" src="https://www.highperformanceformat.com/cee8e337a4322443b8513b91f8f6f91e/invoke.js"></script>
             </div>
 
             <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Matrix" class="article-image">
@@ -269,7 +277,6 @@
                     if (currentStep < TOTAL_STEPS) {
                         btn.innerHTML = `CONTINUAR PASO ${currentStep + 1} <i class='bx bx-right-arrow-alt'></i>`;
                     } else {
-                        // EN EL PASO 3, EL BOTÓN DICE "DESBLOQUEAR ENLACE"
                         btn.innerHTML = `DESBLOQUEAR ENLACE <i class='bx bx-lock-open-alt'></i>`;
                     }
                     isValidated = true;
@@ -277,12 +284,11 @@
             }, 1000);
         }
 
-        // FUNCIÓN DEL JEFE FINAL (REWARDED VIDEO FAKE)
         function triggerFinalAd() {
             document.getElementById('rewardedAdScreen').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Evita scroll
+            document.body.style.overflow = 'hidden'; 
             
-            let waitTime = 8; // Segundos que el usuario debe esperar obligado
+            let waitTime = 8; 
             const timerEl = document.getElementById('rewardedTimer');
             const closeBtn = document.getElementById('closeAdBtn');
             
@@ -293,12 +299,11 @@
                 if (waitTime <= 0) {
                     clearInterval(adInterval);
                     timerEl.style.display = 'none';
-                    closeBtn.style.display = 'flex'; // Aparece la X
+                    closeBtn.style.display = 'flex'; 
                 }
             }, 1000);
         }
 
-        // CLIC EN LA "X" FINAL PARA RECIBIR RECOMPENSA Y REDIRIGIR
         document.getElementById('closeAdBtn').addEventListener('click', async () => {
             const closeBtn = document.getElementById('closeAdBtn');
             closeBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i>";
@@ -321,11 +326,10 @@
             }
         });
 
-        // BOTON DE CONTINUAR NORMAL
         document.getElementById('btnContinue').addEventListener('click', () => {
             if (!isValidated) return;
             
-            // DIRECT LINK ADSTERRA (Pestaña emergente que da dinero)
+            // DIRECT LINK ADSTERRA
             window.open("https://www.profitablecpmratenetwork.com/fih9wq1r?key=fd29c0187465b25cfc9e9a49133c1a53", "_blank");
 
             checkAdBlock(async () => {
@@ -337,7 +341,7 @@
                     return;
                 }
 
-                // SI ESTÁ EN EL PASO 3 Y DA CLIC... SALTA EL JEFE FINAL
+                // PASO 3 -> Lanza el Jefe Final
                 triggerFinalAd();
             });
         });
