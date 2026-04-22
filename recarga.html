@@ -47,8 +47,6 @@
         .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
         .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; margin-bottom: 10px; transition: 0.3s; }
         .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
-        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
-        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
         /* =========================================
            3. TABS Y CONTENEDOR
@@ -112,8 +110,10 @@
         .hc-btn-upload:hover { background: #00aaff; box-shadow: 0 0 15px #00aaff; }
         .hc-btn-success { background: rgba(0,255,0,0.1); color: #00ff00; border: 1px solid #00ff00; width: 100%; cursor: default; }
         .hc-btn-error { background: rgba(255,7,58,0.1); color: var(--neon-red); border: 1px solid var(--neon-red); width: 100%; cursor: default; }
+        .hc-btn-edit { background: #ff8800; color: white; box-shadow: 0 0 10px rgba(255, 136, 0, 0.4); }
+        .hc-btn-edit:hover { background: #ffaa00; box-shadow: 0 0 15px #ffaa00; }
 
-        /* LISTA DE ENLACES GENERADOS (NUEVO) */
+        /* LISTA DE ENLACES GENERADOS */
         .link-card { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: left; transition: 0.3s; }
         .link-card:hover { border-color: rgba(0, 243, 255, 0.3); box-shadow: 0 0 10px rgba(0, 243, 255, 0.1); }
         .lc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -122,8 +122,8 @@
         .lc-target { font-size: 0.8rem; color: #888; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .lc-short { font-size: 0.85rem; color: #ccc; margin-bottom: 12px; }
         .lc-short span { color: #fff; user-select: all; font-family: monospace; font-size: 0.95rem; }
-        .lc-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; }
-        .lc-date { font-size: 0.7rem; color: #555; }
+        .lc-footer { border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; }
+        .lc-date { font-size: 0.7rem; color: #555; display: block; margin-bottom: 10px; }
 
         /* LOADER */
         #globalLoader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; }
@@ -188,7 +188,7 @@
 
         <div class="card-setup" id="viewAds" style="display: none;">
             <h2 class="setup-title"><i class='bx bx-share-alt'></i> MONETIZAR ENLACES</h2>
-            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5;">Convierte tus links de descarga en saldo. Por cada usuario que pase la publicidad de tu enlace generado, sumarás dinero a tu cuenta automáticamente.</p>
+            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5;">Convierte tus links de descarga en saldo. Por cada usuario que pase la publicidad de tu enlace generado, sumarás dinero a tu cuenta.</p>
             
             <div class="input-box">
                 <label>NOMBRE DEL ENLACE (Para identificarlo)</label>
@@ -208,7 +208,7 @@
             </div>
 
             <div style="margin-top: 40px; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 20px;">
-                <h3 style="font-family: 'Orbitron'; color: var(--neon-green); font-size: 1.1rem; margin-bottom: 15px; text-align: left;"><i class='bx bx-list-ul'></i> Mis Enlaces Generados</h3>
+                <h3 style="font-family: 'Orbitron'; color: var(--neon-green); font-size: 1.1rem; margin-bottom: 15px; text-align: left;"><i class='bx bx-list-ul'></i> Mis Enlaces</h3>
                 
                 <div id="myLinksContainer" style="display: flex; flex-direction: column; gap: 15px;">
                     <p style="text-align: center; color: #888; font-size: 0.9rem;">Cargando tus enlaces...</p>
@@ -228,7 +228,6 @@
         let selectedCountryCode = null;
         let currentUploadOrderId = null; 
 
-        // 1. CARGAR DATOS INICIALES
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -246,12 +245,10 @@
                         }
                     }
                 });
-                
                 await loadCountries();
             } else { window.location.href = "login.html"; }
         });
 
-        // 2. LÓGICA DE PAÍSES Y CALCULADORA
         async function loadCountries() {
             try {
                 const snap = await get(ref(db, 'config/countries'));
@@ -265,9 +262,7 @@
                         select.appendChild(opt);
                     });
                 }
-            } catch (e) {
-                console.error("Error al cargar países:", e);
-            }
+            } catch (e) { console.error(e); }
         }
 
         const inputUSD = document.getElementById('amountUSD');
@@ -278,7 +273,6 @@
             const amt = parseFloat(inputUSD.value);
             const countryCode = selectCountry.value;
             if(!countryCode) return;
-            
             const pais = countriesData[countryCode];
             selectedCountryCode = countryCode;
 
@@ -295,7 +289,6 @@
         inputUSD.addEventListener('input', updateCalculator);
         selectCountry.addEventListener('change', updateCalculator);
 
-        // 3. TABS MÚLTIPLES VINCULADOS GLOBALMENTE
         window.switchTab = (tab) => {
             document.getElementById('tabNew').classList.remove('active');
             document.getElementById('tabHistory').classList.remove('active');
@@ -314,15 +307,13 @@
             } else if(tab === 'ads') {
                 document.getElementById('tabAds').classList.add('active');
                 document.getElementById('viewAds').style.display = 'block';
-                loadMyLinks(); // <--- Cargar la lista de links del usuario al abrir la pestaña
+                loadMyLinks(); 
             }
         };
 
-        // 4. GENERAR ORDEN EN BASE DE DATOS
         window.generateOrder = async () => {
             const amt = parseFloat(inputUSD.value);
             if (!amt || amt < 1 || !selectedCountryCode) return alert("Ingresa un monto y selecciona un país.");
-
             const pais = countriesData[selectedCountryCode];
             const localAmt = amt * pais.rate;
 
@@ -331,36 +322,22 @@
 
             try {
                 const orderRef = push(ref(db, `users/${currentUser.uid}/recharges`));
-                await set(orderRef, {
-                    amount: amt,
-                    amountLocal: `${pais.currency} ${localAmt.toLocaleString('es-CO')}`,
-                    countryCode: selectedCountryCode,
-                    countryName: pais.name,
-                    date: Date.now(),
-                    status: 'waiting_proof'
-                });
-
+                await set(orderRef, { amount: amt, amountLocal: `${pais.currency} ${localAmt.toLocaleString('es-CO')}`, countryCode: selectedCountryCode, countryName: pais.name, date: Date.now(), status: 'waiting_proof' });
                 inputUSD.value = ""; displayRate.innerText = "≈ 0";
                 document.getElementById('globalLoader').style.display = 'none';
                 switchTab('history');
-
             } catch (e) {
                 document.getElementById('globalLoader').style.display = 'none';
                 alert("Error al crear la orden: " + e.message);
             }
         };
 
-        // 5. CARGAR HISTORIAL DE RECARGAS
         async function loadHistory() {
             const container = document.getElementById('viewHistory');
             try {
                 const snap = await get(ref(db, `users/${currentUser.uid}/recharges`));
                 container.innerHTML = "";
-                
-                if (!snap.exists()) {
-                    container.innerHTML = "<p style='text-align:center; color:#888;'>No tienes recargas aún.</p>";
-                    return;
-                }
+                if (!snap.exists()) return container.innerHTML = "<p style='text-align:center; color:#888;'>No tienes recargas aún.</p>";
 
                 let records = [];
                 snap.forEach(child => { records.push({ id: child.key, ...child.val() }); });
@@ -370,18 +347,11 @@
                     const dateObj = new Date(rec.date);
                     const dateStr = dateObj.toLocaleDateString() + ", " + dateObj.toLocaleTimeString();
                     const shortId = rec.id.substring(1, 6).toUpperCase();
-
                     let badgeHtml = ""; let actionsHtml = "";
 
                     if(rec.status === 'waiting_proof') {
                         badgeHtml = `<div class="status-badge status-waiting"><i class='bx bx-time'></i> Pagado (Falta Comprobante)</div>`;
-                        actionsHtml = `
-                            <div class="hc-btn-group">
-                                <button class="hc-btn hc-btn-copy" onclick="copyOrder('${rec.countryCode}', '${rec.amountLocal}', '${shortId}')"><i class='bx bx-copy'></i> Copiar Orden</button>
-                                <button class="hc-btn hc-btn-wa" onclick="shareWa('${rec.amountLocal}', '${shortId}')"><i class='bx bxl-whatsapp'></i> WhatsApp</button>
-                            </div>
-                            <button class="hc-btn hc-btn-upload" onclick="triggerUpload('${rec.id}')"><i class='bx bx-cloud-upload'></i> Subir Comprobante</button>
-                        `;
+                        actionsHtml = `<div class="hc-btn-group"><button class="hc-btn hc-btn-copy" onclick="copyOrder('${rec.countryCode}', '${rec.amountLocal}', '${shortId}')"><i class='bx bx-copy'></i> Copiar Orden</button><button class="hc-btn hc-btn-wa" onclick="shareWa('${rec.amountLocal}', '${shortId}')"><i class='bx bxl-whatsapp'></i> WhatsApp</button></div><button class="hc-btn hc-btn-upload" onclick="triggerUpload('${rec.id}')"><i class='bx bx-cloud-upload'></i> Subir Comprobante</button>`;
                     } else if (rec.status === 'pending_approval') {
                         badgeHtml = `<div class="status-badge status-pending"><i class='bx bx-search-alt'></i> En revisión por Admin</div>`;
                         actionsHtml = `<button class="hc-btn" style="background:#333; color:#aaa; cursor:not-allowed;"><i class='bx bx-time'></i> Comprobante en revisión...</button>`;
@@ -393,36 +363,17 @@
                         actionsHtml = `<button class="hc-btn hc-btn-error"><i class='bx bx-x'></i> Comprobante rechazado</button>`;
                     }
 
-                    container.innerHTML += `
-                        <div class="history-card">
-                            <div class="hc-header"><span class="hc-id"><i class='bx bx-wallet'></i> Recarga #${shortId}</span>${badgeHtml}</div>
-                            <div class="hc-date">${dateStr}</div>
-                            <div class="hc-grid">
-                                <div class="hc-item"><label>País:</label><span>${rec.countryName}</span></div>
-                                <div class="hc-item"><label>Monto USD:</label><span class="text-green">$${rec.amount.toFixed(2)}</span></div>
-                                <div class="hc-item"><label>Bono USD:</label><span class="text-green">+$0.00</span></div>
-                                <div class="hc-item"><label>Total a Acreditar:</label><span>$${rec.amount.toFixed(2)}</span></div>
-                                <div class="hc-item" style="grid-column: span 2;"><label>Monto Local:</label><span>${rec.amountLocal}</span></div>
-                            </div>
-                            <div class="hc-actions">${actionsHtml}</div>
-                        </div>
-                    `;
+                    container.innerHTML += `<div class="history-card"><div class="hc-header"><span class="hc-id"><i class='bx bx-wallet'></i> Recarga #${shortId}</span>${badgeHtml}</div><div class="hc-date">${dateStr}</div><div class="hc-grid"><div class="hc-item"><label>País:</label><span>${rec.countryName}</span></div><div class="hc-item"><label>Monto USD:</label><span class="text-green">$${rec.amount.toFixed(2)}</span></div><div class="hc-item"><label>Bono USD:</label><span class="text-green">+$0.00</span></div><div class="hc-item"><label>Total a Acreditar:</label><span>$${rec.amount.toFixed(2)}</span></div><div class="hc-item" style="grid-column: span 2;"><label>Monto Local:</label><span>${rec.amountLocal}</span></div></div><div class="hc-actions">${actionsHtml}</div></div>`;
                 });
-
-            } catch (e) {
-                container.innerHTML = `<p style="color:red; text-align:center;">Error: ${e.message}</p>`;
-            }
+            } catch (e) { container.innerHTML = `<p style="color:red; text-align:center;">Error: ${e.message}</p>`; }
         }
 
-        // 6. ACCIONES DE LAS TARJETAS PENDIENTES
         window.copyOrder = (cCode, localAmt, shortId) => {
             const pais = countriesData[cCode];
             let text = `ORDEN #${shortId}\nMonto a transferir: ${localAmt}\n\nCUENTAS HABILITADAS:\n`;
-            if(pais && pais.paymentMethods) {
-                pais.paymentMethods.forEach(m => { text += `Banco ${m.bankName}: ${m.accountNumber}\n`; });
-            } else { text += "Habla con el admin para los métodos de pago."; }
-            navigator.clipboard.writeText(text);
-            alert("¡Datos de banco copiados!");
+            if(pais && pais.paymentMethods) { pais.paymentMethods.forEach(m => { text += `Banco ${m.bankName}: ${m.accountNumber}\n`; }); } 
+            else { text += "Habla con el admin para los métodos de pago."; }
+            navigator.clipboard.writeText(text); alert("¡Datos de banco copiados!");
         };
 
         window.shareWa = (localAmt, shortId) => {
@@ -430,77 +381,43 @@
             window.open(`https://wa.me/?text=${msg}`);
         };
 
-        // 7. SISTEMA DE SUBIDA A IMGBB
-        window.triggerUpload = (orderId) => {
-            currentUploadOrderId = orderId;
-            document.getElementById('globalReceiptInput').click();
-        };
-
+        window.triggerUpload = (orderId) => { currentUploadOrderId = orderId; document.getElementById('globalReceiptInput').click(); };
         document.getElementById('globalReceiptInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file || !currentUploadOrderId) return;
-
-            document.getElementById('globalLoader').style.display = 'flex';
-            document.getElementById('loaderText').innerText = "ENVIANDO FOTO...";
-
-            const formData = new FormData();
-            formData.append('image', file);
+            const file = e.target.files[0]; if (!file || !currentUploadOrderId) return;
+            document.getElementById('globalLoader').style.display = 'flex'; document.getElementById('loaderText').innerText = "ENVIANDO FOTO...";
+            const formData = new FormData(); formData.append('image', file);
 
             try {
                 const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: formData });
                 const json = await res.json();
-
                 if (json.success) {
                     const imageUrl = json.data.url;
-                    
                     const orderSnap = await get(ref(db, `users/${currentUser.uid}/recharges/${currentUploadOrderId}`));
                     const orderData = orderSnap.val();
-
-                    await update(ref(db), {
-                        [`users/${currentUser.uid}/recharges/${currentUploadOrderId}/status`]: 'pending_approval',
-                        [`users/${currentUser.uid}/recharges/${currentUploadOrderId}/receiptUrl`]: imageUrl
-                    });
-
-                    await set(ref(db, `pending_receipts/${currentUploadOrderId}`), {
-                        uid: currentUser.uid,
-                        username: document.getElementById('topUserDisplay').innerText,
-                        amountUsd: orderData.amount,
-                        amountLocal: orderData.amountLocal,
-                        countryName: orderData.countryName,
-                        receiptUrl: imageUrl,
-                        date: Date.now()
-                    });
-
-                    document.getElementById('globalLoader').style.display = 'none';
-                    alert("¡Comprobante enviado al Admin! En breve será revisado.");
-                    loadHistory(); 
-                } else {
-                    throw new Error("Fallo la subida a ImgBB");
-                }
-            } catch (err) {
-                console.error(err);
-                document.getElementById('globalLoader').style.display = 'none';
-                alert("Ocurrió un error. Intenta enviarlo manualmente.");
-            }
+                    await update(ref(db), { [`users/${currentUser.uid}/recharges/${currentUploadOrderId}/status`]: 'pending_approval', [`users/${currentUser.uid}/recharges/${currentUploadOrderId}/receiptUrl`]: imageUrl });
+                    await set(ref(db, `pending_receipts/${currentUploadOrderId}`), { uid: currentUser.uid, username: document.getElementById('topUserDisplay').innerText, amountUsd: orderData.amount, amountLocal: orderData.amountLocal, countryName: orderData.countryName, receiptUrl: imageUrl, date: Date.now() });
+                    document.getElementById('globalLoader').style.display = 'none'; alert("¡Comprobante enviado al Admin! En breve será revisado."); loadHistory(); 
+                } else { throw new Error("Fallo la subida a ImgBB"); }
+            } catch (err) { console.error(err); document.getElementById('globalLoader').style.display = 'none'; alert("Ocurrió un error."); }
         });
 
-        // 8. LÓGICA DE GENERADOR DE ENLACES CON NOMBRE E HISTORIAL
+        // 8. GENERADOR DE ENLACES CON ID PERSONALIZADA (LUCK XIT) Y EDICIÓN
         window.generateAdLink = async () => {
             const nameInput = document.getElementById('linkName').value.trim();
             const urlInput = document.getElementById('targetUrl').value.trim();
             
-            if (!nameInput) return alert("Por favor, ponle un nombre a tu enlace para identificarlo en el historial.");
+            if (!nameInput) return alert("Por favor, ponle un nombre a tu enlace para identificarlo.");
             if (!urlInput.startsWith('http')) return alert("Ingresa una URL válida del archivo (Ej: https://...).");
 
             document.getElementById('globalLoader').style.display = 'flex';
             document.getElementById('loaderText').innerText = "GENERANDO...";
 
             try {
-                const linksRef = ref(db, 'monetized_links');
-                const newLinkRef = push(linksRef);
-                const linkId = newLinkRef.key;
+                // Generar código aleatorio de 5 letras/números
+                const randomChars = Math.random().toString(36).substring(2, 7);
+                const customLinkId = `-Luck_xit_${randomChars}`;
 
-                await set(newLinkRef, {
+                await set(ref(db, `monetized_links/${customLinkId}`), {
                     owner: currentUser.uid,
                     name: nameInput,
                     target: urlInput,
@@ -509,17 +426,15 @@
                 });
 
                 const currentDomain = window.location.origin;
-                const finalUrl = `${currentDomain}/ads.html?l=${linkId}`;
+                const finalUrl = `${currentDomain}/ads.html?l=${customLinkId}`;
                 
                 document.getElementById('shortLinkDisplay').innerText = finalUrl;
                 document.getElementById('resultContainer').style.display = 'block';
                 
-                // Limpiar campos
                 document.getElementById('linkName').value = '';
                 document.getElementById('targetUrl').value = '';
                 document.getElementById('globalLoader').style.display = 'none';
-
-                // Recargar el historial automáticamente
+                
                 loadMyLinks();
 
             } catch (error) {
@@ -534,13 +449,11 @@
             alert("¡Enlace copiado al portapapeles!");
         };
 
-        // NUEVO: CARGAR Y MOSTRAR LOS ENLACES DEL USUARIO
         window.loadMyLinks = async () => {
             const container = document.getElementById('myLinksContainer');
             if (!currentUser) return;
 
             try {
-                // Obtenemos todos los enlaces para filtrar los del usuario actual
                 const snap = await get(ref(db, 'monetized_links'));
                 container.innerHTML = "";
                 
@@ -552,9 +465,7 @@
                 let myLinks = [];
                 snap.forEach(child => { 
                     const data = child.val();
-                    if (data.owner === currentUser.uid) {
-                        myLinks.push({ id: child.key, ...data }); 
-                    }
+                    if (data.owner === currentUser.uid) { myLinks.push({ id: child.key, ...data }); }
                 });
 
                 if (myLinks.length === 0) {
@@ -562,14 +473,14 @@
                     return;
                 }
 
-                // Ordenar del más reciente al más antiguo
                 myLinks.sort((a, b) => b.createdAt - a.createdAt);
                 const currentDomain = window.location.origin;
 
                 myLinks.forEach(link => {
                     const shortUrl = `${currentDomain}/ads.html?l=${link.id}`;
                     const dateObj = new Date(link.createdAt || Date.now());
-                    const dateStr = dateObj.toLocaleDateString();
+                    const safeName = (link.name || '').replace(/'/g, "\\'"); // Evitar errores con comillas
+                    const safeTarget = (link.target || '').replace(/'/g, "\\'");
 
                     container.innerHTML += `
                         <div class="link-card">
@@ -578,15 +489,17 @@
                                 <span class="lc-views"><i class='bx bx-show'></i> ${link.views || 0}</span>
                             </div>
                             <div class="lc-target"><strong>Destino:</strong> ${link.target}</div>
-                            <div class="lc-short"><strong>Link Monetizado:</strong> <br><span>${shortUrl}</span></div>
+                            <div class="lc-short"><strong>Link:</strong> <br><span>${shortUrl}</span></div>
                             <div class="lc-footer">
-                                <span class="lc-date">Creado el: ${dateStr}</span>
-                                <button class="hc-btn hc-btn-upload" style="padding: 6px 15px; font-size: 0.8rem; width: auto;" onclick="copySpecificLink('${shortUrl}')"><i class='bx bx-copy'></i> Copiar</button>
+                                <span class="lc-date">Creado el: ${dateObj.toLocaleDateString()}</span>
+                                <div class="hc-btn-group">
+                                    <button class="hc-btn hc-btn-upload" style="padding: 6px 10px; font-size: 0.8rem;" onclick="copySpecificLink('${shortUrl}')"><i class='bx bx-copy'></i> Copiar</button>
+                                    <button class="hc-btn hc-btn-edit" style="padding: 6px 10px; font-size: 0.8rem;" onclick="editSpecificLink('${link.id}', '${safeName}', '${safeTarget}')"><i class='bx bx-edit'></i> Editar</button>
+                                </div>
                             </div>
                         </div>
                     `;
                 });
-
             } catch (e) {
                 container.innerHTML = `<p style="color:red; text-align:center;">Error al cargar tus enlaces: ${e.message}</p>`;
             }
@@ -597,17 +510,46 @@
             alert("¡Link copiado con éxito!");
         };
 
+        // FUNCIÓN NUEVA: EDITAR ENLACE
+        window.editSpecificLink = async (linkId, currentName, currentTarget) => {
+            const newName = prompt("✏️ Edita el nombre de tu enlace:", currentName);
+            if(newName === null) return; // Si cancela
+
+            const newTarget = prompt("🔗 Edita la URL de destino (Ej: nueva carpeta de Mega/Mediafire):", currentTarget);
+            if(newTarget === null) return; // Si cancela
+
+            if(newTarget.trim() === '' || !newTarget.startsWith('http')) {
+                return alert("⚠️ La URL de destino debe ser válida (https://...)");
+            }
+
+            document.getElementById('globalLoader').style.display = 'flex';
+            document.getElementById('loaderText').innerText = "GUARDANDO...";
+
+            try {
+                // Actualizamos solo el nombre y el destino en Firebase, sin afectar las visitas
+                await update(ref(db, `monetized_links/${linkId}`), {
+                    name: newName.trim(),
+                    target: newTarget.trim()
+                });
+
+                document.getElementById('globalLoader').style.display = 'none';
+                alert("✅ Enlace actualizado correctamente.");
+                loadMyLinks(); // Recargamos la lista para ver los cambios
+
+            } catch(e) {
+                document.getElementById('globalLoader').style.display = 'none';
+                alert("Error al actualizar: " + e.message);
+            }
+        };
+
     </script>
 
     <script>
-        // CONTROLES DE LA INTERFAZ
-        const sidebar = document.getElementById('sidebar'); 
-        const overlay = document.getElementById('sidebarOverlay');
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
         document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
 
-        // SISTEMA DE PARTÍCULAS
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let w, h, pts = [];
         function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Pt { constructor() { this.x=Math.random()*w; this.y=Math.random()*h; this.v=Math.random()*0.5; } update(){ this.y-=this.v; if(this.y<0)this.y=h; } draw(){ ctx.fillStyle="rgba(0,243,255,0.3)"; ctx.beginPath(); ctx.arc(this.x,this.y,1,0,Math.PI*2); ctx.fill(); } }
