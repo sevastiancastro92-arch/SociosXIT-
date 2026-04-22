@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acceso - SociosXIT</title>
-    
-    <meta name="google-adsense-account" content="ca-pub-2505548585376357">
-    
     <style>
         /* =========================================
            1. FUENTES Y PROTECCIÓN
@@ -32,13 +29,13 @@
             color: white;
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px 0; /* Un poco de padding para los banners */
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            overflow: hidden;
+            overflow-x: hidden; /* Evitar scroll horizontal */
         }
 
         /* FONDO DE PARTÍCULAS */
@@ -71,6 +68,7 @@
             animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             z-index: 10;
+            margin: 15px 0; /* Separación con los banners */
         }
 
         @keyframes zoomIn {
@@ -142,7 +140,6 @@
             transform: translateY(-2px);
         }
 
-        /* Clase para ocultar campos que solo son de registro */
         .reg-only {
             display: none;
             opacity: 0;
@@ -220,7 +217,6 @@
             height: 100%;
             background: rgba(2, 0, 5, 0.95);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -257,6 +253,39 @@
             animation: pulseText 1.5s infinite;
         }
 
+        /* =========================================
+           6. BANNERS PUBLICITARIOS ELEGANTES
+           ========================================= */
+        .login-ad-container {
+            width: 100%;
+            max-width: 320px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.03); /* Fondo tipo vidrio muy sutil */
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px dashed rgba(188, 19, 254, 0.3); /* Borde punteado morado */
+            position: relative;
+            z-index: 5;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Etiqueta de "Anuncio" minimalista */
+        .login-ad-container::before {
+            content: "Publicidad";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #888;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Orbitron';
+        }
+
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes glow {
             from { box-shadow: 0 0 10px var(--neon-purple), inset 0 0 10px var(--neon-purple); }
@@ -277,6 +306,13 @@
 
     <canvas id="particle-canvas"></canvas>
 
+    <div class="login-ad-container">
+        <script type="text/javascript">
+            atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
+    </div>
+
     <div class="container">
         <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo SociosXIT" class="logo" onerror="this.src='https://via.placeholder.com/90/14001e/bc13fe?text=XIT'">
         
@@ -292,6 +328,13 @@
         
         <button id="actionBtn">Entrar</button>
         <button id="toggleBtn" class="btn-secondary">No tengo cuenta, Registrarme</button>
+    </div>
+
+    <div class="login-ad-container">
+        <script type="text/javascript">
+            atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
     </div>
 
     <script>
@@ -451,8 +494,8 @@
                     // Guarda TODOS los datos reales en la base de datos
                     await set(ref(db, 'users/' + uid), {
                         username: userClean,
-                        correoReal: emailReal, 
-                        telefono: phone,       
+                        correoReal: emailReal,
+                        telefono: phone,
                         balance: 0,          
                         role: 'user',        
                         emailAuth: fakeEmail     
@@ -463,7 +506,6 @@
                 loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
-                // Redirección
                 setTimeout(() => {
                     window.location.href = "dashboard.html";
                 }, 2000);
