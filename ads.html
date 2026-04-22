@@ -6,7 +6,10 @@
     <title>Artículo y Descarga - LUCK XIT OFC</title>
     
     <script async src="https://pl29214375.profitablecpmratenetwork.com/db/b0/5e/dbb05ec9f27434170d1aa9bc6d35f7b9.js"></script>
+    
     <script type='text/javascript' src='https://pl29216451.profitablecpmratenetwork.com/b8/36/05/b836053cba629ab522c4119be81f3ec7.js'></script>
+
+    <script>(function(s){s.dataset.zone='10909093',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
@@ -52,10 +55,9 @@
         /* BANNERS VISUALES MULTIFORMATO */
         .ad-container-small { width: 100%; max-width: 320px; min-height: 50px; margin: 20px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 8px; }
         .ad-container-large { width: 100%; max-width: 468px; min-height: 60px; margin: 15px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 8px; overflow-x: auto; overflow-y: hidden; }
-        /* NUEVO BANNER RECTÁNGULO 300x250 */
         .ad-container-medium { width: 100%; max-width: 300px; min-height: 250px; margin: 20px auto; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
 
-        /* EL JEFE FINAL: PANTALLA DE VIDEO OBLIGATORIA */
+        /* EL JEFE FINAL: PANTALLA DE VIDEO OBLIGATORIA DE LUCK XIT */
         .rewarded-ad-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .rewarded-ad-overlay h2 { font-family: 'Orbitron'; color: #ffcc00; margin-bottom: 10px; font-size: 1.5rem; text-transform: uppercase; }
         .rewarded-ad-overlay p { color: #fff; margin-bottom: 20px; }
@@ -284,6 +286,7 @@
             }, 1000);
         }
 
+        // Lanza el bloqueo visual y obliga a esperar 8 segundos más para ver el banner de 300x250
         function triggerFinalAd() {
             document.getElementById('rewardedAdScreen').style.display = 'flex';
             document.body.style.overflow = 'hidden'; 
@@ -304,6 +307,7 @@
             }, 1000);
         }
 
+        // Cuando la persona da clic a la X final
         document.getElementById('closeAdBtn').addEventListener('click', async () => {
             const closeBtn = document.getElementById('closeAdBtn');
             closeBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i>";
@@ -320,6 +324,9 @@
                     updates[`users/${linkOwnerId}/balance`] = balanceActual + REWARD_PER_COMPLETION;
                 }
                 await update(ref(db), updates);
+                
+                // AQUÍ PASA LA MAGIA: Al redirigir a targetUrl, el Vignette de Monetag va a interceptar la redirección
+                // y va a tirar su pantalla completa original para ganar el doble.
                 window.location.href = targetUrl;
             } catch (e) {
                 window.location.href = targetUrl; 
