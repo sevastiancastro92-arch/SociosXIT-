@@ -12,18 +12,19 @@
         body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100dvh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: hidden; }
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         
+        /* BARRA SUPERIOR */
         .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100; }
         .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
         .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
         .top-bar-right::-webkit-scrollbar { display: none; }
         .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s;}
         .badge:hover { border-color: var(--neon-cyan); }
-        .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
+        .badge img { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--neon-cyan); object-fit: cover; }
         .badge span { color: #fff; font-weight: 600; }
         .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default; }
-        .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
-        .bell-btn { background: transparent; border: none; color: var(--neon-green); font-size: 1.4rem; cursor: pointer; padding: 0 5px; transition: 0.3s; }
+        .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 
+        /* MENÚ LATERAL */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
         .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan); box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; }
@@ -31,13 +32,15 @@
         .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
         .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; }
         .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; }
+        
         .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
         .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s; }
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
         .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
+        
         .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
-        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
+        /* HUB CENTRAL */
         .hub-container { width: 90%; max-width: 450px; text-align: center; margin-top: 60px; animation: slideUp 0.8s ease-out; display: flex; flex-direction: column; align-items: center; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         .center-icon { width: 90px; height: 90px; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); border-radius: 25px; display: flex; justify-content: center; align-items: center; font-size: 3rem; color: white; box-shadow: 0 0 30px rgba(0, 243, 255, 0.4); margin-bottom: 20px; animation: floatIcon 4s ease-in-out infinite; border: 2px solid rgba(255,255,255,0.2); }
@@ -51,10 +54,10 @@
         .btn-store:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 30px var(--neon-cyan); }
         .btn-history { background: linear-gradient(135deg, var(--neon-purple) 0%, #8e44ad 100%); box-shadow: 0 0 20px rgba(188, 19, 254, 0.4); }
         .btn-history:hover { transform: translateY(-3px) scale(1.02); }
-        /* Botón Dorado de Rankings */
         .btn-ranking { background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%); color: #000; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); border: 1px solid #fff; }
         .btn-ranking:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 30px #FFD700; }
 
+        /* MODAL DE BIENVENIDA */
         .welcome-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.4s; }
         .welcome-overlay.active { opacity: 1; visibility: visible; }
         .welcome-modal { background: var(--glass-bg); border: 1px solid var(--neon-cyan); border-radius: 20px; padding: 30px 25px; width: 90%; max-width: 450px; text-align: center; }
@@ -63,9 +66,48 @@
         .btn-auth { background: transparent; border: 2px solid var(--neon-purple); color: white; width: 100%; padding: 15px; border-radius: 10px; margin-bottom: 25px; display: flex; justify-content: center; gap: 10px; font-weight: bold; text-decoration: none; }
         .btn-never-show { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #777; border-radius: 10px; cursor: not-allowed; }
         .btn-never-show.ready { color: var(--neon-red); border-color: var(--neon-red); cursor: pointer; }
+
+        /* =========================================
+           VENTANA EMERGENTE (POPUP RECARGAS)
+           ========================================= */
+        .payment-popup {
+            position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
+            background: rgba(10, 0, 15, 0.95); backdrop-filter: blur(20px);
+            border: 2px solid; border-radius: 15px; padding: 15px 25px;
+            display: flex; align-items: center; gap: 15px; z-index: 9999;
+            width: 90%; max-width: 400px;
+            transition: top 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .payment-popup.show { top: 25px; }
+
+        .payment-popup.approved { border-color: var(--neon-green); box-shadow: 0 0 25px rgba(0, 255, 204, 0.4); }
+        .payment-popup.rejected { border-color: var(--neon-red); box-shadow: 0 0 25px rgba(255, 7, 58, 0.4); }
+
+        .popup-icon { font-size: 2.5rem; }
+        .payment-popup.approved .popup-icon { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+        .payment-popup.rejected .popup-icon { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+
+        .popup-content { flex-grow: 1; text-align: left; }
+        .popup-title { margin: 0; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: bold; }
+        .payment-popup.approved .popup-title { color: var(--neon-green); }
+        .payment-popup.rejected .popup-title { color: var(--neon-red); }
+        .popup-msg { margin: 5px 0 0 0; font-size: 0.85rem; color: #eee; font-family: 'Poppins', sans-serif;}
+
+        .popup-close { background: transparent; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .popup-close:hover { color: white; transform: scale(1.1); }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
+
+    <div id="paymentNotification" class="payment-popup">
+        <div class="popup-icon" id="popupIcon"><i class='bx bx-check-circle'></i></div>
+        <div class="popup-content">
+            <h3 class="popup-title" id="popupTitle">Recarga Aprobada</h3>
+            <p class="popup-msg" id="popupMsg">Se han añadido $5.00 a tu cuenta.</p>
+        </div>
+        <button class="popup-close" onclick="closePopup()"><i class='bx bx-x'></i></button>
+    </div>
 
     <div class="welcome-overlay" id="welcomeModal">
         <div class="welcome-modal">
@@ -85,10 +127,10 @@
         <div class="top-bar-right">
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
             <div class="badge" onclick="window.location.href='perfil.html'">
-                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-cyan);"> 
+                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U"> 
                 <span id="topUserDisplay">...</span>
             </div>
-            <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
+            <div class="badge green"><span>$</span><span id="balanceDisplay">0.00</span></div>
         </div>
     </div>
 
@@ -100,12 +142,18 @@
             <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
             <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
             <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
-            <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
+<a href="recarga.html" class="sidebar-item">
+  <i class='bx bx-wallet'></i> Recargar Saldo
+</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
+            <a href="tutoriales.html" class="sidebar-item">
+  <i class='bx bx-file'></i> Tutoriales
+</a>
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
+            <a href="#" class="sidebar-item" id="logoutMenuBtn" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; color: var(--neon-red);"><i class='bx bx-log-out' style="color: var(--neon-red);"></i> Cerrar Sesión</a>
         </div>
-        <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button></div>
+        <div class="sidebar-footer"></div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
@@ -121,44 +169,120 @@
         </div>
     </div>
 
-    <script type="module">
-        import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
+    <script>
+        // --- CONTROL DEL POPUP DE NOTIFICACIÓN ---
+        function showPopup(type, amount) {
+            const popup = document.getElementById('paymentNotification');
+            const icon = document.getElementById('popupIcon');
+            const title = document.getElementById('popupTitle');
+            const msg = document.getElementById('popupMsg');
+
+            popup.className = `payment-popup ${type}`;
+
+            if (type === 'approved') {
+                icon.innerHTML = "<i class='bx bx-check-circle'></i>";
+                title.innerText = "¡Recarga Aprobada!";
+                msg.innerText = `Se han añadido $${parseFloat(amount).toFixed(2)} USD a tu saldo.`;
+            } else {
+                icon.innerHTML = "<i class='bx bx-x-circle'></i>";
+                title.innerText = "Recarga Rechazada";
+                msg.innerText = "El administrador ha rechazado tu comprobante.";
+            }
+
+            popup.classList.add('show');
+
+            // Ocultar automáticamente después de 6 segundos
+            setTimeout(() => {
+                closePopup();
+            }, 6000);
+        }
+
+        function closePopup() {
+            document.getElementById('paymentNotification').classList.remove('show');
+        }
+
+        // --- CONTROL DEL MENÚ LATERAL Y PARTÍCULAS ---
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
+        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
 
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
         for (let i = 0; i < 60; i++) particles.push(new Particle());
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+    </script>
 
-        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
-        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
-        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
-        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
-        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=>window.location.href="login.html");
+    <script type="module">
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
+        
+        // IMPORTAMOS 'onValue' PARA ESCUCHAR LA BASE DE DATOS EN TIEMPO REAL
+        import { onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        let initialLoad = true;
+        let knownRecharges = {};
+
+        document.getElementById('logoutMenuBtn').onclick = (e) => {
+            e.preventDefault();
+            signOut(auth).then(()=>window.location.href="login.html");
+        };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
-                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                // ESCUCHA EN TIEMPO REAL AL USUARIO
+                const userRef = ref(db, `users/${user.uid}`);
+                
+                onValue(userRef, (snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
+                        
+                        // Actualizar UI Gráfica
                         document.getElementById('topUserDisplay').innerText = data.username;
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
 
+                        // LÓGICA DE NOTIFICACIÓN DE RECARGAS
+                        if (data.recharges) {
+                            if (!initialLoad) {
+                                // Revisar si alguna recarga cambió de estado
+                                for (let key in data.recharges) {
+                                    const currentStatus = data.recharges[key].status;
+                                    const oldStatus = knownRecharges[key] ? knownRecharges[key].status : null;
+                                    
+                                    // Si antes estaba pendiente y ahora está aprobada o rechazada
+                                    if (oldStatus === 'pending_approval' || oldStatus === 'waiting_proof') {
+                                        if (currentStatus === 'approved') {
+                                            showPopup('approved', data.recharges[key].amount);
+                                        } else if (currentStatus === 'rejected') {
+                                            showPopup('rejected', 0);
+                                        }
+                                    }
+                                }
+                            }
+                            // Guardamos la copia exacta para comparar en el siguiente cambio
+                            knownRecharges = JSON.parse(JSON.stringify(data.recharges));
+                        }
+
+                        // Validar el Modal de Bienvenida Inicial
                         if (!data.linked_devices && !localStorage.getItem('welcomeXITDismissed')) {
                             const wm = document.getElementById('welcomeModal'); const cBtn = document.getElementById('closeWelcomeBtn');
                             wm.classList.add('active'); let tl = 5; cBtn.innerText = `Cerrar (${tl}s)`;
                             const timer = setInterval(() => { tl--; if(tl>0) cBtn.innerText = `Cerrar (${tl}s)`; else { clearInterval(timer); cBtn.innerText = "Cerrar y no mostrar más"; cBtn.disabled = false; cBtn.classList.add('ready'); } }, 1000);
                             cBtn.onclick = () => { localStorage.setItem('welcomeXITDismissed', 'true'); wm.classList.remove('active'); };
                         }
+
+                        initialLoad = false; // Terminó la carga inicial
                     }
                 });
-            } else { window.location.href = "login.html"; }
+            } else { 
+                window.location.href = "login.html"; 
+            }
         });
     </script>
 </body>
