@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operaciones - LUCK XIT OFC</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+
+        * { user-select: none; box-sizing: border-box; }
+
+        :root { --neon-purple: #bc13fe; --neon-red: #ff073a; --neon-cyan: #00f3ff; --neon-green: #00ffcc; --glass-bg: rgba(15, 0, 25, 0.7); }
+
+        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0px); } }
+        @keyframes gradientScroll { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes borderPulse { 0% { box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); } 50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); } 100% { box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); } }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #020202; } ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 4px; box-shadow: 0 0 10px var(--neon-purple); }
+
+        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 900px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-purple); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(188, 19, 254, 0.15); z-index: 100; }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-purple); color: var(--neon-purple); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .menu-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--neon-purple); background: rgba(188, 19, 254, 0.1); }
+        .top-bar-right { display: flex; align-items: center; gap: 10px; }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; }
+        .badge i { font-size: 1.1rem; color: var(--neon-purple); } .badge span { color: #fff; font-weight: 600; }
+
+        .admin-container { width: 95%; max-width: 900px; margin: 90px auto 30px auto; z-index: 10; animation: popIn 0.6s ease-out; }
+        .header-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 20px 0; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px; }
+
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; }
+        .admin-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; animation: float 4s ease-in-out infinite; }
+        .admin-card:nth-child(even) { animation-delay: 1s; } .admin-card:nth-child(3n) { animation-delay: 2s; }
+        .admin-card:hover { transform: translateY(-5px) scale(1.02) !important; border-color: var(--neon-purple); box-shadow: 0 5px 25px rgba(188, 19, 254, 0.3); z-index: 2; animation-play-state: paused; }
+        .card-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; font-size: 1.8rem; color: var(--neon-purple); transition: 0.3s; }
+        .admin-card:hover .card-icon { transform: rotate(10deg) scale(1.1); text-shadow: 0 0 10px currentColor; }
+        .card-info h3 { margin: 0 0 5px 0; font-family: 'Orbitron', sans-serif; font-size: 1rem; color: #fff; transition: 0.3s; }
+        .admin-card:hover .card-info h3 { color: var(--neon-purple); } .card-info p { margin: 0; font-size: 0.75rem; color: #aaa; }
+
+        .color-red .card-icon { color: var(--neon-red); background: rgba(255, 7, 58, 0.1); }
+        .color-red:hover { border-color: var(--neon-red); box-shadow: 0 5px 25px rgba(255, 7, 58, 0.3); } .color-red:hover .card-info h3 { color: var(--neon-red); }
+        .color-green .card-icon { color: #25D366; background: rgba(37, 211, 102, 0.1); }
+        .color-green:hover { border-color: #25D366; box-shadow: 0 5px 25px rgba(37, 211, 102, 0.3); } .color-green:hover .card-info h3 { color: #25D366; }
+        .color-cyan .card-icon { color: var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
+        .color-cyan:hover { border-color: var(--neon-cyan); box-shadow: 0 5px 25px rgba(0, 243, 255, 0.3); } .color-cyan:hover .card-info h3 { color: var(--neon-cyan); }
+        .color-blue .card-icon { color: #3b3dff; background: rgba(59, 61, 255, 0.1); }
+        .color-blue:hover { border-color: #3b3dff; box-shadow: 0 5px 25px rgba(59, 61, 255, 0.3); } .color-blue:hover .card-info h3 { color: #3b3dff; }
+        .color-gold .card-icon { color: #ffd700; background: rgba(255, 215, 0, 0.1); }
+        .color-gold:hover { border-color: #ffd700; box-shadow: 0 5px 25px rgba(255, 215, 0, 0.3); } .color-gold:hover .card-info h3 { color: #ffd700; }
+
+        /* MODALES */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-box { background: linear-gradient(145deg, #0a0a0a, #050505); padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid var(--neon-purple); text-align: center; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 30px rgba(188, 19, 254, 0.1) inset; }
+        .modal-overlay[style*="display: flex"] .modal-box { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        #modalRecharges .modal-box { max-width: 550px; } #modalAdminLogs .modal-box { max-width: 600px; border-color: var(--neon-red); }
+        #banksContainer::-webkit-scrollbar, #logsContainer::-webkit-scrollbar { width: 4px; } #banksContainer::-webkit-scrollbar-thumb, #logsContainer::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 2px; }
+        
+        .cyber-box { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 3px solid var(--neon-purple); border-radius: 10px; padding: 15px; margin-bottom: 15px; transition: 0.3s; }
+        .cyber-box:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.1); }
+        .cyber-box-title { color: #aaa; font-size: 0.75rem; text-align: left; margin-bottom: 10px; font-weight: bold; font-family: 'Orbitron'; letter-spacing: 1px; }
+        .bank-field { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(188, 19, 254, 0.3); text-align: left; transition: 0.3s; }
+        .bank-field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; } .bank-field-header strong { color: var(--neon-purple); font-size: 0.85rem; font-family: 'Orbitron'; }
+        .btn-trash { background: none; border: none; color: var(--neon-red); cursor: pointer; font-size: 1.2rem; transition: 0.3s; } .btn-trash:hover { transform: scale(1.2) rotate(15deg); text-shadow: 0 0 10px var(--neon-red); }
+        .input-group { margin-bottom: 12px; text-align: left; }
+        .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit; transition: 0.3s; }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--neon-purple); transform: scale(1.02); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); background: rgba(188, 19, 254, 0.05); }
+        .input-group input:read-only { background: rgba(255,255,255,0.02); color: #888; cursor: not-allowed; }
+        .perm-checkbox { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.9rem; cursor: pointer; padding: 5px; border-radius: 5px; transition: 0.3s; }
+        .perm-checkbox:hover { background: rgba(188, 19, 254, 0.1); }
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 8px; background: linear-gradient(90deg, #5e097f, var(--neon-purple), #5e097f); background-size: 200% auto; animation: gradientScroll 3s linear infinite; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        .btn-action:hover { box-shadow: 0 0 20px var(--neon-purple); transform: scale(1.03); letter-spacing: 1px; }
+        .btn-cancel { width: 100%; background: transparent; border: 1px solid #444; color: #888; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-cancel:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.1); }
+        .code-display-box { background: #000; border: 1px solid #333; padding: 15px; border-radius: 10px; margin-top: 15px; font-family: 'Orbitron', sans-serif; font-size: 1.5rem; letter-spacing: 5px; color: #25D366; text-align: center; box-shadow: inset 0 0 20px rgba(37, 211, 102, 0.1); animation: borderPulse 2s infinite; }
+        .log-item { background: rgba(255,0,0,0.05); border-left: 3px solid var(--neon-red); padding: 12px; margin-bottom: 10px; text-align: left; border-radius: 5px; transition: 0.3s; }
+        .log-item p { margin: 3px 0; font-size: 0.85rem; color: #ddd; } .log-item strong { color: var(--neon-cyan); } .log-item .log-date { font-size: 0.7rem; color: #888; font-family: 'Orbitron'; }
+    </style>
+</head>
+<body oncontextmenu="return false;"> 
+
+    <div id="loadingScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#020005; z-index:9999; display:flex; justify-content:center; align-items:center;">
+        <h2 style="font-family:'Orbitron'; color:var(--neon-purple); text-shadow:0 0 15px var(--neon-purple); animation:popIn 1s infinite alternate;">Cargando Herramientas...</h2>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="menu-btn" onclick="window.location.href='admin.html'"><i class='bx bx-arrow-back'></i></button>
+        </div>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-server'></i> <span>OPERACIONES</span></div>
+        </div>
+    </div>
+
+    <div class="admin-container" id="adminMainPanel" style="display: none;">
+        <h1 class="header-title"><i class='bx bx-server'></i> Panel de Control</h1>
+
+        <div class="admin-grid">
+            <div class="admin-card color-cyan" onclick="openRechargesModal()">
+                <div class="card-icon"><i class='bx bx-receipt'></i></div>
+                <div class="card-info"><h3>Validar Recargas</h3><p>Aprobar pagos de usuarios.</p></div>
+            </div>
+
+            <div class="admin-card color-blue" onclick="openPaymentsModal()">
+                <div class="card-icon"><i class='bx bx-credit-card-front'></i></div>
+                <div class="card-info"><h3>Métodos de Pago</h3><p>Añadir, editar o borrar bancos.</p></div>
+            </div>
+
+            <div class="admin-card" onclick="openModal('modalCreateProduct')">
+                <div class="card-icon"><i class='bx bx-plus-circle'></i></div>
+                <div class="card-info"><h3>Crear Producto</h3><p>Nuevo ítem en catálogo.</p></div>
+            </div>
+
+            <div class="admin-card color-blue" onclick="openAddDurationModal()">
+                <div class="card-icon"><i class='bx bx-time-five'></i></div>
+                <div class="card-info"><h3>Añadir Duración</h3><p>Nuevos planes a productos.</p></div>
+            </div>
+
+            <div class="admin-card" onclick="openStockModal()">
+                <div class="card-icon"><i class='bx bx-key'></i></div>
+                <div class="card-info"><h3>Añadir Stock</h3><p>Subir llaves a un producto.</p></div>
+            </div>
+
+            <div class="admin-card color-green" onclick="openModal('modalAddBalance')">
+                <div class="card-icon"><i class='bx bx-money-withdraw'></i></div>
+                <div class="card-info"><h3>Añadir Saldo</h3><p>Dar USD directo a un usuario.</p></div>
+            </div>
+
+            <div class="admin-card color-purple" onclick="openModal('modalTransferUser')">
+                <div class="card-icon"><i class='bx bx-transfer'></i></div>
+                <div class="card-info"><h3>Transferir Datos</h3><p>Mover 100% a cuenta nueva.</p></div>
+            </div>
+
+            <div class="admin-card color-red" onclick="openModal('modalDeleteUser')">
+                <div class="card-icon"><i class='bx bx-user-x'></i></div>
+                <div class="card-info"><h3>Eliminar Usuario</h3><p>Borrar cuenta y datos.</p></div>
+            </div>
+
+            <div class="admin-card color-purple" onclick="openModal('modalBroadcast')">
+                <div class="card-icon"><i class='bx bx-broadcast'></i></div>
+                <div class="card-info"><h3>Mensaje Global</h3><p>Notificar a todos vía WhatsApp.</p></div>
+            </div>
+
+            <div class="admin-card color-green" onclick="openWaModal()" id="cardWaBot">
+                <div class="card-icon"><i class='bx bxl-whatsapp'></i></div>
+                <div class="card-info"><h3>Vincular WhatsApp</h3><p>Código de sesión de bot.</p></div>
+            </div>
+
+            <div class="admin-card color-gold" id="cardManageAdmins" style="display: none;" onclick="openManageAdminsModal()">
+                <div class="card-icon"><i class='bx bx-shield-alt-2'></i></div>
+                <div class="card-info"><h3>Gestión de Admins</h3><p>Dar permisos a tu equipo.</p></div>
+            </div>
+
+            <div class="admin-card color-red" id="cardAdminLogs" style="display: none;" onclick="openAdminLogsModal()">
+                <div class="card-icon"><i class='bx bx-cctv'></i></div>
+                <div class="card-info"><h3>Registro de Seguridad</h3><p>Auditoría de IPs y Acciones.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalAddDuration">
+        <div class="modal-box" style="border-color: var(--neon-cyan);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-time-five'></i> Añadir Duración</h3>
+            <div class="cyber-box">
+                <div class="input-group"><label>Producto Base</label><select id="durProdSelect"></select></div>
+            </div>
+            <div class="cyber-box">
+                <div class="input-group"><label>Nombre de Duración</label><input type="text" id="durName" placeholder="Ej: 60 Días"></div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 1;"><label>Precio (USD)</label><input type="number" id="durPrice" step="0.01"></div>
+                    <div class="input-group" style="flex: 1;"><label>Garantía (H)</label><input type="number" id="durWarr" value="0"></div>
+                </div>
+            </div>
+            <button class="btn-action" style="background: var(--neon-cyan); color:#000;" onclick="funcAddDuration()"><i class='bx bx-save'></i> GUARDAR</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalAdminLogs">
+        <div class="modal-box">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-cctv'></i> Auditoría de Seguridad</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-red); background: rgba(255,0,0,0.02);">
+                <div id="logsContainer" style="max-height: 350px; overflow-y: auto; padding-right: 5px;"></div>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar Monitor</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalWaAuth">
+        <div class="modal-box" style="border-color: #25D366;">
+            <h3 style="font-family:'Orbitron'; color: #25D366;"><i class='bx bxl-whatsapp'></i> Servidor de WhatsApp</h3>
+            <div class="cyber-box" style="border-left-color: #25D366;">
+                <div class="input-group"><label>Número Destino (+57...)</label><input type="number" id="waPairNumber" autocomplete="off" placeholder="57..."></div>
+            </div>
+            <button class="btn-action" style="background: linear-gradient(90deg, #128C7E, #25D366, #128C7E); color: #fff;" onclick="funcRequestWaCode()"><i class='bx bx-refresh'></i> SOLICITAR CÓDIGO</button>
+            <div id="waCodeSection" style="display: none; margin-top: 15px;">
+                <p style="font-size: 0.85rem; color: #aaa;">Ingresa esto en tu WhatsApp:</p>
+                <div class="code-display-box" id="waTheCode">ESPERANDO...</div>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 15px;">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalManageAdmins">
+        <div class="modal-box" style="border-color: #ffd700;">
+            <h3 style="font-family:'Orbitron'; color: #ffd700;"><i class='bx bx-shield-alt-2'></i> Control de Equipo</h3>
+            <div class="cyber-box" style="border-left-color: #ffd700;">
+                <div class="input-group"><label>Username Objetivo</label><input type="text" id="adminTargetUser" autocomplete="off" placeholder="Ej: adminJuan"></div>
+            </div>
+            <div class="cyber-box" style="border-left-color: #ffd700;">
+                <div class="cyber-box-title" style="color: #ffd700;">PRIVILEGIOS OTORGADOS</div>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label class="perm-checkbox"><input type="checkbox" id="permRecharges"> 🧾 Validar Recargas</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permBalance"> 💰 Añadir Saldo Manual</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permProducts"> 📦 Gestionar Productos/Stock</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permUsers"> ☠️ Eliminar/Transferir Usuarios</label>
+                </div>
+            </div>
+            <button class="btn-action" style="background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); color: #000;" onclick="funcSetAdmin()"><i class='bx bx-check-shield'></i> ACTUALIZAR ROL</button>
+            <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none;" onclick="funcRemoveAdmin()"><i class='bx bx-user-minus'></i> QUITAR PERMISOS</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalManagePayments">
+        <div class="modal-box" style="max-width: 550px; border-color: #3b3dff;">
+            <h3 style="font-family:'Orbitron'; color: #3b3dff;"><i class='bx bx-credit-card-front'></i> Rutas de Pago</h3>
+            <div class="cyber-box" style="border-left-color: #3b3dff;">
+                <div class="cyber-box-title">ACTIVOS ACTUALMENTE</div>
+                <div id="existingCountriesList" style="max-height: 120px; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+            <p id="payModeText" style="color:var(--neon-green); font-size: 0.85rem; margin-bottom: 10px; font-weight: bold; font-family: 'Orbitron';">MODO: CREAR NUEVO</p>
+            <div class="cyber-box">
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 1;"><label>Cód (CO)</label><input type="text" id="payCode" maxlength="2" style="text-transform: uppercase;"></div>
+                    <div class="input-group" style="flex: 1;"><label>Bandera</label><input type="text" id="payFlag"></div>
+                    <div class="input-group" style="flex: 2;"><label>Nombre</label><input type="text" id="payName"></div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 1;"><label>Moneda</label><input type="text" id="payCurr" style="text-transform: uppercase;"></div>
+                    <div class="input-group" style="flex: 2;"><label>Tasa de Cambio</label><input type="number" id="payRate" placeholder="Ej: 4200" step="0.01"></div>
+                </div>
+            </div>
+            <div class="cyber-box" style="border-left-color: var(--neon-purple);">
+                <div class="cyber-box-title" style="color: var(--neon-purple);">BANCOS ENLAZADOS</div>
+                <div id="banksContainer" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;"></div>
+                <button class="btn-action" style="background: rgba(188, 19, 254, 0.1); border: 1px solid var(--neon-purple); color: var(--neon-purple); box-shadow: none; padding: 10px;" onclick="addBankField()"><i class='bx bx-plus'></i> AÑADIR CUENTA</button>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-action" onclick="savePaymentConfig()" style="flex: 2; margin-bottom: 0; background: #3b3dff; color:#fff;"><i class='bx bx-save'></i> GUARDAR INFO</button>
+                <button class="btn-action" onclick="clearPaymentInputs()" style="flex: 1; background: #222; border: 1px solid #555; color: white; margin-bottom: 0; box-shadow: none;"><i class='bx bx-reset'></i> LIMPIAR</button>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 10px;">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalRecharges">
+        <div class="modal-box" style="max-width: 550px; border-color: var(--neon-cyan);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-receipt'></i> VERIFICACIÓN DE PAGOS</h3>
+            <div class="cyber-box">
+                <div id="rechargesList" style="max-height: 400px; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;"></div>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar Bandeja</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalCreateProduct">
+        <div class="modal-box">
+            <h3 style="font-family:'Orbitron'"><i class='bx bx-plus-circle'></i> Forjar Producto</h3>
+            <div class="cyber-box">
+                <div class="input-group"><label>Nombre Comercial</label><input type="text" id="pName" placeholder="Ej: Netflix Premium"></div>
+                <div class="input-group"><label>Ecosistema</label><select id="pCat"><option value="Android">Android</option><option value="iPhone">iPhone</option><option value="PC">PC</option></select></div>
+            </div>
+            <div class="cyber-box">
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex:1;"><label>Precio ($)</label><input type="number" id="pPrice" step="0.01"></div>
+                    <div class="input-group" style="flex:1.5;"><label>Tiempo</label><input type="text" id="pDur" placeholder="Ej: 30 Días"></div>
+                </div>
+                <div class="input-group"><label>Cobertura Garantía (Hrs)</label><input type="number" id="pWarr" value="0"></div>
+            </div>
+            <button class="btn-action" onclick="funcCreateProduct()"><i class='bx bx-layer-plus'></i> INYECTAR A TIENDA</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalAddStock">
+        <div class="modal-box">
+            <h3 style="font-family:'Orbitron'"><i class='bx bx-key'></i> Bóveda de Keys</h3>
+            <div class="cyber-box">
+                <div class="input-group"><label>Target (Producto/Plan)</label><select id="stockProdSelect"></select></div>
+                <div class="input-group"><label>Datos Crudos (1 por línea)</label><textarea id="stockKeysArea" rows="5"></textarea></div>
+            </div>
+            <button class="btn-action" onclick="funcAddStock()"><i class='bx bx-data'></i> SINCRONIZAR KEYS</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalAddBalance">
+        <div class="modal-box" style="border-color: var(--neon-green);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-green);"><i class='bx bx-money-withdraw'></i> Inyección de Capital</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-green);">
+                <div class="input-group"><label>ID de Usuario (Username)</label><input type="text" id="balUser" placeholder="Ej: sebasxit"></div>
+                <div class="input-group"><label>Monto a transferir (USD)</label><input type="number" id="balAmt" step="0.1" placeholder="0.00"></div>
+            </div>
+            <button class="btn-action" style="background: linear-gradient(90deg, #008066, var(--neon-green), #008066); color: #000;" onclick="funcAddBalance()"><i class='bx bx-send'></i> EJECUTAR TRANSFERENCIA</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalTransferUser">
+        <div class="modal-box" style="border-color: var(--neon-purple);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-purple);"><i class='bx bx-transfer'></i> Migración de Datos</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-purple);">
+                <div class="input-group"><label>Username Origen (Muerto)</label><input type="text" id="transferOldUser" autocomplete="off" placeholder="Ej: olduser123"></div>
+                <div class="input-group"><label>Username Destino (Nuevo)</label><input type="text" id="transferNewUser" autocomplete="off" placeholder="Ej: newuser456"></div>
+            </div>
+            <button class="btn-action" onclick="funcTransferUser()"><i class='bx bx-git-merge'></i> INICIAR MIGRACIÓN</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Abortar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalDeleteUser">
+        <div class="modal-box" style="border-color: var(--neon-red);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-user-x'></i> Exterminio de Entidad</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-red); background: rgba(255,0,0,0.02);">
+                <div class="input-group"><label>Fijar Objetivo (Username)</label><input type="text" id="delUserUsername" placeholder="Ej: JuanPerez" autocomplete="off"></div>
+            </div>
+            <button class="btn-action" style="background: linear-gradient(90deg, #80001d, var(--neon-red), #80001d); color: white;" onclick="funcDeleteUser()"><i class='bx bx-skull'></i> EJECUTAR PURGA</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalBroadcast">
+        <div class="modal-box" style="border-color: var(--neon-purple);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-purple);"><i class='bx bx-broadcast'></i> Transmisión Global</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-purple);">
+                <div class="input-group"><label>Mensaje Vía WhatsApp</label><textarea id="bcText" rows="4" placeholder="Escribe el comunicado..."></textarea></div>
+            </div>
+            <button class="btn-action" onclick="funcBroadcast()"><i class='bx bx-radar'></i> DIFUNDIR A TODOS</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db, onAuthStateChanged, ref, get, child, update, push, set, onValue } from './firebase-config.js';
+
+        let adminUser = null; 
+        let isSuperAdmin = false;
+        let currentAdminIp = "0.0.0.0";
+
+        async function logAdminAction(actionType, targetUsername, details) {
+            try {
+                await push(ref(db, 'admin_logs'), {
+                    admin: adminUser.username,
+                    ip: currentAdminIp,
+                    action: actionType,
+                    target: targetUsername,
+                    details: details,
+                    timestamp: Date.now()
+                });
+            } catch (e) { console.error("Error guardando log", e); }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    currentAdminIp = data.ip;
+                    await update(ref(db), { [`users/${user.uid}/lastIp`]: currentAdminIp });
+                } catch (err) { console.error("Error IP:", err); }
+
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    const data = snapshot.val();
+                    const safeUsername = data && data.username ? data.username.trim().toLowerCase() : '';
+
+                    isSuperAdmin = (safeUsername === 'sebasxit');
+                    const isAdmin = data && data.role === 'admin';
+
+                    if (isSuperAdmin || isAdmin) {
+                        adminUser = data;
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('adminMainPanel').style.display = 'block';
+                        
+                        if (isSuperAdmin) {
+                            document.getElementById('cardManageAdmins').style.display = 'flex';
+                            document.getElementById('cardAdminLogs').style.display = 'flex'; 
+                        }
+                        listenToWaCode(); 
+                    } else { 
+                        alert("⚠️ Acceso Denegado. Intervención bloqueada.");
+                        window.location.href = "admin.html"; 
+                    }
+                }).catch((error) => {
+                    document.getElementById('loadingScreen').innerHTML = `<h2 style="color:red; font-family:'Orbitron';">ERROR: ${error.message}</h2>`;
+                });
+            } else { window.location.href = "login.html"; }
+        });
+
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+        window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+
+        // LOGS ADMIN
+        window.openAdminLogsModal = async () => {
+            if (!isSuperAdmin) return;
+            openModal('modalAdminLogs');
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = "<p style='color:#aaa; font-size:12px; text-align:center;'>Extrayendo registros...</p>";
+            try {
+                const snap = await get(ref(db, 'admin_logs'));
+                if (!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size:12px; text-align:center;'>Base de datos limpia.</p>"; return; }
+                let logsHtml = ""; const logsData = [];
+                snap.forEach(child => { logsData.push(child.val()); });
+                logsData.reverse(); 
+                logsData.forEach(log => {
+                    const dateStr = new Date(log.timestamp).toLocaleString('es-ES');
+                    logsHtml += `<div class="log-item"><p><strong>Admin:</strong> ${log.admin} | <strong>IP:</strong> ${log.ip}</p><p><strong>Operación:</strong> <span style="color:var(--neon-green)">${log.action}</span></p><p><strong>Target:</strong> ${log.target}</p><p><strong>Info:</strong> ${log.details}</p><p class="log-date">${dateStr}</p></div>`;
+                });
+                container.innerHTML = logsHtml;
+            } catch(e) { container.innerHTML = `<p style="color:red; font-size:12px;">Error: ${e.message}</p>`; }
+        };
+
+        // WABOT
+        window.openWaModal = () => {
+            if(!isSuperAdmin) return alert("❌ Requiere autorización SuperAdmin.");
+            openModal('modalWaAuth'); document.getElementById('waCodeSection').style.display = 'none'; document.getElementById('waPairNumber').value = "";
+        };
+        window.funcRequestWaCode = async () => {
+            const number = document.getElementById('waPairNumber').value.trim();
+            if(!number) return alert("❌ Ingresa el número.");
+            document.getElementById('waCodeSection').style.display = 'block'; document.getElementById('waTheCode').innerText = "GENERANDO...";
+            try { await set(ref(db, 'whatsapp_control/command'), { action: 'request_code', number: number, timestamp: Date.now() }); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        function listenToWaCode() {
+            if(!isSuperAdmin) return;
+            onValue(ref(db, 'whatsapp_control/code'), (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.code && document.getElementById('modalWaAuth').style.display === 'flex') document.getElementById('waTheCode').innerText = data.code;
+            });
+        }
+
+        // ADMINS
+        window.openManageAdminsModal = () => {
+            if(!isSuperAdmin) return;
+            document.getElementById('adminTargetUser').value = ""; document.getElementById('permRecharges').checked = false; document.getElementById('permBalance').checked = false; document.getElementById('permProducts').checked = false; document.getElementById('permUsers').checked = false;
+            openModal('modalManageAdmins');
+        };
+        window.funcSetAdmin = async () => {
+            if(!isSuperAdmin) return;
+            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); if(!targetUser) return alert("❌ Define el target.");
+            const perms = { recharges: document.getElementById('permRecharges').checked, balance: document.getElementById('permBalance').checked, products: document.getElementById('permProducts').checked, users: document.getElementById('permUsers').checked };
+            try {
+                const uSnap = await get(ref(db, 'users')); let foundId = null; uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
+                if(foundId) { await update(ref(db, `users/${foundId}`), { role: 'admin', permissions: perms }); alert(`✅ Nivel otorgado.`); closeAllModals(); } else { alert("❌ Usuario no encontrado."); }
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        window.funcRemoveAdmin = async () => {
+            if(!isSuperAdmin) return;
+            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); if(!targetUser) return alert("❌ Define el target.");
+            try {
+                const uSnap = await get(ref(db, 'users')); let foundId = null; uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
+                if(foundId) { await update(ref(db, `users/${foundId}`), { role: 'user', permissions: null }); alert(`✅ Accesos revocados.`); closeAllModals(); } else { alert("❌ Usuario no encontrado."); }
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        // PAGOS
+        let banksList = [];
+        window.openPaymentsModal = async () => {
+            if(!isSuperAdmin) return alert("❌ Acceso denegado.");
+            clearPaymentInputs(); openModal('modalManagePayments'); await loadConfiguredCountries();
+        };
+        window.clearPaymentInputs = () => {
+            document.getElementById('payCode').value = ""; document.getElementById('payCode').readOnly = false; document.getElementById('payFlag').value = ""; document.getElementById('payName').value = ""; document.getElementById('payCurr').value = ""; document.getElementById('payRate').value = "";
+            document.getElementById('payModeText').innerText = "MODO: CREAR NUEVO PAÍS"; document.getElementById('payModeText').style.color = "var(--neon-green)"; banksList = []; addBankField(); renderBanks();
+        };
+        window.loadConfiguredCountries = async () => {
+            const container = document.getElementById('existingCountriesList'); container.innerHTML = "<p style='color:#aaa; font-size: 0.8rem;'>Cargando...</p>";
+            try {
+                const snap = await get(ref(db, 'config/countries'));
+                if(!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size: 0.8rem;'>Ninguna ruta configurada.</p>"; return; }
+                container.innerHTML = "";
+                snap.forEach(child => {
+                    const code = child.key; const data = child.val();
+                    container.innerHTML += `<div style="background: rgba(0,0,0,0.6); border: 1px solid rgba(0,243,255,0.2); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom:5px;">
+                        <span style="color: white; font-size: 0.9rem;">${data.flag} <strong style="color:var(--neon-cyan);">${data.name}</strong> (${code})</span>
+                        <div style="display:flex; gap: 8px;">
+                            <button onclick="editCountry('${code}')" style="background:rgba(0,243,255,0.1); color:var(--neon-cyan); border:1px solid var(--neon-cyan); padding:5px; border-radius:5px; cursor:pointer;"><i class='bx bx-edit-alt'></i></button>
+                            <button onclick="deleteCountry('${code}', '${data.name}')" style="background:rgba(255,7,58,0.1); color:var(--neon-red); border:1px solid var(--neon-red); padding:5px; border-radius:5px; cursor:pointer;"><i class='bx bx-trash'></i></button>
+                        </div></div>`;
+                });
+            } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
+        };
+        window.editCountry = async (code) => {
+            try {
+                const snap = await get(ref(db, `config/countries/${code}`));
+                if(snap.exists()) {
+                    const data = snap.val(); document.getElementById('payCode').value = code; document.getElementById('payCode').readOnly = true; document.getElementById('payFlag').value = data.flag || ""; document.getElementById('payName').value = data.name || ""; document.getElementById('payCurr').value = data.currency || ""; document.getElementById('payRate').value = data.rate || "";
+                    document.getElementById('payModeText').innerText = `MODO: EDITANDO ${data.name.toUpperCase()}`; document.getElementById('payModeText').style.color = "#3b3dff";
+                    banksList = data.paymentMethods || []; if(banksList.length === 0) addBankField(); renderBanks();
+                }
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        window.deleteCountry = async (code, name) => { if(confirm(`⚠️ ¿Borrar ${name}?`)) { try { await set(ref(db, `config/countries/${code}`), null); alert(`✅ Borrado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error: " + e.message); } } };
+        window.addBankField = () => { banksList.push({ bankName: "", accountNumber: "", description: "" }); renderBanks(); };
+        window.removeBankField = (index) => { banksList.splice(index, 1); renderBanks(); };
+        window.updateBankField = (index, field, value) => { banksList[index][field] = value; };
+        function renderBanks() {
+            const container = document.getElementById('banksContainer'); container.innerHTML = "";
+            banksList.forEach((bank, index) => {
+                container.innerHTML += `<div class="bank-field"><div class="bank-field-header"><strong><i class='bx bxs-bank'></i> Entidad #${index + 1}</strong><button onclick="removeBankField(${index})" class="btn-trash"><i class='bx bx-trash'></i></button></div>
+                    <input type="text" placeholder="Institución" value="${bank.bankName}" onchange="updateBankField(${index}, 'bankName', this.value)" style="width:100%; margin-bottom:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;">
+                    <input type="text" placeholder="N° Cuenta" value="${bank.accountNumber}" onchange="updateBankField(${index}, 'accountNumber', this.value)" style="width:100%; margin-bottom:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;">
+                    <input type="text" placeholder="Nota anexa" value="${bank.description}" onchange="updateBankField(${index}, 'description', this.value)" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;"></div>`;
+            });
+        }
+        window.savePaymentConfig = async () => {
+            const code = document.getElementById('payCode').value.trim().toUpperCase(); const flag = document.getElementById('payFlag').value.trim(); const name = document.getElementById('payName').value.trim(); const currency = document.getElementById('payCurr').value.trim().toUpperCase(); const rate = parseFloat(document.getElementById('payRate').value);
+            if(!code || !flag || !name || !currency || isNaN(rate)) return alert("❌ Faltan datos.");
+            const cleanBanksList = banksList.filter(b => b.bankName.trim() !== "" && b.accountNumber.trim() !== ""); if(cleanBanksList.length === 0) return alert("❌ Añade un banco.");
+            try { await set(ref(db, `config/countries/${code}`), { name, flag, currency, rate, paymentMethods: cleanBanksList }); alert(`✅ Guardado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        // RECARGAS
+        window.openRechargesModal = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return alert("❌ No tienes permiso.");
+            openModal('modalRecharges'); const container = document.getElementById('rechargesList'); container.innerHTML = "<p style='text-align:center; color:#aaa;'>Cargando...</p>";
+            try {
+                const snap = await get(ref(db, 'pending_receipts')); if (!snap.exists()) { container.innerHTML = "<p style='text-align:center; color:#888;'>Cero tickets pendientes.</p>"; return; }
+                container.innerHTML = "";
+                snap.forEach(childSnap => {
+                    const id = childSnap.key; const data = childSnap.val(); const dateString = new Date(data.date).toLocaleString('es-ES');
+                    container.innerHTML += `<div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,243,255,0.2);">
+                        <p style="margin: 0 0 5px 0; font-size: 0.8rem; color:#888;">HASH: ${id.substring(1,8)}</p><p style="margin: 0 0 5px 0;"><strong>Entidad:</strong> <span style="color:var(--neon-cyan);">${data.username}</span></p>
+                        <p style="margin: 0 0 5px 0;"><strong>Valor:</strong> $${data.amountUsd.toFixed(2)} USD</p><p style="margin: 0 0 5px 0;"><strong>Local:</strong> ${data.amountLocal || '---'}</p><p style="margin: 0 0 10px 0; font-size: 0.8rem; color:#aaa;">Fecha: ${dateString}</p>
+                        <a href="${data.receiptUrl}" target="_blank" style="display:inline-block; padding: 10px; background: rgba(0,243,255,0.1); color: var(--neon-cyan); text-decoration: none; border-radius: 8px; border: 1px solid var(--neon-cyan); width: 100%; text-align: center; margin-bottom: 10px; font-weight:bold;"><i class='bx bx-scan'></i> Ver Comprobante</a>
+                        <div style="display:flex; gap:10px;"><button onclick="approveRecharge('${id}', '${data.uid}', ${data.amountUsd}, '${data.username}')" style="flex:1; background:var(--neon-green); color:#000; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;"><i class='bx bx-check'></i> Aprobar</button>
+                        <button onclick="rejectRecharge('${id}', '${data.uid}')" style="flex:1; background:var(--neon-red); color:#fff; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;"><i class='bx bx-block'></i> Denegar</button></div></div>`;
+                });
+            } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
+        };
+        window.approveRecharge = async (receiptId, uid, amountUsd, username) => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
+            if(!confirm(`¿Aprobar $${amountUsd} USD a ${username}?`)) return;
+            try {
+                const uSnap = await get(ref(db, `users/${uid}`)); const targetData = uSnap.val(); let currentBal = targetData ? parseFloat(targetData.balance || 0) : 0;
+                if (!isSuperAdmin && targetData && targetData.lastIp === currentAdminIp) { alert("Error 404 de autenticacion contacta al admin para informar sobre el error +573142369516"); return; }
+                const updates = {}; updates[`users/${uid}/balance`] = currentBal + amountUsd; updates[`users/${uid}/recharges/${receiptId}/status`] = 'approved'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
+                await update(ref(db), updates); await logAdminAction("Autorización Recarga", username, `Liberó $${amountUsd} USD.`); alert(`✅ Aprobado.`); openRechargesModal();
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        window.rejectRecharge = async (receiptId, uid) => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
+            if(!confirm("¿Bloquear ticket?")) return;
+            try { const updates = {}; updates[`users/${uid}/recharges/${receiptId}/status`] = 'rejected'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; await update(ref(db), updates); alert("❌ Denegado."); openRechargesModal(); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        // PRODUCTOS
+        window.funcCreateProduct = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            const name = document.getElementById('pName').value.trim(); const cat = document.getElementById('pCat').value; const price = parseFloat(document.getElementById('pPrice').value); const dur = document.getElementById('pDur').value.trim(); const warr = parseInt(document.getElementById('pWarr').value);
+            if(!name || isNaN(price)) return alert("Faltan datos.");
+            try { const newProdRef = push(ref(db, 'products')); const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key; await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr }); alert("✅ Creado."); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        window.openAddDurationModal = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            const select = document.getElementById('durProdSelect'); select.innerHTML = "<option value=''>Cargando...</option>"; openModal('modalAddDuration');
+            try {
+                const snap = await get(ref(db, 'products')); select.innerHTML = "";
+                if(snap.exists()) { snap.forEach(p => { const opt = document.createElement('option'); opt.value = p.key; opt.text = p.val().name; select.appendChild(opt); }); } else { select.innerHTML = "<option value=''>BD Vacía</option>"; }
+            } catch(e) { select.innerHTML = `<option value=''>Error: ${e.message}</option>`; }
+        };
+        window.funcAddDuration = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const pId = document.getElementById('durProdSelect').value; const dur = document.getElementById('durName').value.trim(); const price = parseFloat(document.getElementById('durPrice').value); const warr = parseInt(document.getElementById('durWarr').value);
+            if(!pId || !dur || isNaN(price)) return alert("❌ Faltan datos.");
+            try { await set(push(ref(db, `products/${pId}/durations`)), { duration: dur, price: price, warranty: isNaN(warr) ? 0 : warr }); alert(`✅ Añadido.`); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        window.openStockModal = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            const select = document.getElementById('stockProdSelect'); select.innerHTML = ""; const snap = await get(ref(db, 'products'));
+            if(snap.exists()) { snap.forEach(p => { const prod = p.val(); if(prod.durations) { Object.keys(prod.durations).forEach(dId => { const opt = document.createElement('option'); opt.value = `${p.key}|${dId}`; opt.text = `${prod.name} (${prod.durations[dId].duration})`; select.appendChild(opt); }); } }); openModal('modalAddStock'); } else { alert("BD Vacía."); }
+        };
+        window.funcAddStock = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const selectVal = document.getElementById('stockProdSelect').value; if(!selectVal) return alert("❌ Selecciona target.");
+            const [pId, dId] = selectVal.split('|'); const keys = document.getElementById('stockKeysArea').value.split('\n').filter(k => k.trim() !== ""); if(keys.length === 0) return alert("Faltan keys.");
+            try { const updates = {}; keys.forEach(key => { updates[`products/${pId}/durations/${dId}/keys/${push(ref(db)).key}`] = key.trim(); }); await update(ref(db), updates); alert(`✅ ${keys.length} Keys subidas.`); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        // SALDO Y USUARIOS
+        window.funcAddBalance = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.balance)) return alert("❌ Sin acceso a fondos.");
+            const user = document.getElementById('balUser').value.trim().toLowerCase(); const amt = parseFloat(document.getElementById('balAmt').value); if(!user || isNaN(amt)) return;
+            try {
+                const uSnap = await get(ref(db, 'users')); let foundId = null, currentB = 0, targetIp = null;
+                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === user) { foundId = u.key; currentB = u.val().balance || 0; targetIp = u.val().lastIp || "unknown"; } });
+                if(foundId) {
+                    if (!isSuperAdmin && targetIp === currentAdminIp) { alert("Error 404 de autenticacion contacta al admin para informar sobre el error +573142369516"); return; }
+                    await update(ref(db), { [`users/${foundId}/balance`]: currentB + amt }); await logAdminAction("Inyección Manual", user, `Traspasó $${amt} USD.`); alert("✅ Saldo transferido."); closeAllModals();
+                } else { alert("Usuario no existe."); }
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        window.funcTransferUser = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("❌ Bloqueado.");
+            const oldU = document.getElementById('transferOldUser').value.trim().toLowerCase(); const newU = document.getElementById('transferNewUser').value.trim().toLowerCase(); if(!oldU || !newU) return alert("❌ Llenar campos."); if(oldU === newU) return alert("❌ Nombres iguales.");
+            try {
+                const uSnap = await get(ref(db, 'users')); let oldUid = null, newUid = null, oldData = null, newDataInfo = null;
+                uSnap.forEach(u => { const ud = u.val(); if(ud.username && ud.username.toLowerCase() === oldU) { oldUid = u.key; oldData = ud; } if(ud.username && ud.username.toLowerCase() === newU) { newUid = u.key; newDataInfo = ud; } });
+                if(!oldUid) return alert("❌ Origen no encontrado."); if(!newUid) return alert("❌ Destino no encontrado.");
+                if(confirm(`⚠️ ¿Sobrescribir "${newU}" con "${oldU}"?`)) {
+                    const cData = { ...oldData }; cData.username = newDataInfo.username; if(newDataInfo.email) cData.email = newDataInfo.email; if(newDataInfo.uid) cData.uid = newDataInfo.uid; 
+                    const updates = {}; updates[`users/${newUid}`] = cData; updates[`users/${oldUid}`] = null; await update(ref(db), updates); alert(`✅ Migrado.`); closeAllModals();
+                }
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        window.funcDeleteUser = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("❌ Bloqueado.");
+            const userToDelete = document.getElementById('delUserUsername').value.trim().toLowerCase(); if(!userToDelete) return; if(userToDelete === 'sebasxit') return alert("❌ No puedes borrar a Matrix.");
+            try {
+                const uSnap = await get(ref(db, 'users')); let foundId = null, targetIsAdmin = false;
+                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === userToDelete) { foundId = u.key; if(u.val().role === 'admin') targetIsAdmin = true; } });
+                if(!isSuperAdmin && targetIsAdmin) return alert("❌ No puedes purgar admins.");
+                if(foundId) { if(confirm(`⚠️ ¿Purgar a "${userToDelete}"?`)) { await set(ref(db, `users/${foundId}`), null); alert("✅ Purgado."); closeAllModals(); } } else { alert("❌ No existe."); }
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        window.funcBroadcast = async () => { 
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Bloqueado.");
+            const msg = document.getElementById('bcText').value.trim(); if(!msg) return;
+            try { await set(ref(db, 'whatsapp_control/broadcast'), { message: msg, timestamp: Date.now() }); alert("✅ Enviado."); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        // PARTICULAS
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 0.5; this.color = Math.random() > 0.5 ? 'rgba(188, 19, 254, ' : 'rgba(0, 243, 255, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+    </script>
+</body>
+</html>

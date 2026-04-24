@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Tutoriales - LUCK XIT</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+
+        * { user-select: none; box-sizing: border-box; }
+
+        :root {
+            --neon-purple: #bc13fe;
+            --neon-red: #ff073a;
+            --neon-cyan: #00f3ff;
+            --neon-green: #00ffcc;
+            --glass-bg: rgba(15, 0, 25, 0.7);
+            --sidebar-bg: rgba(5, 10, 20, 0.95);
+        }
+
+        body {
+            background-color: #020005;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0;
+            min-height: 100vh; min-height: 100dvh; 
+            display: flex; flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ANIMACIONES */
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes gradientScroll { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes borderPulse { 0% { box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); } 50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); } 100% { box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); } }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020202; }
+        ::-webkit-scrollbar-thumb { background: #3b3dff; border-radius: 4px; box-shadow: 0 0 10px #3b3dff; }
+
+        .top-bar {
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 700px;
+            background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px);
+            border: 1px solid #3b3dff; border-radius: 12px;
+            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 0 15px rgba(59, 61, 255, 0.15); z-index: 100;
+        }
+
+        .menu-btn {
+            background: transparent; border: 1px solid #3b3dff; color: #3b3dff;
+            border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+        }
+        .menu-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px #3b3dff; background: rgba(59, 61, 255, 0.1); }
+
+        .top-bar-right { display: flex; align-items: center; gap: 10px; }
+        
+        .badge {
+            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap;
+        }
+        .badge i { font-size: 1.1rem; color: #3b3dff; }
+        .badge span { color: #fff; font-weight: 600; }
+
+        .admin-container {
+            width: 95%; max-width: 700px; margin: 90px auto 30px auto;
+            z-index: 10; animation: popIn 0.6s ease-out;
+            background: linear-gradient(145deg, #0a0a0a, #050505);
+            padding: 25px; border-radius: 20px; border: 1px solid #3b3dff;
+            box-shadow: 0 0 30px rgba(59, 61, 255, 0.1) inset;
+        }
+
+        .header-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.5rem; margin: 0 0 15px 0; text-align: center;
+            background: linear-gradient(90deg, #1a1c9c, #3b3dff, #1a1c9c);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase; letter-spacing: 2px;
+            animation: gradientScroll 3s linear infinite; background-size: 200%;
+        }
+
+        .cyber-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #3b3dff;
+            border-radius: 10px; padding: 15px; margin-bottom: 15px; transition: 0.3s;
+        }
+        .cyber-box:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.1); }
+        .cyber-box-title { color: #aaa; font-size: 0.75rem; text-align: left; margin-bottom: 10px; font-weight: bold; font-family: 'Orbitron'; letter-spacing: 1px; }
+
+        .input-group { margin-bottom: 12px; text-align: left; }
+        .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; transition: 0.3s; }
+        .input-group input, .input-group textarea {
+            width: 100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .input-group input:focus, .input-group textarea:focus { 
+            border-color: #3b3dff; transform: scale(1.02); box-shadow: 0 0 15px rgba(59, 61, 255, 0.3); background: rgba(59, 61, 255, 0.05); 
+        }
+        .input-group input:focus + label, .input-group textarea:focus + label { color: #3b3dff; }
+
+        .btn-action { 
+            width: 100%; padding: 15px; border: none; border-radius: 8px; 
+            background: linear-gradient(90deg, #1a1c9c, #3b3dff, #1a1c9c); 
+            background-size: 200% auto; animation: gradientScroll 3s linear infinite;
+            color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 15px; 
+        }
+        .btn-action:hover { box-shadow: 0 0 20px #3b3dff; transform: scale(1.03); letter-spacing: 1px; }
+        
+        .btn-cancel { width: 100%; background: transparent; border: 1px solid #444; color: #aaa; padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Orbitron'; }
+        .btn-cancel:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0,243,255,0.1); }
+
+        #loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #020005; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #loadingScreen h2 { font-family: 'Orbitron'; color: #3b3dff; text-shadow: 0 0 15px #3b3dff; animation: popIn 1s infinite alternate; }
+
+    </style>
+</head>
+<body oncontextmenu="return false;"> 
+
+    <div id="loadingScreen"><h2>VERIFICANDO AUTORIZACIÓN...</h2></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="menu-btn" onclick="window.location.href='admin.html'"><i class='bx bx-arrow-back'></i></button>
+        </div>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-book-bookmark'></i> <span>TUTORIALES</span></div>
+        </div>
+    </div>
+
+    <div class="admin-container" id="mainPanel" style="display: none;">
+        <h1 class="header-title"><i class='bx bx-cloud-upload'></i> Subir Material</h1>
+        
+        <div class="cyber-box">
+            <div class="cyber-box-title">NUEVO TUTORIAL / GUÍA</div>
+            <div class="input-group">
+                <label>Título / Nombre del Producto</label>
+                <input type="text" id="tutTitle" placeholder="Ej: Instalar Hack Termux" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>URL de Descarga Directa</label>
+                <input type="url" id="tutLink" placeholder="Ej: https://mediafire.com/..." autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>Instrucciones (Opcional)</label>
+                <textarea id="tutDesc" rows="3" placeholder="Escribe los comandos o pasos a seguir..."></textarea>
+            </div>
+            <button class="btn-action" onclick="funcUploadTutorial()"><i class='bx bx-upload'></i> PUBLICAR EN LA RED</button>
+        </div>
+
+        <div class="cyber-box">
+            <div class="cyber-box-title">MATERIAL ACTIVO EN LA BASE DE DATOS</div>
+            <div id="adminTutorialsList" style="max-height: 250px; overflow-y: auto; text-align: left; padding-right: 5px;"></div>
+        </div>
+
+        <button class="btn-cancel" onclick="window.location.href='admin.html'"><i class='bx bx-radar'></i> Volver al Núcleo Central</button>
+    </div>
+
+    <script type="module">
+        import { auth, db, onAuthStateChanged, ref, get, child, update, push, set } from './firebase-config.js';
+
+        let adminUser = null; 
+        let isSuperAdmin = false;
+        let currentAdminIp = "0.0.0.0";
+
+        async function logAdminAction(actionType, targetUsername, details) {
+            try {
+                await push(ref(db, 'admin_logs'), {
+                    admin: adminUser.username,
+                    ip: currentAdminIp,
+                    action: actionType,
+                    target: targetUsername,
+                    details: details,
+                    timestamp: Date.now()
+                });
+            } catch (e) { console.error("Error guardando log", e); }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    currentAdminIp = data.ip;
+                } catch (err) { console.error("No se pudo obtener IP:", err); }
+
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    const data = snapshot.val();
+                    const safeUsername = data && data.username ? data.username.trim().toLowerCase() : '';
+
+                    isSuperAdmin = (safeUsername === 'sebasxit');
+                    const isAdmin = data && data.role === 'admin';
+                    
+                    // VALIDACIÓN ESTRICTA: Solo entran los que tienen permiso de 'products' o el superadmin
+                    const hasPermission = isSuperAdmin || (isAdmin && data.permissions && data.permissions.products);
+
+                    if (hasPermission) {
+                        adminUser = data;
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('mainPanel').style.display = 'block';
+                        loadAdminTutorials();
+                    } else { 
+                        alert("⚠️ Área Restringida. No tienes permisos de gestión de productos/tutoriales.");
+                        window.location.href = "admin.html"; 
+                    }
+                }).catch((error) => {
+                    document.getElementById('loadingScreen').innerHTML = `<h2 style="color:red;">FALLA DE CONEXIÓN: ${error.message}</h2>`;
+                });
+            } else { window.location.href = "login.html"; }
+        });
+
+        window.funcUploadTutorial = async () => {
+            const title = document.getElementById('tutTitle').value.trim();
+            const link = document.getElementById('tutLink').value.trim();
+            const desc = document.getElementById('tutDesc').value.trim();
+
+            if(!title || !link) return alert("❌ El título y el link son obligatorios.");
+
+            try {
+                await push(ref(db, 'tutorials'), {
+                    title: title,
+                    link: link,
+                    description: desc,
+                    timestamp: Date.now()
+                });
+                await logAdminAction("Subida de Material", "Global", `Publicó el tutorial: ${title}`);
+                alert("✅ Material subido a la red exitosamente.");
+                document.getElementById('tutTitle').value = '';
+                document.getElementById('tutLink').value = '';
+                document.getElementById('tutDesc').value = '';
+                loadAdminTutorials();
+            } catch(e) {
+                alert("❌ Fallo de subida: " + e.message);
+            }
+        };
+
+        window.loadAdminTutorials = async () => {
+            const container = document.getElementById('adminTutorialsList');
+            container.innerHTML = "<p style='color:#aaa; font-size:12px; text-align:center;'>Sincronizando datos...</p>";
+            try {
+                const snap = await get(ref(db, 'tutorials'));
+                if(!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size:12px; text-align:center;'>La base de datos de tutoriales está vacía.</p>"; return; }
+                container.innerHTML = "";
+                snap.forEach(child => {
+                    const data = child.val();
+                    container.innerHTML += `
+                        <div style="background: rgba(0,0,0,0.5); padding: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;" onmouseover="this.style.borderColor='#3b3dff'; this.style.background='rgba(59,61,255,0.05)';" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(0,0,0,0.5)';">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">
+                                <strong style="color:#fff; font-size:14px; font-family:'Orbitron'; letter-spacing:1px;">${data.title}</strong><br>
+                                <a href="${data.link}" target="_blank" style="color:#3b3dff; font-size:11px; text-decoration:none; display:inline-block; margin-top:4px;"><i class='bx bx-link-external'></i> Comprobar Enlace</a>
+                            </div>
+                            <button onclick="funcDeleteTutorial('${child.key}', '${data.title}')" style="background:rgba(255,7,58,0.1); border:1px solid var(--neon-red); color:var(--neon-red); border-radius:5px; padding:8px; cursor:pointer; font-size: 1.2rem; transition:0.3s;" onmouseover="this.style.transform='scale(1.1)'; this.style.background='var(--neon-red)'; this.style.color='#fff';" onmouseout="this.style.transform='scale(1)'; this.style.background='rgba(255,7,58,0.1)'; this.style.color='var(--neon-red)';"><i class='bx bx-trash'></i></button>
+                        </div>
+                    `;
+                });
+            } catch(e) { container.innerHTML = `<p style="color:var(--neon-red); font-size:12px;">Error de extracción: ${e.message}</p>`; }
+        };
+
+        window.funcDeleteTutorial = async (id, title) => {
+            if(confirm(`⚠️ ¿Peligro: Seguro que deseas eliminar permanentemente el tutorial "${title}"?`)) {
+                try {
+                    await set(ref(db, `tutorials/${id}`), null);
+                    await logAdminAction("Eliminación de Material", "Global", `Borró el tutorial: ${title}`);
+                    loadAdminTutorials();
+                } catch(e) {
+                    alert("❌ Fallo al purgar el bloque: " + e.message);
+                }
+            }
+        };
+
+        // PARTICULAS
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 0.5; this.color = Math.random() > 0.5 ? 'rgba(59, 61, 255, ' : 'rgba(0, 243, 255, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+    </script>
+</body>
+</html>
