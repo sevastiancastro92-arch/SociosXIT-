@@ -297,6 +297,11 @@
                 <div class="card-info"><h3>Crear Producto</h3><p>Nuevo ítem en catálogo.</p></div>
             </div>
 
+            <div class="admin-card color-blue" onclick="openAddDurationModal()">
+                <div class="card-icon"><i class='bx bx-time-five'></i></div>
+                <div class="card-info"><h3>Añadir Duración</h3><p>Nuevos planes a productos.</p></div>
+            </div>
+
             <div class="admin-card" onclick="openStockModal()">
                 <div class="card-icon"><i class='bx bx-key'></i></div>
                 <div class="card-info"><h3>Añadir Stock</h3><p>Subir llaves a un producto.</p></div>
@@ -326,6 +331,33 @@
                 <div class="card-icon"><i class='bx bx-power-off'></i></div>
                 <div class="card-info"><h3>Mantenimiento</h3><p id="maintStatus">Cargando...</p></div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalAddDuration">
+        <div class="modal-box" style="border-color: var(--neon-cyan);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-time-five'></i> Añadir Duración</h3>
+            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 15px;">Agrega un nuevo plan (ej: 60 Días) a un producto ya creado.</p>
+            
+            <div class="input-group">
+                <label>Selecciona Producto</label>
+                <select id="durProdSelect"></select>
+            </div>
+            <div class="input-group">
+                <label>Nueva Duración (Ej: 60 Días)</label>
+                <input type="text" id="durName" placeholder="Ej: 60 Días">
+            </div>
+            <div class="input-group">
+                <label>Precio (USD)</label>
+                <input type="number" id="durPrice" step="0.01" placeholder="Ej: 5.50">
+            </div>
+            <div class="input-group">
+                <label>Garantía (Horas)</label>
+                <input type="number" id="durWarr" value="0">
+            </div>
+            
+            <button class="btn-action" onclick="funcAddDuration()">GUARDAR DURACIÓN</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
         </div>
     </div>
 
@@ -553,7 +585,6 @@
                     console.error("No se pudo obtener IP:", err);
                 }
 
-                // AQUI ESTABA EL ERROR: Devolví la estructura original de tu get() tal cual como la tenías
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     const data = snapshot.val();
                     const safeUsername = data && data.username ? data.username.trim().toLowerCase() : '';
@@ -925,7 +956,7 @@
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // --- PRODUCTOS Y STOCK ---
+        // --- PRODUCTOS, STOCK Y AÑADIR DURACIONES ---
         window.funcCreateProduct = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para productos.");
             const name = document.getElementById('pName').value.trim(); const cat = document.getElementById('pCat').value; const price = parseFloat(document.getElementById('pPrice').value); const dur = document.getElementById('pDur').value.trim(); const warr = parseInt(document.getElementById('pWarr').value);
@@ -935,6 +966,55 @@
                 await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr });
                 alert("¡Producto creado melo!"); location.reload();
             } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        window.openAddDurationModal = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para productos.");
+            const select = document.getElementById('durProdSelect'); 
+            select.innerHTML = "<option value=''>Cargando...</option>";
+            openModal('modalAddDuration');
+            
+            try {
+                const snap = await get(ref(db, 'products'));
+                select.innerHTML = "";
+                if(snap.exists()) {
+                    let hasProducts = false;
+                    snap.forEach(p => { 
+                        const prod = p.val(); 
+                        const opt = document.createElement('option'); 
+                        opt.value = p.key; 
+                        opt.text = prod.name; 
+                        select.appendChild(opt); 
+                        hasProducts = true;
+                    });
+                    if(!hasProducts) { select.innerHTML = "<option value=''>No hay productos</option>"; }
+                } else { 
+                    select.innerHTML = "<option value=''>Aún no hay productos creados.</option>"; 
+                }
+            } catch(e) {
+                select.innerHTML = `<option value=''>Error: ${e.message}</option>`;
+            }
+        };
+
+        window.funcAddDuration = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const pId = document.getElementById('durProdSelect').value;
+            const dur = document.getElementById('durName').value.trim();
+            const price = parseFloat(document.getElementById('durPrice').value);
+            const warr = parseInt(document.getElementById('durWarr').value);
+
+            if(!pId) return alert("❌ Selecciona un producto primero.");
+            if(!dur || isNaN(price)) return alert("❌ Llena la duración y el precio correctamente.");
+
+            try {
+                const newDurRef = push(ref(db, `products/${pId}/durations`));
+                await set(newDurRef, { duration: dur, price: price, warranty: isNaN(warr) ? 0 : warr });
+                alert(`✅ Duración "${dur}" agregada exitosamente.`);
+                closeAllModals();
+                location.reload();
+            } catch(e) {
+                alert("❌ Error al guardar: " + e.message);
+            }
         };
 
         window.openStockModal = async () => {
