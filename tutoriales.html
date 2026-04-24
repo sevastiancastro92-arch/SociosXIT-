@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutoriales - LUCK XIT OFC</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+
+        * { user-select: none; box-sizing: border-box; }
+
+        :root {
+            --neon-purple: #bc13fe;
+            --neon-red: #ff073a;
+            --neon-cyan: #00f3ff;
+            --glass-bg: rgba(15, 0, 25, 0.7);
+        }
+
+        body {
+            background-color: #020005;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center;
+        }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020202; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
+
+        .header-title {
+            font-family: 'Orbitron', sans-serif; font-size: 2rem; margin: 40px 0 20px 0;
+            background: linear-gradient(90deg, var(--neon-cyan), #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase; letter-spacing: 2px; text-align: center;
+        }
+
+        .tutorials-container {
+            width: 95%; max-width: 800px; margin: 0 auto 40px auto;
+            display: flex; flex-direction: column; gap: 20px; z-index: 10;
+        }
+
+        .tutorial-card {
+            background: var(--glass-bg); backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 15px; padding: 20px;
+            transition: 0.3s; position: relative; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        .tutorial-card:hover { border-color: var(--neon-cyan); box-shadow: 0 5px 20px rgba(0, 243, 255, 0.2); transform: translateY(-2px); }
+
+        .tutorial-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: var(--neon-cyan);
+            margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px;
+        }
+        
+        .tutorial-desc {
+            font-size: 0.9rem; color: #ccc; margin: 0 0 15px 0; line-height: 1.5;
+            background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; border-left: 3px solid var(--neon-purple);
+        }
+
+        .btn-download {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 12px; border-radius: 8px; background: rgba(0, 243, 255, 0.1);
+            color: var(--neon-cyan); border: 1px solid var(--neon-cyan); font-family: 'Orbitron', sans-serif;
+            text-decoration: none; font-weight: bold; transition: 0.3s;
+        }
+        .btn-download:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+
+        .back-btn {
+            position: absolute; top: 20px; left: 20px; color: var(--neon-cyan); font-size: 1.5rem;
+            text-decoration: none; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 8px;
+            border: 1px solid var(--neon-cyan); z-index: 100; transition: 0.3s;
+        }
+        .back-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 10px var(--neon-cyan); }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    
+    <a href="dashboard.html" class="back-btn"><i class='bx bx-arrow-back'></i></a>
+
+    <h1 class="header-title"><i class='bx bx-book-reader'></i> Tutoriales Oficiales</h1>
+    
+    <div class="tutorials-container" id="tutorialsList">
+        <p style="text-align: center; color: var(--neon-cyan); font-family: 'Orbitron';">Cargando datos...</p>
+    </div>
+
+    <script type="module">
+        import { db, ref, get } from './firebase-config.js';
+
+        async function loadTutorials() {
+            const container = document.getElementById('tutorialsList');
+            try {
+                const snap = await get(ref(db, 'tutorials'));
+                if (!snap.exists()) {
+                    container.innerHTML = `<p style="text-align: center; color: #888;">No hay tutoriales disponibles en este momento.</p>`;
+                    return;
+                }
+                
+                container.innerHTML = "";
+                // Convertir el objeto a array para poder ordenarlo (los más recientes primero)
+                let tutorialsArray = [];
+                snap.forEach(child => {
+                    tutorialsArray.push({ id: child.key, ...child.val() });
+                });
+                
+                tutorialsArray.sort((a, b) => b.timestamp - a.timestamp);
+
+                tutorialsArray.forEach(data => {
+                    let descHtml = data.description ? `<div class="tutorial-desc">${data.description}</div>` : '';
+                    container.innerHTML += `
+                        <div class="tutorial-card">
+                            <h2 class="tutorial-title"><i class='bx bxs-file-blank'></i> ${data.title}</h2>
+                            ${descHtml}
+                            <a href="${data.link}" target="_blank" class="btn-download"><i class='bx bx-cloud-download'></i> DESCARGAR AHORA</a>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                container.innerHTML = `<p style="color: var(--neon-red); text-align: center;">Error al cargar: ${error.message}</p>`;
+            }
+        }
+
+        loadTutorials();
+
+        // Efecto de fondo (Partículas)
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+    </script>
+</body>
+</html>

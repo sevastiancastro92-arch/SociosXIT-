@@ -222,6 +222,7 @@
             <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
             <a href="index.html" class="sidebar-item"><i class='bx bx-store'></i> Tienda</a>
             <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
+            <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-book-reader'></i> Tutoriales</a>
         </div>
         <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Salir</button></div>
     </div>
@@ -236,6 +237,14 @@
         </div>
 
         <div class="admin-grid">
+
+            <div class="admin-card color-blue" onclick="openTutorialsModal()">
+                <div class="card-icon"><i class='bx bx-book-bookmark'></i></div>
+                <div class="card-info">
+                    <h3>Subir Tutorial</h3>
+                    <p>Agregar links y descripciones.</p>
+                </div>
+            </div>
 
             <div class="admin-card color-green" onclick="openWaModal()" id="cardWaBot">
                 <div class="card-icon"><i class='bx bxl-whatsapp'></i></div>
@@ -394,6 +403,34 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="modalManageTutorials">
+        <div class="modal-box" style="border-color: var(--neon-blue);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-book-bookmark'></i> Gestor de Tutoriales</h3>
+            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 15px;">Añade nuevos tutoriales y guías para los usuarios.</p>
+            
+            <div class="input-group">
+                <label>Título / Nombre del Producto</label>
+                <input type="text" id="tutTitle" placeholder="Ej: Instalar Hack Termux">
+            </div>
+            <div class="input-group">
+                <label>Link de Descarga</label>
+                <input type="url" id="tutLink" placeholder="Ej: https://mediafire.com/...">
+            </div>
+            <div class="input-group">
+                <label>Descripción (Opcional)</label>
+                <textarea id="tutDesc" rows="3" placeholder="Instrucciones, pasos, comandos..."></textarea>
+            </div>
+            
+            <button class="btn-action" style="background: #3b3dff; color: white; box-shadow: 0 0 10px #3b3dff;" onclick="funcUploadTutorial()">PUBLICAR TUTORIAL</button>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;"></div>
+            <h4 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 0.9rem; text-align: left; margin-bottom: 10px;">TUTORIALES ACTIVOS</h4>
+            <div id="adminTutorialsList" style="max-height: 150px; overflow-y: auto; text-align: left; margin-bottom: 15px;"></div>
+
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="modalCreateProduct">
         <div class="modal-box">
             <h3 style="font-family:'Orbitron'"><i class='bx bx-plus-circle'></i> Nuevo Producto</h3>
@@ -535,6 +572,72 @@
                 }
             });
         }
+
+        // --- MÓDULO: GESTIÓN DE TUTORIALES ---
+        window.openTutorialsModal = () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para gestionar tutoriales.");
+            openModal('modalManageTutorials');
+            loadAdminTutorials();
+        };
+
+        window.funcUploadTutorial = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const title = document.getElementById('tutTitle').value.trim();
+            const link = document.getElementById('tutLink').value.trim();
+            const desc = document.getElementById('tutDesc').value.trim();
+
+            if(!title || !link) return alert("❌ El título y el link de descarga son obligatorios.");
+
+            try {
+                await push(ref(db, 'tutorials'), {
+                    title: title,
+                    link: link,
+                    description: desc,
+                    timestamp: Date.now()
+                });
+                alert("✅ Tutorial subido correctamente.");
+                document.getElementById('tutTitle').value = '';
+                document.getElementById('tutLink').value = '';
+                document.getElementById('tutDesc').value = '';
+                loadAdminTutorials();
+            } catch(e) {
+                alert("❌ Error al subir: " + e.message);
+            }
+        };
+
+        window.loadAdminTutorials = async () => {
+            const container = document.getElementById('adminTutorialsList');
+            container.innerHTML = "<p style='color:#aaa; font-size:12px;'>Cargando tutoriales...</p>";
+            try {
+                const snap = await get(ref(db, 'tutorials'));
+                if(!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size:12px;'>No has subido ningún tutorial aún.</p>"; return; }
+                container.innerHTML = "";
+                snap.forEach(child => {
+                    const data = child.val();
+                    container.innerHTML += `
+                        <div style="background: rgba(0,0,0,0.5); padding: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">
+                                <strong style="color:var(--neon-cyan); font-size:13px;">${data.title}</strong><br>
+                                <a href="${data.link}" target="_blank" style="color:#aaa; font-size:11px; text-decoration:none;"><i class='bx bx-link'></i> Ver Enlace</a>
+                            </div>
+                            <button onclick="funcDeleteTutorial('${child.key}')" style="background:transparent; border:none; color:var(--neon-red); cursor:pointer; font-size: 1.2rem;"><i class='bx bx-trash'></i></button>
+                        </div>
+                    `;
+                });
+            } catch(e) { container.innerHTML = `<p style="color:red; font-size:12px;">Error: ${e.message}</p>`; }
+        };
+
+        window.funcDeleteTutorial = async (id) => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            if(confirm("¿Estás seguro de eliminar este tutorial?")) {
+                try {
+                    await set(ref(db, `tutorials/${id}`), null);
+                    loadAdminTutorials();
+                } catch(e) {
+                    alert("❌ Error al eliminar: " + e.message);
+                }
+            }
+        };
 
         // --- MÓDULO: GESTIÓN DE ADMINS ---
         window.openManageAdminsModal = () => {
