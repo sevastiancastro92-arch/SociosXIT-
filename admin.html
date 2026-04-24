@@ -157,9 +157,10 @@
         }
 
         #modalRecharges .modal-box { max-width: 550px; }
+        #modalAdminLogs .modal-box { max-width: 600px; border-color: var(--neon-red); }
 
-        #banksContainer::-webkit-scrollbar { width: 4px; }
-        #banksContainer::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 2px; }
+        #banksContainer::-webkit-scrollbar, #logsContainer::-webkit-scrollbar { width: 4px; }
+        #banksContainer::-webkit-scrollbar-thumb, #logsContainer::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 2px; }
         
         .bank-field { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(188, 19, 254, 0.3); text-align: left; }
         .bank-field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -188,6 +189,11 @@
             background: #111; border: 1px solid #333; padding: 15px; border-radius: 10px; margin-top: 15px;
             font-family: 'Orbitron', sans-serif; font-size: 1.5rem; letter-spacing: 5px; color: #25D366; text-align: center;
         }
+
+        .log-item { background: rgba(255,0,0,0.05); border-left: 3px solid var(--neon-red); padding: 12px; margin-bottom: 10px; text-align: left; border-radius: 5px; }
+        .log-item p { margin: 3px 0; font-size: 0.85rem; color: #ddd; }
+        .log-item strong { color: var(--neon-cyan); }
+        .log-item .log-date { font-size: 0.7rem; color: #888; font-family: 'Orbitron'; }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -262,6 +268,14 @@
                 </div>
             </div>
 
+            <div class="admin-card color-red" id="cardAdminLogs" style="display: none;" onclick="openAdminLogsModal()">
+                <div class="card-icon"><i class='bx bx-cctv'></i></div>
+                <div class="card-info">
+                    <h3>Registro de Seguridad</h3>
+                    <p>Auditoría de IPs y Acciones.</p>
+                </div>
+            </div>
+
             <div class="admin-card color-cyan" onclick="openRechargesModal()">
                 <div class="card-icon"><i class='bx bx-receipt'></i></div>
                 <div class="card-info">
@@ -312,6 +326,15 @@
                 <div class="card-icon"><i class='bx bx-power-off'></i></div>
                 <div class="card-info"><h3>Mantenimiento</h3><p id="maintStatus">Cargando...</p></div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalAdminLogs">
+        <div class="modal-box">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-cctv'></i> Historial de Administradores</h3>
+            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 15px;">Registro de acciones críticas e IPs. Visible solo para SuperAdmin.</p>
+            <div id="logsContainer" style="max-height: 350px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;"></div>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
         </div>
     </div>
 
@@ -502,10 +525,34 @@
 
         let adminUser = null; 
         let isSuperAdmin = false;
+        let currentAdminIp = "0.0.0.0"; // VARIABLE PARA IP DE ESTA SESION
+
+        // OBTENER LA IP ACTUAL DEL ADMIN
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => { currentAdminIp = data.ip; })
+            .catch(error => console.error("No se pudo obtener IP:", error));
+
+        // FUNCION PARA GUARDAR LOGS SILENCIOSAMENTE
+        async function logAdminAction(actionType, targetUsername, details) {
+            try {
+                await push(ref(db, 'admin_logs'), {
+                    admin: adminUser.username,
+                    ip: currentAdminIp,
+                    action: actionType,
+                    target: targetUsername,
+                    details: details,
+                    timestamp: Date.now()
+                });
+            } catch (e) { console.error("Error guardando log", e); }
+        }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                // Registrar la IP del usuario en la base de datos cada vez que inicia sesión
+                if (currentAdminIp !== "0.0.0.0") { update(ref(db, `users/${user.uid}`), { lastIp: currentAdminIp }); }
+
+                get(child(ref(db, `users/${user.uid}`))).then((snapshot) => {
                     const data = snapshot.val();
                     const safeUsername = data && data.username ? data.username.trim().toLowerCase() : '';
 
@@ -520,6 +567,7 @@
                         
                         if (isSuperAdmin) {
                             document.getElementById('cardManageAdmins').style.display = 'flex';
+                            document.getElementById('cardAdminLogs').style.display = 'flex'; // ACTIVA EL PANEL DE LOGS SOLO PARA TI
                         }
 
                         loadStats();
@@ -535,6 +583,38 @@
                 });
             } else { window.location.href = "login.html"; }
         });
+
+        // --- MÓDULO: HISTORIAL DE ADMINS (SOLO PARA SEBASXIT) ---
+        window.openAdminLogsModal = async () => {
+            if (!isSuperAdmin) return;
+            openModal('modalAdminLogs');
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = "<p style='color:#aaa; font-size:12px;'>Cargando registros de seguridad...</p>";
+            
+            try {
+                const snap = await get(ref(db, 'admin_logs'));
+                if (!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size:12px;'>No hay actividad registrada aún.</p>"; return; }
+                
+                let logsHtml = "";
+                const logsData = [];
+                snap.forEach(child => { logsData.push(child.val()); });
+                logsData.reverse(); // Mostrar los más recientes primero
+
+                logsData.forEach(log => {
+                    const dateStr = new Date(log.timestamp).toLocaleString('es-ES');
+                    logsHtml += `
+                        <div class="log-item">
+                            <p><strong>Admin:</strong> ${log.admin} | <strong>IP:</strong> ${log.ip}</p>
+                            <p><strong>Acción:</strong> <span style="color:var(--neon-green)">${log.action}</span></p>
+                            <p><strong>Objetivo:</strong> ${log.target}</p>
+                            <p><strong>Detalle:</strong> ${log.details}</p>
+                            <p class="log-date">${dateStr}</p>
+                        </div>
+                    `;
+                });
+                container.innerHTML = logsHtml;
+            } catch(e) { container.innerHTML = `<p style="color:red; font-size:12px;">Error: ${e.message}</p>`; }
+        };
 
         // --- MÓDULO: VINCULACIÓN WHATSAPP ---
         window.openWaModal = () => {
@@ -802,10 +882,27 @@
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
             if(!confirm(`¿Estás seguro de aprobar y darle $${amountUsd} USD a ${username}?`)) return;
             try {
-                const uSnap = await get(ref(db, `users/${uid}`)); let currentBal = 0;
-                if(uSnap.exists()) currentBal = parseFloat(uSnap.val().balance || 0);
-                const updates = {}; updates[`users/${uid}/balance`] = currentBal + amountUsd; updates[`users/${uid}/recharges/${receiptId}/status`] = 'approved'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
-                await update(ref(db), updates); alert(`✅ Recarga Aprobada.`); openRechargesModal();
+                const uSnap = await get(ref(db, `users/${uid}`)); 
+                const targetData = uSnap.val();
+                let currentBal = targetData ? parseFloat(targetData.balance || 0) : 0;
+                
+                // VALIDACIÓN DE SEGURIDAD DE IP (SOLO APLICA SI NO ES SEBASXIT)
+                if (!isSuperAdmin && targetData && targetData.lastIp === currentAdminIp) {
+                    alert("Error 404 de autenticacion contacta al admin para informar sobre el error +573142369516");
+                    return;
+                }
+
+                const updates = {}; 
+                updates[`users/${uid}/balance`] = currentBal + amountUsd; 
+                updates[`users/${uid}/recharges/${receiptId}/status`] = 'approved'; 
+                updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); 
+                updates[`pending_receipts/${receiptId}`] = null; 
+                
+                await update(ref(db), updates); 
+                await logAdminAction("Aprobación Recarga", username, `Aprobó recarga de $${amountUsd} USD al ticket ${receiptId.substring(1,8)}`);
+                
+                alert(`✅ Recarga Aprobada.`); 
+                openRechargesModal();
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
@@ -813,8 +910,16 @@
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
             if(!confirm("¿Rechazar este comprobante?")) return;
             try {
-                const updates = {}; updates[`users/${uid}/recharges/${receiptId}/status`] = 'rejected'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
-                await update(ref(db), updates); alert("❌ Recarga Rechazada."); openRechargesModal(); 
+                const updates = {}; 
+                updates[`users/${uid}/recharges/${receiptId}/status`] = 'rejected'; 
+                updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); 
+                updates[`pending_receipts/${receiptId}`] = null; 
+                
+                await update(ref(db), updates); 
+                await logAdminAction("Rechazo Recarga", "Desconocido", `Rechazó comprobante de recarga (Ticket: ${receiptId.substring(1,8)})`);
+                
+                alert("❌ Recarga Rechazada."); 
+                openRechargesModal(); 
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
@@ -860,15 +965,33 @@
             
             if(!user || isNaN(amt)) return;
 
-            if (!isSuperAdmin && user === adminUser.username.toLowerCase()) {
-                alert("Error 404");
-                return;
-            }
-
             try {
-                const uSnap = await get(ref(db, 'users')); let foundId = null, currentB = 0;
-                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === user) { foundId = u.key; currentB = u.val().balance || 0; } });
-                if(foundId) { await update(ref(db), { [`users/${foundId}/balance`]: currentB + amt }); alert("Saldo enviado."); location.reload(); } else { alert("Usuario no encontrado."); }
+                const uSnap = await get(ref(db, 'users')); 
+                let foundId = null, currentB = 0, targetIp = null;
+                
+                uSnap.forEach(u => { 
+                    if(u.val().username && u.val().username.toLowerCase() === user) { 
+                        foundId = u.key; 
+                        currentB = u.val().balance || 0; 
+                        targetIp = u.val().lastIp || "unknown";
+                    } 
+                });
+
+                if(foundId) { 
+                    // VALIDACIÓN DE SEGURIDAD DE IP (SOLO APLICA SI NO ES SEBASXIT)
+                    if (!isSuperAdmin && targetIp === currentAdminIp) {
+                        alert("Error 404 de autenticacion contacta al admin para informar sobre el error +573142369516");
+                        return;
+                    }
+
+                    await update(ref(db), { [`users/${foundId}/balance`]: currentB + amt }); 
+                    await logAdminAction("Añadir Saldo Manual", user, `Añadió $${amt} USD directos.`);
+                    
+                    alert("Saldo enviado."); 
+                    location.reload(); 
+                } else { 
+                    alert("Usuario no encontrado."); 
+                }
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
