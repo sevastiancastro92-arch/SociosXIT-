@@ -527,12 +527,6 @@
         let isSuperAdmin = false;
         let currentAdminIp = "0.0.0.0"; // VARIABLE PARA IP DE ESTA SESION
 
-        // OBTENER LA IP ACTUAL DEL ADMIN
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => { currentAdminIp = data.ip; })
-            .catch(error => console.error("No se pudo obtener IP:", error));
-
         // FUNCION PARA GUARDAR LOGS SILENCIOSAMENTE
         async function logAdminAction(actionType, targetUsername, details) {
             try {
@@ -547,12 +541,20 @@
             } catch (e) { console.error("Error guardando log", e); }
         }
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Registrar la IP del usuario en la base de datos cada vez que inicia sesión
-                if (currentAdminIp !== "0.0.0.0") { update(ref(db, `users/${user.uid}`), { lastIp: currentAdminIp }); }
+                // OBTENEMOS LA IP Y LA GUARDAMOS ANTES DE CARGAR EL PANEL PARA EVITAR ERRORES
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    currentAdminIp = data.ip;
+                    await update(ref(db), { [`users/${user.uid}/lastIp`]: currentAdminIp });
+                } catch (err) {
+                    console.error("No se pudo obtener IP:", err);
+                }
 
-                get(child(ref(db, `users/${user.uid}`))).then((snapshot) => {
+                // AQUI ESTABA EL ERROR: Devolví la estructura original de tu get() tal cual como la tenías
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     const data = snapshot.val();
                     const safeUsername = data && data.username ? data.username.trim().toLowerCase() : '';
 
