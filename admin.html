@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - LUCK XIT OFC</title>
+    <title>Núcleo Central - LUCK XIT OFC</title>
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
@@ -31,188 +31,135 @@
             overflow-x: hidden;
         }
 
+        /* ANIMACIONES */
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0px); } }
+        @keyframes gradientScroll { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #020202; }
         ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
 
-        .top-bar {
-            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 700px;
-            background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px);
-            border: 1px solid var(--neon-cyan); border-radius: 12px;
-            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100;
+        /* LOADER CIBERNÉTICO */
+        #loadingScreen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #020005; z-index: 9999; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; gap: 30px; transition: opacity 0.6s ease;
         }
-
-        .menu-btn {
-            background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
-            border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+        .cyber-loader { position: relative; width: 120px; height: 120px; }
+        .cyber-ring {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%; border: 2px solid transparent;
+            border-top-color: var(--neon-cyan); border-bottom-color: var(--neon-purple);
+            animation: ringSpin 1.5s linear infinite; box-shadow: 0 0 20px rgba(0, 243, 255, 0.3) inset;
         }
-
-        .top-bar-right { display: flex; align-items: center; gap: 10px; }
+        .cyber-shard {
+            position: absolute; top: 25%; left: 25%; width: 50%; height: 50%;
+            background: var(--neon-red); clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation: shardBreak1 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite alternate;
+            box-shadow: 0 0 15px var(--neon-red);
+        }
+        .cyber-shard:nth-child(2) { background: var(--neon-cyan); animation: shardBreak2 2.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite alternate; }
+        .cyber-shard:nth-child(3) { background: var(--neon-purple); animation: shardBreak3 1.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite alternate; }
         
-        .badge {
-            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px;
-            font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap;
+        @keyframes ringSpin { 100% { transform: rotate(360deg); } }
+        @keyframes shardBreak1 { 0% { transform: rotate(0deg) scale(1) translateY(0); opacity: 1; } 100% { transform: rotate(180deg) scale(0.5) translateY(-40px); opacity: 0.6; } }
+        @keyframes shardBreak2 { 0% { transform: rotate(120deg) scale(1) translateY(0); opacity: 1; } 100% { transform: rotate(300deg) scale(0.6) translateY(40px) translateX(30px); opacity: 0.6; } }
+        @keyframes shardBreak3 { 0% { transform: rotate(240deg) scale(1) translateY(0); opacity: 1; } 100% { transform: rotate(60deg) scale(0.4) translateY(40px) translateX(-30px); opacity: 0.6; } }
+
+        #loadingText {
+            font-family: 'Orbitron', sans-serif; font-size: 1rem; color: var(--neon-cyan);
+            letter-spacing: 3px; text-transform: uppercase; text-align: center;
+            text-shadow: 0 0 10px var(--neon-cyan); animation: textPulse 1s infinite alternate;
         }
+        @keyframes textPulse { 0% { opacity: 0.7; } 100% { opacity: 1; text-shadow: 0 0 20px currentColor; } }
+
+        /* INTERFAZ */
+        .top-bar {
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px;
+            background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px;
+            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100;
+        }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .menu-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
+        .top-bar-right { display: flex; align-items: center; gap: 10px; }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; transition: 0.3s; }
+        .badge:hover { transform: translateY(-2px); border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); color: white; }
         .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
         .badge span { color: #fff; font-weight: 600; }
         .badge.red { border-color: var(--neon-red); }
+        .badge.red:hover { border-color: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
         .badge.red span { color: var(--neon-red); }
 
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998;
-            opacity: 0; visibility: hidden; transition: 0.3s;
-        }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
-        .sidebar {
-            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; 
-            background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan);
-            box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999;
-            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
-        }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan); box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; }
         .sidebar.active { left: 0; }
-
-        .sidebar-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px;
-        }
-        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; }
-
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-cyan); }
+        .close-btn { background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
         .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; }
-        
-        .sidebar-item {
-            display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;
-            padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s;
-        }
-        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
-        .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
-
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s; }
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s; }
+        .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); transform: translateX(5px); }
+        .sidebar-item:hover i { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
         .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
-        .logout-btn {
-            width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
-            padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .logout-btn:hover { background: rgba(255, 7, 58, 0.1); box-shadow: 0 0 15px var(--neon-red); transform: scale(1.02); }
 
-        .admin-container {
-            width: 95%; max-width: 900px; margin: 90px auto 30px auto;
-            z-index: 10; animation: slideUp 0.6s ease-out;
-        }
-
-        .header-title {
-            font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 5px 0;
-            background: linear-gradient(90deg, var(--neon-red), #fff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase; letter-spacing: 2px;
-        }
+        .admin-container { width: 95%; max-width: 900px; margin: 90px auto 30px auto; z-index: 10; animation: popIn 0.6s ease-out; }
+        .header-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 5px 0; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px; animation: gradientScroll 3s linear infinite; background-size: 200%; }
 
         .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; text-align: center; }
+        .stat-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; text-align: center; transition: 0.3s; }
+        .stat-box:hover { transform: translateY(-5px); border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,243,255,0.2); }
         .stat-box h4 { margin: 0; font-size: 0.75rem; color: #888; text-transform: uppercase; }
-        .stat-box p { margin: 5px 0 0 0; font-family: 'Orbitron'; font-size: 1.2rem; color: var(--neon-cyan); }
+        .stat-box p { margin: 5px 0 0 0; font-family: 'Orbitron'; font-size: 1.2rem; color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); }
 
         .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; }
-        .admin-card {
-            background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s;
-            position: relative; overflow: hidden;
-        }
-        .admin-card:hover { transform: translateY(-3px); border-color: var(--neon-cyan); box-shadow: 0 5px 20px rgba(0, 243, 255, 0.2); }
-        .card-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; font-size: 1.8rem; color: var(--neon-cyan); }
-        .card-info h3 { margin: 0 0 5px 0; font-family: 'Orbitron', sans-serif; font-size: 1rem; color: #fff; }
+        .admin-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; animation: float 4s ease-in-out infinite; }
+        .admin-card:nth-child(even) { animation-delay: 1s; }
+        .admin-card:nth-child(3n) { animation-delay: 2s; }
+        .admin-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%); opacity: 0; transition: 0.5s; pointer-events: none; }
+        .admin-card:hover::before { opacity: 1; transform: scale(1.2); }
+        .admin-card:hover { transform: translateY(-5px) scale(1.02) !important; border-color: var(--neon-cyan); box-shadow: 0 5px 25px rgba(0, 243, 255, 0.3); z-index: 2; animation-play-state: paused; }
+        .card-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; font-size: 1.8rem; color: var(--neon-cyan); transition: 0.3s; }
+        .admin-card:hover .card-icon { transform: rotate(10deg) scale(1.1); text-shadow: 0 0 10px currentColor; }
+        .card-info h3 { margin: 0 0 5px 0; font-family: 'Orbitron', sans-serif; font-size: 1rem; color: #fff; transition: 0.3s; }
+        .admin-card:hover .card-info h3 { color: var(--neon-cyan); }
         .card-info p { margin: 0; font-size: 0.75rem; color: #aaa; }
 
         .color-red .card-icon { color: var(--neon-red); background: rgba(255, 7, 58, 0.1); }
-        .color-red:hover { border-color: var(--neon-red); box-shadow: 0 5px 20px rgba(255, 7, 58, 0.2); }
-
-        .color-green .card-icon { color: #25D366; background: rgba(37, 211, 102, 0.1); }
-        .color-green:hover { border-color: #25D366; box-shadow: 0 5px 20px rgba(37, 211, 102, 0.2); }
-
+        .color-red:hover { border-color: var(--neon-red); box-shadow: 0 5px 25px rgba(255, 7, 58, 0.3); }
+        .color-red:hover .card-info h3 { color: var(--neon-red); }
         .color-purple .card-icon { color: var(--neon-purple); background: rgba(188, 19, 254, 0.1); }
-        .color-purple:hover { border-color: var(--neon-purple); box-shadow: 0 5px 20px rgba(188, 19, 254, 0.2); }
-        
+        .color-purple:hover { border-color: var(--neon-purple); box-shadow: 0 5px 25px rgba(188, 19, 254, 0.3); }
+        .color-purple:hover .card-info h3 { color: var(--neon-purple); }
         .color-blue .card-icon { color: #3b3dff; background: rgba(59, 61, 255, 0.1); }
-        .color-blue:hover { border-color: #3b3dff; box-shadow: 0 5px 20px rgba(59, 61, 255, 0.2); }
-
-        .color-gold .card-icon { color: #ffd700; background: rgba(255, 215, 0, 0.1); }
-        .color-gold:hover { border-color: #ffd700; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2); }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px);
-            display: none; justify-content: center; align-items: center; z-index: 2000;
-        }
-
-        .modal-box {
-            background: #0a0a0a; padding: 25px; border-radius: 20px;
-            width: 90%; max-width: 450px; border: 1px solid var(--neon-cyan);
-            text-align: center; position: relative; max-height: 90vh; overflow-y: auto;
-        }
-
-        #modalRecharges .modal-box { max-width: 550px; }
-        #modalAdminLogs .modal-box { max-width: 600px; border-color: var(--neon-red); }
-
-        #banksContainer::-webkit-scrollbar, #logsContainer::-webkit-scrollbar { width: 4px; }
-        #banksContainer::-webkit-scrollbar-thumb, #logsContainer::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 2px; }
-        
-        .bank-field { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(188, 19, 254, 0.3); text-align: left; }
-        .bank-field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .bank-field-header strong { color: var(--neon-cyan); font-size: 0.85rem; font-family: 'Orbitron'; }
-        .btn-trash { background: none; border: none; color: var(--neon-red); cursor: pointer; font-size: 1.2rem; }
-
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
-        .input-group input, .input-group select, .input-group textarea {
-            width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit; transition: 0.3s;
-        }
-        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--neon-cyan); }
-        .input-group input:read-only { background: rgba(255,255,255,0.02); color: #888; cursor: not-allowed; }
-
-        .perm-checkbox { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.9rem; cursor: pointer; }
-        .perm-checkbox input { accent-color: var(--neon-cyan); width: 18px; height: 18px; cursor: pointer; }
-
-        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 8px; background: var(--neon-cyan); color: #000; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
-        .btn-action:hover { box-shadow: 0 0 15px var(--neon-cyan); transform: scale(1.02); }
-        .btn-cancel { width: 100%; background: transparent; border: 1px solid #333; color: #666; padding: 10px; border-radius: 8px; cursor: pointer; }
-
-        #loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #020005; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        
-        .code-display-box {
-            background: #111; border: 1px solid #333; padding: 15px; border-radius: 10px; margin-top: 15px;
-            font-family: 'Orbitron', sans-serif; font-size: 1.5rem; letter-spacing: 5px; color: #25D366; text-align: center;
-        }
-
-        .log-item { background: rgba(255,0,0,0.05); border-left: 3px solid var(--neon-red); padding: 12px; margin-bottom: 10px; text-align: left; border-radius: 5px; }
-        .log-item p { margin: 3px 0; font-size: 0.85rem; color: #ddd; }
-        .log-item strong { color: var(--neon-cyan); }
-        .log-item .log-date { font-size: 0.7rem; color: #888; font-family: 'Orbitron'; }
+        .color-blue:hover { border-color: #3b3dff; box-shadow: 0 5px 25px rgba(59, 61, 255, 0.3); }
+        .color-blue:hover .card-info h3 { color: #3b3dff; }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
-    <script>
-        window.addEventListener('error', function(e) {
-            document.getElementById('loadingScreen').innerHTML = `<h2 style="color:red; font-family:'Orbitron'; text-align:center; padding: 20px;"><i class='bx bx-error-circle'></i> ERROR CRÍTICO<br><span style="font-size:14px; color:white; font-family:'Poppins';">${e.message}</span></h2>`;
-        });
-    </script>
-
     <div id="loadingScreen">
-        <h2 style="font-family: 'Orbitron'; color: var(--neon-red); animation: blink 1s infinite;">VERIFICANDO...</h2>
+        <div class="cyber-loader">
+            <div class="cyber-ring"></div>
+            <div class="cyber-shard"></div>
+            <div class="cyber-shard"></div>
+            <div class="cyber-shard"></div>
+        </div>
+        <div id="loadingText">INICIANDO PROTOCOLO...</div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
 
     <div class="top-bar">
         <div class="top-bar-left">
-            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
+            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu-alt-left'></i></button>
         </div>
         <div class="top-bar-right">
             <div class="badge red"><i class='bx bx-shield-quarter'></i> <span>ADMIN</span></div>
@@ -228,13 +175,12 @@
             <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
             <a href="index.html" class="sidebar-item"><i class='bx bx-store'></i> Tienda</a>
             <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
-            <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-book-reader'></i> Tutoriales</a>
         </div>
-        <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Salir</button></div>
+        <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Apagar Sistema</button></div>
     </div>
 
     <div class="admin-container" id="adminMainPanel" style="display: none;">
-        <h1 class="header-title">Control Central</h1>
+        <h1 class="header-title">NÚCLEO CENTRAL</h1>
         
         <div class="stats-row">
             <div class="stat-box"><h4>Usuarios</h4><p id="statUsers">0</p></div>
@@ -244,640 +190,99 @@
 
         <div class="admin-grid">
 
-            <div class="admin-card color-blue" onclick="openTutorialsModal()">
+            <div class="admin-card color-blue" onclick="window.location.href='admin_tutoriales.html'">
                 <div class="card-icon"><i class='bx bx-book-bookmark'></i></div>
                 <div class="card-info">
-                    <h3>Subir Tutorial</h3>
-                    <p>Agregar links y descripciones.</p>
+                    <h3>Gestor de Guías</h3>
+                    <p>Agregar o editar tutoriales.</p>
                 </div>
             </div>
 
-            <div class="admin-card color-green" onclick="openWaModal()" id="cardWaBot">
-                <div class="card-icon"><i class='bx bxl-whatsapp'></i></div>
+            <div class="admin-card color-purple" onclick="window.location.href='admin_operaciones.html'">
+                <div class="card-icon"><i class='bx bx-server'></i></div>
                 <div class="card-info">
-                    <h3>Vincular WhatsApp</h3>
-                    <p>Obtener código de sesión.</p>
+                    <h3>Panel de Operaciones</h3>
+                    <p>Tienda, usuarios y finanzas.</p>
                 </div>
-            </div>
-
-            <div class="admin-card color-gold" id="cardManageAdmins" style="display: none;" onclick="openManageAdminsModal()">
-                <div class="card-icon"><i class='bx bx-shield-alt-2'></i></div>
-                <div class="card-info">
-                    <h3>Gestión de Admins</h3>
-                    <p>Dar permisos a tu equipo.</p>
-                </div>
-            </div>
-
-            <div class="admin-card color-red" id="cardAdminLogs" style="display: none;" onclick="openAdminLogsModal()">
-                <div class="card-icon"><i class='bx bx-cctv'></i></div>
-                <div class="card-info">
-                    <h3>Registro de Seguridad</h3>
-                    <p>Auditoría de IPs y Acciones.</p>
-                </div>
-            </div>
-
-            <div class="admin-card color-cyan" onclick="openRechargesModal()">
-                <div class="card-icon"><i class='bx bx-receipt'></i></div>
-                <div class="card-info">
-                    <h3>Validar Recargas</h3>
-                    <p>Aprobar pagos de usuarios.</p>
-                </div>
-            </div>
-
-            <div class="admin-card color-blue" onclick="openPaymentsModal()">
-                <div class="card-icon"><i class='bx bx-credit-card-front'></i></div>
-                <div class="card-info">
-                    <h3>Métodos de Pago</h3>
-                    <p>Añadir, editar o borrar bancos.</p>
-                </div>
-            </div>
-
-            <div class="admin-card" onclick="openModal('modalCreateProduct')">
-                <div class="card-icon"><i class='bx bx-plus-circle'></i></div>
-                <div class="card-info"><h3>Crear Producto</h3><p>Nuevo ítem en catálogo.</p></div>
-            </div>
-
-            <div class="admin-card color-blue" onclick="openAddDurationModal()">
-                <div class="card-icon"><i class='bx bx-time-five'></i></div>
-                <div class="card-info"><h3>Añadir Duración</h3><p>Nuevos planes a productos.</p></div>
-            </div>
-
-            <div class="admin-card" onclick="openStockModal()">
-                <div class="card-icon"><i class='bx bx-key'></i></div>
-                <div class="card-info"><h3>Añadir Stock</h3><p>Subir llaves a un producto.</p></div>
-            </div>
-
-            <div class="admin-card color-green" onclick="openModal('modalAddBalance')">
-                <div class="card-icon"><i class='bx bx-money-withdraw'></i></div>
-                <div class="card-info"><h3>Añadir Saldo</h3><p>Dar USD directo a un usuario.</p></div>
-            </div>
-
-            <div class="admin-card color-purple" onclick="openModal('modalTransferUser')">
-                <div class="card-icon"><i class='bx bx-transfer'></i></div>
-                <div class="card-info"><h3>Transferir Datos</h3><p>Mover 100% a cuenta nueva.</p></div>
-            </div>
-
-            <div class="admin-card color-red" onclick="openModal('modalDeleteUser')">
-                <div class="card-icon"><i class='bx bx-user-x'></i></div>
-                <div class="card-info"><h3>Eliminar Usuario</h3><p>Borrar cuenta y datos.</p></div>
-            </div>
-
-            <div class="admin-card color-purple" onclick="openModal('modalBroadcast')">
-                <div class="card-icon"><i class='bx bx-broadcast'></i></div>
-                <div class="card-info"><h3>Mensaje Global</h3><p>Notificar a todos.</p></div>
             </div>
 
             <div class="admin-card color-red" onclick="toggleMaintenance()">
                 <div class="card-icon"><i class='bx bx-power-off'></i></div>
-                <div class="card-info"><h3>Mantenimiento</h3><p id="maintStatus">Cargando...</p></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalAddDuration">
-        <div class="modal-box" style="border-color: var(--neon-cyan);">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-time-five'></i> Añadir Duración</h3>
-            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 15px;">Agrega un nuevo plan (ej: 60 Días) a un producto ya creado.</p>
-            
-            <div class="input-group">
-                <label>Selecciona Producto</label>
-                <select id="durProdSelect"></select>
-            </div>
-            <div class="input-group">
-                <label>Nueva Duración (Ej: 60 Días)</label>
-                <input type="text" id="durName" placeholder="Ej: 60 Días">
-            </div>
-            <div class="input-group">
-                <label>Precio (USD)</label>
-                <input type="number" id="durPrice" step="0.01" placeholder="Ej: 5.50">
-            </div>
-            <div class="input-group">
-                <label>Garantía (Horas)</label>
-                <input type="number" id="durWarr" value="0">
-            </div>
-            
-            <button class="btn-action" onclick="funcAddDuration()">GUARDAR DURACIÓN</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalAdminLogs">
-        <div class="modal-box">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-cctv'></i> Historial de Administradores</h3>
-            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 15px;">Registro de acciones críticas e IPs. Visible solo para SuperAdmin.</p>
-            <div id="logsContainer" style="max-height: 350px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;"></div>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalWaAuth">
-        <div class="modal-box" style="border-color: #25D366;">
-            <h3 style="font-family:'Orbitron'; color: #25D366;"><i class='bx bxl-whatsapp'></i> Servidor de WhatsApp</h3>
-            <p style="color:#aaa; font-size: 0.85rem; margin-bottom: 20px;">Envía la solicitud al bot Node.js para que genere el código de emparejamiento y lo muestre aquí.</p>
-            
-            <div class="input-group">
-                <label>Número de teléfono (Con código de país, ej: 57300...)</label>
-                <input type="number" id="waPairNumber" autocomplete="off" placeholder="57...">
-            </div>
-
-            <button class="btn-action" style="background: #25D366; color: #000;" onclick="funcRequestWaCode()"><i class='bx bx-refresh'></i> SOLICITAR CÓDIGO</button>
-            
-            <div id="waCodeSection" style="display: none;">
-                <p style="font-size: 0.85rem; color: #aaa; margin-top: 15px;">Tu código aparecerá aquí abajo. Ingrésalo en "Vincular dispositivo" en tu WhatsApp.</p>
-                <div class="code-display-box" id="waTheCode">
-                    ESPERANDO...
+                <div class="card-info">
+                    <h3>Mantenimiento</h3>
+                    <p id="maintStatus">Cargando...</p>
                 </div>
             </div>
 
-            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 15px;">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalManageAdmins">
-        <div class="modal-box" style="border-color: #ffd700;">
-            <h3 style="font-family:'Orbitron'; color: #ffd700;"><i class='bx bx-shield-alt-2'></i> Gestión de Admins</h3>
-            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 20px;">Asigna o remueve permisos a los usuarios de tu equipo.</p>
-            
-            <div class="input-group">
-                <label>Username del Usuario</label>
-                <input type="text" id="adminTargetUser" autocomplete="off" placeholder="Ej: adminJuan">
-            </div>
-
-            <div style="text-align: left; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                <label style="color: var(--neon-cyan); font-size: 0.9rem; display: block; margin-bottom: 10px; font-family:'Orbitron';">PERMISOS:</label>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <label class="perm-checkbox"><input type="checkbox" id="permRecharges"> Validar Recargas</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permBalance"> Añadir Saldo Manual</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permProducts"> Gestionar Productos y Stock</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permUsers"> Eliminar y Transferir Usuarios</label>
-                </div>
-            </div>
-
-            <button class="btn-action" style="background: #ffd700; color: #000;" onclick="funcSetAdmin()">GUARDAR ADMIN</button>
-            <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none;" onclick="funcRemoveAdmin()">QUITAR TODOS LOS PERMISOS</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalManagePayments">
-        <div class="modal-box" style="max-width: 550px;">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-credit-card-front'></i> Configurar Pagos</h3>
-            <h4 style="color: #aaa; font-family: 'Orbitron'; text-align: left; margin-bottom: 5px; font-size: 0.85rem;">PAÍSES CONFIGURADOS</h4>
-            <div id="existingCountriesList" style="margin-bottom: 15px; max-height: 160px; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 8px;"></div>
-            <div style="border-top: 1px solid rgba(0, 243, 255, 0.3); margin: 15px 0;"></div>
-            <p id="payModeText" style="color:var(--neon-green); font-size: 0.85rem; margin-bottom: 15px; font-weight: bold;">MODO: CREAR NUEVO PAÍS</p>
-
-            <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;"><label>Cód (Ej: CO)</label><input type="text" id="payCode" maxlength="2" style="text-transform: uppercase;" autocomplete="off"></div>
-                <div class="input-group" style="flex: 1;"><label>Bandera (Ej: 🇨🇴)</label><input type="text" id="payFlag" autocomplete="off"></div>
-                <div class="input-group" style="flex: 2;"><label>País (Ej: Colombia)</label><input type="text" id="payName" autocomplete="off"></div>
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;"><label>Moneda (Ej: COP)</label><input type="text" id="payCurr" style="text-transform: uppercase;" autocomplete="off"></div>
-                <div class="input-group" style="flex: 2;"><label>Tasa (1 USD = X Local)</label><input type="number" id="payRate" placeholder="Ej: 4200" step="0.01"></div>
-            </div>
-
-            <h4 style="color: var(--neon-purple); font-family: 'Orbitron'; text-align: left; margin-bottom: 10px; border-bottom: 1px solid rgba(188, 19, 254, 0.3); padding-bottom: 5px;">BANCOS DISPONIBLES</h4>
-            <div id="banksContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
-            <button class="btn-action" style="background: rgba(188, 19, 254, 0.2); border: 1px solid var(--neon-purple); color: white; box-shadow: none;" onclick="addBankField()"><i class='bx bx-plus'></i> AÑADIR OTRO BANCO</button>
-
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-action" onclick="savePaymentConfig()" style="flex: 2; margin-bottom: 0;">GUARDAR DATOS</button>
-                <button class="btn-action" onclick="clearPaymentInputs()" style="flex: 1; background: #222; border: 1px solid #555; color: white; margin-bottom: 0; box-shadow: none;"><i class='bx bx-reset'></i> NUEVO</button>
-            </div>
-            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 10px;">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalRecharges">
-        <div class="modal-box" style="max-width: 550px;">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-receipt'></i> RECARGAS PENDIENTES</h3>
-            <div id="rechargesList" style="max-height: 400px; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 15px; margin-top: 15px; padding-right: 5px;"></div>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalManageTutorials">
-        <div class="modal-box" style="border-color: var(--neon-blue);">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-book-bookmark'></i> Gestor de Tutoriales</h3>
-            <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 15px;">Añade nuevos tutoriales y guías para los usuarios.</p>
-            
-            <div class="input-group">
-                <label>Título / Nombre del Producto</label>
-                <input type="text" id="tutTitle" placeholder="Ej: Instalar Hack Termux">
-            </div>
-            <div class="input-group">
-                <label>Link de Descarga</label>
-                <input type="url" id="tutLink" placeholder="Ej: https://mediafire.com/...">
-            </div>
-            <div class="input-group">
-                <label>Descripción (Opcional)</label>
-                <textarea id="tutDesc" rows="3" placeholder="Instrucciones, pasos, comandos..."></textarea>
-            </div>
-            
-            <button class="btn-action" style="background: #3b3dff; color: white; box-shadow: 0 0 10px #3b3dff;" onclick="funcUploadTutorial()">PUBLICAR TUTORIAL</button>
-            
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;"></div>
-            <h4 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 0.9rem; text-align: left; margin-bottom: 10px;">TUTORIALES ACTIVOS</h4>
-            <div id="adminTutorialsList" style="max-height: 150px; overflow-y: auto; text-align: left; margin-bottom: 15px;"></div>
-
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalCreateProduct">
-        <div class="modal-box">
-            <h3 style="font-family:'Orbitron'"><i class='bx bx-plus-circle'></i> Nuevo Producto</h3>
-            <div class="input-group"><label>Nombre</label><input type="text" id="pName" placeholder="Ej: Netflix Premium"></div>
-            <div class="input-group"><label>Categoría</label><select id="pCat"><option value="Android">Android</option><option value="iPhone">iPhone</option><option value="PC">PC</option></select></div>
-            <div class="input-group"><label>Precio (USD)</label><input type="number" id="pPrice" step="0.01"></div>
-            <div class="input-group"><label>Duración</label><input type="text" id="pDur" placeholder="Ej: 30 Días"></div>
-            <div class="input-group"><label>Garantía (Horas)</label><input type="number" id="pWarr" value="0"></div>
-            <button class="btn-action" onclick="funcCreateProduct()">GUARDAR PRODUCTO</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalAddStock">
-        <div class="modal-box">
-            <h3 style="font-family:'Orbitron'"><i class='bx bx-key'></i> Cargar Keys</h3>
-            <div class="input-group"><label>Selecciona Producto</label><select id="stockProdSelect"></select></div>
-            <div class="input-group"><label>Pega las Keys (una por línea)</label><textarea id="stockKeysArea" rows="6"></textarea></div>
-            <button class="btn-action" onclick="funcAddStock()">SUBIR KEYS</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalAddBalance">
-        <div class="modal-box">
-            <h3 style="font-family:'Orbitron'"><i class='bx bx-money-withdraw'></i> Dar Saldo</h3>
-            <div class="input-group"><label>Username</label><input type="text" id="balUser"></div>
-            <div class="input-group"><label>Cantidad (USD)</label><input type="number" id="balAmt" step="0.1"></div>
-            <button class="btn-action" onclick="funcAddBalance()">DEPÓSITO DIRECTO</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalTransferUser">
-        <div class="modal-box" style="border-color: var(--neon-purple);">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-purple);"><i class='bx bx-transfer'></i> Transferir Cuenta</h3>
-            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 15px;">Mueve historial, saldo y compras de una cuenta perdida a una nueva. La cuenta antigua se eliminará de la BD.</p>
-            <div class="input-group"><label>Username ANTIGUO (El que perdió acceso)</label><input type="text" id="transferOldUser" autocomplete="off" placeholder="Ej: olduser123"></div>
-            <div class="input-group"><label>Username NUEVO (La cuenta recién creada)</label><input type="text" id="transferNewUser" autocomplete="off" placeholder="Ej: newuser456"></div>
-            <button class="btn-action" style="background: var(--neon-purple); color: white; box-shadow: 0 0 10px var(--neon-purple);" onclick="funcTransferUser()">TRANSFERIR DATOS 100%</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalDeleteUser">
-        <div class="modal-box" style="border-color: var(--neon-red);">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-user-x'></i> Eliminar Usuario</h3>
-            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 15px;">Esta acción es irreversible. Se borrará su saldo, historial y todo rastro de la base de datos.</p>
-            <div class="input-group"><label>Username Exacto a Eliminar</label><input type="text" id="delUserUsername" placeholder="Ej: JuanPerez" autocomplete="off"></div>
-            <button class="btn-action" style="background: var(--neon-red); color: white; box-shadow: 0 0 10px var(--neon-red);" onclick="funcDeleteUser()">ELIMINAR PARA SIEMPRE</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalBroadcast">
-        <div class="modal-box">
-            <h3 style="font-family:'Orbitron'"><i class='bx bx-broadcast'></i> Mensaje Global</h3>
-            <p style="color:#aaa; font-size: 0.85rem; margin-bottom: 15px;">Escribe el mensaje y el bot de Node.js lo enviará a todos los usuarios de WhatsApp.</p>
-            <div class="input-group">
-                <textarea id="bcText" rows="5" placeholder="Escribe el comunicado oficial aquí..."></textarea>
-            </div>
-            <button class="btn-action" onclick="funcBroadcast()">ENVIAR A TODOS</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
         </div>
     </div>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, push, set, onValue } from './firebase-config.js';
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, set } from './firebase-config.js';
 
         let adminUser = null; 
         let isSuperAdmin = false;
-        let currentAdminIp = "0.0.0.0"; // VARIABLE PARA IP DE ESTA SESION
-
-        // FUNCION PARA GUARDAR LOGS SILENCIOSAMENTE
-        async function logAdminAction(actionType, targetUsername, details) {
-            try {
-                await push(ref(db, 'admin_logs'), {
-                    admin: adminUser.username,
-                    ip: currentAdminIp,
-                    action: actionType,
-                    target: targetUsername,
-                    details: details,
-                    timestamp: Date.now()
-                });
-            } catch (e) { console.error("Error guardando log", e); }
-        }
+        const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // OBTENEMOS LA IP Y LA GUARDAMOS ANTES DE CARGAR EL PANEL PARA EVITAR ERRORES
+                const loadingText = document.getElementById('loadingText');
+                
+                loadingText.innerText = "DETECTANDO IP...";
                 try {
                     const res = await fetch('https://api.ipify.org?format=json');
                     const data = await res.json();
-                    currentAdminIp = data.ip;
-                    await update(ref(db), { [`users/${user.uid}/lastIp`]: currentAdminIp });
-                } catch (err) {
-                    console.error("No se pudo obtener IP:", err);
-                }
+                    await update(ref(db), { [`users/${user.uid}/lastIp`]: data.ip });
+                } catch (err) { console.error("IP error:", err); }
+                
+                await delay(600);
 
-                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                loadingText.innerText = "RECOPILANDO INFORMACIÓN...";
+                
+                get(child(ref(db), `users/${user.uid}`)).then(async (snapshot) => {
+                    await delay(600);
+
+                    loadingText.innerText = "REVISANDO PERMISOS...";
                     const data = snapshot.val();
                     const safeUsername = data && data.username ? data.username.trim().toLowerCase() : '';
 
                     isSuperAdmin = (safeUsername === 'sebasxit');
                     const isAdmin = data && data.role === 'admin';
 
+                    await delay(600);
+
                     if (isSuperAdmin || isAdmin) {
+                        loadingText.style.color = "var(--neon-green)";
+                        loadingText.style.textShadow = "0 0 15px var(--neon-green)";
+                        loadingText.innerText = "ACCESO CONCEDIDO";
+
                         adminUser = data;
-                        document.getElementById('loadingScreen').style.display = 'none';
-                        document.getElementById('adminMainPanel').style.display = 'block';
+                        
+                        await delay(500); 
+
+                        document.getElementById('loadingScreen').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('loadingScreen').style.display = 'none';
+                            document.getElementById('adminMainPanel').style.display = 'block';
+                        }, 600);
+
                         document.getElementById('topBalance').innerText = parseFloat(data.balance || 0).toFixed(2);
                         
-                        if (isSuperAdmin) {
-                            document.getElementById('cardManageAdmins').style.display = 'flex';
-                            document.getElementById('cardAdminLogs').style.display = 'flex'; // ACTIVA EL PANEL DE LOGS SOLO PARA TI
-                        }
-
                         loadStats();
                         checkMaintenance();
-                        listenToWaCode(); 
                     } else { 
-                        alert("⚠️ Acceso Denegado.");
+                        loadingText.style.color = "var(--neon-red)";
+                        loadingText.innerText = "ACCESO DENEGADO";
+                        await delay(1000);
+                        alert("⚠️ Acceso Denegado. Intervención bloqueada.");
                         window.location.href = "dashboard.html"; 
                     }
                 }).catch((error) => {
-                    console.error(error);
-                    document.getElementById('loadingScreen').innerHTML = `<h2 style="color:red; font-family:'Orbitron';"><i class='bx bx-error-circle'></i> ERROR DE RED: ${error.message}</h2>`;
+                    loadingText.style.color = "red"; loadingText.innerText = `FALLA DE CONEXIÓN`;
                 });
             } else { window.location.href = "login.html"; }
         });
 
-        // --- MÓDULO: HISTORIAL DE ADMINS (SOLO PARA SEBASXIT) ---
-        window.openAdminLogsModal = async () => {
-            if (!isSuperAdmin) return;
-            openModal('modalAdminLogs');
-            const container = document.getElementById('logsContainer');
-            container.innerHTML = "<p style='color:#aaa; font-size:12px;'>Cargando registros de seguridad...</p>";
-            
-            try {
-                const snap = await get(ref(db, 'admin_logs'));
-                if (!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size:12px;'>No hay actividad registrada aún.</p>"; return; }
-                
-                let logsHtml = "";
-                const logsData = [];
-                snap.forEach(child => { logsData.push(child.val()); });
-                logsData.reverse(); // Mostrar los más recientes primero
-
-                logsData.forEach(log => {
-                    const dateStr = new Date(log.timestamp).toLocaleString('es-ES');
-                    logsHtml += `
-                        <div class="log-item">
-                            <p><strong>Admin:</strong> ${log.admin} | <strong>IP:</strong> ${log.ip}</p>
-                            <p><strong>Acción:</strong> <span style="color:var(--neon-green)">${log.action}</span></p>
-                            <p><strong>Objetivo:</strong> ${log.target}</p>
-                            <p><strong>Detalle:</strong> ${log.details}</p>
-                            <p class="log-date">${dateStr}</p>
-                        </div>
-                    `;
-                });
-                container.innerHTML = logsHtml;
-            } catch(e) { container.innerHTML = `<p style="color:red; font-size:12px;">Error: ${e.message}</p>`; }
-        };
-
-        // --- MÓDULO: VINCULACIÓN WHATSAPP ---
-        window.openWaModal = () => {
-            if(!isSuperAdmin) return alert("❌ Solo el administrador principal puede gestionar el bot de WhatsApp.");
-            openModal('modalWaAuth');
-            document.getElementById('waCodeSection').style.display = 'none';
-            document.getElementById('waPairNumber').value = "";
-        };
-
-        window.funcRequestWaCode = async () => {
-            const number = document.getElementById('waPairNumber').value.trim();
-            if(!number) return alert("❌ Ingresa el número de destino.");
-            
-            document.getElementById('waCodeSection').style.display = 'block';
-            document.getElementById('waTheCode').innerText = "SOLICITANDO...";
-
-            try {
-                await set(ref(db, 'whatsapp_control/command'), { 
-                    action: 'request_code', 
-                    number: number, 
-                    timestamp: Date.now() 
-                });
-            } catch(e) {
-                alert("❌ Error de red: " + e.message);
-            }
-        };
-
-        function listenToWaCode() {
-            if(!isSuperAdmin) return;
-            const codeRef = ref(db, 'whatsapp_control/code');
-            onValue(codeRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data && data.code && document.getElementById('modalWaAuth').style.display === 'flex') {
-                    document.getElementById('waTheCode').innerText = data.code;
-                }
-            });
-        }
-
-        // --- MÓDULO: GESTIÓN DE TUTORIALES ---
-        window.openTutorialsModal = () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para gestionar tutoriales.");
-            openModal('modalManageTutorials');
-            loadAdminTutorials();
-        };
-
-        window.funcUploadTutorial = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const title = document.getElementById('tutTitle').value.trim();
-            const link = document.getElementById('tutLink').value.trim();
-            const desc = document.getElementById('tutDesc').value.trim();
-
-            if(!title || !link) return alert("❌ El título y el link de descarga son obligatorios.");
-
-            try {
-                await push(ref(db, 'tutorials'), {
-                    title: title,
-                    link: link,
-                    description: desc,
-                    timestamp: Date.now()
-                });
-                alert("✅ Tutorial subido correctamente.");
-                document.getElementById('tutTitle').value = '';
-                document.getElementById('tutLink').value = '';
-                document.getElementById('tutDesc').value = '';
-                loadAdminTutorials();
-            } catch(e) {
-                alert("❌ Error al subir: " + e.message);
-            }
-        };
-
-        window.loadAdminTutorials = async () => {
-            const container = document.getElementById('adminTutorialsList');
-            container.innerHTML = "<p style='color:#aaa; font-size:12px;'>Cargando tutoriales...</p>";
-            try {
-                const snap = await get(ref(db, 'tutorials'));
-                if(!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size:12px;'>No has subido ningún tutorial aún.</p>"; return; }
-                container.innerHTML = "";
-                snap.forEach(child => {
-                    const data = child.val();
-                    container.innerHTML += `
-                        <div style="background: rgba(0,0,0,0.5); padding: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">
-                                <strong style="color:var(--neon-cyan); font-size:13px;">${data.title}</strong><br>
-                                <a href="${data.link}" target="_blank" style="color:#aaa; font-size:11px; text-decoration:none;"><i class='bx bx-link'></i> Ver Enlace</a>
-                            </div>
-                            <button onclick="funcDeleteTutorial('${child.key}')" style="background:transparent; border:none; color:var(--neon-red); cursor:pointer; font-size: 1.2rem;"><i class='bx bx-trash'></i></button>
-                        </div>
-                    `;
-                });
-            } catch(e) { container.innerHTML = `<p style="color:red; font-size:12px;">Error: ${e.message}</p>`; }
-        };
-
-        window.funcDeleteTutorial = async (id) => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            if(confirm("¿Estás seguro de eliminar este tutorial?")) {
-                try {
-                    await set(ref(db, `tutorials/${id}`), null);
-                    loadAdminTutorials();
-                } catch(e) {
-                    alert("❌ Error al eliminar: " + e.message);
-                }
-            }
-        };
-
-        // --- MÓDULO: GESTIÓN DE ADMINS ---
-        window.openManageAdminsModal = () => {
-            if(!isSuperAdmin) return;
-            document.getElementById('adminTargetUser').value = "";
-            document.getElementById('permRecharges').checked = false;
-            document.getElementById('permBalance').checked = false;
-            document.getElementById('permProducts').checked = false;
-            document.getElementById('permUsers').checked = false;
-            openModal('modalManageAdmins');
-        };
-
-        window.funcSetAdmin = async () => {
-            if(!isSuperAdmin) return;
-            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase();
-            if(!targetUser) return alert("❌ Escribe el username.");
-            
-            const perms = {
-                recharges: document.getElementById('permRecharges').checked,
-                balance: document.getElementById('permBalance').checked,
-                products: document.getElementById('permProducts').checked,
-                users: document.getElementById('permUsers').checked
-            };
-
-            try {
-                const uSnap = await get(ref(db, 'users')); let foundId = null;
-                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
-                
-                if(foundId) {
-                    await update(ref(db, `users/${foundId}`), { role: 'admin', permissions: perms });
-                    alert(`✅ ${targetUser} actualizado como Admin.`);
-                    closeAllModals();
-                } else { alert("❌ Usuario no encontrado."); }
-            } catch(e) { alert("❌ Error: " + e.message); }
-        };
-
-        window.funcRemoveAdmin = async () => {
-            if(!isSuperAdmin) return;
-            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase();
-            if(!targetUser) return alert("❌ Escribe el username.");
-            
-            try {
-                const uSnap = await get(ref(db, 'users')); let foundId = null;
-                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
-                
-                if(foundId) {
-                    await update(ref(db, `users/${foundId}`), { role: 'user', permissions: null });
-                    alert(`✅ Privilegios removidos a ${targetUser}. Ahora es un usuario normal.`);
-                    closeAllModals();
-                } else { alert("❌ Usuario no encontrado."); }
-            } catch(e) { alert("❌ Error: " + e.message); }
-        };
-
-        // --- MÓDULO: MÉTODOS DE PAGO ---
-        let banksList = [];
-
-        window.openPaymentsModal = async () => {
-            if(!isSuperAdmin) return alert("❌ Solo el administrador principal puede editar métodos de pago.");
-            clearPaymentInputs();
-            openModal('modalManagePayments');
-            await loadConfiguredCountries();
-        };
-
-        window.clearPaymentInputs = () => {
-            document.getElementById('payCode').value = ""; document.getElementById('payCode').readOnly = false;
-            document.getElementById('payFlag').value = ""; document.getElementById('payName').value = "";
-            document.getElementById('payCurr').value = ""; document.getElementById('payRate').value = "";
-            const modeText = document.getElementById('payModeText'); modeText.innerText = "MODO: CREAR NUEVO PAÍS"; modeText.style.color = "var(--neon-green)";
-            banksList = []; addBankField(); renderBanks();
-        };
-
-        window.loadConfiguredCountries = async () => {
-            const container = document.getElementById('existingCountriesList'); container.innerHTML = "<p style='color:#aaa; text-align:center; font-size: 0.8rem;'>Cargando países...</p>";
-            try {
-                const snap = await get(ref(db, 'config/countries'));
-                if(!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size: 0.8rem; text-align:center;'>No hay países configurados aún.</p>"; return; }
-                container.innerHTML = "";
-                snap.forEach(child => {
-                    const code = child.key; const data = child.val();
-                    container.innerHTML += `<div style="background: rgba(0,0,0,0.6); border: 1px solid rgba(0,243,255,0.2); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;"><span style="color: white; font-size: 0.9rem;">${data.flag} <strong>${data.name}</strong> (${code})</span><div style="display:flex; gap: 8px;"><button onclick="editCountry('${code}')" style="background:rgba(0,243,255,0.2); color:var(--neon-cyan); border:1px solid var(--neon-cyan); padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold; transition: 0.3s;"><i class='bx bx-edit-alt'></i></button><button onclick="deleteCountry('${code}', '${data.name}')" style="background:rgba(255,7,58,0.2); color:var(--neon-red); border:1px solid var(--neon-red); padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold; transition: 0.3s;"><i class='bx bx-trash'></i></button></div></div>`;
-                });
-            } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
-        };
-
-        window.editCountry = async (code) => {
-            try {
-                const snap = await get(ref(db, `config/countries/${code}`));
-                if(snap.exists()) {
-                    const data = snap.val();
-                    document.getElementById('payCode').value = code; document.getElementById('payCode').readOnly = true; 
-                    document.getElementById('payFlag').value = data.flag || ""; document.getElementById('payName').value = data.name || "";
-                    document.getElementById('payCurr').value = data.currency || ""; document.getElementById('payRate').value = data.rate || "";
-                    const modeText = document.getElementById('payModeText'); modeText.innerText = `MODO: EDITANDO ${data.name.toUpperCase()}`; modeText.style.color = "var(--neon-cyan)";
-                    banksList = data.paymentMethods || []; if(banksList.length === 0) addBankField(); renderBanks();
-                }
-            } catch(e) { alert("❌ Error cargando país: " + e.message); }
-        };
-
-        window.deleteCountry = async (code, name) => {
-            if(confirm(`⚠️ ¿Seguro que quieres eliminar la configuración de pagos para ${name} (${code})?`)) {
-                try { await set(ref(db, `config/countries/${code}`), null); alert(`✅ ${name} eliminado correctamente.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error al eliminar: " + e.message); }
-            }
-        };
-
-        window.addBankField = () => { banksList.push({ bankName: "", accountNumber: "", description: "" }); renderBanks(); };
-        window.removeBankField = (index) => { banksList.splice(index, 1); renderBanks(); };
-        window.updateBankField = (index, field, value) => { banksList[index][field] = value; };
-
-        function renderBanks() {
-            const container = document.getElementById('banksContainer'); container.innerHTML = "";
-            banksList.forEach((bank, index) => {
-                container.innerHTML += `<div class="bank-field"><div class="bank-field-header"><strong><i class='bx bxs-bank'></i> Banco #${index + 1}</strong><button onclick="removeBankField(${index})" class="btn-trash"><i class='bx bx-trash'></i></button></div><input type="text" placeholder="Nombre (Ej: Nequi)" value="${bank.bankName}" onchange="updateBankField(${index}, 'bankName', this.value)" style="width:100%; margin-bottom:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;"><input type="text" placeholder="N° Cuenta o Número" value="${bank.accountNumber}" onchange="updateBankField(${index}, 'accountNumber', this.value)" style="width:100%; margin-bottom:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;"><input type="text" placeholder="Descripción (Opcional)" value="${bank.description}" onchange="updateBankField(${index}, 'description', this.value)" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.6); color:white;"></div>`;
-            });
-        }
-
-        window.savePaymentConfig = async () => {
-            const code = document.getElementById('payCode').value.trim().toUpperCase(); const flag = document.getElementById('payFlag').value.trim(); const name = document.getElementById('payName').value.trim(); const currency = document.getElementById('payCurr').value.trim().toUpperCase(); const rate = parseFloat(document.getElementById('payRate').value);
-            if(!code || !flag || !name || !currency || isNaN(rate)) return alert("❌ Llena todos los datos principales.");
-            const cleanBanksList = banksList.filter(b => b.bankName.trim() !== "" && b.accountNumber.trim() !== "");
-            if(cleanBanksList.length === 0) return alert("❌ Asegúrate de completar el Nombre y Número de cuenta de los bancos.");
-            try {
-                const countryData = { name: name, flag: flag, currency: currency, rate: rate, paymentMethods: cleanBanksList };
-                await set(ref(db, `config/countries/${code}`), countryData); alert(`✅ Datos guardados para ${name}.`); loadConfiguredCountries(); clearPaymentInputs();
-            } catch(e) { alert("❌ Error al guardar: " + e.message); }
-        };
-
-        // --- FUNCIONES COMUNES ---
         async function loadStats() {
             try {
                 const uSnap = await get(ref(db, 'users')); const pSnap = await get(ref(db, 'products')); let totalUsers = 0, globalBal = 0, totalKeys = 0;
@@ -888,265 +293,23 @@
         }
 
         async function checkMaintenance() {
-            const snap = await get(ref(db, 'settings/maintenance')); document.getElementById('maintStatus').innerText = (snap.val() || false) ? "ESTADO: CERRADO 🔴" : "ESTADO: ABIERTO 🟢";
+            const snap = await get(ref(db, 'settings/maintenance')); document.getElementById('maintStatus').innerText = (snap.val() || false) ? "CERRADO 🔴" : "ABIERTO 🟢";
         }
         window.toggleMaintenance = async () => { 
-            if(!isSuperAdmin) return alert("❌ Solo Super Admin puede hacer esto.");
-            const snap = await get(ref(db, 'settings/maintenance')); await set(ref(db, 'settings/maintenance'), !(snap.val() || false)); checkMaintenance(); alert("Estado actualizado."); 
+            if(!isSuperAdmin) return alert("❌ Protocolo Exclusivo de SuperAdmin.");
+            const snap = await get(ref(db, 'settings/maintenance')); await set(ref(db, 'settings/maintenance'), !(snap.val() || false)); checkMaintenance(); alert("Modo de sistema actualizado."); 
         };
 
-        // --- VALIDAR RECARGAS ---
-        window.openRechargesModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return alert("❌ No tienes permisos para validar recargas.");
-            openModal('modalRecharges');
-            const container = document.getElementById('rechargesList'); container.innerHTML = "<p style='text-align:center; color:#aaa;'>Cargando comprobantes...</p>";
-            try {
-                const snap = await get(ref(db, 'pending_receipts'));
-                if (!snap.exists()) { container.innerHTML = "<p style='text-align:center; color:#888; font-style:italic;'>No hay recargas pendientes.</p>"; return; }
-                container.innerHTML = "";
-                snap.forEach(childSnap => {
-                    const id = childSnap.key; const data = childSnap.val(); const dateString = new Date(data.date).toLocaleString('es-ES');
-                    container.innerHTML += `<div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,243,255,0.2);"><p style="margin: 0 0 5px 0; font-size: 0.8rem; color:#888;">ID Ticket: ${id.substring(1,8)}</p><p style="margin: 0 0 5px 0;"><strong>Usuario:</strong> <span style="color:var(--neon-cyan);">${data.username}</span></p><p style="margin: 0 0 5px 0;"><strong>Monto USD:</strong> $${data.amountUsd.toFixed(2)}</p><p style="margin: 0 0 5px 0;"><strong>País:</strong> <span style="color:#fff;">${data.countryName || 'No registrado'}</span></p><p style="margin: 0 0 5px 0;"><strong>Monto Local:</strong> ${data.amountLocal || 'No registrado'}</p><p style="margin: 0 0 10px 0; font-size: 0.8rem; color:#aaa;">Fecha: ${dateString}</p><a href="${data.receiptUrl}" target="_blank" style="display:inline-block; padding: 10px; background: rgba(188,19,254,0.2); color: #fff; text-decoration: none; border-radius: 8px; border: 1px solid var(--neon-purple); width: 100%; text-align: center; margin-bottom: 10px; font-weight:bold;"><i class='bx bx-image-alt'></i> Ver Comprobante 📸</a><div style="display:flex; gap:10px;"><button onclick="approveRecharge('${id}', '${data.uid}', ${data.amountUsd}, '${data.username}')" style="flex:1; background:var(--neon-green); color:#000; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;"><i class='bx bx-check'></i> Aprobar</button><button onclick="rejectRecharge('${id}', '${data.uid}')" style="flex:1; background:var(--neon-red); color:#fff; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;"><i class='bx bx-x'></i> Rechazar</button></div></div>`;
-                });
-            } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
-        };
-
-        window.approveRecharge = async (receiptId, uid, amountUsd, username) => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
-            if(!confirm(`¿Estás seguro de aprobar y darle $${amountUsd} USD a ${username}?`)) return;
-            try {
-                const uSnap = await get(ref(db, `users/${uid}`)); 
-                const targetData = uSnap.val();
-                let currentBal = targetData ? parseFloat(targetData.balance || 0) : 0;
-                
-                // VALIDACIÓN DE SEGURIDAD DE IP (SOLO APLICA SI NO ES SEBASXIT)
-                if (!isSuperAdmin && targetData && targetData.lastIp === currentAdminIp) {
-                    alert("Error 404 de autenticacion contacta al admin para informar sobre el error +573142369516");
-                    return;
-                }
-
-                const updates = {}; 
-                updates[`users/${uid}/balance`] = currentBal + amountUsd; 
-                updates[`users/${uid}/recharges/${receiptId}/status`] = 'approved'; 
-                updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); 
-                updates[`pending_receipts/${receiptId}`] = null; 
-                
-                await update(ref(db), updates); 
-                await logAdminAction("Aprobación Recarga", username, `Aprobó recarga de $${amountUsd} USD al ticket ${receiptId.substring(1,8)}`);
-                
-                alert(`✅ Recarga Aprobada.`); 
-                openRechargesModal();
-            } catch(e) { alert("❌ Error: " + e.message); }
-        };
-
-        window.rejectRecharge = async (receiptId, uid) => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
-            if(!confirm("¿Rechazar este comprobante?")) return;
-            try {
-                const updates = {}; 
-                updates[`users/${uid}/recharges/${receiptId}/status`] = 'rejected'; 
-                updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); 
-                updates[`pending_receipts/${receiptId}`] = null; 
-                
-                await update(ref(db), updates); 
-                await logAdminAction("Rechazo Recarga", "Desconocido", `Rechazó comprobante de recarga (Ticket: ${receiptId.substring(1,8)})`);
-                
-                alert("❌ Recarga Rechazada."); 
-                openRechargesModal(); 
-            } catch(e) { alert("❌ Error: " + e.message); }
-        };
-
-        // --- PRODUCTOS, STOCK Y AÑADIR DURACIONES ---
-        window.funcCreateProduct = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para productos.");
-            const name = document.getElementById('pName').value.trim(); const cat = document.getElementById('pCat').value; const price = parseFloat(document.getElementById('pPrice').value); const dur = document.getElementById('pDur').value.trim(); const warr = parseInt(document.getElementById('pWarr').value);
-            if(!name || isNaN(price)) return alert("Llena los campos");
-            try {
-                const newProdRef = push(ref(db, 'products')); const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key;
-                await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr });
-                alert("¡Producto creado melo!"); location.reload();
-            } catch(e) { alert("❌ Error: " + e.message); }
-        };
-
-        window.openAddDurationModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para productos.");
-            const select = document.getElementById('durProdSelect'); 
-            select.innerHTML = "<option value=''>Cargando...</option>";
-            openModal('modalAddDuration');
-            
-            try {
-                const snap = await get(ref(db, 'products'));
-                select.innerHTML = "";
-                if(snap.exists()) {
-                    let hasProducts = false;
-                    snap.forEach(p => { 
-                        const prod = p.val(); 
-                        const opt = document.createElement('option'); 
-                        opt.value = p.key; 
-                        opt.text = prod.name; 
-                        select.appendChild(opt); 
-                        hasProducts = true;
-                    });
-                    if(!hasProducts) { select.innerHTML = "<option value=''>No hay productos</option>"; }
-                } else { 
-                    select.innerHTML = "<option value=''>Aún no hay productos creados.</option>"; 
-                }
-            } catch(e) {
-                select.innerHTML = `<option value=''>Error: ${e.message}</option>`;
-            }
-        };
-
-        window.funcAddDuration = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const pId = document.getElementById('durProdSelect').value;
-            const dur = document.getElementById('durName').value.trim();
-            const price = parseFloat(document.getElementById('durPrice').value);
-            const warr = parseInt(document.getElementById('durWarr').value);
-
-            if(!pId) return alert("❌ Selecciona un producto primero.");
-            if(!dur || isNaN(price)) return alert("❌ Llena la duración y el precio correctamente.");
-
-            try {
-                const newDurRef = push(ref(db, `products/${pId}/durations`));
-                await set(newDurRef, { duration: dur, price: price, warranty: isNaN(warr) ? 0 : warr });
-                alert(`✅ Duración "${dur}" agregada exitosamente.`);
-                closeAllModals();
-                location.reload();
-            } catch(e) {
-                alert("❌ Error al guardar: " + e.message);
-            }
-        };
-
-        window.openStockModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permisos para stock.");
-            const select = document.getElementById('stockProdSelect'); select.innerHTML = "";
-            const snap = await get(ref(db, 'products'));
-            if(snap.exists()) {
-                snap.forEach(p => { const prod = p.val(); if(prod.durations) { Object.keys(prod.durations).forEach(dId => { const opt = document.createElement('option'); opt.value = `${p.key}|${dId}`; opt.text = `${prod.name} (${prod.durations[dId].duration})`; select.appendChild(opt); }); } });
-                openModal('modalAddStock');
-            } else { alert("Aún no hay productos creados."); }
-        };
-
-        window.funcAddStock = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const selectVal = document.getElementById('stockProdSelect').value; if(!selectVal) return alert("❌ Selecciona un producto.");
-            const [pId, dId] = selectVal.split('|'); const keys = document.getElementById('stockKeysArea').value.split('\n').filter(k => k.trim() !== "");
-            if(keys.length === 0) return alert("Pega alguna key");
-            try {
-                const updates = {}; keys.forEach(key => { updates[`products/${pId}/durations/${dId}/keys/${push(ref(db)).key}`] = key.trim(); });
-                await update(ref(db), updates); alert(`¡${keys.length} Keys subidas!`); location.reload();
-            } catch(e) { alert("❌ Error: " + e.message); }
-        };
-
-        // --- DAR SALDO ---
-        window.funcAddBalance = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.balance)) return alert("❌ No tienes permisos para añadir saldo.");
-            
-            const user = document.getElementById('balUser').value.trim().toLowerCase(); 
-            const amt = parseFloat(document.getElementById('balAmt').value);
-            
-            if(!user || isNaN(amt)) return;
-
-            try {
-                const uSnap = await get(ref(db, 'users')); 
-                let foundId = null, currentB = 0, targetIp = null;
-                
-                uSnap.forEach(u => { 
-                    if(u.val().username && u.val().username.toLowerCase() === user) { 
-                        foundId = u.key; 
-                        currentB = u.val().balance || 0; 
-                        targetIp = u.val().lastIp || "unknown";
-                    } 
-                });
-
-                if(foundId) { 
-                    // VALIDACIÓN DE SEGURIDAD DE IP (SOLO APLICA SI NO ES SEBASXIT)
-                    if (!isSuperAdmin && targetIp === currentAdminIp) {
-                        alert("Error 404 de autenticacion contacta al admin para informar sobre el error +573142369516");
-                        return;
-                    }
-
-                    await update(ref(db), { [`users/${foundId}/balance`]: currentB + amt }); 
-                    await logAdminAction("Añadir Saldo Manual", user, `Añadió $${amt} USD directos.`);
-                    
-                    alert("Saldo enviado."); 
-                    location.reload(); 
-                } else { 
-                    alert("Usuario no encontrado."); 
-                }
-            } catch(e) { alert("❌ Error: " + e.message); }
-        };
-
-        // --- GESTIÓN DE USUARIOS ---
-        window.funcTransferUser = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("❌ No tienes permisos para transferir usuarios.");
-            const oldUsername = document.getElementById('transferOldUser').value.trim().toLowerCase(); const newUsername = document.getElementById('transferNewUser').value.trim().toLowerCase();
-            if(!oldUsername || !newUsername) return alert("❌ Por favor llena ambos campos.");
-            if(oldUsername === newUsername) return alert("❌ Los usuarios no pueden ser iguales.");
-            try {
-                const loading = document.getElementById('loadingScreen'); loading.style.display = 'flex'; loading.innerHTML = `<h2 style="font-family: 'Orbitron'; color: var(--neon-purple); animation: blink 1s infinite;">TRANSFIRIENDO...</h2>`;
-                const uSnap = await get(ref(db, 'users')); let oldUid = null, newUid = null; let oldData = null, newDataInfo = null;
-                uSnap.forEach(u => { const uData = u.val(); if(uData.username && uData.username.toLowerCase() === oldUsername) { oldUid = u.key; oldData = uData; } if(uData.username && uData.username.toLowerCase() === newUsername) { newUid = u.key; newDataInfo = uData; } });
-                if(!oldUid) { loading.style.display = 'none'; return alert("❌ Usuario ANTIGUO no encontrado."); }
-                if(!newUid) { loading.style.display = 'none'; return alert("❌ Usuario NUEVO no encontrado. Dile al usuario que se registre primero."); }
-                if(confirm(`⚠️ ¿Transferir TODO de "${oldUsername}" a "${newUsername}"?`)) {
-                    const clonedData = { ...oldData }; clonedData.username = newDataInfo.username; if(newDataInfo.email) clonedData.email = newDataInfo.email; if(newDataInfo.uid) clonedData.uid = newDataInfo.uid; 
-                    const updates = {}; updates[`users/${newUid}`] = clonedData; updates[`users/${oldUid}`] = null;
-                    await update(ref(db), updates); loading.style.display = 'none'; alert(`✅ Transferencia completada.`); closeAllModals(); location.reload();
-                } else { loading.style.display = 'none'; }
-            } catch(e) { document.getElementById('loadingScreen').style.display = 'none'; alert("❌ Error en la transferencia: " + e.message); }
-        };
-
-        window.funcDeleteUser = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("❌ No tienes permisos para borrar usuarios.");
-            const userToDelete = document.getElementById('delUserUsername').value.trim().toLowerCase();
-            if(!userToDelete) return alert("❌ Escribe el nombre de usuario.");
-            if(userToDelete === 'sebasxit') return alert("❌ ERROR: No puedes eliminar la cuenta del Administrador.");
-            
-            try {
-                const uSnap = await get(ref(db, 'users')); let foundId = null; let targetIsAdmin = false;
-                uSnap.forEach(u => { 
-                    if(u.val().username && u.val().username.toLowerCase() === userToDelete) {
-                        foundId = u.key; 
-                        if(u.val().role === 'admin') targetIsAdmin = true;
-                    } 
-                });
-
-                if(!isSuperAdmin && targetIsAdmin) return alert("❌ No tienes permisos para eliminar a otro Administrador.");
-
-                if(foundId) { if(confirm(`⚠️ ALERTA ⚠️\n\n¿Deseas eliminar a "${userToDelete}"?`)) { await set(ref(db, `users/${foundId}`), null); alert("✅ Usuario borrado."); location.reload(); } } else { alert("❌ Usuario no encontrado."); }
-            } catch(e) { alert("❌ Error: " + e.message); }
-        };
-
-        // --- MENSAJE GLOBAL POR WHATSAPP ---
-        window.funcBroadcast = async () => { 
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ No tienes permiso para mensajes globales.");
-            
-            const msg = document.getElementById('bcText').value.trim();
-            if(!msg) return alert("❌ Escribe un mensaje antes de enviar.");
-            
-            try {
-                await set(ref(db, 'whatsapp_control/broadcast'), { message: msg, timestamp: Date.now() });
-                alert("✅ Mensaje global enviado al servidor para su distribución."); 
-                document.getElementById('bcText').value = "";
-                closeAllModals(); 
-            } catch(e) {
-                alert("❌ Error: " + e.message);
-            }
-        };
-
-        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
-        window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-        
         const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
         document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=> window.location.href="login.html");
 
+        // SISTEMA DE PARTÍCULAS
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
-        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
-        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 0.5; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
 </body>
