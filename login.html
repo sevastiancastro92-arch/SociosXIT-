@@ -66,7 +66,6 @@
             mix-blend-mode: screen;
         }
 
-        /* Anillo Exterior Púrpura (Lento) */
         .ring-outer {
             width: 900px;
             height: 900px;
@@ -75,7 +74,6 @@
             animation: spinRing 60s linear infinite;
         }
 
-        /* Anillo Medio Azul/Cian (Rápido inverso) */
         .ring-middle {
             width: 700px;
             height: 700px;
@@ -84,7 +82,6 @@
             animation: spinRingReverse 30s linear infinite;
         }
 
-        /* Anillo Interior Rosa/Rojo (Punteado épico) */
         .ring-inner {
             width: 550px;
             height: 550px;
@@ -93,7 +90,6 @@
             animation: spinRing 20s linear infinite;
         }
 
-        /* Partículas de estrellas de fondo */
         .stars {
             position: absolute;
             width: 100%; height: 100%;
@@ -101,8 +97,7 @@
                 radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
             background-repeat: repeat;
             background-size: 200px 200px;
             animation: twinkle 4s infinite alternate;
@@ -114,17 +109,25 @@
         @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
 
         /* =========================================
-           3. CONTENEDOR HEXAGONAL (EL ESCUDO)
+           3. CONTENEDOR PRINCIPAL
            ========================================= */
-        /* Envoltura para aplicar el drop-shadow sobre el clip-path */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            z-index: 10;
+            padding: 20px;
+        }
+
         .hex-wrapper {
             position: relative;
-            z-index: 10;
             filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.5)) drop-shadow(0 0 40px rgba(255, 0, 85, 0.3));
             animation: hoverFloat 4s ease-in-out infinite;
-            margin-bottom: 2rem;
-            width: 90%;
+            width: 100%;
             max-width: 420px;
+            margin-bottom: 30px; /* Separación con los anuncios */
         }
 
         @keyframes hoverFloat {
@@ -138,13 +141,11 @@
             -webkit-backdrop-filter: blur(20px);
             padding: 3rem 2.5rem;
             text-align: center;
-            /* Forma hexagonal recortada */
             clip-path: polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%);
             border: 1px solid transparent; 
             position: relative;
         }
 
-        /* Borde interior brillante animado */
         .hex-container::before {
             content: '';
             position: absolute;
@@ -185,7 +186,7 @@
         }
 
         /* =========================================
-           4. INPUTS ESTILO HOLOGRAMA
+           4. INPUTS Y BOTONES
            ========================================= */
         .input-box {
             position: relative;
@@ -209,9 +210,7 @@
             user-select: text;
         }
 
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
+        input::placeholder { color: rgba(255, 255, 255, 0.3); }
 
         input:focus {
             border-color: var(--neon-pink);
@@ -227,9 +226,6 @@
             transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
-        /* =========================================
-           5. BOTÓN MAGNÉTICO
-           ========================================= */
         #actionBtn {
             width: 100%;
             padding: 16px;
@@ -259,16 +255,12 @@
             animation: lightSweep 3s infinite;
         }
 
-        @keyframes lightSweep {
-            0% { left: -100%; }
-            50%, 100% { left: 200%; }
-        }
+        @keyframes lightSweep { 0% { left: -100%; } 50%, 100% { left: 200%; } }
 
         #actionBtn:hover {
             transform: translateY(-2px) scale(1.03);
             box-shadow: 0 0 30px var(--neon-pink), 0 0 10px var(--neon-blue);
         }
-
         #actionBtn:active { transform: scale(0.95); }
 
         .btn-secondary {
@@ -282,7 +274,6 @@
             font-family: 'Exo 2', sans-serif;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-shadow: 0 0 5px rgba(0, 238, 255, 0.4);
         }
 
         .btn-secondary:hover {
@@ -301,54 +292,37 @@
         }
 
         /* =========================================
-           6. SECCIÓN DE ANUNCIOS (ADS)
+           5. CONTENEDOR DE ANUNCIOS (ABAJO)
            ========================================= */
-        .ads-wrapper {
-            width: 90%;
+        #ads-container {
+            width: 100%;
             max-width: 600px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column; /* Cambia a row si quieres anuncios uno al lado del otro */
+            align-items: center;
             gap: 15px;
-            z-index: 10;
+            margin-top: 10px;
         }
 
-        .ad-space {
-            flex: 1;
-            height: 80px;
+        /* Clase de ejemplo para visualizar donde van tus anuncios.
+           Tus scripts reemplazarán o se acomodarán aquí dentro */
+        .ad-slot {
+            width: 100%;
+            min-height: 90px; /* Altura estándar de banner */
             background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 238, 255, 0.2);
+            border: 1px dashed rgba(0, 238, 255, 0.3);
             border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(5px);
-            transition: border-color 0.3s, box-shadow 0.3s;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .ad-space::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
-        }
-
-        .ad-space:hover {
-            border-color: var(--neon-blue);
-            box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.2);
-        }
-
-        .ad-text {
+            color: rgba(255, 255, 255, 0.3);
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
             letter-spacing: 1px;
-            text-transform: uppercase;
         }
 
         /* =========================================
-           7. PANTALLA DE CARGA ÉPICA
+           6. PANTALLA DE CARGA ÉPICA
            ========================================= */
         #loader-overlay {
             position: fixed;
@@ -369,10 +343,7 @@
             visibility: visible;
         }
 
-        .loader-atom {
-            position: relative;
-            width: 100px; height: 100px;
-        }
+        .loader-atom { position: relative; width: 100px; height: 100px; }
 
         .orbit {
             position: absolute;
@@ -401,12 +372,6 @@
         @keyframes orbitSpin2 { 100% { transform: rotateX(60deg) rotateY(45deg) rotateZ(360deg); } }
         @keyframes orbitSpin3 { 100% { transform: rotateX(60deg) rotateY(-45deg) rotateZ(360deg); } }
         @keyframes pulseText { 0% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* Responsivo para los anuncios */
-        @media (max-width: 600px) {
-            .ads-wrapper { flex-direction: column; }
-            .ad-space { height: 60px; }
-        }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -424,45 +389,44 @@
             <div class="orbit"></div>
             <div class="orbit"></div>
         </div>
-        <div class="loader-text" id="loader-msg">SINCRONIZANDO...</div>
+        <div class="loader-text" id="loader-msg">AUTENTICANDO...</div>
     </div>
 
-    <div class="hex-wrapper">
-        <div class="hex-container">
-            <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo SociosXIT" class="logo" onerror="this.src='https://via.placeholder.com/90/1a0033/00eeff?text=XIT'">
-            
-            <h1 id="title">Iniciar Sesión</h1>
-            
-            <div class="input-box reg-only">
-                <input type="email" id="emailReal" placeholder="Correo Electrónico" autocomplete="off">
+    <div class="main-wrapper">
+        
+        <div class="hex-wrapper">
+            <div class="hex-container">
+                <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo SociosXIT" class="logo" onerror="this.src='https://via.placeholder.com/90/1a0033/00eeff?text=XIT'">
+                
+                <h1 id="title">Iniciar Sesión</h1>
+                
+                <div class="input-box reg-only">
+                    <input type="email" id="emailReal" placeholder="Correo Electrónico" autocomplete="off">
+                </div>
+                
+                <div class="input-box reg-only">
+                    <input type="tel" id="phone" placeholder="Teléfono / WhatsApp" autocomplete="off">
+                </div>
+                
+                <div class="input-box">
+                    <input type="text" id="username" placeholder="Usuario" autocomplete="off">
+                </div>
+                
+                <div class="input-box">
+                    <input type="password" id="password" placeholder="Contraseña">
+                </div>
+                
+                <p id="msg" class="error"></p>
+                
+                <button id="actionBtn">Entrar</button>
+                <button id="toggleBtn" class="btn-secondary">No tengo cuenta, Registrarme</button>
             </div>
-            
-            <div class="input-box reg-only">
-                <input type="tel" id="phone" placeholder="Teléfono / WhatsApp" autocomplete="off">
-            </div>
-            
-            <div class="input-box">
-                <input type="text" id="username" placeholder="Usuario" autocomplete="off">
-            </div>
-            
-            <div class="input-box">
-                <input type="password" id="password" placeholder="Contraseña">
-            </div>
-            
-            <p id="msg" class="error"></p>
-            
-            <button id="actionBtn">Entrar</button>
-            <button id="toggleBtn" class="btn-secondary">No tengo cuenta, Registrarme</button>
         </div>
-    </div>
 
-    <div class="ads-wrapper">
-        <div class="ad-space">
-            <span class="ad-text">ESPACIO PUBLICITARIO 1</span>
+        <div id="ads-container">
+            <div class="ad-slot">TU ANUNCIO O SCRIPT AQUÍ</div>
         </div>
-        <div class="ad-space">
-            <span class="ad-text">ESPACIO PUBLICITARIO 2</span>
-        </div>
+
     </div>
 
     <script type="module">
@@ -482,11 +446,12 @@
         const loaderOverlay = document.getElementById('loader-overlay');
         const loaderMsg = document.getElementById('loader-msg');
         
+        // --- AUDIO DE BIENVENIDA ---
         const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
         
         let isLogin = true;
 
-        // Animación de cambio entre pantallas
+        // Cambiar entre Login y Registro
         toggleBtn.addEventListener('click', () => {
             isLogin = !isLogin;
             title.innerText = isLogin ? "Iniciar Sesión" : "Crear Cuenta";
@@ -494,6 +459,7 @@
             toggleBtn.innerText = isLogin ? "No tengo cuenta, Registrarme" : "Ya tengo cuenta, Iniciar";
             msg.innerText = "";
 
+            // Ocultar o mostrar los campos extra
             regFields.forEach(field => {
                 if (isLogin) {
                     field.style.opacity = '0';
@@ -509,16 +475,18 @@
             });
         });
 
-        // Lógica Principal (SIN MODIFICACIONES)
+        // Lógica Principal
         actionBtn.addEventListener('click', async () => {
             const userRaw = userIn.value.trim();
             const userClean = userRaw.replace(/\s/g, ''); 
             const pass = passIn.value;
             const fakeEmail = `${userClean}@sistema.local`; 
 
+            // Variables para los campos nuevos
             const emailReal = emailRealIn.value.trim();
             const phone = phoneIn.value.trim();
 
+            // Validaciones según el modo
             if(isLogin) {
                 if(!userClean || !pass) { 
                     msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
@@ -536,12 +504,18 @@
                 actionBtn.disabled = true;
 
                 if(isLogin) {
+                    // Solo usa usuario y contraseña
                     await signInWithEmailAndPassword(auth, fakeEmail, pass);
+                    
+                    // --- REPRODUCIR AUDIO SI EL LOGIN ES EXITOSO ---
                     audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
+                    
                 } else {
+                    // Crea la cuenta con el correo falso para mantener el login fácil
                     const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
                     const uid = userCredential.user.uid;
 
+                    // Guarda TODOS los datos reales en la base de datos
                     await set(ref(db, 'users/' + uid), {
                         username: userClean,
                         correoReal: emailReal, 
@@ -552,9 +526,12 @@
                     });
                 }
 
-                loaderMsg.innerText = isLogin ? "ABRIENDO PORTAL..." : "CREANDO PERFIL...";
+                // Carga Épica
+                loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
+                // Nota: Si tu audio dura más de 2 segundos y quieres que se escuche completo 
+                // antes de redirigir, puedes aumentar este número (2000 = 2 segundos).
                 setTimeout(() => {
                     window.location.href = "dashboard.html";
                 }, 2000);
@@ -576,6 +553,7 @@
             }
         });
         
+        // Permitir dar ENTER para entrar
         document.addEventListener('keypress', (e) => {
             if(e.key === 'Enter') actionBtn.click();
         });
