@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acceso - SociosXIT</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* =========================================
            1. FUENTES Y VARIABLES CÓSMICAS
@@ -127,7 +128,7 @@
             animation: hoverFloat 4s ease-in-out infinite;
             width: 100%;
             max-width: 420px;
-            margin-bottom: 30px; /* Separación con los anuncios */
+            margin-bottom: 30px; 
         }
 
         @keyframes hoverFloat {
@@ -298,17 +299,15 @@
             width: 100%;
             max-width: 600px;
             display: flex;
-            flex-direction: column; /* Cambia a row si quieres anuncios uno al lado del otro */
+            flex-direction: column;
             align-items: center;
             gap: 15px;
             margin-top: 10px;
         }
 
-        /* Clase de ejemplo para visualizar donde van tus anuncios.
-           Tus scripts reemplazarán o se acomodarán aquí dentro */
-        .ad-slot {
+        .ad-slot, .adsbox {
             width: 100%;
-            min-height: 90px; /* Altura estándar de banner */
+            min-height: 90px;
             background: rgba(0, 0, 0, 0.4);
             border: 1px dashed rgba(0, 238, 255, 0.3);
             border-radius: 8px;
@@ -372,9 +371,39 @@
         @keyframes orbitSpin2 { 100% { transform: rotateX(60deg) rotateY(45deg) rotateZ(360deg); } }
         @keyframes orbitSpin3 { 100% { transform: rotateX(60deg) rotateY(-45deg) rotateZ(360deg); } }
         @keyframes pulseText { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* =========================================
+           7. AD-BLOCKER SCREEN (CÓSMICO)
+           ========================================= */
+        .adblock-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(3, 0, 8, 0.98); backdrop-filter: blur(15px); 
+            z-index: 10000; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; text-align: center; padding: 20px; 
+        }
+        .adblock-overlay i { font-size: 5rem; color: var(--neon-pink); margin-bottom: 20px; text-shadow: 0 0 20px var(--neon-pink); animation: pulseGlowAd 2s infinite; }
+        .adblock-overlay h1 { font-family: 'Orbitron'; color: white; margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-pink); letter-spacing: 2px;}
+        .adblock-overlay p { color: #ccc; max-width: 450px; margin-bottom: 30px; font-family: 'Exo 2'; line-height: 1.6; }
+        
+        .btn-reload { 
+            padding: 15px 35px; background: transparent; border: 2px solid var(--neon-pink); 
+            color: white; border-radius: 12px; font-weight: bold; cursor: pointer; 
+            font-family: 'Orbitron'; transition: 0.3s; box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.2); 
+            letter-spacing: 1px;
+        }
+        .btn-reload:hover { background: var(--neon-pink); color: #000; box-shadow: 0 0 30px var(--neon-pink); }
+
+        @keyframes pulseGlowAd { 0%, 100% { transform: scale(1); text-shadow: 0 0 20px var(--neon-pink); } 50% { transform: scale(1.1); text-shadow: 0 0 40px var(--neon-pink); } }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
+
+    <div class="adblock-overlay" id="adblockScreen" style="display: none;">
+        <i class='bx bx-shield-x'></i>
+        <h1>ADBLOCK DETECTADO</h1>
+        <p>Para acceder a SociosXIT, necesitamos que desactives tu bloqueador de anuncios. Nuestros creadores mantienen este servicio gracias a la publicidad.</p>
+        <button class="btn-reload" onclick="location.reload()">YA LO DESACTIVÉ</button>
+    </div>
 
     <div class="cosmic-portal">
         <div class="stars"></div>
@@ -424,10 +453,34 @@
         </div>
 
         <div id="ads-container">
-            <div class="ad-slot">TU ANUNCIO O SCRIPT AQUÍ</div>
+            <div class="ad-slot adsbox">TU ANUNCIO O SCRIPT AQUÍ 1</div>
+            <div class="ad-slot adsbox">TU ANUNCIO O SCRIPT AQUÍ 2</div>
         </div>
 
     </div>
+
+    <script>
+        function checkAdBlock() {
+            const ad = document.createElement('div');
+            ad.className = 'adsbox'; // Usamos la misma clase trampa que pediste
+            ad.style.height = '1px';
+            ad.style.width = '1px';
+            ad.style.position = 'absolute';
+            ad.style.left = '-1000px';
+            document.body.appendChild(ad);
+            
+            setTimeout(() => {
+                const isBlocked = ad.offsetHeight === 0;
+                ad.remove();
+                if (isBlocked) {
+                    document.getElementById('adblockScreen').style.display = 'flex';
+                }
+            }, 300);
+        }
+        
+        // Se ejecuta apenas carga la página
+        window.addEventListener('load', checkAdBlock);
+    </script>
 
     <script type="module">
         import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, set } from './firebase-config.js';
@@ -446,12 +499,10 @@
         const loaderOverlay = document.getElementById('loader-overlay');
         const loaderMsg = document.getElementById('loader-msg');
         
-        // --- AUDIO DE BIENVENIDA ---
         const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
         
         let isLogin = true;
 
-        // Cambiar entre Login y Registro
         toggleBtn.addEventListener('click', () => {
             isLogin = !isLogin;
             title.innerText = isLogin ? "Iniciar Sesión" : "Crear Cuenta";
@@ -459,7 +510,6 @@
             toggleBtn.innerText = isLogin ? "No tengo cuenta, Registrarme" : "Ya tengo cuenta, Iniciar";
             msg.innerText = "";
 
-            // Ocultar o mostrar los campos extra
             regFields.forEach(field => {
                 if (isLogin) {
                     field.style.opacity = '0';
@@ -475,18 +525,15 @@
             });
         });
 
-        // Lógica Principal
         actionBtn.addEventListener('click', async () => {
             const userRaw = userIn.value.trim();
             const userClean = userRaw.replace(/\s/g, ''); 
             const pass = passIn.value;
             const fakeEmail = `${userClean}@sistema.local`; 
 
-            // Variables para los campos nuevos
             const emailReal = emailRealIn.value.trim();
             const phone = phoneIn.value.trim();
 
-            // Validaciones según el modo
             if(isLogin) {
                 if(!userClean || !pass) { 
                     msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
@@ -504,18 +551,12 @@
                 actionBtn.disabled = true;
 
                 if(isLogin) {
-                    // Solo usa usuario y contraseña
                     await signInWithEmailAndPassword(auth, fakeEmail, pass);
-                    
-                    // --- REPRODUCIR AUDIO SI EL LOGIN ES EXITOSO ---
                     audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
-                    
                 } else {
-                    // Crea la cuenta con el correo falso para mantener el login fácil
                     const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
                     const uid = userCredential.user.uid;
 
-                    // Guarda TODOS los datos reales en la base de datos
                     await set(ref(db, 'users/' + uid), {
                         username: userClean,
                         correoReal: emailReal, 
@@ -526,12 +567,9 @@
                     });
                 }
 
-                // Carga Épica
                 loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
-                // Nota: Si tu audio dura más de 2 segundos y quieres que se escuche completo 
-                // antes de redirigir, puedes aumentar este número (2000 = 2 segundos).
                 setTimeout(() => {
                     window.location.href = "dashboard.html";
                 }, 2000);
@@ -553,7 +591,6 @@
             }
         });
         
-        // Permitir dar ENTER para entrar
         document.addEventListener('keypress', (e) => {
             if(e.key === 'Enter') actionBtn.click();
         });
