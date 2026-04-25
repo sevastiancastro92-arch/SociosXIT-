@@ -72,8 +72,11 @@
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit; transition: 0.3s; }
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--neon-purple); transform: scale(1.02); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); background: rgba(188, 19, 254, 0.05); }
         .input-group input:read-only { background: rgba(255,255,255,0.02); color: #888; cursor: not-allowed; }
-        .perm-checkbox { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.9rem; cursor: pointer; padding: 5px; border-radius: 5px; transition: 0.3s; }
-        .perm-checkbox:hover { background: rgba(188, 19, 254, 0.1); }
+        
+        .perm-checkbox { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer; padding: 6px; border-radius: 5px; transition: 0.3s; color: #ccc; }
+        .perm-checkbox:hover { background: rgba(188, 19, 254, 0.1); color: #fff; }
+        .perm-checkbox input { accent-color: #ffd700; width: 16px; height: 16px; cursor: pointer; }
+
         .btn-action { width: 100%; padding: 15px; border: none; border-radius: 8px; background: linear-gradient(90deg, #5e097f, var(--neon-purple), #5e097f); background-size: 200% auto; animation: gradientScroll 3s linear infinite; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
         .btn-action:hover { box-shadow: 0 0 20px var(--neon-purple); transform: scale(1.03); letter-spacing: 1px; }
         .btn-cancel { width: 100%; background: transparent; border: 1px solid #444; color: #888; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
@@ -210,18 +213,23 @@
     </div>
 
     <div class="modal-overlay" id="modalManageAdmins">
-        <div class="modal-box" style="border-color: #ffd700;">
+        <div class="modal-box" style="border-color: #ffd700; max-width: 550px;">
             <h3 style="font-family:'Orbitron'; color: #ffd700;"><i class='bx bx-shield-alt-2'></i> Control de Equipo</h3>
             <div class="cyber-box" style="border-left-color: #ffd700;">
                 <div class="input-group"><label>Username Objetivo</label><input type="text" id="adminTargetUser" autocomplete="off" placeholder="Ej: adminJuan"></div>
             </div>
+            
             <div class="cyber-box" style="border-left-color: #ffd700;">
-                <div class="cyber-box-title" style="color: #ffd700;">PRIVILEGIOS OTORGADOS</div>
-                <div style="display: flex; flex-direction: column; gap: 5px;">
+                <div class="cyber-box-title" style="color: #ffd700;">ASIGNACIÓN DE PERMISOS</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left;">
                     <label class="perm-checkbox"><input type="checkbox" id="permRecharges"> 🧾 Validar Recargas</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permBalance"> 💰 Añadir Saldo Manual</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permProducts"> 📦 Gestionar Productos/Stock</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permUsers"> ☠️ Eliminar/Transferir Usuarios</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permBalance"> 💰 Añadir Saldo</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permProducts"> 📦 Prod/Stock</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permUsers"> ☠️ Eliminar/Transferir</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permPayments"> 🏦 Métodos de Pago</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permWaBot"> 🤖 WhatsApp Bot</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permBroadcast"> 📡 Mensaje Global</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permMaintenance"> 🛠️ Mantenimiento</label>
                 </div>
             </div>
             <button class="btn-action" style="background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); color: #000;" onclick="funcSetAdmin()"><i class='bx bx-check-shield'></i> ACTUALIZAR ROL</button>
@@ -311,7 +319,7 @@
                 <div class="input-group"><label>Monto a transferir (USD)</label><input type="number" id="balAmt" step="0.1" placeholder="0.00"></div>
             </div>
             <button class="btn-action" style="background: linear-gradient(90deg, #008066, var(--neon-green), #008066); color: #000;" onclick="funcAddBalance()"><i class='bx bx-send'></i> EJECUTAR TRANSFERENCIA</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cancelar Operación</button>
         </div>
     </div>
 
@@ -408,7 +416,7 @@
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
 
-        // LOGS ADMIN
+        // LOGS ADMIN (SOLO SUPERADMIN)
         window.openAdminLogsModal = async () => {
             if (!isSuperAdmin) return;
             openModal('modalAdminLogs');
@@ -428,40 +436,44 @@
             } catch(e) { container.innerHTML = `<p style="color:red; font-size:12px;">Error: ${e.message}</p>`; }
         };
 
-        // WABOT
-        window.openWaModal = () => {
-            if(!isSuperAdmin) return alert("❌ Requiere autorización SuperAdmin.");
-            openModal('modalWaAuth'); document.getElementById('waCodeSection').style.display = 'none'; document.getElementById('waPairNumber').value = "";
-        };
-        window.funcRequestWaCode = async () => {
-            const number = document.getElementById('waPairNumber').value.trim();
-            if(!number) return alert("❌ Ingresa el número.");
-            document.getElementById('waCodeSection').style.display = 'block'; document.getElementById('waTheCode').innerText = "GENERANDO...";
-            try { await set(ref(db, 'whatsapp_control/command'), { action: 'request_code', number: number, timestamp: Date.now() }); } catch(e) { alert("❌ Error: " + e.message); }
-        };
-        function listenToWaCode() {
-            if(!isSuperAdmin) return;
-            onValue(ref(db, 'whatsapp_control/code'), (snapshot) => {
-                const data = snapshot.val();
-                if (data && data.code && document.getElementById('modalWaAuth').style.display === 'flex') document.getElementById('waTheCode').innerText = data.code;
-            });
-        }
-
-        // ADMINS
+        // ADMINS (SOLO SUPERADMIN)
         window.openManageAdminsModal = () => {
             if(!isSuperAdmin) return;
-            document.getElementById('adminTargetUser').value = ""; document.getElementById('permRecharges').checked = false; document.getElementById('permBalance').checked = false; document.getElementById('permProducts').checked = false; document.getElementById('permUsers').checked = false;
+            document.getElementById('adminTargetUser').value = ""; 
+            document.getElementById('permRecharges').checked = false; 
+            document.getElementById('permBalance').checked = false; 
+            document.getElementById('permProducts').checked = false; 
+            document.getElementById('permUsers').checked = false;
+            document.getElementById('permPayments').checked = false;
+            document.getElementById('permWaBot').checked = false;
+            document.getElementById('permBroadcast').checked = false;
+            document.getElementById('permMaintenance').checked = false;
             openModal('modalManageAdmins');
         };
+
         window.funcSetAdmin = async () => {
             if(!isSuperAdmin) return;
-            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); if(!targetUser) return alert("❌ Define el target.");
-            const perms = { recharges: document.getElementById('permRecharges').checked, balance: document.getElementById('permBalance').checked, products: document.getElementById('permProducts').checked, users: document.getElementById('permUsers').checked };
+            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); 
+            if(!targetUser) return alert("❌ Define el target.");
+            
+            const perms = { 
+                recharges: document.getElementById('permRecharges').checked, 
+                balance: document.getElementById('permBalance').checked, 
+                products: document.getElementById('permProducts').checked, 
+                users: document.getElementById('permUsers').checked,
+                payments: document.getElementById('permPayments').checked,
+                wabot: document.getElementById('permWaBot').checked,
+                broadcast: document.getElementById('permBroadcast').checked,
+                maintenance: document.getElementById('permMaintenance').checked
+            };
+            
             try {
-                const uSnap = await get(ref(db, 'users')); let foundId = null; uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
+                const uSnap = await get(ref(db, 'users')); let foundId = null; 
+                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
                 if(foundId) { await update(ref(db, `users/${foundId}`), { role: 'admin', permissions: perms }); alert(`✅ Nivel otorgado.`); closeAllModals(); } else { alert("❌ Usuario no encontrado."); }
             } catch(e) { alert("❌ Error: " + e.message); }
         };
+
         window.funcRemoveAdmin = async () => {
             if(!isSuperAdmin) return;
             const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); if(!targetUser) return alert("❌ Define el target.");
@@ -471,10 +483,29 @@
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // PAGOS
+        // WABOT (Requiere permiso wabot o ser SuperAdmin)
+        window.openWaModal = () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.wabot)) return alert("❌ Requiere autorización.");
+            openModal('modalWaAuth'); document.getElementById('waCodeSection').style.display = 'none'; document.getElementById('waPairNumber').value = "";
+        };
+        window.funcRequestWaCode = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.wabot)) return;
+            const number = document.getElementById('waPairNumber').value.trim();
+            if(!number) return alert("❌ Ingresa el número.");
+            document.getElementById('waCodeSection').style.display = 'block'; document.getElementById('waTheCode').innerText = "GENERANDO...";
+            try { await set(ref(db, 'whatsapp_control/command'), { action: 'request_code', number: number, timestamp: Date.now() }); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+        function listenToWaCode() {
+            onValue(ref(db, 'whatsapp_control/code'), (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.code && document.getElementById('modalWaAuth').style.display === 'flex') document.getElementById('waTheCode').innerText = data.code;
+            });
+        }
+
+        // PAGOS (Requiere permiso payments o ser SuperAdmin)
         let banksList = [];
         window.openPaymentsModal = async () => {
-            if(!isSuperAdmin) return alert("❌ Acceso denegado.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return alert("❌ Acceso denegado a las bóvedas de pago.");
             clearPaymentInputs(); openModal('modalManagePayments'); await loadConfiguredCountries();
         };
         window.clearPaymentInputs = () => {
@@ -508,7 +539,10 @@
                 }
             } catch(e) { alert("❌ Error: " + e.message); }
         };
-        window.deleteCountry = async (code, name) => { if(confirm(`⚠️ ¿Borrar ${name}?`)) { try { await set(ref(db, `config/countries/${code}`), null); alert(`✅ Borrado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error: " + e.message); } } };
+        window.deleteCountry = async (code, name) => { 
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return;
+            if(confirm(`⚠️ ¿Borrar ${name}?`)) { try { await set(ref(db, `config/countries/${code}`), null); alert(`✅ Borrado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error: " + e.message); } } 
+        };
         window.addBankField = () => { banksList.push({ bankName: "", accountNumber: "", description: "" }); renderBanks(); };
         window.removeBankField = (index) => { banksList.splice(index, 1); renderBanks(); };
         window.updateBankField = (index, field, value) => { banksList[index][field] = value; };
@@ -522,6 +556,7 @@
             });
         }
         window.savePaymentConfig = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return;
             const code = document.getElementById('payCode').value.trim().toUpperCase(); const flag = document.getElementById('payFlag').value.trim(); const name = document.getElementById('payName').value.trim(); const currency = document.getElementById('payCurr').value.trim().toUpperCase(); const rate = parseFloat(document.getElementById('payRate').value);
             if(!code || !flag || !name || !currency || isNaN(rate)) return alert("❌ Faltan datos.");
             const cleanBanksList = banksList.filter(b => b.bankName.trim() !== "" && b.accountNumber.trim() !== ""); if(cleanBanksList.length === 0) return alert("❌ Añade un banco.");
@@ -631,8 +666,10 @@
                 if(foundId) { if(confirm(`⚠️ ¿Purgar a "${userToDelete}"?`)) { await set(ref(db, `users/${foundId}`), null); alert("✅ Purgado."); closeAllModals(); } } else { alert("❌ No existe."); }
             } catch(e) { alert("❌ Error: " + e.message); }
         };
+        
+        // BROADCAST Y MANTENIMIENTO
         window.funcBroadcast = async () => { 
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Bloqueado.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.broadcast)) return alert("❌ Acceso a torre de transmisión bloqueado.");
             const msg = document.getElementById('bcText').value.trim(); if(!msg) return;
             try { await set(ref(db, 'whatsapp_control/broadcast'), { message: msg, timestamp: Date.now() }); alert("✅ Enviado."); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
         };
