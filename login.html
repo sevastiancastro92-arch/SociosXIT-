@@ -6,9 +6,9 @@
     <title>Acceso - SociosXIT</title>
     <style>
         /* =========================================
-           1. FUENTES Y PROTECCIÓN
+           1. FUENTES Y VARIABLES CÓSMICAS
            ========================================= */
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
 
         * {
             -webkit-user-select: none;
@@ -19,61 +19,147 @@
         }
 
         :root {
+            --neon-pink: #ff0055;
+            --neon-blue: #00eeff;
             --neon-purple: #bc13fe;
-            --neon-red: #ff073a;
-            --glass-bg: rgba(15, 0, 25, 0.75);
+            --bg-deep: #030008;
+            --text-light: #e0f7fa;
         }
 
         body {
-            background-color: #020005;
-            color: white;
-            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
+            color: var(--text-light);
+            font-family: 'Exo 2', sans-serif;
             margin: 0;
-            padding: 20px 0; /* Un poco de padding para los banners */
+            padding: 0;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            overflow-x: hidden; /* Evitar scroll horizontal */
-        }
-
-        /* FONDO DE PARTÍCULAS */
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            overflow-x: hidden;
+            position: relative;
         }
 
         /* =========================================
-           2. CONTENEDOR Y LOGO
+           2. FONDOS ÉPICOS: ANILLOS MÁGICOS GIRATORIOS
            ========================================= */
-        .container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 2.5rem 2.5rem;
-            border-radius: 24px;
-            box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.5),
-                0 0 40px rgba(188, 19, 254, 0.15),
-                inset 0 0 20px rgba(255, 7, 58, 0.05);
-            width: 90%;
-            max-width: 420px;
-            border: 1px solid rgba(188, 19, 254, 0.2);
-            text-align: center;
-            animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            z-index: 10;
-            margin: 15px 0; /* Separación con los banners */
+        .cosmic-portal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            overflow: hidden;
         }
 
-        @keyframes zoomIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.9); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        .magic-ring {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+        }
+
+        /* Anillo Exterior Púrpura (Lento) */
+        .ring-outer {
+            width: 900px;
+            height: 900px;
+            border: 4px dashed rgba(188, 19, 254, 0.4);
+            box-shadow: 0 0 80px rgba(188, 19, 254, 0.6), inset 0 0 80px rgba(188, 19, 254, 0.4);
+            animation: spinRing 60s linear infinite;
+        }
+
+        /* Anillo Medio Azul/Cian (Rápido inverso) */
+        .ring-middle {
+            width: 700px;
+            height: 700px;
+            border: 2px solid rgba(0, 238, 255, 0.3);
+            box-shadow: 0 0 50px rgba(0, 238, 255, 0.5), inset 0 0 30px rgba(0, 238, 255, 0.3);
+            animation: spinRingReverse 30s linear infinite;
+        }
+
+        /* Anillo Interior Rosa/Rojo (Punteado épico) */
+        .ring-inner {
+            width: 550px;
+            height: 550px;
+            border: 6px dotted rgba(255, 0, 85, 0.6);
+            box-shadow: 0 0 60px rgba(255, 0, 85, 0.8), inset 0 0 40px rgba(255, 0, 85, 0.5);
+            animation: spinRing 20s linear infinite;
+        }
+
+        /* Partículas de estrellas de fondo */
+        .stars {
+            position: absolute;
+            width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 4s infinite alternate;
+            opacity: 0.5;
+        }
+
+        @keyframes spinRing { 100% { transform: rotate(360deg); } }
+        @keyframes spinRingReverse { 100% { transform: rotate(-360deg); } }
+        @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
+
+        /* =========================================
+           3. CONTENEDOR HEXAGONAL (EL ESCUDO)
+           ========================================= */
+        /* Envoltura para aplicar el drop-shadow sobre el clip-path */
+        .hex-wrapper {
+            position: relative;
+            z-index: 10;
+            filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.5)) drop-shadow(0 0 40px rgba(255, 0, 85, 0.3));
+            animation: hoverFloat 4s ease-in-out infinite;
+            margin-bottom: 2rem;
+            width: 90%;
+            max-width: 420px;
+        }
+
+        @keyframes hoverFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hex-container {
+            background: rgba(10, 2, 20, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 3rem 2.5rem;
+            text-align: center;
+            /* Forma hexagonal recortada */
+            clip-path: polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%);
+            border: 1px solid transparent; 
+            position: relative;
+        }
+
+        /* Borde interior brillante animado */
+        .hex-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, var(--neon-purple), transparent, var(--neon-pink), transparent, var(--neon-blue));
+            background-size: 300% 300%;
+            z-index: -1;
+            opacity: 0.3;
+            animation: borderPulse 6s ease infinite;
+        }
+
+        @keyframes borderPulse {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .logo {
@@ -83,42 +169,37 @@
             border-radius: 50%;
             margin: 0 auto 1.5rem auto;
             display: block;
-            border: 2px solid var(--neon-purple);
-            box-shadow: 0 0 15px var(--neon-purple), inset 0 0 10px var(--neon-red);
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); box-shadow: 0 0 15px var(--neon-purple); }
-            50% { transform: translateY(-8px); box-shadow: 0 0 25px var(--neon-red); }
-            100% { transform: translateY(0px); box-shadow: 0 0 15px var(--neon-purple); }
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue);
         }
 
         h1 {
             font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
+            font-weight: 700;
             font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(90deg, var(--neon-purple), #fff, var(--neon-red));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            color: #fff;
             text-transform: uppercase;
             letter-spacing: 2px;
-            filter: drop-shadow(0 0 8px rgba(188, 19, 254, 0.4));
+            text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-blue);
         }
 
         /* =========================================
-           3. INPUTS
+           4. INPUTS ESTILO HOLOGRAMA
            ========================================= */
+        .input-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
         input {
             width: 100%;
-            padding: 16px;
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.5);
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             color: #fff;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Exo 2', sans-serif;
             font-size: 1rem;
             outline: none;
             transition: all 0.3s ease;
@@ -130,32 +211,32 @@
 
         input::placeholder {
             color: rgba(255, 255, 255, 0.3);
-            font-style: italic;
         }
 
         input:focus {
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
-            background: rgba(0, 0, 0, 0.8);
-            transform: translateY(-2px);
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4), inset 0 0 10px rgba(255, 0, 85, 0.2);
+            transform: scale(1.02);
+            background: rgba(20, 0, 10, 0.8);
         }
 
         .reg-only {
             display: none;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transform: translateY(-15px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
         /* =========================================
-           4. BOTONES
+           5. BOTÓN MAGNÉTICO
            ========================================= */
         #actionBtn {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             margin-top: 10px;
-            background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-red) 100%);
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
             border: none;
-            border-radius: 50px;
+            border-radius: 12px;
             color: white;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
@@ -163,37 +244,50 @@
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(188, 19, 254, 0.3);
-            letter-spacing: 1.5px;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.5);
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #actionBtn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg);
+            animation: lightSweep 3s infinite;
+        }
+
+        @keyframes lightSweep {
+            0% { left: -100%; }
+            50%, 100% { left: 200%; }
         }
 
         #actionBtn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(255, 7, 58, 0.5);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 30px var(--neon-pink), 0 0 10px var(--neon-blue);
         }
 
-        #actionBtn:active {
-            transform: scale(0.96);
-        }
+        #actionBtn:active { transform: scale(0.95); }
 
         .btn-secondary {
             background: transparent;
             border: none;
-            color: #999;
-            margin-top: 20px;
-            font-size: 0.9rem;
+            color: var(--neon-blue);
+            margin-top: 25px;
+            font-size: 0.95rem;
             cursor: pointer;
-            text-decoration: none;
             transition: 0.3s;
-            font-family: 'Poppins', sans-serif;
-            border-bottom: 1px dashed #999;
-            padding-bottom: 2px;
+            font-family: 'Exo 2', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(0, 238, 255, 0.4);
         }
 
         .btn-secondary:hover {
-            color: var(--neon-red);
-            border-bottom-color: var(--neon-red);
-            text-shadow: 0 0 8px rgba(255, 7, 58, 0.6);
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
         }
 
         .error {
@@ -201,22 +295,65 @@
             font-size: 0.85rem;
             margin: 10px 0;
             min-height: 20px;
-            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-            font-weight: 600;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
+            font-weight: 700;
             letter-spacing: 0.5px;
         }
 
         /* =========================================
-           5. SISTEMA DE CARGA ÉPICO
+           6. SECCIÓN DE ANUNCIOS (ADS)
+           ========================================= */
+        .ads-wrapper {
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .ad-space {
+            flex: 1;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 238, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ad-space::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+        }
+
+        .ad-space:hover {
+            border-color: var(--neon-blue);
+            box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.2);
+        }
+
+        .ad-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* =========================================
+           7. PANTALLA DE CARGA ÉPICA
            ========================================= */
         #loader-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(2, 0, 5, 0.95);
-            backdrop-filter: blur(10px);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 0, 8, 0.95);
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -232,182 +369,101 @@
             visibility: visible;
         }
 
-        .loader-ring {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: 4px solid transparent;
-            border-top-color: var(--neon-purple);
-            border-bottom-color: var(--neon-red);
-            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite, glow 2s ease-in-out infinite alternate;
+        .loader-atom {
+            position: relative;
+            width: 100px; height: 100px;
         }
+
+        .orbit {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--neon-blue);
+            border-bottom-color: var(--neon-pink);
+            animation: orbitSpin 1s linear infinite;
+        }
+
+        .orbit:nth-child(2) { transform: rotateX(60deg) rotateY(45deg); animation: orbitSpin2 1.2s linear infinite; border-top-color: var(--neon-purple); border-bottom-color: var(--neon-blue); }
+        .orbit:nth-child(3) { transform: rotateX(60deg) rotateY(-45deg); animation: orbitSpin3 1.4s linear infinite; border-top-color: var(--neon-pink); border-bottom-color: var(--neon-purple); }
 
         .loader-text {
-            margin-top: 25px;
+            margin-top: 30px;
             font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
             font-size: 1.2rem;
-            color: white;
+            color: #fff;
             letter-spacing: 4px;
-            text-shadow: 0 0 15px var(--neon-purple);
-            animation: pulseText 1.5s infinite;
+            text-shadow: 0 0 10px var(--neon-blue);
+            animation: pulseText 1.5s infinite alternate;
         }
 
-        /* =========================================
-           6. BANNERS PUBLICITARIOS ELEGANTES
-           ========================================= */
-        .login-ad-container {
-            width: 100%;
-            max-width: 320px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.03); /* Fondo tipo vidrio muy sutil */
-            padding: 5px;
-            border-radius: 12px;
-            border: 1px dashed rgba(188, 19, 254, 0.3); /* Borde punteado morado */
-            position: relative;
-            z-index: 5;
-            animation: fadeIn 1s ease-in-out;
-        }
+        @keyframes orbitSpin { 100% { transform: rotateZ(360deg); } }
+        @keyframes orbitSpin2 { 100% { transform: rotateX(60deg) rotateY(45deg) rotateZ(360deg); } }
+        @keyframes orbitSpin3 { 100% { transform: rotateX(60deg) rotateY(-45deg) rotateZ(360deg); } }
+        @keyframes pulseText { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* Etiqueta de "Anuncio" minimalista */
-        .login-ad-container::before {
-            content: "Publicidad";
-            position: absolute;
-            top: -10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            color: #888;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Orbitron';
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes glow {
-            from { box-shadow: 0 0 10px var(--neon-purple), inset 0 0 10px var(--neon-purple); }
-            to { box-shadow: 0 0 30px var(--neon-red), inset 0 0 30px var(--neon-red); }
-        }
-        @keyframes pulseText {
-            0%, 100% { opacity: 1; text-shadow: 0 0 15px var(--neon-purple); }
-            50% { opacity: 0.4; text-shadow: none; }
+        /* Responsivo para los anuncios */
+        @media (max-width: 600px) {
+            .ads-wrapper { flex-direction: column; }
+            .ad-space { height: 60px; }
         }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
+    <div class="cosmic-portal">
+        <div class="stars"></div>
+        <div class="magic-ring ring-outer"></div>
+        <div class="magic-ring ring-middle"></div>
+        <div class="magic-ring ring-inner"></div>
+    </div>
+
     <div id="loader-overlay">
-        <div class="loader-ring"></div>
-        <div class="loader-text" id="loader-msg">AUTENTICANDO...</div>
+        <div class="loader-atom">
+            <div class="orbit"></div>
+            <div class="orbit"></div>
+            <div class="orbit"></div>
+        </div>
+        <div class="loader-text" id="loader-msg">SINCRONIZANDO...</div>
     </div>
 
-    <canvas id="particle-canvas"></canvas>
-
-    <div class="login-ad-container">
-        <script type="text/javascript">
-            atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
-        </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
+    <div class="hex-wrapper">
+        <div class="hex-container">
+            <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo SociosXIT" class="logo" onerror="this.src='https://via.placeholder.com/90/1a0033/00eeff?text=XIT'">
+            
+            <h1 id="title">Iniciar Sesión</h1>
+            
+            <div class="input-box reg-only">
+                <input type="email" id="emailReal" placeholder="Correo Electrónico" autocomplete="off">
+            </div>
+            
+            <div class="input-box reg-only">
+                <input type="tel" id="phone" placeholder="Teléfono / WhatsApp" autocomplete="off">
+            </div>
+            
+            <div class="input-box">
+                <input type="text" id="username" placeholder="Usuario" autocomplete="off">
+            </div>
+            
+            <div class="input-box">
+                <input type="password" id="password" placeholder="Contraseña">
+            </div>
+            
+            <p id="msg" class="error"></p>
+            
+            <button id="actionBtn">Entrar</button>
+            <button id="toggleBtn" class="btn-secondary">No tengo cuenta, Registrarme</button>
+        </div>
     </div>
 
-    <div class="container">
-        <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo SociosXIT" class="logo" onerror="this.src='https://via.placeholder.com/90/14001e/bc13fe?text=XIT'">
-        
-        <h1 id="title">Iniciar Sesión</h1>
-        
-        <input type="email" id="emailReal" class="reg-only" placeholder="Correo Electrónico" autocomplete="off">
-        <input type="tel" id="phone" class="reg-only" placeholder="Teléfono / WhatsApp" autocomplete="off">
-        
-        <input type="text" id="username" placeholder="Usuario" autocomplete="off">
-        <input type="password" id="password" placeholder="Contraseña">
-        
-        <p id="msg" class="error"></p>
-        
-        <button id="actionBtn">Entrar</button>
-        <button id="toggleBtn" class="btn-secondary">No tengo cuenta, Registrarme</button>
+    <div class="ads-wrapper">
+        <div class="ad-space">
+            <span class="ad-text">ESPACIO PUBLICITARIO 1</span>
+        </div>
+        <div class="ad-space">
+            <span class="ad-text">ESPACIO PUBLICITARIO 2</span>
+        </div>
     </div>
-
-    <div class="login-ad-container">
-        <script type="text/javascript">
-            atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
-        </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
-    </div>
-
-    <script>
-        // --- EFECTOS VISUALES DE PARTÍCULAS ---
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1.5;
-                this.vy = (Math.random() - 0.5) * 1.5;
-                this.size = Math.random() * 2 + 1;
-                this.color = Math.random() > 0.5 ? 'rgba(255, 7, 58, ' : 'rgba(188, 19, 254, ';
-                this.alpha = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color + this.alpha + ')';
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color + '1)';
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < 60; i++) {
-                particles.push(new Particle());
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-                for (let j = i; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 120) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = 'rgba(150, 50, 255, ' + (1 - distance/120) * 0.2 + ')';
-                        ctx.lineWidth = 1;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-        initParticles();
-        animate();
-    </script>
 
     <script type="module">
         import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, set } from './firebase-config.js';
@@ -426,12 +482,11 @@
         const loaderOverlay = document.getElementById('loader-overlay');
         const loaderMsg = document.getElementById('loader-msg');
         
-        // --- AUDIO DE BIENVENIDA ---
         const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
         
         let isLogin = true;
 
-        // Cambiar entre Login y Registro
+        // Animación de cambio entre pantallas
         toggleBtn.addEventListener('click', () => {
             isLogin = !isLogin;
             title.innerText = isLogin ? "Iniciar Sesión" : "Crear Cuenta";
@@ -439,30 +494,31 @@
             toggleBtn.innerText = isLogin ? "No tengo cuenta, Registrarme" : "Ya tengo cuenta, Iniciar";
             msg.innerText = "";
 
-            // Ocultar o mostrar los campos extra
             regFields.forEach(field => {
                 if (isLogin) {
-                    field.style.display = 'none';
-                    setTimeout(() => field.style.opacity = '0', 10);
+                    field.style.opacity = '0';
+                    field.style.transform = 'translateY(-15px)';
+                    setTimeout(() => field.style.display = 'none', 400);
                 } else {
                     field.style.display = 'block';
-                    setTimeout(() => field.style.opacity = '1', 10);
+                    setTimeout(() => {
+                        field.style.opacity = '1';
+                        field.style.transform = 'translateY(0)';
+                    }, 10);
                 }
             });
         });
 
-        // Lógica Principal
+        // Lógica Principal (SIN MODIFICACIONES)
         actionBtn.addEventListener('click', async () => {
             const userRaw = userIn.value.trim();
             const userClean = userRaw.replace(/\s/g, ''); 
             const pass = passIn.value;
             const fakeEmail = `${userClean}@sistema.local`; 
 
-            // Variables para los campos nuevos
             const emailReal = emailRealIn.value.trim();
             const phone = phoneIn.value.trim();
 
-            // Validaciones según el modo
             if(isLogin) {
                 if(!userClean || !pass) { 
                     msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
@@ -480,30 +536,23 @@
                 actionBtn.disabled = true;
 
                 if(isLogin) {
-                    // Solo usa usuario y contraseña
                     await signInWithEmailAndPassword(auth, fakeEmail, pass);
-                    
-                    // --- REPRODUCIR AUDIO SI EL LOGIN ES EXITOSO ---
                     audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
-                    
                 } else {
-                    // Crea la cuenta con el correo falso para mantener el login fácil
                     const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
                     const uid = userCredential.user.uid;
 
-                    // Guarda TODOS los datos reales en la base de datos
                     await set(ref(db, 'users/' + uid), {
                         username: userClean,
-                        correoReal: emailReal,
-                        telefono: phone,
+                        correoReal: emailReal, 
+                        telefono: phone,       
                         balance: 0,          
                         role: 'user',        
                         emailAuth: fakeEmail     
                     });
                 }
 
-                // Carga Épica
-                loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
+                loaderMsg.innerText = isLogin ? "ABRIENDO PORTAL..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
                 setTimeout(() => {
@@ -527,7 +576,6 @@
             }
         });
         
-        // Permitir dar ENTER para entrar
         document.addEventListener('keypress', (e) => {
             if(e.key === 'Enter') actionBtn.click();
         });
