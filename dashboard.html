@@ -8,8 +8,23 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
         * { user-select: none; box-sizing: border-box; }
-        :root { --neon-purple: #bc13fe; --neon-red: #ff073a; --neon-cyan: #00f3ff; --neon-green: #00ffcc; --glass-bg: rgba(15, 0, 25, 0.6); --sidebar-bg: rgba(5, 10, 20, 0.95); }
-        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100dvh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: hidden; }
+        :root { 
+            --neon-purple: #bc13fe; 
+            --neon-red: #ff073a; 
+            --neon-cyan: #00f3ff; 
+            --neon-green: #00ffcc; 
+            --glass-bg: rgba(15, 0, 25, 0.6); 
+            --sidebar-bg: rgba(5, 10, 20, 0.95); 
+        }
+        body { 
+            background-color: #020005; 
+            color: white; 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; padding: 0; 
+            min-height: 100dvh; 
+            display: flex; justify-content: center; align-items: center; flex-direction: column; 
+            overflow: hidden; 
+        }
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         
         /* BARRA SUPERIOR */
@@ -68,45 +83,81 @@
         .btn-never-show.ready { color: var(--neon-red); border-color: var(--neon-red); cursor: pointer; }
 
         /* =========================================
-           VENTANA EMERGENTE (POPUP RECARGAS)
+           SISTEMA ÉPICO DE NOTIFICACIÓN DE RECARGAS
            ========================================= */
-        .payment-popup {
-            position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
-            background: rgba(10, 0, 15, 0.95); backdrop-filter: blur(20px);
-            border: 2px solid; border-radius: 15px; padding: 15px 25px;
-            display: flex; align-items: center; gap: 15px; z-index: 9999;
-            width: 90%; max-width: 400px;
-            transition: top 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        .epic-popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px);
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.5s ease;
         }
-        .payment-popup.show { top: 25px; }
+        .epic-popup-overlay.show {
+            opacity: 1; visibility: visible;
+        }
+        
+        .epic-popup-box {
+            background: #05050a; border-radius: 20px; padding: 40px 25px;
+            width: 90%; max-width: 450px; text-align: center;
+            transform: scale(0.8) translateY(50px); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            position: relative; overflow: hidden;
+        }
+        .epic-popup-overlay.show .epic-popup-box {
+            transform: scale(1) translateY(0);
+        }
 
-        .payment-popup.approved { border-color: var(--neon-green); box-shadow: 0 0 25px rgba(0, 255, 204, 0.4); }
-        .payment-popup.rejected { border-color: var(--neon-red); box-shadow: 0 0 25px rgba(255, 7, 58, 0.4); }
+        /* Variantes de color para la caja */
+        .epic-popup-box.approved { border: 2px solid var(--neon-green); box-shadow: 0 0 40px rgba(0, 255, 204, 0.3); }
+        .epic-popup-box.rejected { border: 2px solid var(--neon-red); box-shadow: 0 0 40px rgba(255, 7, 58, 0.3); }
 
-        .popup-icon { font-size: 2.5rem; }
-        .payment-popup.approved .popup-icon { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
-        .payment-popup.rejected .popup-icon { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+        .epic-icon-wrapper {
+            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px auto;
+            display: flex; justify-content: center; align-items: center; font-size: 4rem;
+            animation: pulseGlow 2s infinite;
+        }
+        .epic-popup-box.approved .epic-icon-wrapper { background: rgba(0, 255, 204, 0.1); color: var(--neon-green); border: 2px solid var(--neon-green); }
+        .epic-popup-box.rejected .epic-icon-wrapper { background: rgba(255, 7, 58, 0.1); color: var(--neon-red); border: 2px solid var(--neon-red); }
 
-        .popup-content { flex-grow: 1; text-align: left; }
-        .popup-title { margin: 0; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: bold; }
-        .payment-popup.approved .popup-title { color: var(--neon-green); }
-        .payment-popup.rejected .popup-title { color: var(--neon-red); }
-        .popup-msg { margin: 5px 0 0 0; font-size: 0.85rem; color: #eee; font-family: 'Poppins', sans-serif;}
+        @keyframes pulseGlow {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
 
-        .popup-close { background: transparent; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
-        .popup-close:hover { color: white; transform: scale(1.1); }
+        .epic-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; }
+        .epic-popup-box.approved .epic-title { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+        .epic-popup-box.rejected .epic-title { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+
+        .epic-msg { font-size: 1rem; color: #ddd; margin-bottom: 30px; line-height: 1.6; }
+        .epic-msg strong { font-family: 'Orbitron'; font-size: 1.2rem; color: #fff; }
+
+        .epic-buttons { display: flex; flex-direction: column; gap: 15px; }
+        .btn-epic-primary {
+            width: 100%; padding: 18px; border: none; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; text-decoration: none;
+        }
+        .btn-epic-primary.green { background: var(--neon-green); color: #000; box-shadow: 0 0 20px var(--neon-green); }
+        .btn-epic-primary.green:hover { transform: scale(1.05); }
+        
+        .btn-epic-secondary {
+            background: transparent; border: 2px solid #555; color: #aaa; padding: 15px; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-epic-secondary:hover { border-color: #fff; color: #fff; }
+
+        .btn-whatsapp { background: #25D366; color: #000; box-shadow: 0 0 20px rgba(37, 211, 102, 0.5); }
+        .btn-whatsapp:hover { transform: scale(1.05); box-shadow: 0 0 30px #25D366; }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
-    <div id="paymentNotification" class="payment-popup">
-        <div class="popup-icon" id="popupIcon"><i class='bx bx-check-circle'></i></div>
-        <div class="popup-content">
-            <h3 class="popup-title" id="popupTitle">Recarga Aprobada</h3>
-            <p class="popup-msg" id="popupMsg">Se han añadido $5.00 a tu cuenta.</p>
+    <div id="epicPopupOverlay" class="epic-popup-overlay">
+        <div id="epicPopupBox" class="epic-popup-box">
+            <div id="epicIcon" class="epic-icon-wrapper"><i class='bx bx-check'></i></div>
+            <h2 id="epicTitle" class="epic-title">TÍTULO</h2>
+            <p id="epicMsg" class="epic-msg">Mensaje descriptivo aquí.</p>
+            <div id="epicButtons" class="epic-buttons">
+                </div>
         </div>
-        <button class="popup-close" onclick="closePopup()"><i class='bx bx-x'></i></button>
     </div>
 
     <div class="welcome-overlay" id="welcomeModal">
@@ -170,35 +221,50 @@
     </div>
 
     <script>
-        // --- CONTROL DEL POPUP DE NOTIFICACIÓN ---
-        function showPopup(type, amount) {
-            const popup = document.getElementById('paymentNotification');
-            const icon = document.getElementById('popupIcon');
-            const title = document.getElementById('popupTitle');
-            const msg = document.getElementById('popupMsg');
+        // --- CONTROL DEL POPUP ÉPICO ---
+        function showEpicPopup(type, amount) {
+            const overlay = document.getElementById('epicPopupOverlay');
+            const box = document.getElementById('epicPopupBox');
+            const icon = document.getElementById('epicIcon');
+            const title = document.getElementById('epicTitle');
+            const msg = document.getElementById('epicMsg');
+            const buttonsContainer = document.getElementById('epicButtons');
 
-            popup.className = `payment-popup ${type}`;
+            // Limpiamos clases y contenido previo
+            box.className = `epic-popup-box ${type}`;
+            buttonsContainer.innerHTML = '';
 
             if (type === 'approved') {
-                icon.innerHTML = "<i class='bx bx-check-circle'></i>";
-                title.innerText = "¡Recarga Aprobada!";
-                msg.innerText = `Se han añadido $${parseFloat(amount).toFixed(2)} USD a tu saldo.`;
+                icon.innerHTML = "<i class='bx bxs-check-shield'></i>";
+                title.innerText = "¡RECARGA APROBADA!";
+                msg.innerHTML = `Comprobante de pago <strong>REAL</strong> verificado con éxito.<br><br>Se han añadido <strong style="color:var(--neon-green); font-size:1.5rem;">$${parseFloat(amount).toFixed(2)} USD</strong> a tu saldo.`;
+                
+                // Botón de actualizar saldo
+                buttonsContainer.innerHTML = `
+                    <button onclick="location.reload()" class="btn-epic-primary green">
+                        <i class='bx bx-refresh' style="font-size:1.5rem;"></i> ACTUALIZAR SALDO
+                    </button>
+                `;
             } else {
-                icon.innerHTML = "<i class='bx bx-x-circle'></i>";
-                title.innerText = "Recarga Rechazada";
-                msg.innerText = "El administrador ha rechazado tu comprobante.";
+                icon.innerHTML = "<i class='bx bxs-error-circle'></i>";
+                title.innerText = "¡PAGO RECHAZADO!";
+                msg.innerHTML = `Tu comprobante de pago ha sido <strong>denegado</strong> por el sistema o administrador.<br><br>Si crees que es un error, por favor contacta a soporte inmediatamente.`;
+                
+                // Botones de cerrar y soporte WhatsApp
+                buttonsContainer.innerHTML = `
+                    <a href="https://wa.me/34642459475" target="_blank" class="btn-epic-primary btn-whatsapp">
+                        <i class='bx bxl-whatsapp' style="font-size:1.5rem;"></i> CONTACTAR A SOPORTE
+                    </a>
+                    <button onclick="closeEpicPopup()" class="btn-epic-secondary">CERRAR VENTANA</button>
+                `;
             }
 
-            popup.classList.add('show');
-
-            // Ocultar automáticamente después de 6 segundos
-            setTimeout(() => {
-                closePopup();
-            }, 6000);
+            // Mostrar Modal
+            overlay.classList.add('show');
         }
 
-        function closePopup() {
-            document.getElementById('paymentNotification').classList.remove('show');
+        function closeEpicPopup() {
+            document.getElementById('epicPopupOverlay').classList.remove('show');
         }
 
         // --- CONTROL DEL MENÚ LATERAL Y PARTÍCULAS ---
@@ -219,6 +285,15 @@
         
         // IMPORTAMOS 'onValue' PARA ESCUCHAR LA BASE DE DATOS EN TIEMPO REAL
         import { onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        
+        // --- NUEVO: IMPORTAMOS EL MÓDULO DE PERSISTENCIA NATIVA DE FIREBASE ---
+        import { setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // --- FORZAMOS A FIREBASE A BORRAR LA SESIÓN AL CERRAR GOOGLE/NAVEGADOR ---
+        setPersistence(auth, browserSessionPersistence)
+            .catch((error) => {
+                console.error("Error ajustando la persistencia de sesión:", error);
+            });
 
         let initialLoad = true;
         let knownRecharges = {};
@@ -258,9 +333,9 @@
                                     // Si antes estaba pendiente y ahora está aprobada o rechazada
                                     if (oldStatus === 'pending_approval' || oldStatus === 'waiting_proof') {
                                         if (currentStatus === 'approved') {
-                                            showPopup('approved', data.recharges[key].amount);
+                                            showEpicPopup('approved', data.recharges[key].amount);
                                         } else if (currentStatus === 'rejected') {
-                                            showPopup('rejected', 0);
+                                            showEpicPopup('rejected', 0);
                                         }
                                     }
                                 }

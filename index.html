@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - SociosXIT</title>
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2505548585376357" crossorigin="anonymous"></script>
+
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,400;0,700;0,900;1,900&family=Poppins:wght@300;400;600;700&display=swap');
@@ -135,6 +138,15 @@
 
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, update, runTransaction, push, child } from './firebase-config.js';
+        
+        // --- IMPORTAMOS EL MÓDULO DE PERSISTENCIA NATIVA DE FIREBASE ---
+        import { setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // --- FORZAMOS A FIREBASE A BORRAR LA SESIÓN AL CERRAR GOOGLE/NAVEGADOR ---
+        setPersistence(auth, browserSessionPersistence)
+            .catch((error) => {
+                console.error("Error ajustando la persistencia de sesión:", error);
+            });
 
         let currentUser = null; let currentBalance = 0; let allProducts = []; let filterStockOnly = false;
 
