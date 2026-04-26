@@ -187,8 +187,7 @@
             display: flex; justify-content: center; align-items: center; color: rgba(255, 255, 255, 0.3); 
             font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 1px; transition: 0.3s;
         }
-        /* ESTILOS INVISIBLES PARA LOS ANUNCIOS REALES */
-        .ad-slot-real { border: none !important; background: transparent !important; padding: 0 !important; box-shadow: none !important; }
+        .ad-slot:hover, .adsbox:hover { border-color: var(--neon-blue); box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.1); }
 
         /* =========================================
            7. MODALES (BIENVENIDA, RECARGAS, ADBLOCK)
@@ -337,15 +336,17 @@
             </div>
         </div>
 
-        <div id="ads-container"></div>
+        <div id="ads-container">
+            <div class="ad-slot adsbox">ESPACIO PUBLICITARIO 1</div>
+            <div class="ad-slot adsbox">ESPACIO PUBLICITARIO 2</div>
+        </div>
 
     </div>
 
     <script>
-        // Función de Adblock (Se llama dinámicamente, NO al cargar la página)
         function checkAdBlock() {
             const ad = document.createElement('div');
-            ad.className = 'adsbox'; 
+            ad.className = 'adsbox'; // Usamos la misma clase trampa
             ad.style.height = '1px';
             ad.style.width = '1px';
             ad.style.position = 'absolute';
@@ -360,6 +361,9 @@
                 }
             }, 300);
         }
+        
+        // Se ejecuta apenas carga la página
+        window.addEventListener('load', checkAdBlock);
     </script>
 
     <script>
@@ -430,63 +434,11 @@
 
         let initialLoad = true;
         let knownRecharges = {};
-        let anunciosYaCargados = false; // Evita inyectar los scripts dos veces
 
         document.getElementById('logoutMenuBtn').onclick = (e) => {
             e.preventDefault();
             signOut(auth).then(()=>window.location.href="login.html");
         };
-
-        // --- FUNCIÓN PARA INYECTAR ANUNCIOS SOLO A LOS GRATUITOS ---
-        function inyectarPublicidad() {
-            if(anunciosYaCargados) return;
-            anunciosYaCargados = true;
-
-            // 1. Social Bar
-            const script1 = document.createElement('script');
-            script1.type = 'text/javascript';
-            script1.src = 'https://pl29216451.profitablecpmratenetwork.com/b8/36/05/b836053cba629ab522c4119be81f3ec7.js';
-            document.head.appendChild(script1);
-
-            // 2. Pop-under
-            const script2 = document.createElement('script');
-            script2.async = true;
-            script2.src = 'https://pl29214375.profitablecpmratenetwork.com/db/b0/5e/dbb05ec9f27434170d1aa9bc6d35f7b9.js';
-            document.head.appendChild(script2);
-
-            // 3. Vignette
-            const script3 = document.createElement('script');
-            script3.dataset.zone = '10909093';
-            script3.src = 'https://n6wxm.com/vignette.min.js';
-            document.head.appendChild(script3);
-
-            // 4. Banners en el body
-            const adsContainer = document.getElementById('ads-container');
-            
-            const banner1 = document.createElement('div');
-            banner1.className = 'ad-slot adsbox ad-slot-real';
-            const b1Conf = document.createElement('script');
-            b1Conf.innerHTML = `atOptions = { 'key' : 'cee8e337a4322443b8513b91f8f6f91e', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };`;
-            const b1Inv = document.createElement('script');
-            b1Inv.src = "https://www.highperformanceformat.com/cee8e337a4322443b8513b91f8f6f91e/invoke.js";
-            banner1.appendChild(b1Conf);
-            banner1.appendChild(b1Inv);
-
-            const banner2 = document.createElement('div');
-            banner2.className = 'ad-slot adsbox ad-slot-real';
-            const b2Conf = document.createElement('script');
-            b2Conf.innerHTML = `atOptions = { 'key' : '3cbb8200c79f3518e3eed391c2c7cb90', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };`;
-            const b2Inv = document.createElement('script');
-            b2Inv.src = "https://www.highperformanceformat.com/3cbb8200c79f3518e3eed391c2c7cb90/invoke.js";
-            banner2.appendChild(b2Conf);
-            banner2.appendChild(b2Inv);
-
-            adsContainer.appendChild(banner1);
-            adsContainer.appendChild(banner2);
-
-            // 5. Encender el detector de AdBlock (ya que estos sí ven anuncios)
-            checkAdBlock();
-        }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -500,21 +452,7 @@
                         const data = snapshot.val();
                         
                         document.getElementById('topUserDisplay').innerText = data.username;
-                        
-                        // Extraemos balance y total gastado (Asegúrate de guardar "total_gastado" en tu base de datos)
-                        let balanceActual = parseFloat(data.balance || 0);
-                        let totalGastado = parseFloat(data.total_gastado || 0);
-
-                        document.getElementById('balanceDisplay').innerText = balanceActual.toFixed(2);
-                        
-                        // LÓGICA DE ANUNCIOS VIP vs GRATIS
-                        if (balanceActual === 0 && totalGastado < 10) {
-                            // Usuario gratis, lanzamos la publicidad
-                            inyectarPublicidad();
-                        } else {
-                            // Es VIP o tiene saldo, nos aseguramos que el contenedor no ocupe espacio
-                            document.getElementById('ads-container').style.display = 'none';
-                        }
+                        document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
@@ -548,7 +486,9 @@
                     }
                 });
             } else { 
-                window.location.href = "login.html"; 
+                // AQUÍ SE CAPTURA LA URL PARA LUEGO REDIRIGIR DESPUÉS DEL LOGIN
+                const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
+                window.location.href = "login.html?redirect=" + currentPath; 
             }
         });
     </script>

@@ -367,7 +367,11 @@
                     }
                 });
                 loadProductsData();
-            } else { window.location.href = "login.html"; }
+            } else { 
+                // AQUÍ SE CAPTURA LA URL PARA LUEGO REDIRIGIR DESPUÉS DEL LOGIN
+                const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
+                window.location.href = "login.html?redirect=" + currentPath; 
+            }
         });
 
         async function loadProductsData() {

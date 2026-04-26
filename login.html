@@ -570,8 +570,16 @@
                 loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
+                // AQUÍ ESTÁ LA MAGIA DEL REDIRECT DE LUCK XIT OFC
                 setTimeout(() => {
-                    window.location.href = "dashboard.html";
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectUrl = urlParams.get('redirect');
+                    
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                    } else {
+                        window.location.href = "dashboard.html";
+                    }
                 }, 2000);
 
             } catch (error) {
