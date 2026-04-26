@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidad - LUCK XIT OFC</title>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;user-select:none;}
+:root{--neon-cyan:#00f3ff;--neon-purple:#bc13fe;--bg:#020005;}
+body{background:var(--bg);color:#ccc;font-family:'Poppins';line-height:1.6;overflow-x:hidden;}
+#particle-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+.header-title{font-family:'Orbitron';text-align:center;margin:40px 0 20px;font-size:2rem;background:linear-gradient(90deg,var(--neon-cyan),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:fadeDown 1s ease;}
+.legal-container{width:90%;max-width:800px;margin:20px auto 60px;background:rgba(15,0,25,0.9);border:1px solid var(--neon-cyan);border-radius:15px;padding:30px;box-shadow:0 0 15px rgba(0,243,255,.2);position:relative;z-index:2;}
+.legal-container h2{color:var(--neon-purple);font-family:'Orbitron';margin-top:20px;margin-bottom:10px;font-size:1.2rem;}
+.legal-container p{margin-bottom:15px;font-size:14px;}
+.legal-container ul{margin-left:20px;margin-bottom:15px;font-size:14px;}
+.legal-container ul li{margin-bottom:5px;}
+.back-btn{position:fixed;top:20px;left:20px;color:var(--neon-cyan);font-size:20px;background:rgba(0,0,0,.5);padding:10px;border-radius:10px;border:1px solid var(--neon-cyan);transition:.3s;z-index:10;}
+.back-btn:hover{background:var(--neon-cyan);color:#000;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-30px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+
+<a href="index.html" class="back-btn"><i class='bx bx-arrow-back'></i></a>
+
+<h1 class="header-title">Política de Privacidad</h1>
+
+<div class="legal-container">
+    <p>En <strong>LUCK XIT OFC</strong>, accesible desde [TU DOMINIO], una de nuestras principales prioridades es la privacidad de nuestros visitantes. Este documento de Política de Privacidad contiene los tipos de información que recopilamos y registramos, y cómo la utilizamos.</p>
+    
+    <h2>1. Archivos de Registro (Log Files)</h2>
+    <p>LUCK XIT OFC sigue un procedimiento estándar de uso de archivos de registro. Estos archivos registran a los visitantes cuando entran a los sitios web. La información recopilada incluye direcciones de protocolo de Internet (IP), tipo de navegador, proveedor de servicios de Internet (ISP), marca de fecha y hora, y posiblemente el número de clics. Estos no están vinculados a ninguna información que sea personalmente identificable.</p>
+
+    <h2>2. Cookies y Web Beacons</h2>
+    <p>Como cualquier otro sitio web, LUCK XIT OFC utiliza "cookies". Estas cookies se utilizan para almacenar información, incluyendo las preferencias de los visitantes, y las páginas del sitio web a las que el visitante accedió o visitó. La información se utiliza para optimizar la experiencia de los usuarios personalizando el contenido de nuestra página web.</p>
+
+    <h2>3. Google DoubleClick DART Cookie (Requisito AdSense)</h2>
+    <p>Google es uno de los proveedores externos en nuestro sitio. También utiliza cookies, conocidas como cookies DART, para publicar anuncios para los visitantes de nuestro sitio basándose en su visita a [TU DOMINIO] y otros sitios en Internet. Sin embargo, los visitantes pueden optar por rechazar el uso de cookies DART visitando la Política de Privacidad de la red de anuncios y contenido de Google en la siguiente URL: <a href="https://policies.google.com/technologies/ads" style="color:var(--neon-cyan);">https://policies.google.com/technologies/ads</a>.</p>
+
+    <h2>4. Proveedores de Publicidad de Terceros</h2>
+    <p>Los servidores de anuncios de terceros o redes de anuncios utilizan tecnologías como cookies, JavaScript o Web Beacons que se utilizan en sus respectivos anuncios y enlaces que aparecen en LUCK XIT OFC. Ellos reciben automáticamente su dirección IP cuando esto ocurre. Estas tecnologías se utilizan para medir la eficacia de sus campañas publicitarias y/o para personalizar el contenido publicitario que ve en los sitios web que visita.</p>
+    <p>Tenga en cuenta que LUCK XIT OFC no tiene acceso ni control sobre estas cookies que son utilizadas por anunciantes de terceros.</p>
+
+    <h2>5. Consentimiento</h2>
+    <p>Al utilizar nuestro sitio web, usted acepta por la presente nuestra Política de Privacidad y acepta sus términos.</p>
+</div>
+
+<script>
+// Efecto de partículas reutilizado
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let w,h,particles=[];
+function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;}
+window.addEventListener('resize',resize);resize();
+class P{
+constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-0.5)*0.7;this.vy=(Math.random()-0.5)*0.7;this.size=Math.random()*2+1;}
+draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle="rgba(0,243,255,0.5)";ctx.fill();}
+update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1;}
+}
+for(let i=0;i<60;i++)particles.push(new P());
+function anim(){ctx.clearRect(0,0,w,h);particles.forEach(p=>{p.update();p.draw();});requestAnimationFrame(anim);}
+anim();
+</script>
+
+</body>
+</html>

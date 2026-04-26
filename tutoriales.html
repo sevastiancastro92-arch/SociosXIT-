@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
 <title>Tutoriales - LUCK XIT OFC</title>
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
@@ -23,6 +25,9 @@ background:var(--bg);
 color:white;
 font-family:'Poppins';
 overflow-x:hidden;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
 }
 
 /* FONDO */
@@ -76,7 +81,12 @@ color:var(--neon-cyan);
 font-size:18px;
 }
 
-/* CONTENEDOR */
+/* CONTENEDOR DE CONTENIDO PRINCIPAL */
+.main-content {
+flex: 1;
+width: 100%;
+}
+
 .tutorials-container{
 width:95%;
 max-width:800px;
@@ -85,6 +95,20 @@ display:flex;
 flex-direction:column;
 gap:20px;
 padding-bottom:40px;
+}
+
+/* ESPACIOS PARA ADSENSE */
+.adsense-slot {
+width: 100%;
+min-height: 90px; /* Altura mínima recomendada por Google */
+background: rgba(255, 255, 255, 0.05); /* Fondo sutil para indicar que hay un anuncio cargando */
+border: 1px dashed var(--neon-purple);
+border-radius: 10px;
+margin: 20px 0;
+display: flex;
+justify-content: center;
+align-items: center;
+overflow: hidden;
 }
 
 /* TARJETAS */
@@ -96,10 +120,9 @@ overflow:hidden;
 opacity:0;
 transform:translateY(30px);
 animation:cardEnter .6s forwards;
-text-align: center; /* Centrar elementos internos */
+text-align: center;
 }
 
-/* EFECTO GIRATORIO */
 .tutorial-card::after{
 content:"";
 position:absolute;
@@ -107,18 +130,11 @@ width:200%;
 height:200%;
 top:-50%;
 left:-50%;
-background:conic-gradient(
-transparent,
-rgba(0,243,255,0.25),
-transparent,
-rgba(188,19,254,0.25),
-transparent
-);
+background:conic-gradient(transparent,rgba(0,243,255,0.25),transparent,rgba(188,19,254,0.25),transparent);
 animation:rotateGlow 6s linear infinite;
 z-index:0;
 }
 
-/* CAPA OSCURA */
 .tutorial-card::before{
 content:"";
 position:absolute;
@@ -128,19 +144,16 @@ border-radius:15px;
 z-index:1;
 }
 
-/* CONTENIDO ENCIMA */
 .tutorial-card > *{
 position:relative;
 z-index:2;
 }
 
-/* HOVER */
 .tutorial-card:hover{
 transform:translateY(-5px) scale(1.02);
 box-shadow:0 0 20px rgba(0,243,255,.3);
 }
 
-/* TITULO */
 .tutorial-title{
 font-family:'Orbitron';
 color:var(--neon-cyan);
@@ -150,7 +163,6 @@ gap:10px;
 margin-bottom:15px;
 }
 
-/* IMAGEN DEL LOGO EN CIRCULO BONITO */
 .tutorial-logo {
 width: 90px;
 height: 90px;
@@ -162,31 +174,32 @@ margin: 0 auto 15px auto;
 display: block;
 }
 
-/* DESC */
+/* AdSense valora el texto descriptivo */
 .tutorial-desc{
-font-size:13px;
+font-size:14px;
+line-height: 1.6;
 color:#ccc;
-background:rgba(0,0,0,.4);
-padding:10px;
+background:rgba(0,0,0,.6);
+padding:15px;
 border-radius:8px;
 margin-bottom:15px;
 border-left:3px solid var(--neon-purple);
-text-align: left; /* Mantener descripcion justificada a la izquierda */
+text-align: left;
 }
 
-/* BOTON */
 .btn-download{
-display:flex;
+display:inline-flex;
 justify-content:center;
 align-items:center;
 gap:8px;
-padding:12px;
+padding:12px 24px;
 border-radius:10px;
 border:1px solid var(--neon-cyan);
 color:var(--neon-cyan);
 text-decoration:none;
 font-family:'Orbitron';
 transition:.3s;
+margin-top: 10px;
 }
 
 .btn-download:hover{
@@ -195,7 +208,6 @@ color:#000;
 box-shadow:0 0 20px var(--neon-cyan);
 }
 
-/* BOTON ATRAS */
 .back-btn{
 position:fixed;
 top:20px;
@@ -215,25 +227,33 @@ background:var(--neon-cyan);
 color:#000;
 }
 
-/* ANIMACIONES */
-@keyframes fadeDown{
-from{opacity:0;transform:translateY(-30px);}
-to{opacity:1;transform:translateY(0);}
+/* FOOTER OBLIGATORIO PARA ADSENSE */
+.site-footer {
+background: rgba(0, 0, 0, 0.8);
+border-top: 1px solid var(--neon-purple);
+padding: 20px;
+text-align: center;
+font-size: 12px;
+color: #888;
+z-index: 5;
+position: relative;
 }
 
-@keyframes fadeUp{
-from{opacity:0;transform:translateY(30px);}
-to{opacity:1;transform:translateY(0);}
+.site-footer a {
+color: var(--neon-cyan);
+text-decoration: none;
+margin: 0 10px;
+transition: 0.3s;
 }
 
-@keyframes cardEnter{
-to{opacity:1;transform:translateY(0);}
+.site-footer a:hover {
+color: var(--neon-purple);
 }
 
-@keyframes rotateGlow{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
-}
+@keyframes fadeDown{ from{opacity:0;transform:translateY(-30px);} to{opacity:1;transform:translateY(0);} }
+@keyframes fadeUp{ from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+@keyframes cardEnter{ to{opacity:1;transform:translateY(0);} }
+@keyframes rotateGlow{ 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 </style>
 </head>
 
@@ -245,20 +265,36 @@ to{opacity:1;transform:translateY(0);}
 <i class='bx bx-arrow-back'></i>
 </a>
 
-<h1 class="header-title">
-<i class='bx bx-book-reader'></i> Tutoriales Oficiales
-</h1>
+<div class="main-content">
+    <h1 class="header-title">
+    <i class='bx bx-book-reader'></i> Tutoriales Oficiales
+    </h1>
 
-<div class="search-box">
-<i class='bx bx-search'></i>
-<input type="text" id="searchInput" placeholder="Buscar tutorial...">
+    <div class="search-box">
+    <i class='bx bx-search'></i>
+    <input type="text" id="searchInput" placeholder="Buscar tutorial...">
+    </div>
+
+    <div class="adsense-slot">
+        <p style="color:#555; font-size:10px;">[Espacio para Anuncio Google AdSense]</p>
+    </div>
+
+    <div class="tutorials-container" id="tutorialsList">
+    <p style="text-align:center;color:var(--neon-cyan);font-family:Orbitron;">Cargando...</p>
+    </div>
 </div>
 
-<div class="tutorials-container" id="tutorialsList">
-<p style="text-align:center;color:var(--neon-cyan);font-family:Orbitron;">Cargando...</p>
-</div>
+<footer class="site-footer">
+    <p>&copy; 2026 LUCK XIT OFC. Todos los derechos reservados.</p>
+    <div style="margin-top:10px;">
+        <a href="privacidad.html">Política de Privacidad</a> | 
+        <a href="terminos.html">Términos de Servicio</a> | 
+        <a href="contacto.html">Contacto</a>
+    </div>
+</footer>
 
 <script type="module">
+// Asegúrate de que la ruta a tu firebase-config.js sea correcta
 import { db, ref, get } from './firebase-config.js';
 
 let allTutorials = [];
@@ -293,6 +329,7 @@ const container = document.getElementById('tutorialsList');
 container.innerHTML="";
 
 list.forEach((data,i)=>{
+// Para AdSense, asegúrate de que la descripción (data.description) tenga AL MENOS 100-200 palabras de texto explicativo real.
 let desc = data.description ? `<div class="tutorial-desc">${data.description}</div>`:"";
 let logoHtml = data.logo ? `<img src="${data.logo}" class="tutorial-logo" alt="Logo de Tutorial">` : "";
 
@@ -304,21 +341,27 @@ container.innerHTML += `
 ${logoHtml}
 ${desc}
 <a href="${data.link}" target="_blank" class="btn-download">
-<i class='bx bx-download'></i> DESCARGAR
+<i class='bx bx-download'></i> LEER Y DESCARGAR
 </a>
 </div>
 `;
+
+// Opcional: Insertar un anuncio cada 3 tutoriales
+if ((i + 1) % 3 === 0) {
+    container.innerHTML += `
+    <div class="adsense-slot">
+        <p style="color:#555; font-size:10px;">[Espacio para Anuncio Google AdSense]</p>
+    </div>`;
+}
 });
 }
 
 document.getElementById('searchInput').addEventListener('input',e=>{
 const value = e.target.value.toLowerCase();
-
 const filtered = allTutorials.filter(t =>
 t.title.toLowerCase().includes(value) ||
 (t.description && t.description.toLowerCase().includes(value))
 );
-
 renderTutorials(filtered);
 });
 
@@ -354,7 +397,6 @@ ctx.fill();
 update(){
 this.x+=this.vx;
 this.y+=this.vy;
-
 if(this.x<0||this.x>w)this.vx*=-1;
 if(this.y<0||this.y>h)this.vy*=-1;
 }
@@ -368,7 +410,6 @@ particles.forEach(p=>{p.update();p.draw();});
 requestAnimationFrame(anim);
 }
 anim();
-
 </script>
 
 </body>
