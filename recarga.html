@@ -231,9 +231,9 @@
                 
                 await loadCountries();
             } else { 
-                // AQUÍ SE CAPTURA LA URL PARA LUEGO REDIRIGIR DESPUÉS DEL LOGIN
-                const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
-                window.location.href = "login.html?redirect=" + currentPath; 
+                // AQUÍ SE CAPTURA LA URL COMPLETA Y ABSOLUTA (MÁS SEGURO)
+                const currentUrl = encodeURIComponent(window.location.href);
+                window.location.href = "login.html?redirect=" + currentUrl; 
             }
         });
 
