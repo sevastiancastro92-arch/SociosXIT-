@@ -121,6 +121,11 @@
                 <div class="card-icon"><i class='bx bx-plus-circle'></i></div>
                 <div class="card-info"><h3>Crear Producto</h3><p>Nuevo ítem en catálogo.</p></div>
             </div>
+            
+            <div class="admin-card color-gold" onclick="openEditProductModal()">
+                <div class="card-icon"><i class='bx bx-edit'></i></div>
+                <div class="card-info"><h3>Editar Producto</h3><p>Modificar info y planes.</p></div>
+            </div>
 
             <div class="admin-card color-blue" onclick="openAddDurationModal()">
                 <div class="card-icon"><i class='bx bx-time-five'></i></div>
@@ -130,6 +135,11 @@
             <div class="admin-card" onclick="openStockModal()">
                 <div class="card-icon"><i class='bx bx-key'></i></div>
                 <div class="card-info"><h3>Añadir Stock</h3><p>Subir llaves a un producto.</p></div>
+            </div>
+            
+            <div class="admin-card color-red" onclick="openManageKeysModal()">
+                <div class="card-icon"><i class='bx bx-list-ul'></i></div>
+                <div class="card-info"><h3>Gestionar Keys</h3><p>Editar o borrar llaves.</p></div>
             </div>
 
             <div class="admin-card color-green" onclick="openModal('modalAddBalance')">
@@ -169,6 +179,37 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="modalEditProduct">
+        <div class="modal-box" style="border-color: #ffd700;">
+            <h3 style="font-family:'Orbitron'; color: #ffd700;"><i class='bx bx-edit'></i> Editar Catálogo</h3>
+            
+            <div class="cyber-box" style="border-left-color: #ffd700;">
+                <div class="cyber-box-title" style="color: #ffd700;">SELECCIÓN BASE</div>
+                <div class="input-group"><label>Producto a Editar</label><select id="editProdSelect" onchange="loadProductDetailsForEdit()"></select></div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex:2;"><label>Nombre Comercial</label><input type="text" id="editPName"></div>
+                    <div class="input-group" style="flex:1;"><label>Ecosistema</label><select id="editPCat"><option value="Android">Android</option><option value="iPhone">iPhone</option><option value="PC">PC</option></select></div>
+                </div>
+                <button class="btn-action" style="background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); color: #000; padding: 10px;" onclick="funcUpdateProduct()"><i class='bx bx-save'></i> ACTUALIZAR PRODUCTO BASE</button>
+                <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none; padding: 10px; margin-top: 5px;" onclick="funcDeleteProduct()"><i class='bx bx-trash'></i> ELIMINAR PRODUCTO Y SUS PLANES</button>
+            </div>
+
+            <div class="cyber-box" style="border-left-color: var(--neon-cyan);">
+                <div class="cyber-box-title" style="color: var(--neon-cyan);">MODIFICAR PLAN / DURACIÓN</div>
+                <div class="input-group"><label>Plan Específico</label><select id="editDurSelect" onchange="loadDurationDetailsForEdit()"></select></div>
+                <div class="input-group"><label>Nombre de Duración</label><input type="text" id="editDurName"></div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 1;"><label>Precio (USD)</label><input type="number" id="editDurPrice" step="0.01"></div>
+                    <div class="input-group" style="flex: 1;"><label>Garantía (H)</label><input type="number" id="editDurWarr"></div>
+                </div>
+                <button class="btn-action" style="background: rgba(0, 243, 255, 0.2); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); box-shadow: none; padding: 10px;" onclick="funcUpdateDuration()"><i class='bx bx-save'></i> ACTUALIZAR PLAN</button>
+                <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none; padding: 10px; margin-top: 5px;" onclick="funcDeleteDuration()"><i class='bx bx-trash'></i> ELIMINAR PLAN</button>
+            </div>
+
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+        </div>
+    </div>
+    
     <div class="modal-overlay" id="modalAddDuration">
         <div class="modal-box" style="border-color: var(--neon-cyan);">
             <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-time-five'></i> Añadir Duración</h3>
@@ -310,6 +351,19 @@
             <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
         </div>
     </div>
+    
+    <div class="modal-overlay" id="modalManageKeys">
+        <div class="modal-box" style="border-color: var(--neon-red); max-width: 600px;">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-list-ul'></i> Gestión de Keys</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-red);">
+                <div class="input-group"><label>Target (Producto/Plan)</label><select id="manageKeysSelect" onchange="loadKeysList()"></select></div>
+            </div>
+            <div class="cyber-box" style="border-left-color: var(--neon-red); padding-right: 5px;">
+                <div id="keysContainer" style="max-height: 300px; overflow-y: auto; text-align: left; padding-right: 5px;"></div>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+        </div>
+    </div>
 
     <div class="modal-overlay" id="modalAddBalance">
         <div class="modal-box" style="border-color: var(--neon-green);">
@@ -363,6 +417,7 @@
         let adminUser = null; 
         let isSuperAdmin = false;
         let currentAdminIp = "0.0.0.0";
+        let loadedProductsData = {}; // Para la edición de productos
 
         async function logAdminAction(actionType, targetUsername, details) {
             try {
@@ -604,6 +659,117 @@
             if(!name || isNaN(price)) return alert("Faltan datos.");
             try { const newProdRef = push(ref(db, 'products')); const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key; await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr }); alert("✅ Creado."); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
         };
+        
+        // --- NUEVAS FUNCIONES: EDITAR PRODUCTO Y DURACIÓN ---
+        window.openEditProductModal = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            const select = document.getElementById('editProdSelect'); select.innerHTML = "<option value=''>Cargando...</option>"; openModal('modalEditProduct');
+            document.getElementById('editPName').value = ''; document.getElementById('editDurSelect').innerHTML = ''; document.getElementById('editDurName').value = ''; document.getElementById('editDurPrice').value = ''; document.getElementById('editDurWarr').value = '';
+            try {
+                const snap = await get(ref(db, 'products')); select.innerHTML = "<option value=''>-- Elige un Producto --</option>";
+                if(snap.exists()) {
+                    loadedProductsData = snap.val();
+                    Object.keys(loadedProductsData).forEach(pId => {
+                        const opt = document.createElement('option'); opt.value = pId; opt.text = loadedProductsData[pId].name; select.appendChild(opt);
+                    });
+                } else { select.innerHTML = "<option value=''>BD Vacía</option>"; }
+            } catch(e) { select.innerHTML = `<option value=''>Error: ${e.message}</option>`; }
+        };
+
+        window.loadProductDetailsForEdit = () => {
+            const pId = document.getElementById('editProdSelect').value;
+            const durSelect = document.getElementById('editDurSelect');
+            durSelect.innerHTML = "<option value=''>-- Elige un Plan --</option>";
+            document.getElementById('editDurName').value = ''; document.getElementById('editDurPrice').value = ''; document.getElementById('editDurWarr').value = '';
+            
+            if(!pId || !loadedProductsData[pId]) {
+                document.getElementById('editPName').value = '';
+                return;
+            }
+            
+            const prod = loadedProductsData[pId];
+            document.getElementById('editPName').value = prod.name || '';
+            document.getElementById('editPCat').value = prod.category || 'Android';
+
+            if(prod.durations) {
+                Object.keys(prod.durations).forEach(dId => {
+                    const opt = document.createElement('option'); opt.value = dId; opt.text = prod.durations[dId].duration; durSelect.appendChild(opt);
+                });
+            }
+        };
+
+        window.loadDurationDetailsForEdit = () => {
+            const pId = document.getElementById('editProdSelect').value;
+            const dId = document.getElementById('editDurSelect').value;
+            if(!pId || !dId || !loadedProductsData[pId] || !loadedProductsData[pId].durations[dId]) return;
+            
+            const dur = loadedProductsData[pId].durations[dId];
+            document.getElementById('editDurName').value = dur.duration || '';
+            document.getElementById('editDurPrice').value = dur.price || 0;
+            document.getElementById('editDurWarr').value = dur.warranty || 0;
+        };
+
+        window.funcUpdateProduct = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const pId = document.getElementById('editProdSelect').value;
+            const name = document.getElementById('editPName').value.trim();
+            const cat = document.getElementById('editPCat').value;
+            if(!pId || !name) return alert("❌ Selecciona un producto y define el nombre.");
+            
+            try {
+                await update(ref(db, `products/${pId}`), { name: name, category: cat });
+                alert("✅ Producto actualizado exitosamente.");
+                openEditProductModal(); 
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        window.funcUpdateDuration = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const pId = document.getElementById('editProdSelect').value;
+            const dId = document.getElementById('editDurSelect').value;
+            const durName = document.getElementById('editDurName').value.trim();
+            const price = parseFloat(document.getElementById('editDurPrice').value);
+            const warr = parseInt(document.getElementById('editDurWarr').value);
+            
+            if(!pId || !dId || !durName || isNaN(price)) return alert("❌ Faltan datos en el plan.");
+            
+            try {
+                await update(ref(db, `products/${pId}/durations/${dId}`), { duration: durName, price: price, warranty: isNaN(warr) ? 0 : warr });
+                alert("✅ Plan actualizado exitosamente.");
+                openEditProductModal(); 
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        window.funcDeleteProduct = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const pId = document.getElementById('editProdSelect').value;
+            const name = document.getElementById('editPName').value.trim();
+            if(!pId) return alert("❌ Selecciona un producto.");
+            if(confirm(`⚠️ ¿ESTÁS SEGURO DE ELIMINAR EL PRODUCTO COMPLETO "${name}"?\nESTO BORRARÁ TODOS SUS PLANES Y KEYS. LA ACCIÓN ES IRREVERSIBLE.`)) {
+                try {
+                    await set(ref(db, `products/${pId}`), null);
+                    alert("✅ Producto eliminado de la base de datos.");
+                    openEditProductModal(); 
+                } catch(e) { alert("❌ Error: " + e.message); }
+            }
+        };
+
+        window.funcDeleteDuration = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const pId = document.getElementById('editProdSelect').value;
+            const dId = document.getElementById('editDurSelect').value;
+            const durName = document.getElementById('editDurName').value.trim();
+            if(!pId || !dId) return alert("❌ Selecciona un plan a eliminar.");
+            if(confirm(`⚠️ ¿ELIMINAR EL PLAN "${durName}"?\nSe perderán todas las keys almacenadas en esta duración.`)) {
+                try {
+                    await set(ref(db, `products/${pId}/durations/${dId}`), null);
+                    alert("✅ Plan eliminado exitosamente.");
+                    openEditProductModal(); 
+                } catch(e) { alert("❌ Error: " + e.message); }
+            }
+        };
+        // -----------------------------------------------------------
+
         window.openAddDurationModal = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
             const select = document.getElementById('durProdSelect'); select.innerHTML = "<option value=''>Cargando...</option>"; openModal('modalAddDuration');
@@ -628,6 +794,84 @@
             const selectVal = document.getElementById('stockProdSelect').value; if(!selectVal) return alert("❌ Selecciona target.");
             const [pId, dId] = selectVal.split('|'); const keys = document.getElementById('stockKeysArea').value.split('\n').filter(k => k.trim() !== ""); if(keys.length === 0) return alert("Faltan keys.");
             try { const updates = {}; keys.forEach(key => { updates[`products/${pId}/durations/${dId}/keys/${push(ref(db)).key}`] = key.trim(); }); await update(ref(db), updates); alert(`✅ ${keys.length} Keys subidas.`); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        // GESTIÓN INDIVIDUAL DE KEYS
+        window.openManageKeysModal = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            const select = document.getElementById('manageKeysSelect');
+            select.innerHTML = "<option value=''>Cargando...</option>";
+            openModal('modalManageKeys');
+            document.getElementById('keysContainer').innerHTML = "<p style='color:#aaa; text-align:center;'>Selecciona un plan para ver el inventario.</p>";
+            
+            try {
+                const snap = await get(ref(db, 'products'));
+                select.innerHTML = "<option value=''>-- Elige un Plan --</option>";
+                if(snap.exists()) {
+                    snap.forEach(p => {
+                        const prod = p.val();
+                        if(prod.durations) {
+                            Object.keys(prod.durations).forEach(dId => {
+                                const opt = document.createElement('option');
+                                opt.value = `${p.key}|${dId}`;
+                                opt.text = `${prod.name} - ${prod.durations[dId].duration}`;
+                                select.appendChild(opt);
+                            });
+                        }
+                    });
+                } else { select.innerHTML = "<option value=''>BD Vacía</option>"; }
+            } catch(e) { select.innerHTML = `<option value=''>Error: ${e.message}</option>`; }
+        };
+
+        window.loadKeysList = async () => {
+            const selectVal = document.getElementById('manageKeysSelect').value;
+            const container = document.getElementById('keysContainer');
+            if(!selectVal) { container.innerHTML = ""; return; }
+            
+            container.innerHTML = "<p style='color:#aaa; text-align:center;'>Extrayendo llaves de la bóveda...</p>";
+            const [pId, dId] = selectVal.split('|');
+            
+            try {
+                const snap = await get(ref(db, `products/${pId}/durations/${dId}/keys`));
+                if(snap.exists()) {
+                    let html = "";
+                    snap.forEach(k => {
+                        const kId = k.key;
+                        const keyText = k.val();
+                        html += `
+                        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <input type="text" value="${keyText.replace(/"/g, '&quot;')}" id="input_key_${kId}" style="width: 100%; padding: 8px; border-radius: 5px; background: #111; color: #00ffcc; border: 1px solid #333; font-family: monospace;">
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="funcEditSpecificKey('${pId}', '${dId}', '${kId}')" style="background: rgba(255,215,0,0.1); color: #ffd700; border: 1px solid #ffd700; padding: 8px; border-radius: 5px; cursor: pointer; transition: 0.3s;"><i class='bx bx-save'></i></button>
+                                <button onclick="funcDeleteSpecificKey('${pId}', '${dId}', '${kId}')" style="background: rgba(255,7,58,0.1); color: var(--neon-red); border: 1px solid var(--neon-red); padding: 8px; border-radius: 5px; cursor: pointer; transition: 0.3s;"><i class='bx bx-trash'></i></button>
+                            </div>
+                        </div>`;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = "<p style='color:#888; text-align:center;'>0 Keys disponibles en este plan.</p>";
+                }
+            } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
+        };
+
+        window.funcEditSpecificKey = async (pId, dId, kId) => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            const newVal = document.getElementById(`input_key_${kId}`).value.trim();
+            if(!newVal) return alert("❌ La key no puede estar vacía.");
+            try {
+                await set(ref(db, `products/${pId}/durations/${dId}/keys/${kId}`), newVal);
+                alert("✅ Key modificada correctamente.");
+            } catch(e) { alert("❌ Error: " + e.message); }
+        };
+
+        window.funcDeleteSpecificKey = async (pId, dId, kId) => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
+            if(confirm("⚠️ ¿Destruir esta key permanentemente?")) {
+                try {
+                    await set(ref(db, `products/${pId}/durations/${dId}/keys/${kId}`), null);
+                    loadKeysList(); 
+                } catch(e) { alert("❌ Error: " + e.message); }
+            }
         };
 
         // SALDO Y USUARIOS
