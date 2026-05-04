@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - SociosXIT</title>
+    <title>Clan Level UP - LUCK XIT OFC</title>
+    
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
     <style>
-        /* =========================================
-           1. FUENTES Y PROTECCIÓN (Omitido por espacio, usa el tuyo original)
-           ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
-        
+
         * { user-select: none; box-sizing: border-box; }
-        
+
         :root { 
             --neon-purple: #bc13fe; 
             --neon-red: #ff073a; 
@@ -21,172 +20,228 @@
             --glass-bg: rgba(15, 0, 25, 0.7); 
             --sidebar-bg: rgba(5, 10, 20, 0.95); 
         }
-        
-        body { 
-            background-color: #020005; color: white; 
-            font-family: 'Poppins', sans-serif; 
-            margin: 0; padding: 0; min-height: 100dvh; 
-            display: flex; justify-content: center; align-items: flex-start; 
-            flex-direction: column; overflow-x: hidden; 
-        }
-        
-        /* ... (tus estilos originales CSS aquí) ... */
 
-        /* --- NUEVOS ESTILOS PARA LA TARJETA DE OFERTA DE LEVEL UP --- */
-        .offer-card {
-            background: rgba(0, 15, 25, 0.6);
-            border: 1px solid var(--neon-cyan);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 15px rgba(0,243,255,0.1);
-        }
-        .offer-card h3 { 
-            font-family: 'Orbitron'; color: var(--neon-cyan); 
-            font-size: 1.2rem; margin: 0 0 15px 0;
-            display: flex; align-items: center; gap: 10px;
-            text-shadow: 0 0 10px var(--neon-cyan);
-        }
-        .offer-details { display: flex; gap: 15px; align-items: center; margin-bottom: 15px;}
-        .clan-logo-buy { width: 80px; height: 80px; border-radius: 12px; border: 2px solid var(--neon-cyan); object-fit: cover; box-shadow: 0 0 15px rgba(0,243,255,0.3);}
-        .offer-text p { margin: 0 0 5px 0; font-size: 0.9rem; color: #ccc; }
-        .offer-price { font-family: 'Orbitron'; color: var(--neon-green); font-size: 1.3rem; font-weight: bold; margin-top: 8px; text-shadow: 0 0 8px rgba(0,255,204,0.5);}
-        
-        .btn-buy-now { 
-            width: 100%; background: var(--neon-cyan); color: #000; border: none; 
-            padding: 12px; border-radius: 10px; font-weight: bold; 
-            cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; 
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-size: 1rem;
-        }
-        .btn-buy-now:hover { box-shadow: 0 0 20px var(--neon-cyan); transform: scale(1.02); background: #fff;}
-        /* ----------------------------------------------------------- */
+        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes gradientScroll { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #020202; } ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
+
+        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 900px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100; }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .menu-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
+        .top-bar-right { display: flex; align-items: center; gap: 10px; }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; }
+        .badge.green i { color: var(--neon-green); } .badge.green span { color: var(--neon-green); }
+        
+        .main-container { width: 95%; max-width: 500px; margin: 90px auto 30px auto; z-index: 10; animation: popIn 0.6s ease-out; text-align: center; }
+        .header-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 5px 0; background: linear-gradient(90deg, var(--neon-cyan), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* ESTILOS EXTRAÍDOS DE TU ADMIN PANEL */
+        .cyber-box { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 3px solid var(--neon-cyan); border-radius: 10px; padding: 15px; margin-bottom: 15px; transition: 0.3s; text-align: left;}
+        .cyber-box:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.1); }
+        .cyber-box-title { color: #aaa; font-size: 0.75rem; text-align: left; margin-bottom: 10px; font-weight: bold; font-family: 'Orbitron'; letter-spacing: 1px; }
+        
+        .input-group { margin-bottom: 12px; text-align: left; }
+        .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .input-group input { width: 100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--neon-cyan); transform: scale(1.02); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); background: rgba(0, 243, 255, 0.05); }
+        
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 1rem;}
+        .btn-action:hover { box-shadow: 0 0 20px var(--neon-cyan); transform: scale(1.03); letter-spacing: 1px; }
+        .btn-cancel { width: 100%; background: transparent; border: 1px solid #444; color: #888; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-cancel:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.1); }
+
+        /* MODAL AL ESTILO DE TU PANEL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-box { background: linear-gradient(145deg, #0a0a0a, #050505); padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid var(--neon-cyan); text-align: center; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.1) inset; }
+        .modal-overlay[style*="display: flex"] .modal-box { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        .warning-box { background: rgba(255, 7, 58, 0.1); border-left: 4px solid var(--neon-red); padding: 12px; border-radius: 5px; font-size: 0.85rem; margin-bottom: 15px; color: #ddd; text-align: left; }
+        .offer-price { font-family: 'Orbitron'; color: var(--neon-green); font-size: 1.5rem; font-weight: bold; margin-top: 5px; text-shadow: 0 0 8px rgba(0,255,204,0.5); }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="uploadLoader">
-        <div class="spinner"></div>
-        <p style="color: var(--neon-cyan); font-family: 'Orbitron'; margin-top: 15px;">PROCESANDO COMPRA...</p>
+    <div id="loadingScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#020005; z-index:9999; display:flex; justify-content:center; align-items:center;">
+        <h2 style="font-family:'Orbitron'; color:var(--neon-cyan); text-shadow:0 0 15px var(--neon-cyan); animation:popIn 1s infinite alternate;">Sincronizando...</h2>
     </div>
 
-    <div class="profile-container">
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="menu-btn" onclick="window.location.href='perfil.html'"><i class='bx bx-arrow-back'></i></button>
+        </div>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-user'></i> <span id="topUsername">...</span></div>
+            <div class="badge green"><i class='bx bx-wallet'></i> $<span id="topBalance">0.00</span></div>
+        </div>
+    </div>
+
+    <div class="main-container" id="mainPanel" style="display: none;">
+        <img src="Logo/imagenclan.png" alt="Clan Logo" style="width: 120px; height: 120px; border-radius: 15px; border: 2px solid var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); margin-bottom: 15px; object-fit: cover;">
         
-        <div class="offer-card">
-            <h3><i class='bx bx-up-arrow-circle'></i> Clan Level UP Service</h3>
-            <div class="offer-details">
-                <img src="Logo/imagenclan.png" alt="Clan Logo" class="clan-logo-buy">
-                <div class="offer-text">
-                    <p>Potencia tu clan rápidamente.</p>
-                    <p><b>Duración:</b> 8 Horas continuas.</p>
-                    <p><b>Servicio:</b> 4 Bots activos jugando.</p>
-                    <p class="offer-price">$5.00 USD</p>
+        <h1 class="header-title">CLAN LEVEL UP</h1>
+        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px;">El camino más rápido al nivel máximo.</p>
+
+        <div class="cyber-box" style="border-left-color: var(--neon-cyan);">
+            <div class="cyber-box-title" style="color: var(--neon-cyan);">DETALLES DEL SERVICIO</div>
+            <p style="margin: 5px 0; font-size: 0.9rem;"><i class='bx bx-time-five' style="color: var(--neon-cyan);"></i> <b>Duración:</b> 8 Horas continuas.</p>
+            <p style="margin: 5px 0; font-size: 0.9rem;"><i class='bx bx-bot' style="color: var(--neon-cyan);"></i> <b>Potencia:</b> 4 Bots activos jugando.</p>
+            <p style="margin: 5px 0; font-size: 0.9rem;"><i class='bx bx-shield-quarter' style="color: var(--neon-cyan);"></i> <b>Seguridad:</b> 100% Anti-Ban.</p>
+            <div style="text-align: center; margin-top: 15px;">
+                <p class="offer-price">$5.00 USD</p>
+            </div>
+        </div>
+
+        <button class="btn-action" style="background: linear-gradient(90deg, #008080, var(--neon-cyan), #008080); background-size: 200% auto; animation: gradientScroll 3s linear infinite; color: #000;" onclick="openModal('modalClanPurchase')">
+            <i class='bx bx-cart-add'></i> CONTRATAR SERVICIO
+        </button>
+    </div>
+
+    <div class="modal-overlay" id="modalClanPurchase">
+        <div class="modal-box" style="border-color: var(--neon-cyan);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan);"><i class='bx bx-radar'></i> Activar Operación</h3>
+            
+            <div class="warning-box">
+                ⚠️ <b>ATENCIÓN:</b> Para que nuestros bots puedan ingresar, debes configurar tu clan temporalmente en <b>Predeterminado</b> y activar la <b>Auto Aprobación</b>.
+            </div>
+
+            <div class="cyber-box" style="border-left-color: var(--neon-cyan);">
+                <div class="input-group">
+                    <label>ID de tu Clan</label>
+                    <input type="number" id="inputClanId" placeholder="Ej: 123456789" autocomplete="off">
                 </div>
             </div>
-            <button class="btn-buy-now" onclick="buyClanLevelUp()">
-                <i class='bx bx-cart-add'></i> COMPRAR AHORA
+
+            <button class="btn-action" style="background: var(--neon-cyan); color: #000;" onclick="funcProcessPurchase()">
+                <i class='bx bx-check'></i> CONFIRMAR PAGO ($5.00)
             </button>
+            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
         </div>
-        </div>
+    </div>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, push, set } from './firebase-config.js';
-        
-        // (Lógica de autenticación y carga de datos del usuario omitida, usa la tuya original)
+        // Importando exactamente tus configuraciones de Firebase
+        import { auth, db, onAuthStateChanged, ref, get, child, update, push } from './firebase-config.js';
 
-        // --- NUEVA LÓGICA SISTEMA DE VENTA LEVEL UP (WEB -> FIREBASE) ---
-        // Esta función corre en el navegador del cliente. 
-        // Descuenta saldo y crea una orden que el bot externo leerá.
-        window.buyClanLevelUp = async () => {
-            if(!currentUserUid) { alert("Error: No hay sesión activa."); return; }
+        let currentUserUid = null;
+        let userData = null;
+
+        // Comprobar sesión de usuario al cargar
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserUid = user.uid;
+                try {
+                    const snapshot = await get(child(ref(db), `users/${user.uid}`));
+                    if (snapshot.exists()) {
+                        userData = snapshot.val();
+                        document.getElementById('topUsername').innerText = userData.username || 'Usuario';
+                        document.getElementById('topBalance').innerText = parseFloat(userData.balance || 0).toFixed(2);
+                        
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('mainPanel').style.display = 'block';
+                    } else {
+                        alert("Error: No se encontraron los datos de tu cuenta.");
+                        window.location.href = "login.html";
+                    }
+                } catch (error) {
+                    document.getElementById('loadingScreen').innerHTML = `<h2 style="color:red; font-family:'Orbitron';">ERROR: ${error.message}</h2>`;
+                }
+            } else { 
+                window.location.href = "login.html"; 
+            }
+        });
+
+        // Funciones de control de modales (Igual que en tu admin)
+        window.openModal = (id) => {
+            document.getElementById('inputClanId').value = ''; // Limpiar input
+            document.getElementById(id).style.display = 'flex';
+        };
+        window.closeAllModals = () => {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        };
+
+        // Lógica de compra
+        window.funcProcessPurchase = async () => {
+            if (!currentUserUid || !userData) return alert("❌ Error de sesión.");
             
+            const clanId = document.getElementById('inputClanId').value.trim();
+            if (!clanId) return alert("❌ Debes ingresar el ID de tu clan.");
+
             const price = 5.00;
-            const product = "Clan Level UP (8H - 4 Bots)";
-            
-            if(!confirm(`¿Deseas comprar "${product}" por $${price.toFixed(2)} USD?\nEl saldo se descontará automáticamente de tu cuenta.`)) return;
+            const currentBalance = parseFloat(userData.balance || 0);
 
-            document.getElementById('uploadLoader').style.display = 'flex';
+            if (currentBalance < price) {
+                alert("❌ Saldo insuficiente. Por favor recarga tu cuenta.");
+                return;
+            }
+
+            document.getElementById('loadingScreen').style.display = 'flex';
+            document.getElementById('loadingScreen').innerHTML = `<h2 style="font-family:'Orbitron'; color:var(--neon-cyan); animation:popIn 1s infinite alternate;">Procesando Pago...</h2>`;
+            closeAllModals();
 
             try {
-                // 1. Obtener datos actuales del usuario (Saldo e info de contacto)
-                const snapshot = await get(child(ref(db), `users/${currentUserUid}`));
+                const newBalance = currentBalance - price;
+                const now = Date.now();
                 
-                if (!snapshot.exists()) throw new Error("Datos de usuario no encontrados.");
+                // Preparar actualizaciones en lote para Firebase
+                const updates = {};
                 
-                const data = snapshot.val();
-                const currentBalance = parseFloat(data.balance || 0);
-
-                // 2. Verificar saldo suficiente
-                if(currentBalance < price) {
-                    alert("❌ Saldo insuficiente. Por favor recarga.");
-                    document.getElementById('uploadLoader').style.display = 'none';
-                    return;
-                }
-
-                // 3. Crear el objeto de la orden para que el BOT la procese
-                const now = new Date();
-                const timestamp = now.getTime();
-                const orderId = push(ref(db, 'clan_level_up_orders')).key; // Generar UID para la orden
+                // 1. Descontar saldo al usuario
+                updates[`users/${currentUserUid}/balance`] = newBalance;
                 
-                const clanOrderData = {
-                    uid: currentUserUid,
-                    username: data.username,
-                    waNumber: data.waNumber || 'No vinculado', // Útil si el usuario vinculó su WA
-                    product: product,
+                // 2. Guardar en el historial del usuario
+                const historyKey = push(ref(db, `users/${currentUserUid}/history`)).key;
+                updates[`users/${currentUserUid}/history/${historyKey}`] = {
+                    date: now,
+                    details: `Clan Level UP (ID: ${clanId})`,
                     price: price,
-                    timestamp: timestamp,
-                    status: 'Pendiente', // El bot cambiará esto a 'Completado' o 'Error'
+                    refunded: false,
+                    status: 'Completado',
+                    type: 'Servicio Clan'
+                };
+
+                // 3. Crear orden pendiente para que tu Bot Wa Sock la detecte
+                const orderKey = push(ref(db, 'clan_level_up_orders')).key;
+                updates[`clan_level_up_orders/${orderKey}`] = {
+                    uid: currentUserUid,
+                    username: userData.username,
+                    waNumber: userData.waNumber || 'No vinculado',
+                    clanId: clanId,
+                    product: 'Clan Level UP (8H - 4 Bots)',
+                    price: price,
+                    timestamp: now,
+                    status: 'Pendiente',
                     processed: false
                 };
 
-                // 4. Crear registro de historial para el usuario
-                const historyItem = {
-                    date: `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`,
-                    details: product,
-                    price: price,
-                    refunded: false,
-                    status: 'Procesando (Verificar WhatsApp)',
-                    type: 'Compra Servicio'
-                };
-
-                // 5. Preparar actualizaciones atómicas
-                const newBalance = currentBalance - price;
-                const updates = {};
-                
-                // Descontar saldo del usuario
-                updates[`/users/${currentUserUid}/balance`] = newBalance;
-                
-                // Añadir al historial del usuario
-                const newHistoryKey = push(ref(db, `users/${currentUserUid}/history`)).key;
-                updates[`/users/${currentUserUid}/history/${newHistoryKey}`] = historyItem;
-
-                // Crear la orden en la cola para el BOT administrativo
-                updates[`/clan_level_up_orders/${orderId}`] = clanOrderData;
-
-                // 6. Ejecutar actualizaciones en Firebase
+                // Ejecutar actualización
                 await update(ref(db), updates);
 
-                // 7. Actualizar Interfaz visualmente
-                document.getElementById('balanceDisplay').innerText = newBalance.toFixed(2);
+                // Actualizar interfaz visual
+                userData.balance = newBalance; 
+                document.getElementById('topBalance').innerText = newBalance.toFixed(2);
                 
-                // (Omitido recalcular total gastado, usa tu lógica original)
-
-                document.getElementById('uploadLoader').style.display = 'none';
+                document.getElementById('loadingScreen').style.display = 'none';
                 
-                // Éxito: Informar al usuario
-                alert(`✅ ¡Compra exitosa!\n\nSe han descontado $${price.toFixed(2)} USD.\n\nNuestro sistema ha notificado automáticamente a los administradores. En breve nos pondremos en contacto contigo vía WhatsApp para coordinar el ingreso de los bots al clan.\n\nGracias por tu compra.`);
-
+                alert(`✅ ¡Pago exitoso!\n\nSe descontaron $${price.toFixed(2)} USD.\n\nTu orden ha sido enviada automáticamente a los administradores. Nos contactaremos en breve por WhatsApp para iniciar los bots en tu clan.`);
+                
             } catch (error) {
-                document.getElementById('uploadLoader').style.display = 'none';
-                console.error("Error en la compra:", error);
-                alert("❌ Ocurrió un error al procesar la compra: " + error.message);
+                document.getElementById('loadingScreen').style.display = 'none';
+                alert("❌ Ocurrió un error en la base de datos: " + error.message);
             }
         };
-        // ----------------------------------------------------------------
+
+        // Efecto de partículas de fondo (Mismo de tu panel)
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 0.5; this.color = Math.random() > 0.5 ? 'rgba(188, 19, 254, ' : 'rgba(0, 243, 255, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
 </body>
 </html>
