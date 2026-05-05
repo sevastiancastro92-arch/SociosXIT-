@@ -8,7 +8,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap');
 
         * { 
             user-select: none; 
@@ -16,6 +16,15 @@
             margin: 0; 
             padding: 0; 
             font-family: 'Inter', sans-serif; 
+        }
+
+        :root {
+            --neon-blue: #3b82f6;
+            --neon-pink: #ff0055;
+            --neon-purple: #bc13fe;
+            --neon-green: #10b981;
+            --glass-bg: rgba(20, 25, 35, 0.4);
+            --sidebar-bg: rgba(10, 15, 25, 0.98);
         }
 
         body { 
@@ -35,31 +44,26 @@
             z-index: -2;
         }
 
-        /* Orbes flotantes de luz */
         .bg-orb { 
-            position: fixed; 
-            border-radius: 50%; 
-            filter: blur(100px); 
-            z-index: -1; 
-            animation: floatOrb 12s infinite alternate ease-in-out; 
-            opacity: 0.6;
+            position: fixed; border-radius: 50%; filter: blur(100px); 
+            z-index: -1; animation: floatOrb 12s infinite alternate ease-in-out; opacity: 0.6;
         }
-        .orb-1 { width: 400px; height: 400px; background: rgba(37, 99, 235, 0.25); top: -100px; left: -100px; }
+        .orb-1 { width: 400px; height: 400px; background: rgba(59, 130, 246, 0.25); top: -100px; left: -100px; }
         .orb-2 { width: 500px; height: 500px; background: rgba(16, 185, 129, 0.15); bottom: -150px; right: -150px; animation-delay: -6s; }
         .orb-3 { width: 300px; height: 300px; background: rgba(139, 92, 246, 0.15); top: 40%; left: 50%; transform: translate(-50%, -50%); animation-duration: 15s; }
 
         ::-webkit-scrollbar { width: 6px; } 
         ::-webkit-scrollbar-track { background: #050505; } 
-        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
 
-        /* Barra Superior Profesional */
+        /* =========================================
+           BARRA SUPERIOR (ESTILO SOCIOSXIT)
+           ========================================= */
         .top-bar { 
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%); 
             width: 95%; max-width: 1000px; 
-            background: rgba(15, 20, 30, 0.6); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 16px; padding: 12px 20px; 
+            background: rgba(15, 20, 30, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 12px 20px; 
             display: flex; justify-content: space-between; align-items: center; 
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); z-index: 100; 
             animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -67,25 +71,68 @@
 
         .menu-btn { 
             background: transparent; border: 1px solid rgba(255,255,255,0.1); 
-            color: #fff; border-radius: 10px; padding: 8px 12px; 
-            font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; 
+            color: #fff; border-radius: 10px; padding: 8px 12px; font-size: 1.5rem; 
+            cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center;
         }
         .menu-btn:hover { 
-            background: rgba(255,255,255,0.1); border-color: #3b82f6;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); transform: scale(1.05);
+            background: rgba(255,255,255,0.1); border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); transform: scale(1.05); color: var(--neon-blue);
         }
         
-        .top-bar-right { display: flex; align-items: center; gap: 12px; }
+        .top-bar-right { display: flex; align-items: center; gap: 10px; }
         .badge { 
             display: flex; align-items: center; gap: 8px; 
             background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); 
-            padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; color: #cbd5e1; font-weight: 600;
-            transition: all 0.3s ease;
+            padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;
+            color: #cbd5e1; cursor: pointer; transition: all 0.3s ease;
         }
-        .badge:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
-        .badge.green { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
-        .badge.green i, .badge.green span { color: #10b981; }
+        .badge:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); color: #fff; }
+        .badge img { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; }
+        .badge span { color: #fff; }
         
+        .badge.green { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); cursor: default; }
+        .badge.green:hover { transform: translateY(-2px); box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+        .badge.green i, .badge.green span { color: var(--neon-green); font-family: 'Orbitron', sans-serif; font-weight: bold; }
+
+        /* =========================================
+           MENÚ LATERAL CYBERPUNK
+           ========================================= */
+        .sidebar-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); 
+            z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; 
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        
+        .sidebar { 
+            position: fixed; top: 0; left: -300px; width: 270px; height: 100dvh; 
+            background: var(--sidebar-bg); border-right: 1px solid rgba(255,255,255,0.05); 
+            box-shadow: 10px 0 40px rgba(0, 0, 0, 0.8); z-index: 999; 
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            display: flex; flex-direction: column; padding: 25px 20px; 
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; 
+        }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; }
+        .close-btn { background: transparent; border: none; color: #64748b; font-size: 2rem; cursor: pointer; transition: 0.3s; display: flex; }
+        .close-btn:hover { color: var(--neon-pink); transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        .sidebar-item { 
+            display: flex; align-items: center; gap: 12px; color: #cbd5e1; text-decoration: none; 
+            padding: 14px 15px; background: rgba(255,255,255,0.02); border-radius: 12px; 
+            font-size: 0.95rem; font-weight: 600; transition: 0.3s; border: 1px solid transparent;
+        }
+        .sidebar-item i { font-size: 1.4rem; color: #64748b; transition: 0.3s; }
+        .sidebar-item:hover { 
+            background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);
+            border-left: 4px solid var(--neon-blue); color: #fff; 
+        }
+        .sidebar-item:hover i { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+
         /* Contenedor Principal */
         .main-container { 
             width: 95%; max-width: 850px; margin: 95px auto 40px auto; 
@@ -119,13 +166,11 @@
         }
 
         /* Grid de Planes */
-        .plans-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;
-        }
+        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
 
         /* TARJETAS CON EFECTO GLASS Y SHINE */
         .glass-card { 
-            background: rgba(20, 25, 35, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); 
+            background: var(--glass-bg); border: 1px solid rgba(255, 255, 255, 0.05); 
             border-radius: 20px; padding: 30px 25px; text-align: left;
             display: flex; flex-direction: column; justify-content: space-between;
             position: relative; overflow: hidden; backdrop-filter: blur(10px);
@@ -134,17 +179,14 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         
-        /* Retraso para que entren una por una */
         .glass-card:nth-child(1) { animation-delay: 0.3s; }
         .glass-card:nth-child(2) { animation-delay: 0.5s; }
         .glass-card:nth-child(3) { animation-delay: 0.7s; }
 
         .glass-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: #3b82f6; opacity: 0.5; transition: 0.3s;
+            background: var(--neon-blue); opacity: 0.5; transition: 0.3s;
         }
-        
-        /* Efecto de rayo de luz (Shine) al hacer hover */
         .glass-card::after {
             content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
@@ -162,22 +204,18 @@
         .plan-price span { font-size: 1.1rem; color: #64748b; font-weight: 600; }
         .plan-desc { color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px; flex-grow: 1; }
 
-        /* Botones Épicos */
+        /* Botones */
         .btn-primary { 
             width: 100%; padding: 16px; color: white; border: none; border-radius: 14px; 
             font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; 
             justify-content: center; align-items: center; gap: 10px; position: relative; overflow: hidden;
             transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
-        
-        /* Animación de destello en el botón */
         .btn-primary::before {
             content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s;
         }
         .btn-primary:hover::before { left: 100%; transition: 0.5s; }
-        
         .btn-primary:hover:not(:disabled) { transform: translateY(-3px); filter: brightness(1.1); }
         .btn-primary:active:not(:disabled) { transform: scale(0.95); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; filter: none; }
@@ -187,7 +225,7 @@
             color: #94a3b8; padding: 14px; border-radius: 14px; cursor: pointer; 
             transition: all 0.3s ease; margin-top: 12px; font-weight: 600;
         }
-        .btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateY(-2px); }
+        .btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateY(-2px); border-color: rgba(255,255,255,0.3);}
 
         .input-group { margin-bottom: 25px; text-align: left; }
         .input-group label { display: block; font-size: 0.9rem; color: #cbd5e1; margin-bottom: 10px; font-weight: 600; }
@@ -197,14 +235,14 @@
             transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
         .input-group input:focus { 
-            border-color: #3b82f6; background: rgba(0,0,0,0.7); 
+            border-color: var(--neon-blue); background: rgba(0,0,0,0.7); 
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 2px 4px rgba(0,0,0,0.5); transform: scale(1.02);
         }
 
         /* Modales */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); 
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); 
             display: none; justify-content: center; align-items: center; z-index: 2000; 
             opacity: 0; animation: fadeIn 0.4s forwards;
         }
@@ -228,15 +266,13 @@
             background: #050505; z-index: 9999; display: flex; flex-direction: column; 
             justify-content: center; align-items: center;
         }
-        
-        /* Loader circular animado */
         .spinner {
             width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: #3b82f6; border-radius: 50%;
+            border-top-color: var(--neon-blue); border-radius: 50%;
             animation: spin 1s linear infinite; margin-bottom: 20px;
         }
 
-        /* --- KEYFRAMES ÉPICOS --- */
+        /* --- KEYFRAMES --- */
         @keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, -50px) scale(1.1); } }
         @keyframes fadeIn { to { opacity: 1; } }
         @keyframes fadeInUP { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
@@ -261,16 +297,42 @@
 
     <div id="loadingScreen" class="loading-screen">
         <div class="spinner"></div>
-        <h2 class="animate-pulse" style="color: #fff; font-weight: 300; font-size: 1.2rem; letter-spacing: 2px;">Sincronizando Sistema...</h2>
+        <h2 class="animate-pulse" style="font-family:'Orbitron', sans-serif; color: #fff; font-weight: 300; font-size: 1.2rem; letter-spacing: 2px;">Sincronizando Sistema...</h2>
     </div>
 
     <div class="top-bar">
         <div class="top-bar-left">
-            <button class="menu-btn" onclick="window.location.href='perfil.html'"><i class='bx bx-arrow-back'></i></button>
+            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
         </div>
         <div class="top-bar-right">
-            <div class="badge"><i class='bx bx-user'></i> <span id="topUsername">...</span></div>
+            <div class="badge" onclick="window.location.href='perfil.html'">
+                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U"> 
+                <span id="topUsername">...</span>
+            </div>
             <div class="badge green"><i class='bx bx-wallet'></i> $<span id="topBalance">0.00</span></div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>SOCIOS XIT</h2>
+            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
+        </div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
+            <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
+            <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
+            <a href="recarga.html" class="sidebar-item"><i class='bx bx-wallet'></i> Recargar Saldo</a>
+            <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
+            <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
+            <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
+            <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
+            
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-pink);"><i class='bx bx-shield-quarter' style="color: var(--neon-pink);"></i> Panel Admin</a>
+            
+            <a href="#" class="sidebar-item" id="logoutMenuBtn" style="border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 10px; color: var(--neon-pink);"><i class='bx bx-log-out' style="color: var(--neon-pink);"></i> Cerrar Sesión</a>
         </div>
     </div>
 
@@ -340,14 +402,27 @@
         </div>
     </div>
 
+    <script>
+        const sidebar = document.getElementById('sidebar'); 
+        const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
+        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+    </script>
+
     <script type="module">
-        import { auth, db, onAuthStateChanged, ref, get, child, update, push } from './firebase-config.js';
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, push } from './firebase-config.js';
 
         let currentUserUid = null;
         let userData = null;
-        
         let currentSelectedPrice = 0;
         let currentSelectedProduct = '';
+
+        // Función para cerrar sesión desde el menú
+        document.getElementById('logoutMenuBtn').onclick = (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => window.location.href = "login.html");
+        };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -356,10 +431,18 @@
                     const snapshot = await get(child(ref(db), `users/${user.uid}`));
                     if (snapshot.exists()) {
                         userData = snapshot.val();
+                        
+                        // Llenar datos de la barra superior
                         document.getElementById('topUsername').innerText = userData.username || 'Usuario';
                         document.getElementById('topBalance').innerText = parseFloat(userData.balance || 0).toFixed(2);
+                        if(userData.avatar) document.getElementById('topAvatar').src = userData.avatar;
                         
-                        // Pequeño timeout para que la animación de carga se aprecie suavemente
+                        // Mostrar botón admin si es sebasxit
+                        if(userData.username && userData.username.toLowerCase() === 'sebasxit') {
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
+                        
+                        // Quitar pantalla de carga
                         setTimeout(() => {
                             document.getElementById('loadingScreen').style.opacity = '0';
                             setTimeout(() => {
@@ -384,11 +467,9 @@
         window.openModal = (id, price, productName) => {
             currentSelectedPrice = price;
             currentSelectedProduct = productName;
-            
             document.getElementById('inputClanId').value = ''; 
             document.getElementById('modalSelectedPlanText').innerText = productName;
             document.getElementById('modalPriceLabel').innerText = `($${price}.00)`;
-            
             const modal = document.getElementById(id);
             modal.style.display = 'flex';
         };
@@ -421,13 +502,12 @@
 
             document.getElementById('loadingScreen').style.opacity = '1';
             document.getElementById('loadingScreen').style.display = 'flex';
-            document.getElementById('loadingScreen').innerHTML = `<div class="spinner"></div><h2 class="animate-pulse" style="color:#fff; font-weight:300; font-size:1.2rem; letter-spacing:2px;">Procesando Pago...</h2>`;
+            document.getElementById('loadingScreen').innerHTML = `<div class="spinner"></div><h2 class="animate-pulse" style="font-family:'Orbitron'; color:#fff; font-weight:300; font-size:1.2rem; letter-spacing:2px;">Procesando Pago...</h2>`;
             closeAllModals();
 
             try {
                 const newBalance = currentBalance - price;
                 const now = Date.now();
-                
                 const updates = {};
                 
                 updates[`users/${currentUserUid}/balance`] = newBalance;
@@ -467,16 +547,13 @@
 
                     alert(`✅ ¡Pago exitoso!\n\nSe descontaron $${price.toFixed(2)} USD.\n\nTu orden ha sido enviada automáticamente a los administradores.`);
                     
-                    // Resetear el HTML del loading screen para futuras recargas en la misma sesión
-                    document.getElementById('loadingScreen').innerHTML = `<div class="spinner"></div><h2 class="animate-pulse" style="color: #fff; font-weight: 300; font-size: 1.2rem; letter-spacing: 2px;">Sincronizando Sistema...</h2>`;
+                    document.getElementById('loadingScreen').innerHTML = `<div class="spinner"></div><h2 class="animate-pulse" style="font-family:'Orbitron'; color: #fff; font-weight: 300; font-size: 1.2rem; letter-spacing: 2px;">Sincronizando Sistema...</h2>`;
                 }, 800);
                 
             } catch (error) {
                 document.getElementById('loadingScreen').style.display = 'none';
-                
                 btnConfirm.disabled = false;
                 btnConfirm.innerHTML = `<i class='bx bx-check-shield' style="font-size: 1.3rem;"></i> CONFIRMAR PAGO ($${price})`;
-                
                 alert("❌ Ocurrió un error en la base de datos: " + error.message);
             }
         };
