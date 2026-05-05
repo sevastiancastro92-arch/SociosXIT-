@@ -299,7 +299,6 @@
     </div>
 
     <script type="module">
-        // UNIFICAMOS LOS IMPORTS PARA EVITAR CONFLICTOS
         import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, set, onValue } from './firebase-config.js';
 
         let adminUser = null; 
@@ -352,7 +351,7 @@
                         
                         loadStats();
                         checkMaintenance();
-                        loadBotOrders(); // Iniciar monitoreo de bots en vivo
+                        loadBotOrders(); 
                     } else { 
                         loadingText.style.color = "var(--neon-red)";
                         loadingText.innerText = "ACCESO DENEGADO";
@@ -383,7 +382,6 @@
             const snap = await get(ref(db, 'settings/maintenance')); await set(ref(db, 'settings/maintenance'), !(snap.val() || false)); checkMaintenance(); alert("Modo de sistema actualizado."); 
         };
 
-        // --- SISTEMA DE GESTIÓN DE BOTS (ACTUALIZADO EN VIVO) ---
         window.openBotsModal = () => { document.getElementById('botsModal').style.display = 'flex'; };
         window.closeBotsModal = () => { 
             const m = document.getElementById('botsModal');
@@ -414,16 +412,16 @@
                     let orders = [];
                     snapshot.forEach(child => { orders.push({id: child.key, ...child.val()}); });
                     
-                    // Ordenar: Las más nuevas arriba
                     orders.sort((a,b) => b.timestamp - a.timestamp);
                     
                     orders.forEach(order => {
                         let statusHtml = '';
                         let btnHtml = '';
                         
-                        if(order.status === 'Pendiente') {
+                        // LÓGICA ARREGLADA: Acepta Pendiente y Notificado para activar
+                        if(order.status === 'Pendiente' || order.status.includes('Notificado')) {
                             pendingCount++;
-                            statusHtml = `<span style="color:#f59e0b; font-weight: bold;"><i class='bx bx-time-five'></i> Pendiente</span>`;
+                            statusHtml = `<span style="color:#f59e0b; font-weight: bold;"><i class='bx bx-time-five'></i> Esperando...</span>`;
                             btnHtml = `<button class="table-action-btn btn-activate" onclick="activateBot('${order.id}')"><i class='bx bx-check-shield'></i> Activar</button>`;
                         } else if (order.status === 'Activo') {
                             statusHtml = `<span style="color:var(--neon-green);"><i class='bx bx-radar'></i> Activo</span>`;
@@ -433,7 +431,6 @@
                             btnHtml = `-`;
                         }
 
-                        // Formateo del enlace de WhatsApp
                         let waNumber = order.waNumber || '';
                         let waLink = waNumber ? `<a href="https://wa.me/${waNumber}" target="_blank" style="color:var(--neon-purple); text-decoration:none;"><i class='bx bxl-whatsapp'></i> Escribir</a>` : '<span style="color:#64748b;">Sin WA</span>';
 
@@ -454,7 +451,6 @@
                     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color:#64748b;">No hay órdenes de bots registradas.</td></tr>`;
                 }
 
-                // Actualizar la bolita roja de notificación si hay pedidos pendientes
                 if (pendingCount > 0) {
                     notification.style.display = 'block';
                     notification.innerText = pendingCount;
@@ -464,14 +460,12 @@
             });
         }
 
-        // --- SISTEMA DE MENÚ LATERAL Y SALIR ---
         const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
         document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=> window.location.href="login.html");
 
-        // SISTEMA DE PARTÍCULAS
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 0.5; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
