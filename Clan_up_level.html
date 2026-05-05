@@ -20,13 +20,33 @@
 
         body { 
             background-color: #050505;
-            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #050505 70%);
             color: #ffffff; 
             min-height: 100vh; 
             display: flex; 
             flex-direction: column; 
             overflow-x: hidden;
+            position: relative;
         }
+
+        /* --- FONDOS ÉPICOS Y ANIMADOS --- */
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(26, 26, 46, 0.8) 0%, #050505 80%);
+            z-index: -2;
+        }
+
+        /* Orbes flotantes de luz */
+        .bg-orb { 
+            position: fixed; 
+            border-radius: 50%; 
+            filter: blur(100px); 
+            z-index: -1; 
+            animation: floatOrb 12s infinite alternate ease-in-out; 
+            opacity: 0.6;
+        }
+        .orb-1 { width: 400px; height: 400px; background: rgba(37, 99, 235, 0.25); top: -100px; left: -100px; }
+        .orb-2 { width: 500px; height: 500px; background: rgba(16, 185, 129, 0.15); bottom: -150px; right: -150px; animation-delay: -6s; }
+        .orb-3 { width: 300px; height: 300px; background: rgba(139, 92, 246, 0.15); top: 40%; left: 50%; transform: translate(-50%, -50%); animation-duration: 15s; }
 
         ::-webkit-scrollbar { width: 6px; } 
         ::-webkit-scrollbar-track { background: #050505; } 
@@ -34,245 +54,214 @@
 
         /* Barra Superior Profesional */
         .top-bar { 
-            position: fixed; 
-            top: 15px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: 95%; 
-            max-width: 1000px; 
-            background: rgba(15, 20, 30, 0.7); 
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%); 
+            width: 95%; max-width: 1000px; 
+            background: rgba(15, 20, 30, 0.6); 
             backdrop-filter: blur(20px); 
             border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 16px; 
-            padding: 12px 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); 
-            z-index: 100; 
+            border-radius: 16px; padding: 12px 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); z-index: 100; 
+            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .menu-btn { 
-            background: transparent; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            color: #fff; 
-            border-radius: 10px; 
-            padding: 8px 12px; 
-            font-size: 1.2rem; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
+            background: transparent; border: 1px solid rgba(255,255,255,0.1); 
+            color: #fff; border-radius: 10px; padding: 8px 12px; 
+            font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; 
         }
         .menu-btn:hover { 
-            background: rgba(255,255,255,0.1); 
-            border-color: #3b82f6;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            background: rgba(255,255,255,0.1); border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); transform: scale(1.05);
         }
         
         .top-bar-right { display: flex; align-items: center; gap: 12px; }
         .badge { 
             display: flex; align-items: center; gap: 8px; 
-            background: rgba(0, 0, 0, 0.5); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            font-size: 0.85rem; 
-            color: #cbd5e1; 
-            font-weight: 600;
+            background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); 
+            padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; color: #cbd5e1; font-weight: 600;
+            transition: all 0.3s ease;
         }
+        .badge:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
         .badge.green { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
         .badge.green i, .badge.green span { color: #10b981; }
         
         /* Contenedor Principal */
         .main-container { 
-            width: 95%; 
-            max-width: 850px; 
-            margin: 95px auto 40px auto; 
-            z-index: 10; 
-            text-align: center; 
-            animation: fadeInUP 0.6s ease-out;
+            width: 95%; max-width: 850px; margin: 95px auto 40px auto; 
+            z-index: 10; text-align: center; 
         }
 
-        /* BANNER PROFESIONAL (Foto Completa) */
+        /* BANNER PROFESIONAL ANIMADO */
         .banner-container {
-            width: 100%;
-            height: 250px; /* Ajusta la altura si lo quieres más grande o pequeño */
-            border-radius: 24px;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 35px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.05);
+            width: 100%; height: 250px; border-radius: 24px; overflow: hidden; 
+            position: relative; margin-bottom: 35px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
+            animation: fadeInUP 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .banner-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-        .banner-container:hover img {
-            transform: scale(1.05);
+            width: 100%; height: 100%; object-fit: cover; 
+            animation: slowZoom 20s infinite alternate linear;
         }
         .banner-overlay {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            padding: 40px 20px 20px 20px;
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 20px 20px 20px;
             background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
             text-align: left;
         }
         .banner-title {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: -1px;
-            margin-bottom: 5px;
+            font-size: 2.2rem; font-weight: 900; color: #fff; letter-spacing: -1px; margin-bottom: 5px; 
             text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s; opacity: 0;
         }
         .banner-subtitle {
-            color: #94a3b8;
-            font-size: 1rem;
-            font-weight: 400;
+            color: #94a3b8; font-size: 1rem; font-weight: 400;
+            animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.4s; opacity: 0;
         }
 
         /* Grid de Planes */
         .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;
         }
 
+        /* TARJETAS CON EFECTO GLASS Y SHINE */
         .glass-card { 
-            background: rgba(20, 25, 35, 0.6); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 20px; 
-            padding: 30px 25px; 
+            background: rgba(20, 25, 35, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 20px; padding: 30px 25px; text-align: left;
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; overflow: hidden; backdrop-filter: blur(10px);
+            opacity: 0; transform: translateY(30px);
+            animation: staggerUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
         }
+        
+        /* Retraso para que entren una por una */
+        .glass-card:nth-child(1) { animation-delay: 0.3s; }
+        .glass-card:nth-child(2) { animation-delay: 0.5s; }
+        .glass-card:nth-child(3) { animation-delay: 0.7s; }
+
         .glass-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
             background: #3b82f6; opacity: 0.5; transition: 0.3s;
         }
+        
+        /* Efecto de rayo de luz (Shine) al hacer hover */
+        .glass-card::after {
+            content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg); transition: 0s;
+        }
+
         .glass-card:hover { 
-            background: rgba(30, 35, 50, 0.8); 
-            transform: translateY(-8px);
-            border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            background: rgba(30, 35, 50, 0.7); transform: translateY(-10px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
         .glass-card:hover::before { opacity: 1; }
+        .glass-card:hover::after { left: 200%; transition: 0.8s ease-in-out; }
         
         .plan-price { font-size: 2.5rem; font-weight: 900; color: #fff; margin-bottom: 15px; letter-spacing: -1px; }
         .plan-price span { font-size: 1.1rem; color: #64748b; font-weight: 600; }
-        
         .plan-desc { color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px; flex-grow: 1; }
 
-        /* Botones y Formularios */
+        /* Botones Épicos */
         .btn-primary { 
-            width: 100%; 
-            padding: 16px; 
-            background: linear-gradient(135deg, #2563eb, #1d4ed8); 
-            color: white;
-            border: none; 
-            border-radius: 14px; 
-            font-weight: 700; 
-            font-size: 1.05rem;
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            width: 100%; padding: 16px; color: white; border: none; border-radius: 14px; 
+            font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; 
+            justify-content: center; align-items: center; gap: 10px; position: relative; overflow: hidden;
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
-        .btn-primary:hover:not(:disabled) { 
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5); 
+        
+        /* Animación de destello en el botón */
+        .btn-primary::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-primary:hover::before { left: 100%; transition: 0.5s; }
+        
+        .btn-primary:hover:not(:disabled) { transform: translateY(-3px); filter: brightness(1.1); }
+        .btn-primary:active:not(:disabled) { transform: scale(0.95); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; filter: none; }
         
         .btn-cancel { 
-            width: 100%; 
-            background: transparent; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            color: #94a3b8; 
-            padding: 14px; 
-            border-radius: 14px; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            margin-top: 12px;
-            font-weight: 600;
+            width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.1); 
+            color: #94a3b8; padding: 14px; border-radius: 14px; cursor: pointer; 
+            transition: all 0.3s ease; margin-top: 12px; font-weight: 600;
         }
-        .btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateY(-2px); }
 
         .input-group { margin-bottom: 25px; text-align: left; }
         .input-group label { display: block; font-size: 0.9rem; color: #cbd5e1; margin-bottom: 10px; font-weight: 600; }
         .input-group input { 
-            width: 100%; 
-            padding: 16px; 
-            border-radius: 14px; 
-            background: rgba(0,0,0,0.4); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            color: white; 
-            outline: none; 
-            font-size: 1.05rem;
-            transition: all 0.3s ease; 
+            width: 100%; padding: 16px; border-radius: 14px; background: rgba(0,0,0,0.5); 
+            border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-size: 1.05rem;
+            transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
-        .input-group input:focus { border-color: #3b82f6; background: rgba(0,0,0,0.6); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .input-group input:focus { 
+            border-color: #3b82f6; background: rgba(0,0,0,0.7); 
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 2px 4px rgba(0,0,0,0.5); transform: scale(1.02);
+        }
 
         /* Modales */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.8); 
-            backdrop-filter: blur(8px); 
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); 
             display: none; justify-content: center; align-items: center; z-index: 2000; 
-            opacity: 0; animation: fadeIn 0.3s forwards;
+            opacity: 0; animation: fadeIn 0.4s forwards;
         }
         .modal-box { 
-            background: #0f141e; 
-            padding: 35px 30px; 
-            border-radius: 24px; 
-            width: 90%; 
-            max-width: 420px; 
-            border: 1px solid rgba(255,255,255,0.08); 
-            text-align: center; 
-            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
-            transform: scale(0.95);
-            animation: scaleUp 0.3s forwards;
+            background: rgba(15, 20, 30, 0.95); padding: 35px 30px; border-radius: 24px; 
+            width: 90%; max-width: 420px; border: 1px solid rgba(255,255,255,0.1); 
+            text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+            transform: scale(0.8) translateY(30px); opacity: 0;
+            animation: bouncyIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.1s;
         }
         
         .warning-box { 
-            background: rgba(245, 158, 11, 0.08); 
-            border-left: 4px solid #f59e0b; 
-            padding: 16px; 
-            border-radius: 10px; 
-            font-size: 0.9rem; 
-            margin: 25px 0; 
-            color: #fcd34d; 
-            text-align: left; 
-            line-height: 1.6;
+            background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; 
+            padding: 16px; border-radius: 10px; font-size: 0.9rem; margin: 25px 0; 
+            color: #fcd34d; text-align: left; line-height: 1.6;
+            animation: pulseWarning 2s infinite alternate;
         }
 
         .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #050505; z-index: 9999; 
-            display: flex; justify-content: center; align-items: center;
+            background: #050505; z-index: 9999; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
+        }
+        
+        /* Loader circular animado */
+        .spinner {
+            width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #3b82f6; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
         }
 
+        /* --- KEYFRAMES ÉPICOS --- */
+        @keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, -50px) scale(1.1); } }
         @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes fadeInUP { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes scaleUp { to { transform: scale(1); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes fadeInUP { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -30px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes staggerUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.15); } }
+        @keyframes bouncyIn { to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulseWarning { from { box-shadow: 0 0 0 rgba(245, 158, 11, 0); } to { box-shadow: -4px 0 15px rgba(245, 158, 11, 0.2); } }
+        @keyframes textPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        
+        .animate-pulse { animation: textPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
+    <div class="bg-overlay"></div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
     <div id="loadingScreen" class="loading-screen">
-        <h2 class="animate-pulse" style="color: #fff; font-weight: 300; font-size: 1.5rem;">Sincronizando Sistema...</h2>
+        <div class="spinner"></div>
+        <h2 class="animate-pulse" style="color: #fff; font-weight: 300; font-size: 1.2rem; letter-spacing: 2px;">Sincronizando Sistema...</h2>
     </div>
 
     <div class="top-bar">
@@ -302,27 +291,27 @@
                     <div class="plan-price">$3 <span>USD</span></div>
                     <p class="plan-desc">Para los que están conscientes del problema y para que no pidan nuevos bots.</p>
                 </div>
-                <button class="btn-primary" style="background: #475569; box-shadow: none;" onclick="openModal('modalClanPurchase', 3, 'Plan Consciente - $3')">
+                <button class="btn-primary" style="background: #475569;" onclick="openModal('modalClanPurchase', 3, 'Plan Consciente - $3')">
                     Seleccionar Plan
                 </button>
             </div>
 
-            <div class="glass-card" style="border-top-color: #3b82f6; transform: scale(1.02); background: rgba(59, 130, 246, 0.05); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);">
+            <div class="glass-card" style="border-top-color: #3b82f6; transform: scale(1.05); background: rgba(59, 130, 246, 0.08); box-shadow: 0 10px 40px rgba(59, 130, 246, 0.15); z-index: 2;">
                 <div>
-                    <div class="plan-price" style="color: #60a5fa;">$5 <span>USD</span></div>
+                    <div class="plan-price" style="color: #60a5fa; text-shadow: 0 0 20px rgba(96, 165, 250, 0.4);">$5 <span>USD</span></div>
                     <p class="plan-desc">Para los que compran y se les banean los bots, se les vuelve a activar hasta que les cumpla con el tiempo comprado.</p>
                 </div>
-                <button class="btn-primary" style="background: linear-gradient(135deg, #3b82f6, #2563eb);" onclick="openModal('modalClanPurchase', 5, 'Plan Reactivación - $5')">
+                <button class="btn-primary" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);" onclick="openModal('modalClanPurchase', 5, 'Plan Reactivación - $5')">
                     Seleccionar Plan
                 </button>
             </div>
 
             <div class="glass-card" style="border-top-color: #10b981;">
                 <div>
-                    <div class="plan-price" style="color: #34d399;">$10 <span>USD</span></div>
+                    <div class="plan-price" style="color: #34d399; text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);">$10 <span>USD</span></div>
                     <p class="plan-desc">Si los bots son baneados, se les activa otras 8 horas por ser buenos clientes de 10$ 😁</p>
                 </div>
-                <button class="btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);" onclick="openModal('modalClanPurchase', 10, 'Plan Cliente VIP - $10')">
+                <button class="btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);" onclick="openModal('modalClanPurchase', 10, 'Plan Cliente VIP - $10')">
                     Seleccionar Plan
                 </button>
             </div>
@@ -332,11 +321,11 @@
 
     <div class="modal-overlay" id="modalClanPurchase">
         <div class="modal-box">
-            <h3 style="color: #fff; font-size: 1.4rem; margin-bottom: 5px; font-weight: 800;">Confirmar Operación</h3>
+            <h3 style="color: #fff; font-size: 1.4rem; margin-bottom: 5px; font-weight: 800; letter-spacing: -0.5px;">Confirmar Operación</h3>
             <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 10px;" id="modalSelectedPlanText">Plan seleccionado</p>
             
             <div class="warning-box">
-                <i class='bx bx-error-circle' style="font-size: 1.2rem; vertical-align: middle;"></i> <b>ATENCIÓN:</b> Para que los bots ingresen, configura tu clan en <b>Predeterminado</b> y activa la <b>Auto Aprobación</b>.
+                <i class='bx bx-error-circle' style="font-size: 1.3rem; vertical-align: middle;"></i> <b>ATENCIÓN:</b> Para que los bots ingresen, configura tu clan en <b>Predeterminado</b> y activa la <b>Auto Aprobación</b>.
             </div>
 
             <div class="input-group">
@@ -344,7 +333,7 @@
                 <input type="number" id="inputClanId" placeholder="Ej: 123456789" autocomplete="off">
             </div>
 
-            <button id="btnConfirmPurchase" class="btn-primary" onclick="funcProcessPurchase()">
+            <button id="btnConfirmPurchase" class="btn-primary" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="funcProcessPurchase()">
                 <i class='bx bx-check-shield' style="font-size: 1.3rem;"></i> CONFIRMAR PAGO <span id="modalPriceLabel">($0)</span>
             </button>
             <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
@@ -370,8 +359,15 @@
                         document.getElementById('topUsername').innerText = userData.username || 'Usuario';
                         document.getElementById('topBalance').innerText = parseFloat(userData.balance || 0).toFixed(2);
                         
-                        document.getElementById('loadingScreen').style.display = 'none';
-                        document.getElementById('mainPanel').style.display = 'block';
+                        // Pequeño timeout para que la animación de carga se aprecie suavemente
+                        setTimeout(() => {
+                            document.getElementById('loadingScreen').style.opacity = '0';
+                            setTimeout(() => {
+                                document.getElementById('loadingScreen').style.display = 'none';
+                                document.getElementById('mainPanel').style.display = 'block';
+                            }, 400);
+                        }, 500);
+                        
                     } else {
                         alert("Error: No se encontraron los datos de tu cuenta.");
                         window.location.href = "login.html";
@@ -380,8 +376,6 @@
                     document.getElementById('loadingScreen').innerHTML = `<h2 style="color:#ef4444; font-weight:300;">ERROR: ${error.message}</h2>`;
                 }
             } else { 
-                // AQUÍ ESTÁ EL SISTEMA DE REDIRECCIONAMIENTO
-                // Guarda la URL exacta en el navegador antes de mandarlo al login
                 localStorage.setItem('redirectSociosXit', 'https://sociosxit.com/Clan_up_level.html');
                 window.location.href = "login.html"; 
             }
@@ -400,7 +394,11 @@
         };
 
         window.closeAllModals = () => {
-            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(m => {
+                m.style.opacity = '0';
+                setTimeout(() => { m.style.display = 'none'; m.style.opacity = '1'; }, 300);
+            });
         };
 
         window.funcProcessPurchase = async () => {
@@ -421,8 +419,9 @@
             btnConfirm.disabled = true;
             btnConfirm.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> PROCESANDO...";
 
+            document.getElementById('loadingScreen').style.opacity = '1';
             document.getElementById('loadingScreen').style.display = 'flex';
-            document.getElementById('loadingScreen').innerHTML = `<h2 class="animate-pulse" style="color:#fff; font-weight:300;">Procesando Pago...</h2>`;
+            document.getElementById('loadingScreen').innerHTML = `<div class="spinner"></div><h2 class="animate-pulse" style="color:#fff; font-weight:300; font-size:1.2rem; letter-spacing:2px;">Procesando Pago...</h2>`;
             closeAllModals();
 
             try {
@@ -461,18 +460,22 @@
                 userData.balance = newBalance; 
                 document.getElementById('topBalance').innerText = newBalance.toFixed(2);
                 
-                document.getElementById('loadingScreen').style.display = 'none';
-                
-                btnConfirm.disabled = false;
-                btnConfirm.innerHTML = `<i class='bx bx-check-shield'></i> CONFIRMAR PAGO ($${price})`;
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    btnConfirm.disabled = false;
+                    btnConfirm.innerHTML = `<i class='bx bx-check-shield' style="font-size: 1.3rem;"></i> CONFIRMAR PAGO ($${price})`;
 
-                alert(`✅ ¡Pago exitoso!\n\nSe descontaron $${price.toFixed(2)} USD.\n\nTu orden ha sido enviada automáticamente a los administradores.`);
+                    alert(`✅ ¡Pago exitoso!\n\nSe descontaron $${price.toFixed(2)} USD.\n\nTu orden ha sido enviada automáticamente a los administradores.`);
+                    
+                    // Resetear el HTML del loading screen para futuras recargas en la misma sesión
+                    document.getElementById('loadingScreen').innerHTML = `<div class="spinner"></div><h2 class="animate-pulse" style="color: #fff; font-weight: 300; font-size: 1.2rem; letter-spacing: 2px;">Sincronizando Sistema...</h2>`;
+                }, 800);
                 
             } catch (error) {
                 document.getElementById('loadingScreen').style.display = 'none';
                 
                 btnConfirm.disabled = false;
-                btnConfirm.innerHTML = `<i class='bx bx-check-shield'></i> CONFIRMAR PAGO ($${price})`;
+                btnConfirm.innerHTML = `<i class='bx bx-check-shield' style="font-size: 1.3rem;"></i> CONFIRMAR PAGO ($${price})`;
                 
                 alert("❌ Ocurrió un error en la base de datos: " + error.message);
             }
