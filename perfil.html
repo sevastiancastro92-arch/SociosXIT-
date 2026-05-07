@@ -65,17 +65,12 @@
         .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s; flex-shrink: 0;}
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
         .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); transform: translateX(5px); }
-        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
 
         /* =========================================
-           3. CONTENEDOR DEL PERFIL (Animado)
+           3. CONTENEDOR DEL PERFIL
            ========================================= */
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes floatGlow {
-            0% { box-shadow: 0 0 20px rgba(188, 19, 254, 0.1); transform: translateY(0px); }
-            50% { box-shadow: 0 0 40px rgba(188, 19, 254, 0.25); transform: translateY(-5px); }
-            100% { box-shadow: 0 0 20px rgba(188, 19, 254, 0.1); transform: translateY(0px); }
-        }
+        @keyframes floatGlow { 0% { box-shadow: 0 0 20px rgba(188, 19, 254, 0.1); transform: translateY(0px); } 50% { box-shadow: 0 0 40px rgba(188, 19, 254, 0.25); transform: translateY(-5px); } 100% { box-shadow: 0 0 20px rgba(188, 19, 254, 0.1); transform: translateY(0px); } }
 
         .profile-container { 
             width: 90%; max-width: 500px; 
@@ -96,7 +91,6 @@
         .username-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-purple); letter-spacing: 1px; }
         .user-email { color: #888; font-size: 0.9rem; margin-bottom: 8px; }
         
-        /* Etiqueta para ID de Usuario */
         .uid-badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-family: 'Orbitron'; font-size: 0.75rem; color: #aaa; cursor: pointer; transition: 0.3s; margin-bottom: 25px; }
         .uid-badge:hover { color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,204,0.1); transform: translateY(-2px); }
 
@@ -108,7 +102,7 @@
         .stat-card.purple p { color: var(--neon-purple); text-shadow: 0 0 5px rgba(188,19,254,0.4);}
 
         /* =========================================
-           4. ACORDEÓN DE CONFIGURACIÓN (NUEVO)
+           4. ACORDEÓN DE CONFIGURACIÓN
            ========================================= */
         .settings-container { text-align: left; margin-bottom: 20px; }
         .settings-title { font-family: 'Orbitron'; color: var(--neon-cyan); font-size: 1.1rem; border-bottom: 1px dashed rgba(0,243,255,0.3); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
@@ -121,7 +115,6 @@
         .accordion-header i.icon-main { font-size: 1.3rem; color: var(--neon-purple); }
         .accordion-header i.bx-chevron-down { font-size: 1.2rem; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #888; }
         
-        /* Estado Activo del Acordeón */
         .accordion-item.active { border-color: var(--neon-cyan); background: rgba(0,0,0,0.8); }
         .accordion-item.active .accordion-header i.bx-chevron-down { transform: rotate(180deg); color: var(--neon-cyan); }
         
@@ -148,17 +141,64 @@
         .btn-save-wa { background: #25D366; }
         .btn-save-wa:hover { box-shadow: 0 0 15px #25D366; background: #34e877; }
 
-        .security-msg { font-size: 0.85rem; text-align: center; margin-top: 15px; font-weight: bold; min-height: 1.2em; transition: 0.3s; }
-
         .action-btn { width: 100%; padding: 15px; background: transparent; border: 1px dashed var(--neon-cyan); color: var(--neon-cyan); border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; gap: 10px; align-items: center; }
         .action-btn:hover { background: rgba(0,243,255,0.1); box-shadow: 0 0 15px var(--neon-cyan); border-style: solid; color: white;}
 
         #uploadLoader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .spinner { width: 60px; height: 60px; border: 4px solid rgba(0, 243, 255, 0.2); border-top-color: var(--neon-cyan); border-left-color: var(--neon-purple); border-radius: 50%; animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* =========================================
+           5. TOAST NOTIFICATIONS (NUEVO SISTEMA)
+           ========================================= */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(10, 5, 20, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideInToast 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOutToast 0.5s ease 3.5s forwards;
+            border: 1px solid transparent;
+        }
+
+        .toast.success { border-color: var(--neon-green); box-shadow: 0 0 20px rgba(0, 255, 204, 0.15); border-left: 5px solid var(--neon-green); }
+        .toast.error { border-color: var(--neon-red); box-shadow: 0 0 20px rgba(255, 7, 58, 0.15); border-left: 5px solid var(--neon-red); }
+        
+        .toast i { font-size: 1.8rem; }
+        .toast.success i { color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); }
+        .toast.error i { color: var(--neon-red); text-shadow: 0 0 15px var(--neon-red); }
+
+        @keyframes slideInToast {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOutToast {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(120%); opacity: 0; }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
+
+    <div id="toast-container"></div>
 
     <div id="uploadLoader">
         <div class="spinner"></div>
@@ -238,24 +278,24 @@
                 </div>
                 <div class="accordion-content">
                     <div class="input-row">
-                        <select id="waCountryCode" style="max-width: 110px;">
-                            <option value="57">🇨🇴 +57</option>
-                            <option value="52">🇲🇽 +52</option>
-                            <option value="54">🇦🇷 +54</option>
-                            <option value="56">🇨🇱 +56</option>
-                            <option value="51">🇵🇪 +51</option>
-                            <option value="58">🇻🇪 +58</option>
-                            <option value="593">🇪🇨 +593</option>
-                            <option value="502">🇬🇹 +502</option>
-                            <option value="504">🇭🇳 +504</option>
-                            <option value="505">🇳🇮 +505</option>
-                            <option value="506">🇨🇷 +506</option>
-                            <option value="507">🇵🇦 +507</option>
-                            <option value="598">🇺🇾 +598</option>
-                            <option value="34">🇪🇸 +34</option>
-                            <option value="1">🇺🇸 +1</option>
+                        <select id="waCountryCode" style="max-width: 100px;">
+                            <option value="57">+57 (CO)</option>
+                            <option value="52">+52 (MX)</option>
+                            <option value="54">+54 (AR)</option>
+                            <option value="56">+56 (CL)</option>
+                            <option value="51">+51 (PE)</option>
+                            <option value="58">+58 (VE)</option>
+                            <option value="593">+593 (EC)</option>
+                            <option value="502">+502 (GT)</option>
+                            <option value="504">+504 (HN)</option>
+                            <option value="505">+505 (NI)</option>
+                            <option value="506">+506 (CR)</option>
+                            <option value="507">+507 (PA)</option>
+                            <option value="598">+598 (UY)</option>
+                            <option value="34">+34 (ES)</option>
+                            <option value="1">+1 (US)</option>
                         </select>
-                        <input type="number" id="waNumber" placeholder="Tu número sin espacios..." autocomplete="off">
+                        <input type="number" id="waNumber" placeholder="Número sin espacios..." autocomplete="off">
                         <button class="btn-save btn-save-wa" onclick="updateWhatsapp()" title="Guardar WhatsApp"><i class='bx bxl-whatsapp'></i></button>
                     </div>
                 </div>
@@ -276,8 +316,6 @@
                     </div>
                 </div>
             </div>
-
-            <div id="securityMessage" class="security-msg"></div>
         </div>
 
         <button class="action-btn" onclick="window.location.href='historial.html'">
@@ -286,23 +324,38 @@
     </div>
 
     <script>
+        // --- SISTEMA DE NOTIFICACIONES TOAST ---
+        window.showToast = (message, type) => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            // Elegir icono según el tipo
+            const iconClass = type === 'success' ? 'bx-check-circle' : 'bx-error-circle';
+            
+            toast.innerHTML = `<i class='bx ${iconClass}'></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            // Eliminar elemento del DOM después de que termine la animación
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        };
+
         // --- CONTROL DEL MENÚ LATERAL Y PARTÍCULAS ---
         const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
         document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
 
-        // LÓGICA DEL ACORDEÓN (Cerrar los otros al abrir uno)
         function toggleSettings(element) {
             const parentItem = element.parentElement;
             const isCurrentlyActive = parentItem.classList.contains('active');
             
-            // Cerramos todos primero
             document.querySelectorAll('.accordion-item').forEach(item => {
                 item.classList.remove('active');
             });
 
-            // Si el que tocamos no estaba activo, lo abrimos
             if (!isCurrentlyActive) {
                 parentItem.classList.add('active');
             }
@@ -327,23 +380,16 @@
             signOut(auth).then(()=>window.location.href="login.html");
         });
 
-        // NUEVA FUNCIÓN: Copiar UID Globalmente
         window.copyMyUID = () => {
             if(!currentUserUid) return;
             navigator.clipboard.writeText(currentUserUid);
-            
-            const msgBox = document.getElementById('securityMessage');
-            msgBox.style.color = "var(--neon-green)";
-            msgBox.innerHTML = "<i class='bx bx-check-shield'></i> ✅ ¡Tu ID fue copiado al portapapeles!";
-            setTimeout(() => { msgBox.innerHTML = ""; }, 4000);
+            showToast("ID de sistema copiado al portapapeles.", "success");
         };
 
-        // CARGA DE DATOS DEL USUARIO
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserUid = user.uid;
                 
-                // Mostrar el UID acortado en el botón
                 const shortUid = user.uid.substring(0, 8) + "...";
                 document.getElementById('uidDisplay').innerText = `ID: ${shortUid}`;
                 
@@ -405,7 +451,6 @@
             } else { window.location.href = "login.html"; }
         });
 
-        // 1. SUBIR AVATAR A IMGBB
         document.getElementById('avatarInput').addEventListener('change', async (e) => {
             const file = e.target.files[0]; if(!file || !currentUserUid) return;
             
@@ -420,20 +465,22 @@
                     await update(ref(db, `users/${currentUserUid}`), { avatar: avatarUrl });
                     document.getElementById('mainAvatar').src = avatarUrl; 
                     document.getElementById('topAvatar').src = avatarUrl;
-                } else { alert("Error al procesar la imagen."); }
-            } catch (err) { alert("Error de red al subir la foto."); }
+                    showToast("Foto de perfil actualizada.", "success");
+                } else { 
+                    showToast("Error al procesar la imagen en el servidor.", "error"); 
+                }
+            } catch (err) { 
+                showToast("Error de red al subir la foto.", "error"); 
+            }
             document.getElementById('uploadLoader').style.display = 'none';
         });
 
-        // 2. FUNCIÓN PARA CAMBIAR USERNAME
         window.updateUsername = async () => {
             const newNameInput = document.getElementById('newUsername');
             const newName = newNameInput.value.trim();
-            const msgBox = document.getElementById('securityMessage');
             
             if(newName.length < 3) {
-                msgBox.style.color = "var(--neon-red)";
-                msgBox.innerText = "❌ El usuario debe tener al menos 3 letras.";
+                showToast("El usuario debe tener al menos 3 letras.", "error");
                 return;
             }
 
@@ -446,25 +493,19 @@
                 newNameInput.value = '';
                 
                 document.getElementById('uploadLoader').style.display = 'none';
-                msgBox.style.color = "var(--neon-green)";
-                msgBox.innerText = "✅ ¡Nombre actualizado con éxito!";
-                setTimeout(() => { msgBox.innerText = ""; }, 4000);
+                showToast("Nombre de usuario actualizado con éxito.", "success");
             } catch (error) {
                 document.getElementById('uploadLoader').style.display = 'none';
-                msgBox.style.color = "var(--neon-red)";
-                msgBox.innerText = "❌ Error de red al actualizar.";
+                showToast("Error de conexión al actualizar los datos.", "error");
             }
         };
 
-        // 3. FUNCIÓN PARA GUARDAR WHATSAPP
         window.updateWhatsapp = async () => {
             const code = document.getElementById('waCountryCode').value;
             const number = document.getElementById('waNumber').value.trim();
-            const msgBox = document.getElementById('securityMessage');
 
             if(!number || number.length < 8) {
-                msgBox.style.color = "var(--neon-red)";
-                msgBox.innerText = "❌ Ingresa un número de teléfono válido.";
+                showToast("Ingresa un número de teléfono válido.", "error");
                 return;
             }
 
@@ -475,33 +516,26 @@
                 await update(ref(db, `users/${currentUserUid}`), { whatsapp: fullNumber });
                 
                 document.getElementById('uploadLoader').style.display = 'none';
-                msgBox.style.color = "var(--neon-green)";
-                msgBox.innerText = "✅ ¡WhatsApp guardado con éxito!";
-                setTimeout(() => { msgBox.innerText = ""; }, 4000);
+                showToast("Número de WhatsApp vinculado correctamente.", "success");
             } catch (error) {
                 document.getElementById('uploadLoader').style.display = 'none';
-                msgBox.style.color = "var(--neon-red)";
-                msgBox.innerText = "❌ Error al guardar el número.";
+                showToast("Fallo al guardar el número de teléfono.", "error");
             }
         };
 
-        // 4. FUNCIÓN PARA CAMBIAR CONTRASEÑA
         window.updateUserPassword = async () => {
             const oldPassInput = document.getElementById('oldPassword');
             const newPassInput = document.getElementById('newPassword');
             const oldPass = oldPassInput.value;
             const newPass = newPassInput.value;
-            const msgBox = document.getElementById('securityMessage');
 
             if(!oldPass) {
-                msgBox.style.color = "var(--neon-red)";
-                msgBox.innerText = "❌ Ingresa tu contraseña actual por seguridad.";
+                showToast("Ingresa tu contraseña actual por seguridad.", "error");
                 return;
             }
 
             if(newPass.length < 6) {
-                msgBox.style.color = "var(--neon-red)";
-                msgBox.innerText = "❌ La nueva contraseña debe tener mínimo 6 caracteres.";
+                showToast("La nueva contraseña debe tener mínimo 6 caracteres.", "error");
                 return;
             }
 
@@ -515,18 +549,14 @@
                 newPassInput.value = '';
                 document.getElementById('uploadLoader').style.display = 'none';
                 
-                msgBox.style.color = "var(--neon-green)";
-                msgBox.innerText = "✅ ¡Contraseña cambiada con éxito!";
-                setTimeout(() => { msgBox.innerText = ""; }, 4000);
-                
+                showToast("Contraseña cambiada con éxito.", "success");
             } catch (error) {
                 document.getElementById('uploadLoader').style.display = 'none';
-                msgBox.style.color = "var(--neon-red)";
                 
                 if(error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
-                    msgBox.innerText = "❌ La contraseña actual es incorrecta.";
+                    showToast("La contraseña actual es incorrecta.", "error");
                 } else {
-                    msgBox.innerText = "❌ Error al cambiar clave: " + error.message;
+                    showToast("Error en el sistema al procesar la clave.", "error");
                 }
             }
         };
