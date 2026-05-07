@@ -149,6 +149,36 @@
         .card-title { font-family: 'Orbitron'; font-size: 1.6rem; color: #fff; letter-spacing: 1px; }
         .card-desc { color: #888; font-size: 0.9rem; margin-top: 10px; max-width: 80%; margin-left: auto; margin-right: auto; line-height: 1.6;}
 
+        /* CAJA DE ALERTA DE TIEMPO (NUEVA) */
+        .info-alert {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-left: 3px solid var(--neon-cyan);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .info-alert i {
+            font-size: 1.6rem;
+            color: var(--neon-cyan);
+            margin-top: 2px;
+        }
+        .info-alert p {
+            font-size: 0.85rem;
+            color: #aaa;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .info-alert p strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
         /* INPUTS MODERNOS */
         .input-group { text-align: left; margin-bottom: 25px; position: relative; }
         .input-group label { display: block; font-size: 0.75rem; color: #aaa; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
@@ -299,6 +329,11 @@
             <div class="rate-box">
                 <span class="rate-lbl">Equivalente a Transferir</span>
                 <span class="rate-val" id="rateDisplay">0 COP</span>
+            </div>
+
+            <div class="info-alert">
+                <i class='bx bx-info-circle'></i>
+                <p><strong>Aviso Importante:</strong> La verificación de los pagos puede tardar entre <strong>30 minutos y 5 horas</strong> (o más). Esto depende exclusivamente de la disponibilidad de los dueños de las cuentas bancarias asignadas en cada país.</p>
             </div>
             
             <button class="btn-action" onclick="generateOrder()">GENERAR ORDEN DE PAGO <i class='bx bx-right-arrow-alt'></i></button>
