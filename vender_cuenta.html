@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vender Cuenta Free Fire - LUCK XIT OFC</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* =========================================
+           VARIABLES Y FUENTES
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        
+        :root { 
+            --neon-primary: #bc13fe; 
+            --neon-secondary: #00f3ff;
+            --bg-dark: #030008;
+            --glass-bg: rgba(10, 15, 30, 0.5);
+            --glass-border: rgba(188, 19, 254, 0.3);
+            --text-main: #ffffff;
+            --text-muted: #8892b0;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            font-family: 'Poppins', sans-serif; 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* FONDO ANIMADO */
+        .bg-glow {
+            position: fixed;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(188, 19, 254, 0.15) 0%, rgba(0,0,0,0) 60%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            animation: pulseGlow 5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+
+        /* NAVEGACIÓN DE REGRESO */
+        .nav-back {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 10;
+            background: rgba(0,0,0,0.4);
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-back:hover {
+            color: var(--neon-secondary);
+            border-color: var(--neon-secondary);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .form-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(188, 19, 254, 0.1);
+            animation: slideUp 0.5s ease-out;
+            margin-top: 40px;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-title {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            color: var(--text-main);
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+
+        .header-title i {
+            color: var(--neon-primary);
+            font-size: 2rem;
+            text-shadow: 0 0 15px var(--neon-primary);
+        }
+
+        /* ZONA DE CARGA DE IMAGEN */
+        .upload-zone {
+            width: 100%;
+            height: 160px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--neon-secondary);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .upload-zone i {
+            font-size: 3.5rem;
+            color: var(--neon-secondary);
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-zone:hover i { transform: translateY(-5px); }
+
+        .upload-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        #previewImg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: none;
+            z-index: 2;
+        }
+
+        /* GRID DE FORMULARIO */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group.full-width { grid-column: 1 / -1; }
+
+        label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        label i { color: var(--neon-secondary); font-size: 1.1rem; }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.2);
+            background: rgba(188, 19, 254, 0.05);
+        }
+
+        input::placeholder { color: #444; font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+
+        /* BOTÓN DE ENVÍO */
+        .btn-submit {
+            grid-column: 1 / -1;
+            margin-top: 15px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(188, 19, 254, 0.1), rgba(0, 243, 255, 0.1));
+            border: 1px solid var(--neon-primary);
+            color: var(--text-main);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .btn-submit:hover {
+            background: var(--neon-primary);
+            color: #000;
+            box-shadow: 0 0 25px var(--neon-primary);
+            transform: scale(1.02);
+            text-shadow: none;
+        }
+
+        .btn-submit i { font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <a href="index.html" class="nav-back">
+        <i class='bx bx-left-arrow-alt'></i> Panel Principal
+    </a>
+
+    <div class="form-container">
+        <h2 class="header-title">
+            <i class='bx bx-game'></i> MERCADO DE CUENTAS
+        </h2>
+
+        <input type="file" id="imageInput" accept="image/*" hidden>
+
+        <div class="upload-zone" id="dropZone">
+            <img id="previewImg" src="" alt="Vista previa de la cuenta">
+            <i class='bx bx-image-add' id="uploadIcon"></i>
+            <span class="upload-text" id="uploadText">Subir Perfil de la Cuenta</span>
+        </div>
+
+        <div class="form-grid">
+            <div class="input-group">
+                <label><i class='bx bx-id-card'></i> ID de la Cuenta</label>
+                <input type="number" id="accId" placeholder="Ej. 123456789">
+            </div>
+
+            <div class="input-group">
+                <label><i class='bx bx-trending-up'></i> Nivel</label>
+                <input type="number" id="accLevel" placeholder="Ej. 72">
+            </div>
+
+            <div class="input-group">
+                <label><i class='bx bx-star'></i> Nivel Prime / Pases</label>
+                <input type="text" id="accPrime" placeholder="Nivel actual o cantidad">
+            </div>
+
+            <div class="input-group">
+                <label><i class='bx bx-target-lock'></i> Armas Evolutivas</label>
+                <input type="number" id="accEvos" placeholder="Total de evos">
+            </div>
+
+            <div class="input-group">
+                <label><i class='bx bx-closet'></i> Pechos (Ropa)</label>
+                <input type="number" id="accChests" placeholder="Ej. 150">
+            </div>
+
+            <div class="input-group">
+                <label><i class='bx bx-dollar-circle'></i> Precio Solicitado</label>
+                <input type="text" id="accPrice" placeholder="Ej. 200.000 COP / 50 USD">
+            </div>
+
+            <div class="input-group full-width">
+                <label><i class='bx bxl-whatsapp'></i> Tu WhatsApp para contacto (Con código de país)</label>
+                <input type="number" id="userWa" placeholder="Ej. 573000000000">
+            </div>
+
+            <button class="btn-submit" onclick="sendToBot()">
+                Procesar y Enviar al Bot <i class='bx bx-send'></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // 1. LÓGICA DE VISTA PREVIA DE IMAGEN
+        // =========================================
+        const dropZone = document.getElementById('dropZone');
+        const imageInput = document.getElementById('imageInput');
+        const previewImg = document.getElementById('previewImg');
+        const uploadIcon = document.getElementById('uploadIcon');
+        const uploadText = document.getElementById('uploadText');
+
+        dropZone.addEventListener('click', () => imageInput.click());
+
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                    uploadIcon.style.display = 'none';
+                    uploadText.style.display = 'none';
+                    dropZone.style.borderStyle = 'solid';
+                    dropZone.style.borderColor = 'var(--neon-secondary)';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // =========================================
+        // 2. LÓGICA DE ENVÍO AL BOT DE WHATSAPP
+        // =========================================
+        function sendToBot() {
+            const accId = document.getElementById('accId').value.trim();
+            const accLevel = document.getElementById('accLevel').value.trim();
+            const accPrime = document.getElementById('accPrime').value.trim();
+            const accEvos = document.getElementById('accEvos').value.trim();
+            const accChests = document.getElementById('accChests').value.trim();
+            const accPrice = document.getElementById('accPrice').value.trim();
+            const userWa = document.getElementById('userWa').value.trim();
+            
+            if(!accId || !accLevel || !accPrime || !accEvos || !accChests || !accPrice || !userWa) {
+                alert("Faltan datos. Por favor, llena toda la información de la cuenta.");
+                return;
+            }
+
+            // Estructura del mensaje para tu Bot
+            const textMessage = `*NUEVO INGRESO: VENTA DE CUENTA FF*\n\n` +
+                                `*ID:* ${accId}\n` +
+                                `*Nivel:* ${accLevel}\n` +
+                                `*Prime/Pases:* ${accPrime}\n` +
+                                `*Evos:* ${accEvos}\n` +
+                                `*Pechos:* ${accChests}\n` +
+                                `*Precio:* ${accPrice}\n\n` +
+                                `*Dueño (WhatsApp):* wa.me/${userWa}\n` +
+                                `_Adjunta la foto de perfil de la cuenta a este chat._`;
+
+            // ========================================================
+            // REEMPLAZA ESTE NÚMERO POR EL NÚMERO DE TU BOT
+            // ========================================================
+            const botPhoneNumber = "573000000000"; 
+
+            // Codificar texto para URL
+            const encodedMessage = encodeURIComponent(textMessage);
+            const waUrl = `https://wa.me/${botPhoneNumber}?text=${encodedMessage}`;
+            
+            // Abrir WhatsApp
+            window.open(waUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
