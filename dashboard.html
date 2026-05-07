@@ -18,6 +18,7 @@
             --neon-blue: #00eeff;
             --neon-purple: #bc13fe;
             --neon-green: #00ffcc; 
+            --wa-green: #25D366;
             --bg-deep: #030008;
             --glass-bg: rgba(10, 2, 20, 0.85); 
             --sidebar-bg: rgba(5, 0, 15, 0.95); 
@@ -250,6 +251,57 @@
         .btn-reload:hover { background: var(--neon-pink); color: #000; box-shadow: 0 0 30px var(--neon-pink); }
 
         @keyframes pulseGlowAd { 0%, 100% { transform: scale(1); text-shadow: 0 0 20px var(--neon-pink); } 50% { transform: scale(1.1); text-shadow: 0 0 40px var(--neon-pink); } }
+
+        /* =========================================
+           8. MODAL DE ALERTA WHATSAPP CYBERPUNK
+           ========================================= */
+        .wa-alert-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 9500; display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.5s ease;
+        }
+        .wa-alert-overlay.show { opacity: 1; visibility: visible; }
+        
+        .wa-alert-box {
+            background: var(--glass-bg); border-radius: 20px; padding: 40px 25px;
+            width: 90%; max-width: 450px; text-align: center;
+            transform: scale(0.8) translateY(50px); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 50px rgba(37, 211, 102, 0.15), inset 0 0 20px rgba(37, 211, 102, 0.1);
+            position: relative; overflow: hidden; border: 2px solid var(--wa-green);
+        }
+        .wa-alert-overlay.show .wa-alert-box { transform: scale(1) translateY(0); }
+        
+        .wa-icon-wrapper {
+            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px auto;
+            display: flex; justify-content: center; align-items: center; font-size: 4.5rem;
+            background: rgba(37, 211, 102, 0.1); color: var(--wa-green); border: 2px solid var(--wa-green);
+            animation: pulseGlowWa 2s infinite;
+        }
+        
+        @keyframes pulseGlowWa {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(37, 211, 102, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        
+        .wa-title { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; color: var(--wa-green); text-shadow: 0 0 10px var(--wa-green); margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
+        .wa-msg { font-size: 1rem; color: #ddd; margin-bottom: 30px; line-height: 1.6; }
+        .wa-msg strong { font-family: 'Orbitron'; color: #fff; font-size: 1.1rem; }
+        
+        .wa-btn-primary {
+            width: 100%; padding: 18px; border: none; border-radius: 12px; font-family: 'Orbitron';
+            font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            background: var(--wa-green); color: #000; box-shadow: 0 0 20px var(--wa-green); text-decoration: none;
+        }
+        .wa-btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--wa-green); }
+        
+        .wa-btn-close {
+            background: transparent; border: none; color: #888; margin-top: 18px;
+            font-family: 'Exo 2'; font-size: 0.95rem; cursor: pointer; transition: 0.3s; text-decoration: underline;
+        }
+        .wa-btn-close:hover { color: #fff; }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -266,6 +318,16 @@
         <div class="magic-ring ring-outer"></div>
         <div class="magic-ring ring-middle"></div>
         <div class="magic-ring ring-inner"></div>
+    </div>
+
+    <div id="waAlertOverlay" class="wa-alert-overlay">
+        <div class="wa-alert-box">
+            <div class="wa-icon-wrapper"><i class='bx bxl-whatsapp'></i></div>
+            <h2 class="wa-title">ACCIÓN REQUERIDA</h2>
+            <p class="wa-msg">Hemos detectado que <strong>NO</strong> tienes tu número de WhatsApp registrado en el sistema.<br><br>Es obligatorio para que el bot pueda notificarte en tiempo real sobre la <strong>aprobación de tus recargas y entregas</strong>.</p>
+            <a href="perfil.html" class="wa-btn-primary"><i class='bx bx-user-circle'></i> IR A MI PERFIL</a>
+            <button id="btnCerrarWaAlert" class="wa-btn-close">Registrar más tarde</button>
+        </div>
     </div>
 
     <div id="epicPopupOverlay" class="epic-popup-overlay">
@@ -364,6 +426,12 @@
         
         // Se ejecuta apenas carga la página
         window.addEventListener('load', checkAdBlock);
+
+        // Control de cierre de alerta de WhatsApp
+        document.getElementById('btnCerrarWaAlert').onclick = () => {
+            sessionStorage.setItem('waAlertDismissed', 'true');
+            document.getElementById('waAlertOverlay').classList.remove('show');
+        };
     </script>
 
     <script>
@@ -455,7 +523,15 @@
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                        if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
+                        if(data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'luck xit ofc') document.getElementById('adminMenuBtn').style.display = 'flex';
+
+                        // LÓGICA DE DETECCIÓN DE WHATSAPP FALTANTE
+                        if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) {
+                            // Le damos un pequeño retraso de 1 segundo para que carguen las otras animaciones primero
+                            setTimeout(() => {
+                                document.getElementById('waAlertOverlay').classList.add('show');
+                            }, 1000);
+                        }
 
                         if (data.recharges) {
                             if (!initialLoad) {
