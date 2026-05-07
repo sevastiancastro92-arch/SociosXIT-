@@ -39,20 +39,18 @@
         /* =========================================
            2. BARRA SUPERIOR Y MENÚ (ESTÁNDAR)
            ========================================= */
-        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100; transition: all 0.3s ease; }
+        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100; }
         .menu-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; flex-shrink: 0;}
-        .menu-btn:hover { background: rgba(0, 243, 255, 0.2); box-shadow: 0 0 10px var(--neon-cyan); transform: scale(1.05); }
         .top-bar-right { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-bottom: 2px; width: 100%; justify-content: flex-end;}
         .top-bar-right::-webkit-scrollbar { display: none; }
         
         .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s; flex-shrink: 0;}
-        .badge:hover { border-color: var(--neon-cyan); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 243, 255, 0.2); }
+        .badge:hover { border-color: var(--neon-cyan); }
         .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
         .badge span { color: #fff; font-weight: 600; }
         .badge img { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--neon-cyan); object-fit: cover; flex-shrink: 0; }
         
         .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default; }
-        .badge.green:hover { border-color: var(--neon-green); box-shadow: 0 4px 10px rgba(0, 255, 204, 0.2); }
         .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
@@ -64,98 +62,108 @@
         .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
         .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
         .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
-        .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: all 0.3s ease; flex-shrink: 0;}
-        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s;}
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.95rem; transition: 0.3s; flex-shrink: 0;}
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
         .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); transform: translateX(5px); }
-        .sidebar-item:hover i { color: var(--neon-cyan); }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
 
         /* =========================================
-           3. CONTENEDOR DEL PERFIL
+           3. CONTENEDOR DEL PERFIL (Animado)
            ========================================= */
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes floatGlow {
+            0% { box-shadow: 0 0 20px rgba(188, 19, 254, 0.1); transform: translateY(0px); }
+            50% { box-shadow: 0 0 40px rgba(188, 19, 254, 0.25); transform: translateY(-5px); }
+            100% { box-shadow: 0 0 20px rgba(188, 19, 254, 0.1); transform: translateY(0px); }
+        }
+
         .profile-container { 
             width: 90%; max-width: 500px; 
-            background: var(--glass-bg); backdrop-filter: blur(12px); 
+            background: var(--glass-bg); backdrop-filter: blur(15px); 
             padding: 2.5rem 2rem; border-radius: 20px; 
             border: 1px solid rgba(188, 19, 254, 0.3); 
             text-align: center; margin: 90px auto 40px auto; 
-            box-shadow: 0 0 30px rgba(188, 19, 254, 0.15); 
-            animation: slideUpFade 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), floatGlow 5s infinite ease-in-out; 
         }
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        .avatar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto 20px auto; transition: 0.3s; }
-        .avatar-wrapper:hover { transform: scale(1.05); }
-        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon-purple); box-shadow: 0 0 20px rgba(188, 19, 254, 0.4); background: #111; }
-        .btn-upload { position: absolute; bottom: 0; right: 0; background: var(--neon-cyan); color: #000; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #000; box-shadow: 0 0 10px var(--neon-cyan); transition: 0.3s; }
-        .btn-upload:hover { transform: scale(1.2) rotate(15deg); background: #fff; }
+        .avatar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto 20px auto; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon-purple); box-shadow: 0 0 20px rgba(188, 19, 254, 0.4); background: #111; transition: 0.3s; }
+        .avatar-wrapper:hover .avatar-img { box-shadow: 0 0 35px var(--neon-cyan); border-color: var(--neon-cyan); transform: scale(1.05); }
         
-        .username-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; margin: 0; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-purple); letter-spacing: 1px;}
+        .btn-upload { position: absolute; bottom: 0; right: 0; background: var(--neon-cyan); color: #000; width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #000; box-shadow: 0 0 10px var(--neon-cyan); transition: 0.3s; font-size: 1.2rem; }
+        .btn-upload:hover { transform: scale(1.15) rotate(10deg); background: #fff; }
         
-        /* NUEVO: Copy Username Badge */
-        .copy-user-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; color: var(--neon-cyan); margin-top: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 15px;}
-        .copy-user-badge:hover { background: rgba(0, 243, 255, 0.1); border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+        .username-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-purple); letter-spacing: 1px; }
+        .user-email { color: #888; font-size: 0.9rem; margin-bottom: 8px; }
         
-        .user-email { color: #888; font-size: 0.9rem; margin-bottom: 25px; display: block;}
+        /* Etiqueta para ID de Usuario */
+        .uid-badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-family: 'Orbitron'; font-size: 0.75rem; color: #aaa; cursor: pointer; transition: 0.3s; margin-bottom: 25px; }
+        .uid-badge:hover { color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,204,0.1); transform: translateY(-2px); }
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; position: relative; overflow: hidden;}
-        .stat-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .stat-card h4 { margin: 0; color: #aaa; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;}
-        .stat-card p { margin: 5px 0 0 0; font-size: 1.1rem; font-weight: bold; font-family: 'Orbitron'; color: var(--neon-green); text-shadow: 0 0 5px rgba(0,255,204,0.4);}
+        .stat-card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.7); }
+        .stat-card h4 { margin: 0; color: #aaa; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card p { margin: 5px 0 0 0; font-size: 1.2rem; font-weight: bold; font-family: 'Orbitron'; color: var(--neon-green); text-shadow: 0 0 5px rgba(0,255,204,0.4);}
         .stat-card.purple p { color: var(--neon-purple); text-shadow: 0 0 5px rgba(188,19,254,0.4);}
 
         /* =========================================
-           4. CONFIGURACIÓN DE CUENTA (ACORDEONES)
+           4. ACORDEÓN DE CONFIGURACIÓN (NUEVO)
            ========================================= */
-        .settings-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: left; }
-        .settings-card h3 { font-family: 'Orbitron'; color: var(--neon-cyan); font-size: 1.1rem; margin-top: 0; border-bottom: 1px dashed rgba(0,243,255,0.3); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .settings-container { text-align: left; margin-bottom: 20px; }
+        .settings-title { font-family: 'Orbitron'; color: var(--neon-cyan); font-size: 1.1rem; border-bottom: 1px dashed rgba(0,243,255,0.3); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
 
-        /* Estilos del Acordeón */
-        .accordion-item { border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
-        .accordion-item:last-child { border-bottom: none; margin-bottom: 0; }
+        .accordion-item { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 10px; overflow: hidden; transition: 0.3s; }
+        .accordion-item:hover { border-color: rgba(188, 19, 254, 0.4); box-shadow: 0 0 10px rgba(188, 19, 254, 0.1); }
         
-        .accordion-btn { width: 100%; background: transparent; border: none; color: white; padding: 12px 5px; text-align: left; font-family: 'Poppins', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
-        .accordion-btn i.icon-left { color: var(--neon-purple); font-size: 1.2rem; margin-right: 10px; }
-        .accordion-btn i.arrow { transition: transform 0.3s ease; color: #888; }
-        .accordion-btn:hover { color: var(--neon-cyan); }
-        .accordion-btn.active { color: var(--neon-cyan); }
-        .accordion-btn.active i.arrow { transform: rotate(180deg); color: var(--neon-cyan); }
+        .accordion-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: white; font-family: 'Poppins', sans-serif; font-size: 0.9rem; font-weight: 600; transition: 0.3s; }
+        .accordion-header .title-wrapper { display: flex; align-items: center; gap: 10px; }
+        .accordion-header i.icon-main { font-size: 1.3rem; color: var(--neon-purple); }
+        .accordion-header i.bx-chevron-down { font-size: 1.2rem; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #888; }
         
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.3s ease; opacity: 0; }
-        .accordion-content.open { opacity: 1; padding-bottom: 15px; }
-
-        .input-row { display: flex; gap: 10px; margin-top: 10px; }
-        .input-row input { flex-grow: 1; padding: 12px 15px; border-radius: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; outline: none; font-family: 'Poppins'; transition: 0.3s; width: 100%; }
-        .input-row input:focus { border-color: var(--neon-purple); box-shadow: 0 0 10px rgba(188,19,254,0.3); background: rgba(255,255,255,0.05);}
+        /* Estado Activo del Acordeón */
+        .accordion-item.active { border-color: var(--neon-cyan); background: rgba(0,0,0,0.8); }
+        .accordion-item.active .accordion-header i.bx-chevron-down { transform: rotate(180deg); color: var(--neon-cyan); }
         
-        .btn-save { background: var(--neon-purple); color: white; border: none; padding: 0 15px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; display: flex; align-items: center; justify-content: center; min-width: 50px; }
-        .btn-save:hover { box-shadow: 0 0 15px var(--neon-purple); transform: scale(1.05); background: #d03cff;}
+        .accordion-content { max-height: 0; padding: 0 15px; opacity: 0; transition: all 0.4s ease-in-out; }
+        .accordion-item.active .accordion-content { max-height: 200px; padding: 0 15px 15px 15px; opacity: 1; }
 
-        .security-msg { font-size: 0.8rem; text-align: center; margin-top: 10px; font-weight: bold; min-height: 1.2em; transition: 0.3s;}
+        .input-row { display: flex; gap: 10px; margin-top: 5px; }
+        .input-row input, .input-row select { 
+            flex-grow: 1; padding: 12px 15px; border-radius: 10px; 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); 
+            color: white; outline: none; font-family: 'Poppins'; transition: 0.3s;
+            width: 100%;
+        }
+        .input-row input:focus, .input-row select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,243,255,0.2); background: rgba(255,255,255,0.1); }
+        .input-row select option { background: #000; color: #fff; }
+        
+        .btn-save { 
+            background: var(--neon-purple); color: white; border: none; 
+            padding: 0 15px; border-radius: 10px; font-weight: bold; font-size: 1.2rem;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+            min-width: 50px;
+        }
+        .btn-save:hover { box-shadow: 0 0 15px var(--neon-purple); transform: scale(1.05); background: #d044ff;}
+        .btn-save-wa { background: #25D366; }
+        .btn-save-wa:hover { box-shadow: 0 0 15px #25D366; background: #34e877; }
 
-        .action-btn { width: 100%; padding: 15px; background: transparent; border: 1px solid var(--neon-cyan); color: white; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; gap: 10px; align-items: center; position: relative; overflow: hidden; z-index: 1;}
-        .action-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent); transition: 0.5s; z-index: -1; }
-        .action-btn:hover::before { left: 100%; }
-        .action-btn:hover { background: rgba(0,243,255,0.1); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); transform: translateY(-2px); }
+        .security-msg { font-size: 0.85rem; text-align: center; margin-top: 15px; font-weight: bold; min-height: 1.2em; transition: 0.3s; }
 
-        #uploadLoader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px);}
-        .spinner { width: 50px; height: 50px; border: 4px solid rgba(0, 243, 255, 0.2); border-top-color: var(--neon-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
+        .action-btn { width: 100%; padding: 15px; background: transparent; border: 1px dashed var(--neon-cyan); color: var(--neon-cyan); border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; gap: 10px; align-items: center; }
+        .action-btn:hover { background: rgba(0,243,255,0.1); box-shadow: 0 0 15px var(--neon-cyan); border-style: solid; color: white;}
+
+        #uploadLoader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .spinner { width: 60px; height: 60px; border: 4px solid rgba(0, 243, 255, 0.2); border-top-color: var(--neon-cyan); border-left-color: var(--neon-purple); border-radius: 50%; animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Notificación Flotante (Toast) */
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(5, 10, 20, 0.9); border: 1px solid var(--neon-cyan); padding: 10px 20px; border-radius: 30px; font-family: 'Poppins'; font-size: 0.85rem; z-index: 9999; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);}
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .toast i { font-size: 1.2rem; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div id="uploadLoader">
         <div class="spinner"></div>
-        <p style="color: var(--neon-cyan); font-family: 'Orbitron'; margin-top: 15px; letter-spacing: 1px;">PROCESANDO...</p>
+        <p style="color: white; font-family: 'Orbitron'; margin-top: 15px; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-cyan);">PROCESANDO...</p>
     </div>
-    
-    <div id="toastNotif" class="toast"><i class='bx bx-check-circle' style="color: var(--neon-green)"></i> <span id="toastMsg">Copiado</span></div>
 
     <div class="top-bar">
         <div class="top-bar-left"><button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button></div>
@@ -180,7 +188,6 @@
             <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
-            <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
             <a href="#" class="sidebar-item" id="logoutMenuBtn" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; color: var(--neon-red);"><i class='bx bx-log-out' style="color: var(--neon-red);"></i> Cerrar Sesión</a>
         </div>
@@ -197,26 +204,26 @@
         </div>
 
         <h1 class="username-title" id="profileName">...</h1>
-        <div class="copy-user-badge" onclick="copyUsername()" title="Copiar nombre de usuario">
-            <i class='bx bx-copy'></i> <span id="copyText">Copiar Usuario</span>
-        </div>
+        <p class="user-email" id="profileEmail">Cargando datos...</p>
         
-        <span class="user-email" id="profileEmail">Cargando datos...</span>
+        <div class="uid-badge" onclick="copyMyUID()" title="Copiar ID de Sistema">
+            <i class='bx bx-copy'></i> <span id="uidDisplay">ID: Obteniendo...</span>
+        </div>
 
         <div class="stats-grid">
             <div class="stat-card"><h4>Total Invertido</h4><p id="totalSpent">$0.00</p></div>
             <div class="stat-card purple"><h4>Nivel de Cuenta</h4><p id="userRank">Miembro</p></div>
         </div>
 
-        <div class="settings-card">
-            <h3><i class='bx bx-slider-alt'></i> Ajustes de Cuenta</h3>
+        <div class="settings-container">
+            <h3 class="settings-title"><i class='bx bx-slider-alt'></i> Panel de Ajustes</h3>
             
             <div class="accordion-item">
-                <button class="accordion-btn" onclick="toggleAccordion('acc-name', this)">
-                    <span><i class='bx bx-user icon-left'></i> Cambiar Nombre de Usuario</span>
-                    <i class='bx bx-chevron-down arrow'></i>
-                </button>
-                <div class="accordion-content" id="acc-name">
+                <div class="accordion-header" onclick="toggleSettings(this)">
+                    <div class="title-wrapper"><i class='bx bx-user icon-main'></i> Cambiar Usuario</div>
+                    <i class='bx bx-chevron-down'></i>
+                </div>
+                <div class="accordion-content">
                     <div class="input-row">
                         <input type="text" id="newUsername" placeholder="Nuevo usuario..." autocomplete="off">
                         <button class="btn-save" onclick="updateUsername()"><i class='bx bx-check'></i></button>
@@ -225,30 +232,47 @@
             </div>
 
             <div class="accordion-item">
-                <button class="accordion-btn" onclick="toggleAccordion('acc-pass', this)">
-                    <span><i class='bx bx-lock-alt icon-left'></i> Cambiar Contraseña</span>
-                    <i class='bx bx-chevron-down arrow'></i>
-                </button>
-                <div class="accordion-content" id="acc-pass">
-                    <div class="input-row" style="margin-bottom: 10px;">
-                        <input type="password" id="oldPassword" placeholder="Clave actual..." autocomplete="off">
-                    </div>
+                <div class="accordion-header" onclick="toggleSettings(this)">
+                    <div class="title-wrapper"><i class='bx bxl-whatsapp icon-main' style="color: #25D366;"></i> Vincular WhatsApp</div>
+                    <i class='bx bx-chevron-down'></i>
+                </div>
+                <div class="accordion-content">
                     <div class="input-row">
-                        <input type="password" id="newPassword" placeholder="Nueva clave (mínimo 6)...">
-                        <button class="btn-save" onclick="updateUserPassword()" title="Guardar Contraseña"><i class='bx bx-check'></i></button>
+                        <select id="waCountryCode" style="max-width: 110px;">
+                            <option value="57">🇨🇴 +57</option>
+                            <option value="52">🇲🇽 +52</option>
+                            <option value="54">🇦🇷 +54</option>
+                            <option value="56">🇨🇱 +56</option>
+                            <option value="51">🇵🇪 +51</option>
+                            <option value="58">🇻🇪 +58</option>
+                            <option value="593">🇪🇨 +593</option>
+                            <option value="502">🇬🇹 +502</option>
+                            <option value="504">🇭🇳 +504</option>
+                            <option value="505">🇳🇮 +505</option>
+                            <option value="506">🇨🇷 +506</option>
+                            <option value="507">🇵🇦 +507</option>
+                            <option value="598">🇺🇾 +598</option>
+                            <option value="34">🇪🇸 +34</option>
+                            <option value="1">🇺🇸 +1</option>
+                        </select>
+                        <input type="number" id="waNumber" placeholder="Tu número sin espacios..." autocomplete="off">
+                        <button class="btn-save btn-save-wa" onclick="updateWhatsapp()" title="Guardar WhatsApp"><i class='bx bxl-whatsapp'></i></button>
                     </div>
                 </div>
             </div>
-            
+
             <div class="accordion-item">
-                <button class="accordion-btn" onclick="toggleAccordion('acc-license', this)">
-                    <span><i class='bx bx-key icon-left'></i> Estado de Key Activa</span>
-                    <i class='bx bx-chevron-down arrow'></i>
-                </button>
-                <div class="accordion-content" id="acc-license">
-                    <div style="background: rgba(0, 255, 204, 0.1); border: 1px dashed var(--neon-green); padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center;">
-                        <p style="margin: 0; font-size: 0.85rem; color: #ccc;">No hay keys en uso actualmente.</p>
-                        <p style="margin: 5px 0 0 0; font-size: 0.7rem; color: var(--neon-green);">Las keys se reflejarán aquí al inyectarse en el menú.</p>
+                <div class="accordion-header" onclick="toggleSettings(this)">
+                    <div class="title-wrapper"><i class='bx bx-lock-alt icon-main' style="color: var(--neon-red);"></i> Cambiar Contraseña</div>
+                    <i class='bx bx-chevron-down'></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="input-row" style="margin-bottom: 10px;">
+                        <input type="password" id="oldPassword" placeholder="Contraseña actual..." autocomplete="off">
+                    </div>
+                    <div class="input-row">
+                        <input type="password" id="newPassword" placeholder="Nueva contraseña (mín 6)...">
+                        <button class="btn-save" onclick="updateUserPassword()" title="Guardar Contraseña"><i class='bx bx-check'></i></button>
                     </div>
                 </div>
             </div>
@@ -257,7 +281,7 @@
         </div>
 
         <button class="action-btn" onclick="window.location.href='historial.html'">
-            <i class='bx bx-receipt'></i> Ver Historial Completo
+            <i class='bx bx-receipt'></i> VER HISTORIAL DE PAGOS
         </button>
     </div>
 
@@ -268,48 +292,27 @@
         document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
 
+        // LÓGICA DEL ACORDEÓN (Cerrar los otros al abrir uno)
+        function toggleSettings(element) {
+            const parentItem = element.parentElement;
+            const isCurrentlyActive = parentItem.classList.contains('active');
+            
+            // Cerramos todos primero
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Si el que tocamos no estaba activo, lo abrimos
+            if (!isCurrentlyActive) {
+                parentItem.classList.add('active');
+            }
+        }
+
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 1.5; this.vy = (Math.random() - 0.5) * 1.5; this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
         for (let i = 0; i < 50; i++) particles.push(new Particle());
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
-
-        // --- CONTROL DE ACORDEONES ---
-        function toggleAccordion(contentId, btnElement) {
-            const content = document.getElementById(contentId);
-            
-            // Cerrar otros acordeones abiertos (opcional, si quieres que solo haya uno abierto a la vez)
-            document.querySelectorAll('.accordion-content').forEach(el => {
-                if(el.id !== contentId && el.classList.contains('open')) {
-                    el.style.maxHeight = null;
-                    el.classList.remove('open');
-                    el.previousElementSibling.classList.remove('active');
-                }
-            });
-
-            // Alternar el actual
-            btnElement.classList.toggle('active');
-            if (content.classList.contains('open')) {
-                content.style.maxHeight = null;
-                content.classList.remove('open');
-            } else {
-                content.classList.add('open');
-                content.style.maxHeight = content.scrollHeight + 30 + "px"; // +30 por el padding extra
-            }
-        }
-
-        // --- FUNCION PARA COPIAR USUARIO ---
-        function copyUsername() {
-            const userName = document.getElementById('profileName').innerText;
-            if(userName && userName !== '...') {
-                navigator.clipboard.writeText(userName).then(() => {
-                    const toast = document.getElementById('toastNotif');
-                    document.getElementById('toastMsg').innerText = "¡Usuario copiado!";
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 2500);
-                });
-            }
-        }
     </script>
 
     <script type="module">
@@ -324,10 +327,26 @@
             signOut(auth).then(()=>window.location.href="login.html");
         });
 
+        // NUEVA FUNCIÓN: Copiar UID Globalmente
+        window.copyMyUID = () => {
+            if(!currentUserUid) return;
+            navigator.clipboard.writeText(currentUserUid);
+            
+            const msgBox = document.getElementById('securityMessage');
+            msgBox.style.color = "var(--neon-green)";
+            msgBox.innerHTML = "<i class='bx bx-check-shield'></i> ✅ ¡Tu ID fue copiado al portapapeles!";
+            setTimeout(() => { msgBox.innerHTML = ""; }, 4000);
+        };
+
         // CARGA DE DATOS DEL USUARIO
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserUid = user.uid;
+                
+                // Mostrar el UID acortado en el botón
+                const shortUid = user.uid.substring(0, 8) + "...";
+                document.getElementById('uidDisplay').innerText = `ID: ${shortUid}`;
+                
                 document.getElementById('profileEmail').innerText = user.email || 'Usuario registrado';
                 
                 const d = new Date(user.metadata.creationTime);
@@ -343,6 +362,22 @@
                         if (data.avatar) { 
                             document.getElementById('topAvatar').src = data.avatar; 
                             document.getElementById('mainAvatar').src = data.avatar; 
+                        }
+
+                        if (data.whatsapp) {
+                            let waStr = String(data.whatsapp);
+                            let selectObj = document.getElementById('waCountryCode');
+                            let foundCode = false;
+                            
+                            for (let opt of selectObj.options) {
+                                if (waStr.startsWith(opt.value)) {
+                                    selectObj.value = opt.value;
+                                    document.getElementById('waNumber').value = waStr.substring(opt.value.length);
+                                    foundCode = true;
+                                    break;
+                                }
+                            }
+                            if (!foundCode) { document.getElementById('waNumber').value = waStr; }
                         }
 
                         let totalGastado = 0;
@@ -362,7 +397,7 @@
                         
                         document.getElementById('userRank').innerText = rank;
 
-                        if(data.username.toLowerCase() === 'sebasxit') {
+                        if(data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'luck xit ofc') {
                             document.getElementById('adminMenuBtn').style.display = 'flex';
                         }
                     }
@@ -412,12 +447,7 @@
                 
                 document.getElementById('uploadLoader').style.display = 'none';
                 msgBox.style.color = "var(--neon-green)";
-                msgBox.innerText = "✅ ¡Nombre de usuario actualizado con éxito!";
-                
-                // Recalcular tamaño del acordeón
-                const content = document.getElementById('acc-name');
-                if(content.classList.contains('open')) { content.style.maxHeight = content.scrollHeight + "px"; }
-
+                msgBox.innerText = "✅ ¡Nombre actualizado con éxito!";
                 setTimeout(() => { msgBox.innerText = ""; }, 4000);
             } catch (error) {
                 document.getElementById('uploadLoader').style.display = 'none';
@@ -426,7 +456,36 @@
             }
         };
 
-        // 3. FUNCIÓN PARA CAMBIAR CONTRASEÑA (RE-AUTENTICACIÓN INVISIBLE)
+        // 3. FUNCIÓN PARA GUARDAR WHATSAPP
+        window.updateWhatsapp = async () => {
+            const code = document.getElementById('waCountryCode').value;
+            const number = document.getElementById('waNumber').value.trim();
+            const msgBox = document.getElementById('securityMessage');
+
+            if(!number || number.length < 8) {
+                msgBox.style.color = "var(--neon-red)";
+                msgBox.innerText = "❌ Ingresa un número de teléfono válido.";
+                return;
+            }
+
+            const fullNumber = code + number;
+
+            try {
+                document.getElementById('uploadLoader').style.display = 'flex';
+                await update(ref(db, `users/${currentUserUid}`), { whatsapp: fullNumber });
+                
+                document.getElementById('uploadLoader').style.display = 'none';
+                msgBox.style.color = "var(--neon-green)";
+                msgBox.innerText = "✅ ¡WhatsApp guardado con éxito!";
+                setTimeout(() => { msgBox.innerText = ""; }, 4000);
+            } catch (error) {
+                document.getElementById('uploadLoader').style.display = 'none';
+                msgBox.style.color = "var(--neon-red)";
+                msgBox.innerText = "❌ Error al guardar el número.";
+            }
+        };
+
+        // 4. FUNCIÓN PARA CAMBIAR CONTRASEÑA
         window.updateUserPassword = async () => {
             const oldPassInput = document.getElementById('oldPassword');
             const newPassInput = document.getElementById('newPassword');
@@ -458,16 +517,12 @@
                 
                 msgBox.style.color = "var(--neon-green)";
                 msgBox.innerText = "✅ ¡Contraseña cambiada con éxito!";
-                
-                // Recalcular tamaño del acordeón
-                const content = document.getElementById('acc-pass');
-                if(content.classList.contains('open')) { content.style.maxHeight = content.scrollHeight + "px"; }
-
                 setTimeout(() => { msgBox.innerText = ""; }, 4000);
                 
             } catch (error) {
                 document.getElementById('uploadLoader').style.display = 'none';
                 msgBox.style.color = "var(--neon-red)";
+                
                 if(error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
                     msgBox.innerText = "❌ La contraseña actual es incorrecta.";
                 } else {
