@@ -206,6 +206,7 @@
 
         const IMGBB_KEY = 'fd76f06048b34773ba64f11cc4535ff4';
         let currentUser = null;
+        let userData = null; // Guardará los datos del usuario logueado
         let countriesData = {};
         let selectedCountryCode = null;
         let currentUploadOrderId = null; 
@@ -219,22 +220,18 @@
 
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
-                        const data = snapshot.val();
-                        document.getElementById('topUserDisplay').innerText = data.username;
-                        document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
-                        if (data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                        if (data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'luck xit ofc') {
+                        userData = snapshot.val();
+                        document.getElementById('topUserDisplay').innerText = userData.username;
+                        document.getElementById('balanceDisplay').innerText = parseFloat(userData.balance || 0).toFixed(2);
+                        if (userData.avatar) document.getElementById('topAvatar').src = userData.avatar;
+                        if (userData.username.toLowerCase() === 'sebasxit' || userData.username.toLowerCase() === 'luck xit ofc') {
                             document.getElementById('adminMenuBtn').style.display = 'flex';
                         }
                     }
                 });
                 
                 await loadCountries();
-            } else { 
-                // AQUÍ SE CAPTURA LA URL COMPLETA Y ABSOLUTA (MÁS SEGURO)
-                const currentUrl = encodeURIComponent(window.location.href);
-                window.location.href = "login.html?redirect=" + currentUrl; 
-            }
+            } else { window.location.href = "login.html"; }
         });
 
         // 2. LÓGICA DE PAÍSES Y CALCULADORA
@@ -306,7 +303,23 @@
         // 4. GENERAR ORDEN EN BASE DE DATOS
         window.generateOrder = async () => {
             const amt = parseFloat(inputUSD.value);
-            if (!amt || amt < 1 || !selectedCountryCode) return alert("Ingresa un monto y selecciona un país.");
+            
+            if (!amt || !selectedCountryCode) return alert("Ingresa un monto y selecciona un país.");
+
+            // --- 1. VALIDACIÓN DE WHATSAPP ---
+            if (!userData || !userData.whatsapp) {
+                alert("⚠️ ACCIÓN REQUERIDA: Es obligatorio registrar tu número de WhatsApp en tu perfil. El bot lo necesita para avisarte cuando se apruebe o rechace tu recarga.");
+                window.location.href = "perfil.html"; 
+                return;
+            }
+
+            // --- 2. VALIDACIÓN DE MONTO MÍNIMO ($3 GLOBAL, $2 COLOMBIA) ---
+            let minAmount = (selectedCountryCode.toUpperCase() === 'CO') ? 2 : 3;
+
+            if (amt < minAmount) {
+                let paisNombre = (selectedCountryCode.toUpperCase() === 'CO') ? 'Colombia' : 'este país';
+                return alert(`El monto mínimo de recarga para ${paisNombre} es de $${minAmount} USD.`);
+            }
 
             const pais = countriesData[selectedCountryCode];
             const localAmt = amt * pais.rate;
@@ -482,7 +495,6 @@
                 const newLinkRef = push(linksRef);
                 const linkId = newLinkRef.key;
 
-                // Extraemos el username de la UI y le quitamos espacios para que la URL se vea profesional
                 let rawUsername = document.getElementById('topUserDisplay').innerText;
                 let cleanUsername = rawUsername.trim().replace(/\s+/g, '_').toLowerCase();
 
@@ -495,8 +507,6 @@
                 });
 
                 const currentDomain = window.location.origin;
-                
-                // Inyectamos el nombre del usuario dinámicamente en el link
                 const finalUrl = `${currentDomain}/ads.html?u=${cleanUsername}&l=${linkId}`;
                 
                 document.getElementById('shortLinkDisplay').innerText = finalUrl;
