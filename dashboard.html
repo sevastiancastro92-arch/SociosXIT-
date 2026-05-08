@@ -255,13 +255,14 @@
         /* =========================================
            8. MODAL DE ALERTA WHATSAPP CYBERPUNK
            ========================================= */
-        .wa-alert-overlay {
+        .wa-alert-overlay, .wa-group-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             z-index: 9500; display: flex; justify-content: center; align-items: center;
             opacity: 0; visibility: hidden; transition: all 0.5s ease;
         }
-        .wa-alert-overlay.show { opacity: 1; visibility: visible; }
+        .wa-group-overlay { z-index: 9600; } /* Un poco por encima por si acaso */
+        .wa-alert-overlay.show, .wa-group-overlay.show { opacity: 1; visibility: visible; }
         
         .wa-alert-box {
             background: var(--glass-bg); border-radius: 20px; padding: 40px 25px;
@@ -270,7 +271,7 @@
             box-shadow: 0 0 50px rgba(37, 211, 102, 0.15), inset 0 0 20px rgba(37, 211, 102, 0.1);
             position: relative; overflow: hidden; border: 2px solid var(--wa-green);
         }
-        .wa-alert-overlay.show .wa-alert-box { transform: scale(1) translateY(0); }
+        .wa-alert-overlay.show .wa-alert-box, .wa-group-overlay.show .wa-alert-box { transform: scale(1) translateY(0); }
         
         .wa-icon-wrapper {
             width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px auto;
@@ -299,9 +300,41 @@
         
         .wa-btn-close {
             background: transparent; border: none; color: #888; margin-top: 18px;
-            font-family: 'Exo 2'; font-size: 0.95rem; cursor: pointer; transition: 0.3s; text-decoration: underline;
+            font-family: 'Exo 2'; font-size: 0.95rem; cursor: pointer; transition: 0.3s; text-decoration: underline; width: 100%; text-align: center;
         }
         .wa-btn-close:hover { color: #fff; }
+
+        /* =========================================
+           9. BOTÓN FLOTANTE SOPORTE WHATSAPP
+           ========================================= */
+        .wa-float-btn {
+            position: fixed;
+            bottom: 30px; /* Separado del borde inferior */
+            right: 30px; /* Separado del borde derecho */
+            width: 60px;
+            height: 60px;
+            background-color: var(--wa-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2rem;
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.5);
+            z-index: 9999;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: floatPulseWa 2s infinite;
+        }
+        .wa-float-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--wa-green);
+        }
+        @keyframes floatPulseWa {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -318,6 +351,16 @@
         <div class="magic-ring ring-outer"></div>
         <div class="magic-ring ring-middle"></div>
         <div class="magic-ring ring-inner"></div>
+    </div>
+
+    <div id="waGroupOverlay" class="wa-group-overlay">
+        <div class="wa-alert-box">
+            <div class="wa-icon-wrapper"><i class='bx bxs-group'></i></div>
+            <h2 class="wa-title">UNIRSE AL GRUPO</h2>
+            <p class="wa-msg">¡Únete a nuestro grupo de <strong>socios a WhatsApp</strong> para enterarte de todas las novedades y estar en contacto con la comunidad!</p>
+            <a href="https://chat.whatsapp.com/GDw2aitD17BFa0WdYS2E53" target="_blank" class="wa-btn-primary"><i class='bx bxl-whatsapp'></i> UNIRSE AL GRUPO</a>
+            <button id="btnCerrarWaGroup" class="wa-btn-close">No mostrar más y cerrar</button>
+        </div>
     </div>
 
     <div id="waAlertOverlay" class="wa-alert-overlay">
@@ -405,6 +448,10 @@
 
     </div>
 
+    <a href="https://wa.me/573142369516" target="_blank" class="wa-float-btn">
+        <i class='bx bxl-whatsapp'></i>
+    </a>
+
     <script>
         function checkAdBlock() {
             const ad = document.createElement('div');
@@ -425,9 +472,24 @@
         }
         
         // Se ejecuta apenas carga la página
-        window.addEventListener('load', checkAdBlock);
+        window.addEventListener('load', () => {
+            checkAdBlock();
+            
+            // Lógica del Grupo de WhatsApp (Aparece si no le han dado a 'No mostrar más')
+            setTimeout(() => {
+                if (!localStorage.getItem('waGroupDismissed')) {
+                    document.getElementById('waGroupOverlay').classList.add('show');
+                }
+            }, 1000); // Aparece 1 segundo después de cargar
+        });
 
-        // Control de cierre de alerta de WhatsApp
+        // Control de cierre para no volver a mostrar Grupo WhatsApp
+        document.getElementById('btnCerrarWaGroup').onclick = () => {
+            localStorage.setItem('waGroupDismissed', 'true');
+            document.getElementById('waGroupOverlay').classList.remove('show');
+        };
+
+        // Control de cierre de alerta de WhatsApp (Perfil)
         document.getElementById('btnCerrarWaAlert').onclick = () => {
             sessionStorage.setItem('waAlertDismissed', 'true');
             document.getElementById('waAlertOverlay').classList.remove('show');
@@ -527,10 +589,10 @@
 
                         // LÓGICA DE DETECCIÓN DE WHATSAPP FALTANTE
                         if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) {
-                            // Le damos un pequeño retraso de 1 segundo para que carguen las otras animaciones primero
+                            // Retraso para no chocar con la alerta de grupo (aparece a los 2s si falta el wpp)
                             setTimeout(() => {
                                 document.getElementById('waAlertOverlay').classList.add('show');
-                            }, 1000);
+                            }, 2000);
                         }
 
                         if (data.recharges) {
