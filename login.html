@@ -462,7 +462,7 @@
     <script>
         function checkAdBlock() {
             const ad = document.createElement('div');
-            ad.className = 'adsbox'; // Usamos la misma clase trampa que pediste
+            ad.className = 'adsbox'; 
             ad.style.height = '1px';
             ad.style.width = '1px';
             ad.style.position = 'absolute';
@@ -478,7 +478,6 @@
             }, 300);
         }
         
-        // Se ejecuta apenas carga la página
         window.addEventListener('load', checkAdBlock);
     </script>
 
@@ -572,20 +571,21 @@
 
                 // === AQUÍ ESTÁ LA MAGIA DEL REDIRECT DE LUCK XIT OFC ===
                 setTimeout(() => {
-                    // Primero revisa si vienes de la página de bots usando el localStorage
                     const redirectLocal = localStorage.getItem('redirectSociosXit');
                     
-                    // También mantiene el sistema por URL por si lo usas en el futuro
+                    // ESTO CAPTURA EL LINK Y TE DEVUELVE TRAS LOGUEARTE
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirectUrl = urlParams.get('redirect');
                     
                     if (redirectLocal) {
-                        localStorage.removeItem('redirectSociosXit'); // Limpia la memoria para que no se quede en bucle
+                        localStorage.removeItem('redirectSociosXit'); 
                         window.location.href = redirectLocal;
                     } else if (redirectUrl) {
+                        // Magia activa: Te devuelve a la ventana exacta con tu token
                         window.location.href = redirectUrl;
                     } else {
-                        window.location.href = "dashboard.html"; // Redirección normal si entraste desde el inicio
+                        // Si entraste normal a la web, te manda al inicio general
+                        window.location.href = "dashboard.html"; 
                     }
                 }, 2000);
 
