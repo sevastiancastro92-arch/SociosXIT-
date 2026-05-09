@@ -431,7 +431,7 @@
         let adminUser = null; 
         let isSuperAdmin = false;
         let currentAdminIp = "0.0.0.0";
-        let loadedProductsData = {}; // Para la edición de productos
+        let loadedProductsData = {}; 
 
         async function logAdminAction(actionType, targetUsername, details) {
             try {
@@ -473,9 +473,6 @@
                         }
                         listenToWaCode(); 
 
-                        // ==============================================
-                        // NUEVA FUNCIÓN: DETECTOR DE URL PARA APROBACIÓN RÁPIDA
-                        // ==============================================
                         const urlParams = new URLSearchParams(window.location.search);
                         const token = urlParams.get('token');
                         if (token) {
@@ -484,20 +481,20 @@
 
                     } else { 
                         alert("⚠️ Acceso Denegado. Intervención bloqueada.");
-                        window.location.href = "admin.html"; 
+                        window.location.href = "login.html"; 
                     }
                 }).catch((error) => {
                     document.getElementById('loadingScreen').innerHTML = `<h2 style="color:red; font-family:'Orbitron';">ERROR: ${error.message}</h2>`;
                 });
-            } else { window.location.href = "login.html"; }
+            } else { 
+                // AQUÍ ESTÁ LA ADAPTACIÓN PARCERO: CAPTURAR Y REDIRIGIR
+                const currentUrl = window.location.href;
+                window.location.href = "login.html?redirect=" + encodeURIComponent(currentUrl); 
+            }
         });
 
-        // ==============================================
-        // LÓGICA DEL MODAL DE APROBACIÓN RÁPIDA
-        // ==============================================
         window.checkQuickApprovalToken = async (token) => {
             try {
-                // Pantalla de carga mientras busca el token
                 document.getElementById('loadingScreen').style.display = 'flex';
                 document.getElementById('quickLoadingText').style.display = 'block';
                 
@@ -532,7 +529,6 @@
                         <p style="font-size: 0.8rem; color: #888;">Toca la imagen para ver en grande</p>
                     `;
 
-                    // Asignar funciones a los botones rápidos
                     document.getElementById('btnQuickApprove').onclick = () => {
                         approveRecharge(foundReceiptId, foundData.uid, foundData.amountUsd, foundData.username, true);
                     };
@@ -552,17 +548,14 @@
 
         window.closeQuickModal = () => {
             document.getElementById('modalQuickApproval').style.display = 'none';
-            // Limpiar la URL para que no se vuelva a abrir al recargar la página
             const url = new URL(window.location);
             url.searchParams.delete('token');
             window.history.replaceState({}, document.title, url);
         };
 
-
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
 
-        // LOGS ADMIN (SOLO SUPERADMIN)
         window.openAdminLogsModal = async () => {
             if (!isSuperAdmin) return;
             openModal('modalAdminLogs');
@@ -582,7 +575,6 @@
             } catch(e) { container.innerHTML = `<p style="color:red; font-size:12px;">Error: ${e.message}</p>`; }
         };
 
-        // ADMINS (SOLO SUPERADMIN)
         window.openManageAdminsModal = () => {
             if(!isSuperAdmin) return;
             document.getElementById('adminTargetUser').value = ""; 
@@ -629,7 +621,6 @@
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // WABOT (Requiere permiso wabot o ser SuperAdmin)
         window.openWaModal = () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.wabot)) return alert("❌ Requiere autorización.");
             openModal('modalWaAuth'); document.getElementById('waCodeSection').style.display = 'none'; document.getElementById('waPairNumber').value = "";
@@ -648,7 +639,6 @@
             });
         }
 
-        // PAGOS (Requiere permiso payments o ser SuperAdmin)
         let banksList = [];
         window.openPaymentsModal = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return alert("❌ Acceso denegado a las bóvedas de pago.");
@@ -709,7 +699,6 @@
             try { await set(ref(db, `config/countries/${code}`), { name, flag, currency, rate, paymentMethods: cleanBanksList }); alert(`✅ Guardado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // RECARGAS Y WHATSAPP (MODIFICADO PARA SOPORTAR APROBACIÓN RÁPIDA)
         window.openRechargesModal = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return alert("❌ No tienes permiso.");
             openModal('modalRecharges'); const container = document.getElementById('rechargesList'); container.innerHTML = "<p style='text-align:center; color:#aaa;'>Cargando...</p>";
@@ -737,7 +726,6 @@
                 const updates = {}; updates[`users/${uid}/balance`] = currentBal + amountUsd; updates[`users/${uid}/recharges/${receiptId}/status`] = 'approved'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
                 await update(ref(db), updates); await logAdminAction("Autorización Recarga", username, `Liberó $${amountUsd} USD.`); 
                 
-                // NOTIFICACIÓN WHATSAPP APROBADO
                 if (targetData && targetData.whatsapp) {
                     const msgAprobado = `✅ *RECARGA APROBADA*\n\n¡Hola ${username}!\nTu recarga de *$${amountUsd} USD* ha sido verificada y tu saldo ha sido actualizado con éxito.\n\n¡Gracias por preferir LUCK XIT OFC! 🚀`;
                     await push(ref(db, 'whatsapp_control/messages'), { number: targetData.whatsapp, message: msgAprobado, timestamp: Date.now() });
@@ -757,7 +745,6 @@
                 const updates = {}; updates[`users/${uid}/recharges/${receiptId}/status`] = 'rejected'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
                 await update(ref(db), updates); 
                 
-                // NOTIFICACIÓN WHATSAPP RECHAZADO
                 if (targetData && targetData.whatsapp) {
                     const msgRechazado = `❌ *RECARGA RECHAZADA*\n\n¡Hola ${username}!\nTu comprobante de recarga ha sido revisado y lamentablemente fue denegado.\n\nPor favor contacta al soporte si crees que esto es un error.`;
                     await push(ref(db, 'whatsapp_control/messages'), { number: targetData.whatsapp, message: msgRechazado, timestamp: Date.now() });
@@ -768,7 +755,6 @@
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // PRODUCTOS
         window.funcCreateProduct = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
             const name = document.getElementById('pName').value.trim(); const cat = document.getElementById('pCat').value; const price = parseFloat(document.getElementById('pPrice').value); const dur = document.getElementById('pDur').value.trim(); const warr = parseInt(document.getElementById('pWarr').value);
@@ -776,7 +762,6 @@
             try { const newProdRef = push(ref(db, 'products')); const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key; await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr }); alert("✅ Creado."); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
         };
         
-        // --- NUEVAS FUNCIONES: EDITAR PRODUCTO Y DURACIÓN ---
         window.openEditProductModal = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
             const select = document.getElementById('editProdSelect'); select.innerHTML = "<option value=''>Cargando...</option>"; openModal('modalEditProduct');
@@ -884,7 +869,6 @@
                 } catch(e) { alert("❌ Error: " + e.message); }
             }
         };
-        // -----------------------------------------------------------
 
         window.openAddDurationModal = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
@@ -912,7 +896,6 @@
             try { const updates = {}; keys.forEach(key => { updates[`products/${pId}/durations/${dId}/keys/${push(ref(db)).key}`] = key.trim(); }); await update(ref(db), updates); alert(`✅ ${keys.length} Keys subidas.`); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // GESTIÓN INDIVIDUAL DE KEYS
         window.openManageKeysModal = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
             const select = document.getElementById('manageKeysSelect');
@@ -990,7 +973,6 @@
             }
         };
 
-        // SALDO Y USUARIOS
         window.funcAddBalance = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.balance)) return alert("❌ Sin acceso a fondos.");
             const user = document.getElementById('balUser').value.trim().toLowerCase(); const amt = parseFloat(document.getElementById('balAmt').value); if(!user || isNaN(amt)) return;
@@ -1027,14 +1009,12 @@
             } catch(e) { alert("❌ Error: " + e.message); }
         };
         
-        // BROADCAST Y MANTENIMIENTO
         window.funcBroadcast = async () => { 
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.broadcast)) return alert("❌ Acceso a torre de transmisión bloqueado.");
             const msg = document.getElementById('bcText').value.trim(); if(!msg) return;
             try { await set(ref(db, 'whatsapp_control/broadcast'), { message: msg, timestamp: Date.now() }); alert("✅ Enviado."); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // PARTICULAS
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 0.5; this.color = Math.random() > 0.5 ? 'rgba(188, 19, 254, ' : 'rgba(0, 243, 255, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
