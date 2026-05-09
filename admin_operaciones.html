@@ -88,8 +88,9 @@
 </head>
 <body oncontextmenu="return false;"> 
 
-    <div id="loadingScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#020005; z-index:9999; display:flex; justify-content:center; align-items:center;">
+    <div id="loadingScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#020005; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
         <h2 style="font-family:'Orbitron'; color:var(--neon-purple); text-shadow:0 0 15px var(--neon-purple); animation:popIn 1s infinite alternate;">Cargando Herramientas...</h2>
+        <div id="quickLoadingText" style="margin-top: 10px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: var(--neon-cyan); display: none;">Buscando Ticket Rápido...</div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
@@ -176,6 +177,19 @@
                 <div class="card-icon"><i class='bx bx-cctv'></i></div>
                 <div class="card-info"><h3>Registro de Seguridad</h3><p>Auditoría de IPs y Acciones.</p></div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalQuickApproval" style="z-index: 3000;">
+        <div class="modal-box" style="border-color: var(--neon-cyan); max-width: 400px; padding: 20px;">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-cyan); margin-top: 0;"><i class='bx bx-zap'></i> APROBACIÓN RÁPIDA</h3>
+            <div class="cyber-box" id="quickApprovalContent" style="border-left-color: var(--neon-cyan); text-align: center; padding: 10px;">
+                </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button id="btnQuickApprove" style="flex: 1; padding: 15px; border: none; border-radius: 8px; background: var(--neon-green); color: #000; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s;"><i class='bx bx-check-double'></i> APROBAR</button>
+                <button id="btnQuickReject" style="flex: 1; padding: 15px; border: none; border-radius: 8px; background: var(--neon-red); color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s;"><i class='bx bx-block'></i> RECHAZAR</button>
+            </div>
+            <button class="btn-cancel" onclick="closeQuickModal()" style="margin-top: 15px;">Ignorar y Cerrar</button>
         </div>
     </div>
 
@@ -458,6 +472,16 @@
                             document.getElementById('cardAdminLogs').style.display = 'flex'; 
                         }
                         listenToWaCode(); 
+
+                        // ==============================================
+                        // NUEVA FUNCIÓN: DETECTOR DE URL PARA APROBACIÓN RÁPIDA
+                        // ==============================================
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const token = urlParams.get('token');
+                        if (token) {
+                            checkQuickApprovalToken(token);
+                        }
+
                     } else { 
                         alert("⚠️ Acceso Denegado. Intervención bloqueada.");
                         window.location.href = "admin.html"; 
@@ -467,6 +491,73 @@
                 });
             } else { window.location.href = "login.html"; }
         });
+
+        // ==============================================
+        // LÓGICA DEL MODAL DE APROBACIÓN RÁPIDA
+        // ==============================================
+        window.checkQuickApprovalToken = async (token) => {
+            try {
+                // Pantalla de carga mientras busca el token
+                document.getElementById('loadingScreen').style.display = 'flex';
+                document.getElementById('quickLoadingText').style.display = 'block';
+                
+                const snap = await get(ref(db, 'pending_receipts'));
+                let foundReceiptId = null;
+                let foundData = null;
+
+                if (snap.exists()) {
+                    snap.forEach(childSnap => {
+                        const data = childSnap.val();
+                        if (data.actionToken === token) {
+                            foundReceiptId = childSnap.key;
+                            foundData = data;
+                        }
+                    });
+                }
+
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('quickLoadingText').style.display = 'none';
+
+                if (foundReceiptId && foundData) {
+                    openModal('modalQuickApproval');
+                    const content = document.getElementById('quickApprovalContent');
+                    content.innerHTML = `
+                        <p style="margin: 0 0 5px 0; font-size: 1.1rem;"><strong>Usuario:</strong> <span style="color:var(--neon-purple);">${foundData.username}</span></p>
+                        <p style="margin: 0 0 5px 0; font-size: 1.3rem;"><strong>Monto:</strong> <span style="color:var(--neon-green);">$${parseFloat(foundData.amountUsd).toFixed(2)} USD</span></p>
+                        ${foundData.amountLocal ? `<p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #aaa;">(Local: ${foundData.amountLocal})</p>` : ''}
+                        
+                        <div style="width: 100%; height: 350px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; background: rgba(0,0,0,0.5);">
+                            <img src="${foundData.receiptUrl}" style="width: 100%; height: 100%; object-fit: contain; cursor: pointer;" onclick="window.open('${foundData.receiptUrl}', '_blank')">
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888;">Toca la imagen para ver en grande</p>
+                    `;
+
+                    // Asignar funciones a los botones rápidos
+                    document.getElementById('btnQuickApprove').onclick = () => {
+                        approveRecharge(foundReceiptId, foundData.uid, foundData.amountUsd, foundData.username, true);
+                    };
+                    
+                    document.getElementById('btnQuickReject').onclick = () => {
+                        rejectRecharge(foundReceiptId, foundData.uid, true);
+                    };
+                } else {
+                    alert("⚠️ Este pago ya fue procesado o el enlace es inválido.");
+                    closeQuickModal();
+                }
+            } catch (error) {
+                alert("❌ Error al buscar el ticket: " + error.message);
+                closeQuickModal();
+            }
+        };
+
+        window.closeQuickModal = () => {
+            document.getElementById('modalQuickApproval').style.display = 'none';
+            // Limpiar la URL para que no se vuelva a abrir al recargar la página
+            const url = new URL(window.location);
+            url.searchParams.delete('token');
+            window.history.replaceState({}, document.title, url);
+        };
+
 
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
@@ -618,7 +709,7 @@
             try { await set(ref(db, `config/countries/${code}`), { name, flag, currency, rate, paymentMethods: cleanBanksList }); alert(`✅ Guardado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        // RECARGAS Y WHATSAPP
+        // RECARGAS Y WHATSAPP (MODIFICADO PARA SOPORTAR APROBACIÓN RÁPIDA)
         window.openRechargesModal = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return alert("❌ No tienes permiso.");
             openModal('modalRecharges'); const container = document.getElementById('rechargesList'); container.innerHTML = "<p style='text-align:center; color:#aaa;'>Cargando...</p>";
@@ -637,7 +728,7 @@
             } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
         };
 
-        window.approveRecharge = async (receiptId, uid, amountUsd, username) => {
+        window.approveRecharge = async (receiptId, uid, amountUsd, username, isQuick = false) => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
             if(!confirm(`¿Aprobar $${amountUsd} USD a ${username}?`)) return;
             try {
@@ -652,11 +743,12 @@
                     await push(ref(db, 'whatsapp_control/messages'), { number: targetData.whatsapp, message: msgAprobado, timestamp: Date.now() });
                 }
                 
-                alert(`✅ Aprobado.`); openRechargesModal();
+                alert(`✅ Aprobado.`); 
+                if(isQuick) { closeQuickModal(); } else { openRechargesModal(); }
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
-        window.rejectRecharge = async (receiptId, uid) => {
+        window.rejectRecharge = async (receiptId, uid, isQuick = false) => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
             if(!confirm("¿Bloquear ticket?")) return;
             try { 
@@ -671,7 +763,8 @@
                     await push(ref(db, 'whatsapp_control/messages'), { number: targetData.whatsapp, message: msgRechazado, timestamp: Date.now() });
                 }
 
-                alert("❌ Denegado."); openRechargesModal(); 
+                alert("❌ Denegado."); 
+                if(isQuick) { closeQuickModal(); } else { openRechargesModal(); }
             } catch(e) { alert("❌ Error: " + e.message); }
         };
 
