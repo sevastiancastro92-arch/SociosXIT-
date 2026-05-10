@@ -94,7 +94,7 @@
 
     </style>
 </head>
-<body> 
+<body oncontextmenu="return false;"> 
 
     <div class="cosmic-portal"><div class="stars"></div><div class="magic-ring ring-outer"></div><div class="magic-ring ring-middle"></div><div class="magic-ring ring-inner"></div></div>
 
@@ -135,7 +135,7 @@
             <div class="platform-tabs">
                 <button class="plat-btn active" id="btnPlatTelegram" onclick="selectPlatform('telegram')"><i class='bx bxl-telegram'></i> Bot Telegram</button>
                 <button class="plat-btn" id="btnPlatWhatsapp" onclick="selectPlatform('whatsapp')"><i class='bx bxl-whatsapp'></i> Bot WhatsApp</button>
-                <button class="plat-btn" id="btnPlatWeb" onclick="selectPlatform('web')"><i class='bx bx-globe'></i> Web HTML</button>
+                <button class="plat-btn" id="btnPlatWeb" onclick="selectPlatform('web')"><i class='bx bx-globe'></i> Web HTML (Crea tu tienda)</button>
             </div>
             
             <div class="script-container">
@@ -158,11 +158,6 @@
         let currentApiKey = "";
         let currentPlatform = "telegram"; // Default
 
-        // =========================================
-        // DATOS DE SCRIPTS Y TUTORIALES
-        // =========================================
-        
-        // ¡OJO! Asegúrate de cambiar 'URL_DE_TU_RAILWAY' por tu URL real de la API.
         const API_SERVER_URL = "https://whatsappbop-production.up.railway.app"; 
 
         const platformData = {
@@ -205,7 +200,6 @@ console.log('Bot de Telegram iniciado...');`,
                     <li>Ve a Telegram, busca a <b>@BotFather</b>, usa el comando <code>/newbot</code> para crear tu bot y copia el Token que te da.</li>
                     <li>Pega el Token en el script donde dice <b>'TU_TOKEN_DE_BOTFATHER_AQUI'</b>.</li>
                     <li>Guarda el código en un archivo llamado <code>bot.js</code> y arráncalo con el comando: <code>node bot.js</code></li>
-                    <li>Ve a tu bot en Telegram y escribe <b>/tienda</b>. ¡Verás tu catálogo conectado!</li>
                 </ol>`
             },
             whatsapp: {
@@ -256,10 +250,8 @@ client.initialize();`,
                     <li>Instala <code>Node.js</code> en tu PC o servidor VPS.</li>
                     <li>Crea una carpeta nueva, abre la consola ahí y ejecuta: <code>npm init -y</code></li>
                     <li>Instala las librerías base ejecutando: <code>npm install whatsapp-web.js qrcode-terminal axios</code></li>
-                    <li>Guarda el código de arriba en un archivo llamado <code>wabot.js</code>.</li>
-                    <li>Inicia el bot ejecutando en la consola: <code>node wabot.js</code></li>
-                    <li>Aparecerá un <b>Código QR en tu consola</b>. Abre tu WhatsApp en el celular, ve a Dispositivos Vinculados y escanea el QR.</li>
-                    <li>Envía <b>!tienda</b> desde otro número a tu bot y responderá con los productos disponibles de tu API.</li>
+                    <li>Guarda el código en un archivo llamado <code>wabot.js</code> y arráncalo con: <code>node wabot.js</code></li>
+                    <li>Aparecerá un <b>Código QR</b> en tu consola. Escanéalo con el dispositivo vinculado de WhatsApp.</li>
                 </ol>`
             },
             web: {
@@ -267,57 +259,118 @@ client.initialize();`,
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Tienda</title>
+    <title>Tienda Revendedor</title>
     <style>
         body { font-family: Arial; background: #111; color: #fff; padding: 20px; }
         .producto { background: #222; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #00ffcc; }
+        .panel { background: #333; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #555; }
+        button { background: #00ffcc; color: #000; padding: 8px 15px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #00ccaa; }
     </style>
 </head>
 <body>
+    <div class="panel">
+        <h2>Mi Tienda (Tu Logo Aquí)</h2>
+        <p>Bienvenido, Cliente. Tu Saldo: $<span id="saldoCliente">15.00</span> <i>(Simulado)</i></p>
+    </div>
 
     <h2>Catálogo de Productos</h2>
-    <div id="catalogo">Cargando...</div>
+    <div id="catalogo">Sincronizando con el proveedor...</div>
 
-    <script>
-        const API_KEY = '{{API_KEY}}';
-        const API_URL = '${API_SERVER_URL}/api/productos';
+    <script type="module">
+        // =========================================================================
+        // 1. CONFIGURA TU PROPIA BASE DE DATOS (PARA AISLAR A TUS CLIENTES)
+        // =========================================================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // IMPORTANTE: Crea un proyecto gratuito en Firebase y pega tus datos aquí.
+        // NUNCA pidas la base de datos de tu proveedor.
+        const miFirebaseConfig = {
+            apiKey: "PON_TU_API_KEY_AQUI",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            databaseURL: "https://TU_PROYECTO-default-rtdb.firebaseio.com",
+            projectId: "TU_PROYECTO",
+            storageBucket: "TU_PROYECTO.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcde"
+        };
+        
+        // Descomenta esto cuando pongas tus datos reales
+        // const app = initializeApp(miFirebaseConfig);
+        // const miDb = getDatabase(app);
+
+        // =========================================================================
+        // 2. CONEXIÓN A LA API DEL PROVEEDOR PRINCIPAL
+        // =========================================================================
+        const PROVEEDOR_API_KEY = '{{API_KEY}}';
+        const PROVEEDOR_URL = '${API_SERVER_URL}/api';
 
         async function cargarTienda() {
             try {
-                const response = await fetch(\`\${API_URL}?apikey=\${API_KEY}\`);
-                const data = await response.json();
+                const res = await fetch(\`\${PROVEEDOR_URL}/productos?apikey=\${PROVEEDOR_API_KEY}\`);
+                const data = await res.json();
                 
                 const div = document.getElementById('catalogo');
                 div.innerHTML = '';
 
-                if(data.catalog.length === 0) {
-                    div.innerHTML = '<p>No hay productos.</p>';
-                    return;
-                }
+                if(data.catalog.length === 0) return div.innerHTML = '<p>No hay productos.</p>';
 
                 data.catalog.forEach(p => {
                     let html = \`<div class="producto"><h3>\${p.name}</h3>\`;
                     p.options.forEach(o => {
-                        html += \`<p>\${o.duration} - $\${o.price} (Stock: \${o.stock})</p>\`;
+                        html += \`<p>\${o.duration} - $\${o.price} (Stock: \${o.stock})</p>
+                                 <button onclick="comprarProd('\${p.productId}', '\${o.durId}', \${o.price})">Comprar Key</button>\`;
                     });
                     html += '</div>';
                     div.innerHTML += html;
                 });
-            } catch (error) {
+            } catch (e) {
                 document.getElementById('catalogo').innerText = 'Error cargando tienda.';
             }
         }
+
+        // =========================================================================
+        // 3. LÓGICA DE COBRO AL CLIENTE Y EXTRACCIÓN DE KEY
+        // =========================================================================
+        window.comprarProd = async (prodId, durId, precio) => {
+            alert('Has iniciado una compra.\\n\\nComo desarrollador, aquí debes programar:\\n1. Descontar el saldo a TU cliente en TU propia Firebase.\\n2. Solicitar la Key a la API del proveedor.\\n3. Mostrarle la Key a tu cliente en pantalla.');
+            
+            /* EJEMPLO REAL DE CÓMO IMPLEMENTARLO:
+            
+            // 1. Verificas saldo en tu base de datos local
+            // const clienteRef = ref(miDb, 'usuarios/ID_DEL_CLIENTE');
+            // ... (verificar si saldo >= precio)
+            
+            // 2. Compras en la API del proveedor (se descuenta de tu saldo de revendedor)
+            const res = await fetch(\`\${PROVEEDOR_URL}/comprar\`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ apikey: PROVEEDOR_API_KEY, productId: prodId, durId: durId, qty: 1 })
+            });
+            const resultado = await res.json();
+            
+            if(resultado.success) {
+                // 3. Descuentas el saldo en TU base de datos y entregas la key
+                // await update(clienteRef, { balance: nuevoSaldo });
+                alert("¡Compra exitosa! La Key es: " + resultado.deliveredKeys[0]);
+            } else {
+                alert("Error del proveedor: " + resultado.error);
+            }
+            */
+        };
 
         cargarTienda();
     <\/script>
 </body>
 </html>`,
-                tutorial: `<h4><i class='bx bx-book-reader'></i> Cómo implementar en Web (HTML)</h4>
+                tutorial: `<h4><i class='bx bx-book-reader'></i> Crea una Tienda Web Autónoma</h4>
                 <ol>
-                    <li>Crea un archivo nuevo en tu computadora y llámalo <code>tienda.html</code>.</li>
-                    <li>Copia todo el script de arriba y pégalo dentro de ese archivo.</li>
-                    <li>Abre el archivo <code>tienda.html</code> dándole doble clic (se abrirá en tu navegador como Chrome o Edge).</li>
-                    <li>¡Listo! La página web se conectará automáticamente a la API usando tu Key, extraerá los productos con stock y los mostrará en pantalla. Puedes modificar el diseño a tu gusto.</li>
+                    <li>Crea un archivo nuevo llamado <code>tienda.html</code> en tu PC y pega el script de arriba.</li>
+                    <li><b>MUY IMPORTANTE:</b> Para gestionar los saldos y perfiles de <i>tus propios clientes</i>, ve a <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--neon-blue)">Firebase</a> y crea un proyecto gratuito.</li>
+                    <li>Copia las credenciales de tu nuevo Firebase y pégalas en la variable <code>miFirebaseConfig</code> del código generado.</li>
+                    <li>Tu llave de proveedor (API Key) ya está inyectada en el código para conectarse a nuestro inventario.</li>
+                    <li>Revisa la función <code>comprarProd()</code>. Ahí te dejamos comentado el ejemplo exacto de cómo cobrarle a tu cliente local antes de extraernos la Key a nosotros.</li>
                 </ol>`
             }
         };
@@ -337,8 +390,8 @@ client.initialize();`,
             currentApiKey = key;
             document.getElementById('apiKeyDisplay').innerText = key;
             document.getElementById('copyBtn').style.display = 'block';
-            document.getElementById('integrationSection').style.display = 'block'; // Mostrar integración
-            window.selectPlatform(currentPlatform); // Refrescar script con la llave nueva
+            document.getElementById('integrationSection').style.display = 'block'; 
+            window.selectPlatform(currentPlatform); 
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -370,7 +423,7 @@ client.initialize();`,
             try {
                 await update(ref(db, `users/${currentUser.uid}`), { apiKey: newKey });
                 updateUIWithApiKey(newKey);
-                alert("API Key generada con éxito. Revisa la sección de abajo para copiar el script de tu bot.");
+                alert("API Key generada con éxito. Revisa la sección de abajo para copiar el script de tu bot o web.");
             } catch (error) {
                 console.error("Error al generar API Key:", error);
                 document.getElementById('apiKeyDisplay').innerText = "ERROR AL GENERAR";
