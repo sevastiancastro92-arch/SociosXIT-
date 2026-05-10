@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mi API - SociosXIT</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
+        
+        * { -webkit-user-select: none; user-select: none; box-sizing: border-box; touch-action: manipulation; }
+        
+        :root { 
+            --neon-pink: #ff0055; --neon-blue: #00eeff; --neon-purple: #bc13fe; --neon-green: #00ffcc; 
+            --bg-deep: #030008; --glass-bg: rgba(10, 2, 20, 0.7); --sidebar-bg: rgba(5, 0, 15, 0.95); 
+        }
+
+        body { 
+            background-color: var(--bg-deep); 
+            background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
+            color: white; font-family: 'Exo 2', sans-serif; margin: 0; padding: 0; 
+            min-height: 100dvh; display: flex; justify-content: flex-start; align-items: center; flex-direction: column; 
+            overflow-x: hidden; overscroll-behavior-y: none;
+        }
+
+        .cosmic-portal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; z-index: -2; display: flex; justify-content: center; align-items: center; pointer-events: none; overflow: hidden; }
+        .magic-ring { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+        .ring-outer { width: 900px; height: 900px; border: 4px dashed rgba(188, 19, 254, 0.3); box-shadow: 0 0 80px rgba(188, 19, 254, 0.4); animation: spinRing 60s linear infinite; }
+        .ring-middle { width: 700px; height: 700px; border: 2px solid rgba(0, 238, 255, 0.2); box-shadow: 0 0 50px rgba(0, 238, 255, 0.3); animation: spinRingReverse 30s linear infinite; }
+        .ring-inner { width: 550px; height: 550px; border: 6px dotted rgba(255, 0, 85, 0.3); box-shadow: 0 0 60px rgba(255, 0, 85, 0.4); animation: spinRing 20s linear infinite; }
+        .stars { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)); background-repeat: repeat; background-size: 200px 200px; animation: twinkle 4s infinite alternate; opacity: 0.4; }
+        @keyframes spinRing { 100% { transform: rotate(360deg); } } @keyframes spinRingReverse { 100% { transform: rotate(-360deg); } } @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.7; } }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; pointer-events: none; }
+
+        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(10, 2, 20, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(0, 238, 255, 0.4); border-radius: 15px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 20px rgba(0, 238, 255, 0.2); z-index: 100; }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
+        .top-bar-right { display: flex; align-items: center; gap: 10px; }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-family: 'Orbitron', sans-serif; color: #ddd; white-space: nowrap; }
+        .badge i { font-size: 1.1rem; color: var(--neon-blue); } .badge span { color: #fff; font-weight: 700; }
+        .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
+
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 2px solid var(--neon-purple); box-shadow: 10px 0 30px rgba(188, 19, 254, 0.2); z-index: 999; transition: left 0.4s; display: flex; flex-direction: column; padding: 20px; }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(188, 19, 254, 0.4); padding-bottom: 15px; margin-bottom: 20px; }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.3rem; }
+        .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 1rem; transition: 0.3s; }
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
+
+        .api-container { width: 95%; max-width: 600px; margin: 90px auto 30px auto; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; border: 1px solid var(--neon-purple); box-shadow: 0 0 30px rgba(188, 19, 254, 0.2); text-align: center; }
+        .api-title { font-family: 'Orbitron'; font-size: 1.8rem; color: var(--neon-blue); margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-blue); }
+        .api-desc { font-size: 1rem; color: #ccc; margin-bottom: 30px; }
+        
+        .api-key-box { background: rgba(0,0,0,0.8); border: 2px dashed var(--neon-blue); padding: 20px; border-radius: 10px; margin-bottom: 20px; word-break: break-all; }
+        .api-key-text { font-family: monospace; font-size: 1.2rem; color: var(--neon-green); letter-spacing: 2px; }
+        
+        .btn-action { background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color: #fff; border: none; padding: 15px 30px; border-radius: 10px; font-family: 'Orbitron'; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%; margin-bottom: 15px; box-shadow: 0 0 15px rgba(188, 19, 254, 0.4); }
+        .btn-action:hover { box-shadow: 0 0 25px var(--neon-blue); transform: scale(1.02); }
+        .btn-copy { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); }
+        .btn-copy:hover { background: rgba(0, 255, 204, 0.1); box-shadow: 0 0 15px rgba(0, 255, 204, 0.3); }
+
+        .docs-box { margin-top: 30px; text-align: left; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 3px solid var(--neon-pink); }
+        .docs-box h4 { font-family: 'Orbitron'; color: var(--neon-pink); margin-top: 0; }
+        .docs-box code { display: block; background: #000; padding: 10px; border-radius: 5px; color: var(--neon-blue); margin-top: 10px; font-family: monospace; overflow-x: auto; }
+    </style>
+</head>
+<body oncontextmenu="return false;"> 
+
+    <div class="cosmic-portal"><div class="stars"></div><div class="magic-ring ring-outer"></div><div class="magic-ring ring-middle"></div><div class="magic-ring ring-inner"></div></div>
+
+    <div class="top-bar">
+        <div class="top-bar-left"><button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button></div>
+        <div class="top-bar-right">
+            <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
+            <a href="api.html" class="sidebar-item" style="border-left: 4px solid var(--neon-blue); background: rgba(0, 238, 255, 0.1); color: var(--neon-blue);"><i class='bx bx-code-alt' style="color: var(--neon-blue);"></i> Desarrolladores / API</a>
+        </div>
+    </div>
+    
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="api-container">
+        <h2 class="api-title"><i class='bx bx-code-block'></i> Acceso API</h2>
+        <p class="api-desc">Genera tu API Key para conectar tus bots o web de reventa. Las compras que haga tu sistema se descontarán de tu saldo actual.</p>
+        
+        <div class="api-key-box">
+            <span class="api-key-text" id="apiKeyDisplay">CARGANDO...</span>
+        </div>
+        
+        <button class="btn-action btn-copy" id="copyBtn" onclick="copyApiKey()" style="display: none;"><i class='bx bx-copy'></i> COPIAR API KEY</button>
+        <button class="btn-action" id="generateBtn" onclick="generateApiKey()"><i class='bx bx-refresh'></i> GENERAR NUEVA API KEY</button>
+
+        <div class="docs-box">
+            <h4><i class='bx bx-book-content'></i> Endpoints</h4>
+            <p style="font-size: 0.9rem; color: #ccc;">Usa la URL de tu servidor en Railway.</p>
+            <code>GET /api/productos?apikey=TU_API_KEY</code>
+            <code>POST /api/comprar<br>{<br> "apikey": "TU_API_KEY",<br> "productId": "ID_PROD",<br> "durId": "ID_DURACION",<br> "qty": 1<br>}</code>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db, onAuthStateChanged, ref, get, update } from './firebase-config.js';
+
+        let currentUser = null;
+
+        function generateRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            return result;
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                get(ref(db, `users/${user.uid}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        document.getElementById('balanceDisplay').innerText = (data.balance !== undefined ? parseFloat(data.balance) : 0).toFixed(2);
+                        
+                        if (data.apiKey) {
+                            document.getElementById('apiKeyDisplay').innerText = data.apiKey;
+                            document.getElementById('copyBtn').style.display = 'block';
+                        } else {
+                            document.getElementById('apiKeyDisplay').innerText = "NO TIENES API KEY AÚN";
+                        }
+                    }
+                });
+            } else { 
+                window.location.href = "login.html"; 
+            }
+        });
+
+        window.generateApiKey = async () => {
+            if(!currentUser) return;
+            const newKey = "XIT-" + generateRandomString(32);
+            document.getElementById('apiKeyDisplay').innerText = "GENERANDO...";
+            
+            try {
+                await update(ref(db, `users/${currentUser.uid}`), { apiKey: newKey });
+                document.getElementById('apiKeyDisplay').innerText = newKey;
+                document.getElementById('copyBtn').style.display = 'block';
+                alert("API Key generada con éxito. Actualiza tu bot con esta nueva llave.");
+            } catch (error) {
+                console.error("Error al generar API Key:", error);
+                document.getElementById('apiKeyDisplay').innerText = "ERROR AL GENERAR";
+            }
+        };
+
+        window.copyApiKey = () => {
+            const key = document.getElementById('apiKeyDisplay').innerText;
+            navigator.clipboard.writeText(key).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.innerHTML = "<i class='bx bx-check'></i> ¡COPIADO!";
+                setTimeout(() => btn.innerHTML = "<i class='bx bx-copy'></i> COPIAR API KEY", 2000);
+            });
+        };
+
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
+        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+
+        // Canvas de fondo (minimizado para que no estorbe el código)
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random()*width; this.y = Math.random()*height; this.vx = (Math.random()-0.5)*0.8; this.vy = (Math.random()-0.5)*0.8; this.size = Math.random()*2+1; this.color = Math.random()>0.5?'rgba(0,238,255,':'rgba(188,19,254,'; this.alpha = Math.random()*0.4+0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x<0||this.x>width) this.vx*=-1; if (this.y<0||this.y>height) this.vy*=-1; } draw() { ctx.beginPath(); ctx.arc(this.x|0, this.y|0, this.size, 0, Math.PI*2); ctx.fillStyle = this.color+this.alpha+')'; ctx.fill(); } }
+        for (let i=0; i<20; i++) particles.push(new Particle()); function animate() { ctx.clearRect(0,0,width,height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); } animate();
+    </script>
+</body>
+</html>
