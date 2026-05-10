@@ -7,6 +7,9 @@
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
+        /* =========================================
+           1. FUENTES Y VARIABLES CÓSMICAS
+           ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
         
         * { -webkit-user-select: none; user-select: none; box-sizing: border-box; touch-action: manipulation; }
@@ -51,7 +54,10 @@
         .sidebar-item { display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 1rem; transition: 0.3s; }
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
 
-        .api-container { width: 95%; max-width: 600px; margin: 90px auto 30px auto; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; border: 1px solid var(--neon-purple); box-shadow: 0 0 30px rgba(188, 19, 254, 0.2); text-align: center; }
+        /* =========================================
+           2. CONTENEDORES DE API E INTEGRACIÓN
+           ========================================= */
+        .api-container { width: 95%; max-width: 800px; margin: 90px auto 30px auto; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; border: 1px solid var(--neon-purple); box-shadow: 0 0 30px rgba(188, 19, 254, 0.2); text-align: center; }
         .api-title { font-family: 'Orbitron'; font-size: 1.8rem; color: var(--neon-blue); margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-blue); }
         .api-desc { font-size: 1rem; color: #ccc; margin-bottom: 30px; }
         
@@ -63,12 +69,32 @@
         .btn-copy { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); }
         .btn-copy:hover { background: rgba(0, 255, 204, 0.1); box-shadow: 0 0 15px rgba(0, 255, 204, 0.3); }
 
-        .docs-box { margin-top: 30px; text-align: left; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 3px solid var(--neon-pink); }
-        .docs-box h4 { font-family: 'Orbitron'; color: var(--neon-pink); margin-top: 0; }
-        .docs-box code { display: block; background: #000; padding: 10px; border-radius: 5px; color: var(--neon-blue); margin-top: 10px; font-family: monospace; overflow-x: auto; }
+        /* SECCIÓN DE INTEGRACIÓN DINAÁMICA */
+        .integration-section { margin-top: 40px; text-align: left; border-top: 1px dashed rgba(188, 19, 254, 0.4); padding-top: 20px; display: none; }
+        .integration-section h3 { font-family: 'Orbitron'; color: var(--neon-pink); font-size: 1.4rem; margin-bottom: 20px; text-align: center; }
+        
+        .platform-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .plat-btn { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #ddd; padding: 10px 20px; border-radius: 8px; font-family: 'Orbitron'; font-size: 0.9rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .plat-btn:hover { background: rgba(0, 238, 255, 0.1); border-color: var(--neon-blue); }
+        .plat-btn.active { background: rgba(0, 238, 255, 0.2); border-color: var(--neon-blue); color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 238, 255, 0.3); }
+
+        .script-container { background: #050505; border: 1px solid var(--neon-blue); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+        .script-header { background: rgba(0, 238, 255, 0.1); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; font-family: 'Exo 2'; font-weight: bold; color: var(--neon-blue); border-bottom: 1px solid rgba(0, 238, 255, 0.3); }
+        .btn-copy-script { background: var(--neon-blue); color: #000; border: none; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
+        .btn-copy-script:hover { box-shadow: 0 0 10px var(--neon-blue); transform: scale(1.05); }
+        
+        pre { margin: 0; padding: 15px; overflow-x: auto; -webkit-user-select: text; user-select: text; }
+        code { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; color: #a6e22e; }
+        
+        .tutorial-box { background: rgba(255,255,255,0.02); border-left: 4px solid var(--neon-purple); padding: 20px; border-radius: 0 10px 10px 0; }
+        .tutorial-box h4 { margin-top: 0; color: var(--neon-purple); font-family: 'Orbitron'; font-size: 1.1rem; margin-bottom: 15px; }
+        .tutorial-box ol { padding-left: 20px; margin: 0; color: #ccc; font-family: 'Exo 2'; line-height: 1.6; }
+        .tutorial-box li { margin-bottom: 10px; }
+        .tutorial-box code { background: #000; padding: 2px 6px; border-radius: 4px; color: var(--neon-pink); font-size: 0.85rem; }
+
     </style>
 </head>
-<body oncontextmenu="return false;"> 
+<body> 
 
     <div class="cosmic-portal"><div class="stars"></div><div class="magic-ring ring-outer"></div><div class="magic-ring ring-middle"></div><div class="magic-ring ring-inner"></div></div>
 
@@ -102,11 +128,26 @@
         <button class="btn-action btn-copy" id="copyBtn" onclick="copyApiKey()" style="display: none;"><i class='bx bx-copy'></i> COPIAR API KEY</button>
         <button class="btn-action" id="generateBtn" onclick="generateApiKey()"><i class='bx bx-refresh'></i> GENERAR NUEVA API KEY</button>
 
-        <div class="docs-box">
-            <h4><i class='bx bx-book-content'></i> Endpoints</h4>
-            <p style="font-size: 0.9rem; color: #ccc;">Usa la URL de tu servidor en Railway.</p>
-            <code>GET /api/productos?apikey=TU_API_KEY</code>
-            <code>POST /api/comprar<br>{<br> "apikey": "TU_API_KEY",<br> "productId": "ID_PROD",<br> "durId": "ID_DURACION",<br> "qty": 1<br>}</code>
+        <div class="integration-section" id="integrationSection">
+            <h3><i class='bx bx-plug'></i> Opciones de Integración</h3>
+            <p style="text-align: center; color: #aaa; margin-bottom: 20px;">Selecciona dónde quieres usar tu API para obtener el script base con tu Key ya insertada.</p>
+            
+            <div class="platform-tabs">
+                <button class="plat-btn active" id="btnPlatTelegram" onclick="selectPlatform('telegram')"><i class='bx bxl-telegram'></i> Bot Telegram</button>
+                <button class="plat-btn" id="btnPlatWhatsapp" onclick="selectPlatform('whatsapp')"><i class='bx bxl-whatsapp'></i> Bot WhatsApp</button>
+                <button class="plat-btn" id="btnPlatWeb" onclick="selectPlatform('web')"><i class='bx bx-globe'></i> Web HTML</button>
+            </div>
+            
+            <div class="script-container">
+                <div class="script-header">
+                    <span><i class='bx bx-code-curly'></i> Script Generado</span>
+                    <button class="btn-copy-script" id="copyScriptBtn" onclick="copyScriptCode()">COPIAR SCRIPT</button>
+                </div>
+                <pre><code id="scriptCodeDisplay">Cargando script...</code></pre>
+            </div>
+
+            <div class="tutorial-box" id="tutorialBoxDisplay">
+                </div>
         </div>
     </div>
 
@@ -114,12 +155,190 @@
         import { auth, db, onAuthStateChanged, ref, get, update } from './firebase-config.js';
 
         let currentUser = null;
+        let currentApiKey = "";
+        let currentPlatform = "telegram"; // Default
+
+        // =========================================
+        // DATOS DE SCRIPTS Y TUTORIALES
+        // =========================================
+        
+        // ¡OJO! Asegúrate de cambiar 'URL_DE_TU_RAILWAY' por tu URL real de la API.
+        const API_SERVER_URL = "https://URL_DE_TU_RAILWAY.up.railway.app"; 
+
+        const platformData = {
+            telegram: {
+                script: `const TelegramBot = require('node-telegram-bot-api');
+const axios = require('axios');
+
+// Configuración
+const token = 'TU_TOKEN_DE_BOTFATHER_AQUI';
+const bot = new TelegramBot(token, {polling: true});
+const API_KEY = '{{API_KEY}}'; 
+const API_URL = '${API_SERVER_URL}/api';
+
+bot.onText(/\\/tienda/, async (msg) => {
+  const chatId = msg.chat.id;
+  try {
+    const res = await axios.get(\`\${API_URL}/productos?apikey=\${API_KEY}\`);
+    if(res.data.catalog.length === 0) return bot.sendMessage(chatId, 'No hay stock por ahora.');
+    
+    let texto = '🛒 *CATÁLOGO DISPONIBLE*\\n\\n';
+    res.data.catalog.forEach(p => {
+      texto += \`📦 *\${p.name}*\\n\`;
+      p.options.forEach(o => {
+        texto += \` ├ \${o.duration}: $\${o.price} (Stock: \${o.stock})\\n\`;
+      });
+      texto += '\\n';
+    });
+    bot.sendMessage(chatId, texto, {parse_mode: 'Markdown'});
+  } catch (error) {
+    bot.sendMessage(chatId, 'Error conectando con el proveedor.');
+  }
+});
+
+console.log('Bot de Telegram iniciado...');`,
+                tutorial: `<h4><i class='bx bx-book-reader'></i> Cómo implementar en Telegram</h4>
+                <ol>
+                    <li>Instala <code>Node.js</code> en tu PC o servidor VPS.</li>
+                    <li>Crea una carpeta para tu bot, ábrela en la consola/terminal e inicializa el proyecto con: <code>npm init -y</code></li>
+                    <li>Instala las librerías necesarias ejecutando: <code>npm install node-telegram-bot-api axios</code></li>
+                    <li>Ve a Telegram, busca a <b>@BotFather</b>, usa el comando <code>/newbot</code> para crear tu bot y copia el Token que te da.</li>
+                    <li>Pega el Token en el script donde dice <b>'TU_TOKEN_DE_BOTFATHER_AQUI'</b>.</li>
+                    <li>Guarda el código en un archivo llamado <code>bot.js</code> y arráncalo con el comando: <code>node bot.js</code></li>
+                    <li>Ve a tu bot en Telegram y escribe <b>/tienda</b>. ¡Verás tu catálogo conectado!</li>
+                </ol>`
+            },
+            whatsapp: {
+                script: `const { Client, LocalAuth } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
+const axios = require('axios');
+
+const API_KEY = '{{API_KEY}}'; 
+const API_URL = '${API_SERVER_URL}/api';
+
+const client = new Client({
+    authStrategy: new LocalAuth()
+});
+
+client.on('qr', (qr) => {
+    qrcode.generate(qr, {small: true});
+    console.log('Escanea este código QR con tu WhatsApp para vincular el bot.');
+});
+
+client.on('ready', () => {
+    console.log('¡Bot de WhatsApp listo y conectado!');
+});
+
+client.on('message', async msg => {
+    if (msg.body === '!tienda') {
+        try {
+            const res = await axios.get(\`\${API_URL}/productos?apikey=\${API_KEY}\`);
+            if(res.data.catalog.length === 0) return msg.reply('No hay stock por ahora.');
+            
+            let texto = '🛒 *CATÁLOGO DISPONIBLE*\\n\\n';
+            res.data.catalog.forEach(p => {
+                texto += \`📦 *\${p.name}*\\n\`;
+                p.options.forEach(o => {
+                    texto += \` ├ \${o.duration}: $\${o.price} (Stock: \${o.stock})\\n\`;
+                });
+                texto += '\\n';
+            });
+            msg.reply(texto);
+        } catch (error) {
+            msg.reply('Error conectando con el proveedor.');
+        }
+    }
+});
+
+client.initialize();`,
+                tutorial: `<h4><i class='bx bx-book-reader'></i> Cómo implementar en WhatsApp</h4>
+                <ol>
+                    <li>Instala <code>Node.js</code> en tu PC o servidor VPS.</li>
+                    <li>Crea una carpeta nueva, abre la consola ahí y ejecuta: <code>npm init -y</code></li>
+                    <li>Instala las librerías base ejecutando: <code>npm install whatsapp-web.js qrcode-terminal axios</code></li>
+                    <li>Guarda el código de arriba en un archivo llamado <code>wabot.js</code>.</li>
+                    <li>Inicia el bot ejecutando en la consola: <code>node wabot.js</code></li>
+                    <li>Aparecerá un <b>Código QR en tu consola</b>. Abre tu WhatsApp en el celular, ve a Dispositivos Vinculados y escanea el QR.</li>
+                    <li>Envía <b>!tienda</b> desde otro número a tu bot y responderá con los productos disponibles de tu API.</li>
+                </ol>`
+            },
+            web: {
+                script: `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Tienda</title>
+    <style>
+        body { font-family: Arial; background: #111; color: #fff; padding: 20px; }
+        .producto { background: #222; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #00ffcc; }
+    </style>
+</head>
+<body>
+
+    <h2>Catálogo de Productos</h2>
+    <div id="catalogo">Cargando...</div>
+
+    <script>
+        const API_KEY = '{{API_KEY}}';
+        const API_URL = '${API_SERVER_URL}/api/productos';
+
+        async function cargarTienda() {
+            try {
+                const response = await fetch(\`\${API_URL}?apikey=\${API_KEY}\`);
+                const data = await response.json();
+                
+                const div = document.getElementById('catalogo');
+                div.innerHTML = '';
+
+                if(data.catalog.length === 0) {
+                    div.innerHTML = '<p>No hay productos.</p>';
+                    return;
+                }
+
+                data.catalog.forEach(p => {
+                    let html = \`<div class="producto"><h3>\${p.name}</h3>\`;
+                    p.options.forEach(o => {
+                        html += \`<p>\${o.duration} - $\${o.price} (Stock: \${o.stock})</p>\`;
+                    });
+                    html += '</div>';
+                    div.innerHTML += html;
+                });
+            } catch (error) {
+                document.getElementById('catalogo').innerText = 'Error cargando tienda.';
+            }
+        }
+
+        cargarTienda();
+    <\/script>
+</body>
+</html>`,
+                tutorial: `<h4><i class='bx bx-book-reader'></i> Cómo implementar en Web (HTML)</h4>
+                <ol>
+                    <li>Crea un archivo nuevo en tu computadora y llámalo <code>tienda.html</code>.</li>
+                    <li>Copia todo el script de arriba y pégalo dentro de ese archivo.</li>
+                    <li>Abre el archivo <code>tienda.html</code> dándole doble clic (se abrirá en tu navegador como Chrome o Edge).</li>
+                    <li>¡Listo! La página web se conectará automáticamente a la API usando tu Key, extraerá los productos con stock y los mostrará en pantalla. Puedes modificar el diseño a tu gusto.</li>
+                </ol>`
+            }
+        };
+
+        // =========================================
+        // LÓGICA DE FIREBASE Y GENERACIÓN
+        // =========================================
 
         function generateRandomString(length) {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
             for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
             return result;
+        }
+
+        function updateUIWithApiKey(key) {
+            currentApiKey = key;
+            document.getElementById('apiKeyDisplay').innerText = key;
+            document.getElementById('copyBtn').style.display = 'block';
+            document.getElementById('integrationSection').style.display = 'block'; // Mostrar integración
+            window.selectPlatform(currentPlatform); // Refrescar script con la llave nueva
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -131,10 +350,10 @@
                         document.getElementById('balanceDisplay').innerText = (data.balance !== undefined ? parseFloat(data.balance) : 0).toFixed(2);
                         
                         if (data.apiKey) {
-                            document.getElementById('apiKeyDisplay').innerText = data.apiKey;
-                            document.getElementById('copyBtn').style.display = 'block';
+                            updateUIWithApiKey(data.apiKey);
                         } else {
                             document.getElementById('apiKeyDisplay').innerText = "NO TIENES API KEY AÚN";
+                            document.getElementById('integrationSection').style.display = 'none';
                         }
                     }
                 });
@@ -150,9 +369,8 @@
             
             try {
                 await update(ref(db, `users/${currentUser.uid}`), { apiKey: newKey });
-                document.getElementById('apiKeyDisplay').innerText = newKey;
-                document.getElementById('copyBtn').style.display = 'block';
-                alert("API Key generada con éxito. Actualiza tu bot con esta nueva llave.");
+                updateUIWithApiKey(newKey);
+                alert("API Key generada con éxito. Revisa la sección de abajo para copiar el script de tu bot.");
             } catch (error) {
                 console.error("Error al generar API Key:", error);
                 document.getElementById('apiKeyDisplay').innerText = "ERROR AL GENERAR";
@@ -160,20 +378,54 @@
         };
 
         window.copyApiKey = () => {
-            const key = document.getElementById('apiKeyDisplay').innerText;
-            navigator.clipboard.writeText(key).then(() => {
+            navigator.clipboard.writeText(currentApiKey).then(() => {
                 const btn = document.getElementById('copyBtn');
                 btn.innerHTML = "<i class='bx bx-check'></i> ¡COPIADO!";
                 setTimeout(() => btn.innerHTML = "<i class='bx bx-copy'></i> COPIAR API KEY", 2000);
             });
         };
 
+        // =========================================
+        // LÓGICA DE PESTAÑAS (TABS)
+        // =========================================
+
+        window.selectPlatform = (platform) => {
+            currentPlatform = platform;
+            
+            // Estilos de botones
+            document.getElementById('btnPlatTelegram').classList.remove('active');
+            document.getElementById('btnPlatWhatsapp').classList.remove('active');
+            document.getElementById('btnPlatWeb').classList.remove('active');
+            
+            if(platform === 'telegram') document.getElementById('btnPlatTelegram').classList.add('active');
+            if(platform === 'whatsapp') document.getElementById('btnPlatWhatsapp').classList.add('active');
+            if(platform === 'web') document.getElementById('btnPlatWeb').classList.add('active');
+
+            // Insertar Script (Reemplazando la Key)
+            const baseScript = platformData[platform].script;
+            const finalScript = baseScript.replace('{{API_KEY}}', currentApiKey);
+            document.getElementById('scriptCodeDisplay').textContent = finalScript;
+
+            // Insertar Tutorial
+            document.getElementById('tutorialBoxDisplay').innerHTML = platformData[platform].tutorial;
+        };
+
+        window.copyScriptCode = () => {
+            const code = document.getElementById('scriptCodeDisplay').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copyScriptBtn');
+                btn.innerText = "¡SCRIPT COPIADO!";
+                setTimeout(() => btn.innerText = "COPIAR SCRIPT", 2000);
+            });
+        };
+
+        // UI Base
         const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
         document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
 
-        // Canvas de fondo (minimizado para que no estorbe el código)
+        // Canvas de fondo (minimizado)
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { constructor() { this.x = Math.random()*width; this.y = Math.random()*height; this.vx = (Math.random()-0.5)*0.8; this.vy = (Math.random()-0.5)*0.8; this.size = Math.random()*2+1; this.color = Math.random()>0.5?'rgba(0,238,255,':'rgba(188,19,254,'; this.alpha = Math.random()*0.4+0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x<0||this.x>width) this.vx*=-1; if (this.y<0||this.y>height) this.vy*=-1; } draw() { ctx.beginPath(); ctx.arc(this.x|0, this.y|0, this.size, 0, Math.PI*2); ctx.fillStyle = this.color+this.alpha+')'; ctx.fill(); } }
