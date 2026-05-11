@@ -116,7 +116,7 @@
 
 
         /* =========================================
-           3. ESTILOS DE RANKING
+           3. ESTILOS DE RANKING Y PODIO
            ========================================= */
         .ranking-wrapper {
             width: 95%; max-width: 900px; margin: 90px auto 30px auto;
@@ -129,23 +129,49 @@
         .main-title { font-size: 3rem; font-weight: 900; font-family: 'Orbitron', sans-serif; background: linear-gradient(to right, var(--neon-cyan), #fff, var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; font-style: italic; letter-spacing: 2px; filter: drop-shadow(0 0 10px rgba(0,243,255,0.6)); margin: 0; position: relative; z-index: 1; }
         .sub-title { color: var(--neon-cyan); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; margin-top: 5px; text-shadow: 0 0 5px var(--neon-cyan); }
 
-        .top1-showcase {
-            background: linear-gradient(180deg, rgba(255, 215, 0, 0.15) 0%, rgba(0,0,0,0.8) 100%);
-            border: 2px solid #FFD700; border-radius: 20px;
-            padding: 35px 20px 20px 20px; text-align: center;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.1);
-            position: relative; margin-bottom: 40px; width: 100%; max-width: 400px;
-            animation: floatTop1 4s ease-in-out infinite;
+        /* NUEVO PODIO TOP 3 */
+        .podium-container {
+            display: flex; justify-content: center; align-items: flex-end; gap: 10px; 
+            margin-bottom: 40px; width: 100%; max-width: 600px;
         }
-        @keyframes floatTop1 { 0%, 100% { transform: translateY(0); box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); } 50% { transform: translateY(-10px); box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); } }
-        .crown-icon { font-size: 4rem; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); filter: drop-shadow(0 0 15px gold); animation: pulseGold 2s infinite alternate; }
+        
+        .podium-card {
+            background: var(--glass-bg); backdrop-filter: blur(10px); 
+            border-radius: 15px; padding: 15px 5px; text-align: center; 
+            position: relative; width: 30%; display: flex; flex-direction: column; align-items: center;
+            transition: 0.3s;
+        }
+        
+        .podium-card img {
+            width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; background: #111;
+        }
+        
+        .podium-card .medal { font-size: 2.2rem; position: absolute; top: -25px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
+        
+        /* ORO */
+        .podium-card.top1 { 
+            border: 2px solid #FFD700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 0 15px rgba(255,215,0,0.1); 
+            padding: 25px 5px; z-index: 2; transform: translateY(-15px); animation: floatTop1 4s ease-in-out infinite;
+        }
+        .podium-card.top1 img { width: 75px; height: 75px; border: 2px solid #FFD700; box-shadow: 0 0 15px gold; }
+        .podium-card.top1 .medal { font-size: 3.5rem; top: -35px; animation: pulseGold 2s infinite alternate; filter: drop-shadow(0 0 10px gold); }
+        @keyframes floatTop1 { 0%, 100% { transform: translateY(-15px); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); } 50% { transform: translateY(-25px); box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); } }
+        
+        /* PLATA */
+        .podium-card.top2 { border: 1px solid #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+        .podium-card.top2 img { border: 2px solid #00f3ff; box-shadow: 0 0 10px #00f3ff; }
+        
+        /* BRONCE */
+        .podium-card.top3 { border: 1px solid #ff5500; box-shadow: 0 0 15px rgba(255, 80, 0, 0.2); }
+        .podium-card.top3 img { border: 2px solid #ff5500; box-shadow: 0 0 10px #ff5500; }
 
-        #top1Avatar { width: 110px; height: 110px; border-radius: 50%; border: 3px solid #FFD700; object-fit: cover; box-shadow: 0 0 25px gold; margin-bottom: 15px; background: #111; }
-        #top1Name { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; margin: 0 0 15px 0; text-shadow: 0 0 15px gold; text-transform: uppercase; }
-        .top1-badges { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        .badge-rank { background: rgba(188, 19, 254, 0.2); border: 1px solid var(--neon-purple); color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; text-shadow: 0 0 5px var(--neon-purple); }
-        .badge-spent { background: rgba(0, 255, 204, 0.2); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; text-shadow: 0 0 5px var(--neon-green); font-family: 'Orbitron', sans-serif; }
-        .top1-label { color: #FFD700; font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; margin: 0; padding-top: 15px; border-top: 1px solid rgba(255,215,0,0.3); }
+        .prize-tag { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.1rem; margin-bottom: 5px; }
+        .podium-card.top1 .prize-tag { color: #FFD700; text-shadow: 0 0 10px gold; font-size: 1.5rem; }
+        .podium-card.top2 .prize-tag { color: #00f3ff; text-shadow: 0 0 10px #00f3ff; }
+        .podium-card.top3 .prize-tag { color: #ff7b00; text-shadow: 0 0 10px #ff5500; }
+
+        .name-tag { font-size: 0.75rem; font-weight: 600; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-transform: uppercase; }
+        .podium-card.top1 .name-tag { color: #fff; text-shadow: 0 0 5px white; font-size: 0.9rem;}
 
         .timer-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(188,19,254,0.5); border-radius: 15px; padding: 15px; max-width: 400px; width: 100%; margin: 0 auto 30px auto; text-align: center; box-shadow: 0 0 20px rgba(188,19,254,0.2); }
         .timer-title { color: var(--neon-purple); font-size: 0.8rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; border-bottom: 1px solid rgba(188,19,254,0.3); padding-bottom: 8px; margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-purple);}
@@ -268,15 +294,31 @@
             <i class='bx bx-radio-circle-marked bx-burst' style="color: var(--neon-purple); font-size: 1rem; vertical-align: middle;"></i> ACTUALIZACIÓN EN VIVO
         </div>
 
-        <div class="top1-showcase" id="top1Container" style="display: none;">
-            <div class="crown-icon">👑</div>
-            <img id="top1Avatar" src="" alt="Top 1 Avatar">
-            <h2 id="top1Name">Cargando...</h2>
-            <div class="top1-badges">
-                <span id="top1Rank" class="badge-rank">Miembro</span>
-                <span id="top1Spent" class="badge-spent">$0.00 USD</span>
+        <!-- PODIO TOP 3 -->
+        <div class="podium-container" id="podiumContainer" style="display: none;">
+            <!-- TOP 2 -->
+            <div class="podium-card top2">
+                <div class="medal">🥈</div>
+                <img id="top2Avatar" src="" alt="Top 2">
+                <div class="prize-tag">$3</div>
+                <div class="name-tag" id="top2Name">...</div>
             </div>
-            <p class="top1-label">Mayor Inversor Global</p>
+            
+            <!-- TOP 1 -->
+            <div class="podium-card top1">
+                <div class="medal">👑</div>
+                <img id="top1Avatar" src="" alt="Top 1">
+                <div class="prize-tag">$5</div>
+                <div class="name-tag" id="top1Name">...</div>
+            </div>
+            
+            <!-- TOP 3 -->
+            <div class="podium-card top3">
+                <div class="medal">🥉</div>
+                <img id="top3Avatar" src="" alt="Top 3">
+                <div class="prize-tag">$1</div>
+                <div class="name-tag" id="top3Name">...</div>
+            </div>
         </div>
 
         <div class="timer-card">
@@ -348,7 +390,8 @@
     </script>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
+        /* IMPORTANTE: Se añadieron set y runTransaction para el sistema de premios */
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child, set, runTransaction } from './firebase-config.js';
 
         let currentUserUid = null;
         let currentUserName = null;
@@ -386,54 +429,131 @@
             signOut(auth).then(() => window.location.href = "login.html");
         });
 
-        async function loadRankings() {
+        // --- SISTEMA AUTOMÁTICO DE PREMIOS DE CICLOS PASADOS ---
+        function getCycleDates() {
             const now = new Date();
-            const currentDay = now.getDate();
-            
-            let cycleStartDate;
-            if (currentDay >= 11) {
-                cycleStartDate = new Date(now.getFullYear(), now.getMonth(), 11, 0, 0, 0);
+            let currentYear = now.getFullYear();
+            let currentMonth = now.getMonth();
+            let currentCycleStart, prevCycleStart, prevCycleEnd;
+
+            if (now.getDate() >= 11) {
+                currentCycleStart = new Date(currentYear, currentMonth, 11, 0, 0, 0);
+                prevCycleStart = new Date(currentYear, currentMonth - 1, 11, 0, 0, 0);
             } else {
-                cycleStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 11, 0, 0, 0);
+                currentCycleStart = new Date(currentYear, currentMonth - 1, 11, 0, 0, 0);
+                prevCycleStart = new Date(currentYear, currentMonth - 2, 11, 0, 0, 0);
             }
+            prevCycleEnd = currentCycleStart;
+            let prevCycleId = `${prevCycleStart.getFullYear()}-${prevCycleStart.getMonth() + 1}`;
+            return { currentCycleStart, prevCycleStart, prevCycleEnd, prevCycleId };
+        }
+
+        async function checkAndSavePastWinners(usersData, dates) {
+            if(!currentUserUid) return;
+            const prevCycleId = dates.prevCycleId;
+            const snap = await get(ref(db, `cycle_winners_sales/${prevCycleId}`));
+            let winners = {};
+            
+            if (!snap.exists()) {
+                const rankingData = [];
+                for (const uid in usersData) {
+                    const u = usersData[uid];
+                    let dName = u.username || "Desconocido";
+                    if (dName.toLowerCase() === "sebasxit") continue;
+                    
+                    let prevCycleSpent = 0;
+                    if (u.history) {
+                        Object.values(u.history).forEach(p => {
+                            const price = parseFloat(p.price || 0);
+                            if (!p.refunded && p.date >= dates.prevCycleStart.getTime() && p.date < dates.prevCycleEnd.getTime()) {
+                                prevCycleSpent += price;
+                            }
+                        });
+                    }
+                    if(prevCycleSpent > 0) {
+                        rankingData.push({ id: uid, name: dName, total: prevCycleSpent });
+                    }
+                }
+                
+                rankingData.sort((a, b) => b.total - a.total);
+                
+                if(rankingData.length > 0) winners[rankingData[0].id] = { rank: 1, prize: 5, claimed: false };
+                if(rankingData.length > 1) winners[rankingData[1].id] = { rank: 2, prize: 3, claimed: false };
+                if(rankingData.length > 2) winners[rankingData[2].id] = { rank: 3, prize: 1, claimed: false };
+                
+                if(Object.keys(winners).length > 0) {
+                    await set(ref(db, `cycle_winners_sales/${prevCycleId}`), winners);
+                }
+            } else {
+                winners = snap.val();
+            }
+
+            // Si el usuario actual es ganador y no ha reclamado
+            if (winners && winners[currentUserUid] && winners[currentUserUid].claimed === false) {
+                const prize = winners[currentUserUid].prize;
+                const rank = winners[currentUserUid].rank;
+                
+                try {
+                    await runTransaction(ref(db, `users/${currentUserUid}/balance`), (currentBalance) => {
+                        return (currentBalance || 0) + prize;
+                    });
+                    await set(ref(db, `cycle_winners_sales/${prevCycleId}/${currentUserUid}/claimed`), true);
+                    showWinnerAlert(rank, prize);
+                } catch(e) {
+                    console.error("Error pagando premio:", e);
+                }
+            }
+        }
+
+        function showWinnerAlert(rank, prize) {
+            const overlay = document.createElement("div");
+            overlay.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px);";
+            overlay.innerHTML = `
+                <div style="background: rgba(10, 0, 20, 0.9); border: 2px solid #FFD700; border-radius: 20px; padding: 40px 20px; text-align: center; max-width: 350px; width: 90%; box-shadow: 0 0 50px rgba(255, 215, 0, 0.4); position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50px; left: -50px; width: 100px; height: 100px; background: var(--neon-purple); filter: blur(50px);"></div>
+                    <h2 style="font-family: 'Orbitron', sans-serif; color: #FFD700; font-size: 2.2rem; margin: 0 0 10px 0; text-shadow: 0 0 15px gold;">¡FELICIDADES!</h2>
+                    <p style="color: white; font-size: 1.1rem; margin: 0 0 20px 0; font-family: 'Rajdhani', sans-serif;">Quedaste en el <span style="color: #FFD700; font-weight: 900; font-size: 1.3rem;">TOP ${rank}</span> del ciclo pasado.</p>
+                    <div style="font-size: 5rem; margin-bottom: 20px; filter: drop-shadow(0 0 15px white);">🏆</div>
+                    <p style="color: var(--neon-cyan); font-weight: bold; font-size: 1rem; margin-bottom: 5px; font-family: 'Rajdhani', sans-serif;">Tu premio fue agregado a tu saldo:</p>
+                    <div style="font-family: 'Orbitron', sans-serif; font-size: 3.5rem; color: #00f3ff; font-weight: 900; text-shadow: 0 0 20px #00f3ff; margin-bottom: 30px;">$${prize}</div>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); color: white; border: none; padding: 12px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 30px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 15px rgba(188, 19, 254, 0.6); font-family: 'Poppins', sans-serif;">¡Genial!</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        async function loadRankings() {
+            const dates = getCycleDates();
 
             try {
                 const snapshot = await get(ref(db, 'users'));
                 if (!snapshot.exists()) return;
 
+                const usersData = snapshot.val();
+                
+                // Verificar y entregar premios si cambió el ciclo
+                await checkAndSavePastWinners(usersData, dates);
+
                 const rankingData = [];
 
-                snapshot.forEach(childSnapshot => {
-                    const uid = childSnapshot.key;
-                    const u = childSnapshot.val();
+                for (const uid in usersData) {
+                    const u = usersData[uid];
                     let dName = u.username || "Desconocido";
                     
-                    if (dName.toLowerCase() === "sebasxit") return;
+                    if (dName.toLowerCase() === "sebasxit") continue;
 
                     let cycleSpent = 0; 
-                    let allTimeSpent = 0;
 
                     if (u.history) {
                         Object.values(u.history).forEach(p => {
                             const price = parseFloat(p.price || 0);
-                            if (!p.refunded) {
-                                allTimeSpent += price; 
-                                if (p.date >= cycleStartDate.getTime()) {
-                                    cycleSpent += price; 
-                                }
+                            if (!p.refunded && p.date >= dates.currentCycleStart.getTime()) {
+                                cycleSpent += price; 
                             }
                         });
                     }
 
-                    let rankName = "Miembro";
-                    if(allTimeSpent >= 200) rankName = "🌟 Élite";
-                    else if(allTimeSpent >= 150) rankName = "🔥 Deluxe";
-                    else if(allTimeSpent >= 100) rankName = "💎 Diamante";
-                    else if(allTimeSpent >= 50) rankName = "✨ Premium";
-                    else if(allTimeSpent >= 10) rankName = "🎫 VIP";
-
-                    if(dName.length > 12) dName = dName.substring(0, 12) + "..";
-
+                    if(dName.length > 10) dName = dName.substring(0, 10) + "..";
                     const avatarUrl = u.avatar || `https://via.placeholder.com/150/14001e/bc13fe?text=${dName.charAt(0).toUpperCase()}`;
 
                     rankingData.push({
@@ -441,24 +561,40 @@
                         name: dName,
                         avatar: avatarUrl,
                         cycleSpent: cycleSpent,
-                        allTimeSpent: allTimeSpent,
-                        rankName: rankName,
                         isMe: uid === currentUserUid
                     });
-                });
+                }
 
                 const sortSales = [...rankingData].sort((a, b) => b.cycleSpent - a.cycleSpent);
 
-                const top1Container = document.getElementById('top1Container');
+                const podiumContainer = document.getElementById('podiumContainer');
+                
                 if(sortSales.length > 0 && sortSales[0].cycleSpent > 0) {
-                    const top1 = sortSales[0];
-                    document.getElementById('top1Avatar').src = top1.avatar;
-                    document.getElementById('top1Name').innerText = top1.name;
-                    document.getElementById('top1Rank').innerText = top1.rankName;
-                    document.getElementById('top1Spent').innerText = `$${top1.allTimeSpent.toFixed(2)} USD`;
-                    top1Container.style.display = 'block';
+                    podiumContainer.style.display = 'flex';
+                    
+                    // TOP 1
+                    document.getElementById('top1Avatar').src = sortSales[0].avatar;
+                    document.getElementById('top1Name').innerText = sortSales[0].name;
+                    
+                    // TOP 2
+                    if(sortSales[1] && sortSales[1].cycleSpent > 0) {
+                        document.getElementById('top2Avatar').src = sortSales[1].avatar;
+                        document.getElementById('top2Name').innerText = sortSales[1].name;
+                    } else {
+                        document.getElementById('top2Avatar').src = "https://via.placeholder.com/150/111/555?text=?";
+                        document.getElementById('top2Name').innerText = "Vacío";
+                    }
+
+                    // TOP 3
+                    if(sortSales[2] && sortSales[2].cycleSpent > 0) {
+                        document.getElementById('top3Avatar').src = sortSales[2].avatar;
+                        document.getElementById('top3Name').innerText = sortSales[2].name;
+                    } else {
+                        document.getElementById('top3Avatar').src = "https://via.placeholder.com/150/111/555?text=?";
+                        document.getElementById('top3Name').innerText = "Vacío";
+                    }
                 } else {
-                    top1Container.style.display = 'none';
+                    podiumContainer.style.display = 'none';
                 }
 
                 renderList(sortSales, document.getElementById("listSales"), 'cycleSpent', document.getElementById("myRankSales"), 'amount-purple');
