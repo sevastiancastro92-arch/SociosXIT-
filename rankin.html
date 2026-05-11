@@ -150,7 +150,7 @@
       </div>
     </div>
 
-    <!-- NUEVA SECCIÓN DE PREMIOS TOP 1, 2 Y 3 -->
+    <!-- SECCIÓN DE PREMIOS TOP 1, 2 Y 3 (PODIO CON NOMBRES) -->
     <div class="flex justify-center items-end gap-2 md:gap-6 mb-10 px-2">
       <!-- TOP 2 -->
       <div class="relative group w-28 md:w-48 transition-all duration-500 hover:scale-105 mb-2">
@@ -158,7 +158,8 @@
         <div class="relative px-2 py-4 md:py-6 bg-[#050508] rounded-2xl flex flex-col items-center border border-cyan-400/50 h-full justify-center shadow-[inset_0_0_15px_rgba(0,255,255,0.15)]">
           <div class="text-4xl md:text-5xl mb-2 filter drop-shadow-[0_0_15px_white]">🥈</div>
           <div class="text-2xl md:text-4xl font-black text-white mb-1 tracking-tighter font-orbitron" style="text-shadow: 0 0 10px #00ffff;">$3</div>
-          <div class="text-cyan-400 text-[9px] md:text-xs font-bold tracking-widest uppercase text-center border-t border-white/10 pt-2 w-full">Top 2</div>
+          <div class="text-cyan-400 text-[9px] md:text-xs font-bold tracking-widest uppercase text-center border-t border-white/10 pt-2 w-full">Premio Top 2</div>
+          <div id="podium-name-2" class="text-[10px] md:text-sm text-cyan-100 font-bold mt-1 truncate w-full text-center font-mono">...</div>
         </div>
       </div>
 
@@ -168,7 +169,8 @@
         <div class="relative px-2 py-6 md:py-8 bg-[#050508] rounded-2xl flex flex-col items-center border border-yellow-400/50 h-full justify-center shadow-[inset_0_0_20px_rgba(255,215,0,0.2)]">
           <div class="text-5xl md:text-6xl mb-2 filter drop-shadow-[0_0_20px_rgba(255,215,0,1)] animate-bounce">👑</div>
           <div class="text-4xl md:text-6xl font-black text-yellow-300 mb-1 tracking-tighter font-orbitron drop-shadow-[0_0_15px_gold]">$5</div>
-          <div class="text-yellow-400 text-[10px] md:text-sm font-bold tracking-widest uppercase text-center border-t border-yellow-400/30 pt-2 w-full">Top 1</div>
+          <div class="text-yellow-400 text-[10px] md:text-sm font-bold tracking-widest uppercase text-center border-t border-yellow-400/30 pt-2 w-full">Premio Top 1</div>
+          <div id="podium-name-1" class="text-[11px] md:text-base text-yellow-100 font-black mt-1 truncate w-full text-center font-mono drop-shadow-[0_0_5px_gold]">...</div>
         </div>
       </div>
 
@@ -178,7 +180,8 @@
         <div class="relative px-2 py-4 md:py-6 bg-[#050508] rounded-2xl flex flex-col items-center border border-orange-500/50 h-full justify-center shadow-[inset_0_0_15px_rgba(255,123,0,0.15)]">
           <div class="text-4xl md:text-5xl mb-2 filter drop-shadow-[0_0_15px_orange]">🥉</div>
           <div class="text-2xl md:text-4xl font-black text-white mb-1 tracking-tighter font-orbitron" style="text-shadow: 0 0 10px #ff7b00;">$1</div>
-          <div class="text-orange-400 text-[9px] md:text-xs font-bold tracking-widest uppercase text-center border-t border-white/10 pt-2 w-full">Top 3</div>
+          <div class="text-orange-400 text-[9px] md:text-xs font-bold tracking-widest uppercase text-center border-t border-white/10 pt-2 w-full">Premio Top 3</div>
+          <div id="podium-name-3" class="text-[10px] md:text-sm text-orange-100 font-bold mt-1 truncate w-full text-center font-mono">...</div>
         </div>
       </div>
     </div>
@@ -247,6 +250,11 @@
     const myRankRecharge = document.getElementById("myRankRecharge");
     const myRankSales = document.getElementById("myRankSales");
     const countdownTimer = document.getElementById("countdownTimer");
+
+    // Elementos del Podio
+    const podiumName1 = document.getElementById("podium-name-1");
+    const podiumName2 = document.getElementById("podium-name-2");
+    const podiumName3 = document.getElementById("podium-name-3");
 
     function sanitizeEmail(email) { return email.replace(/\./g, "_"); }
     
@@ -321,7 +329,6 @@
         let winners = {};
         
         if (!snap.exists()) {
-            // Si el ciclo pasado aún no se ha evaluado, lo evaluamos y lo guardamos
             const rankingData = [];
             Object.keys(usersData).forEach(key => {
                 let displayName = key.replace(/_gmail_com|_hotmail_com|_outlook_com/g, "").replace(/_/g, "");
@@ -333,7 +340,6 @@
                     Object.values(u.recharge_history).forEach(r => {
                         const amount = parseFloat(r.amount || 0);
                         const rDate = new Date(r.date);
-                        // Filtramos solo recargas del ciclo pasado
                         if (rDate >= dates.prevCycleStart && rDate < dates.prevCycleEnd) {
                             prevCycleRecharged += amount;
                         }
@@ -345,7 +351,6 @@
                 }
             });
             
-            // Ordenamos y sacamos los 3 primeros
             rankingData.sort((a, b) => b.total - a.total);
             
             if(rankingData.length > 0) winners[rankingData[0].id] = { rank: 1, prize: 5, claimed: false, name: rankingData[0].name };
@@ -359,18 +364,15 @@
             winners = snap.val();
         }
 
-        // Revisar si el usuario actual es uno de los ganadores y no ha reclamado
         const myEmailKey = sanitizeEmail(currentUser);
         if (winners && winners[myEmailKey] && winners[myEmailKey].claimed === false) {
             const prize = winners[myEmailKey].prize;
             const rank = winners[myEmailKey].rank;
             
-            // Entregar el saldo usando transacción para seguridad
             db.ref(`users/${myEmailKey}/balance`).transaction((currentBalance) => {
                 return (currentBalance || 0) + prize;
             }, (error, committed, snapshot) => {
                 if (!error && committed) {
-                    // Marcar en la base de datos que ya se le pagó para no duplicarlo
                     db.ref(`cycle_winners/${prevCycleId}/${myEmailKey}/claimed`).set(true);
                     showWinnerAlert(rank, prize);
                 }
@@ -405,10 +407,10 @@
         const usersData = snapshot.val();
         if (!usersData) return;
 
-        // Comprobar historial y dar premios si el ciclo terminó
         await checkAndSavePastWinners(usersData, dates);
 
-        const rankingData = [];
+        const rankingDataRecharges = [];
+        const rankingDataSales = [];
 
         Object.keys(usersData).forEach(key => {
             let displayName = key.replace(/_gmail_com|_hotmail_com|_outlook_com/g, "").replace(/_/g, "");
@@ -436,20 +438,33 @@
 
             if(displayName.length > 7) displayName = displayName.substring(0, 7) + "..";
 
-            rankingData.push({
+            rankingDataRecharges.push({
+                id: key,
+                name: displayName,
+                cycleRecharged: cycleRecharged,
+                isMe: key === myEmail
+            });
+
+            rankingDataSales.push({
                 id: key,
                 name: displayName,
                 cycleSpent: cycleSpent,
-                cycleRecharged: cycleRecharged,
                 isMe: key === myEmail
             });
         });
 
-        rankingData.sort((a, b) => b.cycleRecharged - a.cycleRecharged);
-        renderList(rankingData, listRecharges, 'cycleRecharged', myRankRecharge, '$');
+        // Ordenar y Renderizar Recargas
+        rankingDataRecharges.sort((a, b) => b.cycleRecharged - a.cycleRecharged);
+        renderList(rankingDataRecharges, listRecharges, 'cycleRecharged', myRankRecharge, '$');
+        
+        // --- ACTUALIZAR NOMBRES DEL PODIO ---
+        if(podiumName1) podiumName1.innerText = rankingDataRecharges[0] && rankingDataRecharges[0].cycleRecharged > 0 ? rankingDataRecharges[0].name : 'VACÍO';
+        if(podiumName2) podiumName2.innerText = rankingDataRecharges[1] && rankingDataRecharges[1].cycleRecharged > 0 ? rankingDataRecharges[1].name : 'VACÍO';
+        if(podiumName3) podiumName3.innerText = rankingDataRecharges[2] && rankingDataRecharges[2].cycleRecharged > 0 ? rankingDataRecharges[2].name : 'VACÍO';
 
-        rankingData.sort((a, b) => b.cycleSpent - a.cycleSpent);
-        renderList(rankingData, listSales, 'cycleSpent', myRankSales, '$');
+        // Ordenar y Renderizar Gastos
+        rankingDataSales.sort((a, b) => b.cycleSpent - a.cycleSpent);
+        renderList(rankingDataSales, listSales, 'cycleSpent', myRankSales, '$');
 
       } catch (error) {
         console.error("Error ranking:", error);
@@ -459,7 +474,7 @@
     // --- RENDERIZADO CON ESTILOS NEON ---
     function renderList(data, container, valueKey, myAlert, prefix) {
         container.innerHTML = "";
-        const topData = data.slice(0, 20); // Top 20
+        const topData = data.slice(0, 20);
         
         topData.forEach((user, index) => {
             const rank = index + 1;
