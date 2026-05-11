@@ -141,7 +141,7 @@
       <h1 class="text-4xl md:text-7xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-pink-500 filter drop-shadow-[0_0_10px_rgba(0,255,255,0.8)] uppercase font-orbitron">
         RANKINGS
       </h1>
-      <p class="text-cyan-200 text-[10px] md:text-sm font-bold tracking-[0.3em] mt-2 uppercase text-shadow">🏆 Gana $5 USD - Top 1 🏆</p>
+      <p class="text-cyan-200 text-[10px] md:text-sm font-bold tracking-[0.3em] mt-2 uppercase text-shadow">🏆 PREMIOS PARA EL TOP 3 DE RECARGAS 🏆</p>
     </div>
     
     <div class="flex justify-center mb-8">
@@ -150,21 +150,41 @@
       </div>
     </div>
 
-    <div class="flex justify-center mb-10">
-      <div class="relative group w-64 md:w-96 transition-all duration-500 hover:scale-105">
-        <div class="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-2xl blur opacity-75 group-hover:opacity-100 animate-tilt"></div>
-        <div class="relative px-6 py-8 bg-[#050508] rounded-2xl flex flex-col items-center border border-white/20">
-          <div class="text-6xl mb-3 filter drop-shadow-[0_0_20px_rgba(255,215,0,0.8)] animate-bounce">👑</div>
-          <div class="text-5xl font-black text-white mb-2 tracking-tighter font-orbitron" style="text-shadow: 0 0 20px #00ffff, 0 0 40px #ff00ff;">$5 USD</div>
-          <div class="text-pink-400 text-[10px] font-bold tracking-[0.2em] uppercase text-center border-t border-white/10 pt-3 w-full">
-            Premio Top 1 • <span class="text-cyan-300">Cierre: Día 11</span>
-          </div>
+    <!-- NUEVA SECCIÓN DE PREMIOS TOP 1, 2 Y 3 -->
+    <div class="flex justify-center items-end gap-2 md:gap-6 mb-10 px-2">
+      <!-- TOP 2 -->
+      <div class="relative group w-28 md:w-48 transition-all duration-500 hover:scale-105 mb-2">
+        <div class="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl blur opacity-75 group-hover:opacity-100 animate-tilt"></div>
+        <div class="relative px-2 py-4 md:py-6 bg-[#050508] rounded-2xl flex flex-col items-center border border-cyan-400/50 h-full justify-center shadow-[inset_0_0_15px_rgba(0,255,255,0.15)]">
+          <div class="text-4xl md:text-5xl mb-2 filter drop-shadow-[0_0_15px_white]">🥈</div>
+          <div class="text-2xl md:text-4xl font-black text-white mb-1 tracking-tighter font-orbitron" style="text-shadow: 0 0 10px #00ffff;">$3</div>
+          <div class="text-cyan-400 text-[9px] md:text-xs font-bold tracking-widest uppercase text-center border-t border-white/10 pt-2 w-full">Top 2</div>
+        </div>
+      </div>
+
+      <!-- TOP 1 -->
+      <div class="relative group w-32 md:w-56 transition-all duration-500 hover:scale-110 z-10">
+        <div class="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-2xl blur opacity-100 animate-pulse"></div>
+        <div class="relative px-2 py-6 md:py-8 bg-[#050508] rounded-2xl flex flex-col items-center border border-yellow-400/50 h-full justify-center shadow-[inset_0_0_20px_rgba(255,215,0,0.2)]">
+          <div class="text-5xl md:text-6xl mb-2 filter drop-shadow-[0_0_20px_rgba(255,215,0,1)] animate-bounce">👑</div>
+          <div class="text-4xl md:text-6xl font-black text-yellow-300 mb-1 tracking-tighter font-orbitron drop-shadow-[0_0_15px_gold]">$5</div>
+          <div class="text-yellow-400 text-[10px] md:text-sm font-bold tracking-widest uppercase text-center border-t border-yellow-400/30 pt-2 w-full">Top 1</div>
+        </div>
+      </div>
+
+      <!-- TOP 3 -->
+      <div class="relative group w-28 md:w-48 transition-all duration-500 hover:scale-105 mb-2">
+        <div class="absolute -inset-1 bg-gradient-to-r from-orange-400 to-red-500 rounded-2xl blur opacity-75 group-hover:opacity-100 animate-tilt"></div>
+        <div class="relative px-2 py-4 md:py-6 bg-[#050508] rounded-2xl flex flex-col items-center border border-orange-500/50 h-full justify-center shadow-[inset_0_0_15px_rgba(255,123,0,0.15)]">
+          <div class="text-4xl md:text-5xl mb-2 filter drop-shadow-[0_0_15px_orange]">🥉</div>
+          <div class="text-2xl md:text-4xl font-black text-white mb-1 tracking-tighter font-orbitron" style="text-shadow: 0 0 10px #ff7b00;">$1</div>
+          <div class="text-orange-400 text-[9px] md:text-xs font-bold tracking-widest uppercase text-center border-t border-white/10 pt-2 w-full">Top 3</div>
         </div>
       </div>
     </div>
 
     <div class="max-w-md mx-auto mb-8 neon-card p-4 rounded-xl border-pink-500/50">
-      <div class="text-center text-glow-pink text-[10px] md:text-sm font-black mb-3 tracking-[0.2em] uppercase border-b border-pink-500/30 pb-2">⏰ TIEMPO RESTANTE</div>
+      <div class="text-center text-glow-pink text-[10px] md:text-sm font-black mb-3 tracking-[0.2em] uppercase border-b border-pink-500/30 pb-2">⏰ TIEMPO RESTANTE DEL CICLO</div>
       <div class="grid grid-cols-4 gap-2 text-center divide-x divide-pink-500/30" id="countdownTimer"></div>
     </div>
 
@@ -240,14 +260,12 @@
 
     // --- FUNCIONALIDAD ADMIN ---
     function checkAdminAccess() {
-        // Verifica si el usuario actual es LK-XT
         if(currentUser.toUpperCase().includes("LK-XT") || currentUser.toUpperCase().includes("LK XT")) {
             btnAdmin.classList.remove("hidden");
             btnAdmin.addEventListener("click", () => {
                 isAdminMode = !isAdminMode;
                 btnAdmin.style.backgroundColor = isAdminMode ? "#000" : "#d60000";
                 btnAdmin.innerHTML = isAdminMode ? "❌ SALIR" : "💀 ADMIN";
-                // Recargar rankings para mostrar/ocultar lápices
                 loadRankings();
             });
         }
@@ -274,29 +292,126 @@
         });
     }
 
+    // --- OBTENER FECHAS DEL CICLO ---
+    function getCycleDates() {
+        const now = new Date();
+        let currentYear = now.getFullYear();
+        let currentMonth = now.getMonth();
+        
+        let currentCycleStart, prevCycleStart, prevCycleEnd;
+
+        if (now.getDate() >= 11) {
+            currentCycleStart = new Date(currentYear, currentMonth, 11, 0, 0, 0);
+            prevCycleStart = new Date(currentYear, currentMonth - 1, 11, 0, 0, 0);
+        } else {
+            currentCycleStart = new Date(currentYear, currentMonth - 1, 11, 0, 0, 0);
+            prevCycleStart = new Date(currentYear, currentMonth - 2, 11, 0, 0, 0);
+        }
+        prevCycleEnd = currentCycleStart;
+
+        let prevCycleId = `${prevCycleStart.getFullYear()}-${prevCycleStart.getMonth() + 1}`;
+
+        return { currentCycleStart, prevCycleStart, prevCycleEnd, prevCycleId };
+    }
+
+    // --- REVISAR, GUARDAR Y ENTREGAR PREMIOS DE CICLOS PASADOS ---
+    async function checkAndSavePastWinners(usersData, dates) {
+        const prevCycleId = dates.prevCycleId;
+        const snap = await db.ref(`cycle_winners/${prevCycleId}`).once('value');
+        let winners = {};
+        
+        if (!snap.exists()) {
+            // Si el ciclo pasado aún no se ha evaluado, lo evaluamos y lo guardamos
+            const rankingData = [];
+            Object.keys(usersData).forEach(key => {
+                let displayName = key.replace(/_gmail_com|_hotmail_com|_outlook_com/g, "").replace(/_/g, "");
+                if (displayName === "LK-XT" || displayName === "LK XT" || key.includes("LK-XT")) return;
+                
+                const u = usersData[key];
+                let prevCycleRecharged = 0;
+                if (u.recharge_history) {
+                    Object.values(u.recharge_history).forEach(r => {
+                        const amount = parseFloat(r.amount || 0);
+                        const rDate = new Date(r.date);
+                        // Filtramos solo recargas del ciclo pasado
+                        if (rDate >= dates.prevCycleStart && rDate < dates.prevCycleEnd) {
+                            prevCycleRecharged += amount;
+                        }
+                    });
+                }
+                
+                if(prevCycleRecharged > 0) {
+                    rankingData.push({ id: key, name: displayName, total: prevCycleRecharged });
+                }
+            });
+            
+            // Ordenamos y sacamos los 3 primeros
+            rankingData.sort((a, b) => b.total - a.total);
+            
+            if(rankingData.length > 0) winners[rankingData[0].id] = { rank: 1, prize: 5, claimed: false, name: rankingData[0].name };
+            if(rankingData.length > 1) winners[rankingData[1].id] = { rank: 2, prize: 3, claimed: false, name: rankingData[1].name };
+            if(rankingData.length > 2) winners[rankingData[2].id] = { rank: 3, prize: 1, claimed: false, name: rankingData[2].name };
+            
+            if(Object.keys(winners).length > 0) {
+                await db.ref(`cycle_winners/${prevCycleId}`).set(winners);
+            }
+        } else {
+            winners = snap.val();
+        }
+
+        // Revisar si el usuario actual es uno de los ganadores y no ha reclamado
+        const myEmailKey = sanitizeEmail(currentUser);
+        if (winners && winners[myEmailKey] && winners[myEmailKey].claimed === false) {
+            const prize = winners[myEmailKey].prize;
+            const rank = winners[myEmailKey].rank;
+            
+            // Entregar el saldo usando transacción para seguridad
+            db.ref(`users/${myEmailKey}/balance`).transaction((currentBalance) => {
+                return (currentBalance || 0) + prize;
+            }, (error, committed, snapshot) => {
+                if (!error && committed) {
+                    // Marcar en la base de datos que ya se le pagó para no duplicarlo
+                    db.ref(`cycle_winners/${prevCycleId}/${myEmailKey}/claimed`).set(true);
+                    showWinnerAlert(rank, prize);
+                }
+            });
+        }
+    }
+
+    // --- ALERTA BONITA DE GANADOR ---
+    function showWinnerAlert(rank, prize) {
+        const overlay = document.createElement("div");
+        overlay.className = "fixed inset-0 bg-black/95 z-[100] flex justify-center items-center backdrop-blur-md";
+        overlay.innerHTML = `
+            <div class="neon-card p-6 md:p-10 rounded-2xl text-center border-2 border-yellow-400 shadow-[0_0_80px_rgba(255,215,0,0.4)] animate-bounce relative max-w-sm w-full mx-4">
+                <div class="absolute inset-0 bg-gradient-to-tr from-yellow-500/20 via-pink-500/20 to-cyan-500/20 rounded-2xl blur-xl animate-pulse"></div>
+                <h2 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 font-orbitron drop-shadow-[0_0_10px_gold] mb-4">¡FELICIDADES!</h2>
+                <p class="text-lg md:text-xl text-white font-bold mb-2">Quedaste en el <span class="text-yellow-400 text-2xl font-black font-orbitron">TOP ${rank}</span> de Recargas del ciclo pasado</p>
+                <div class="text-7xl my-6 drop-shadow-[0_0_20px_white]">🏆</div>
+                <p class="text-md text-cyan-200 font-bold mb-6">Tu premio fue agregado a tu saldo: <br><span class="text-5xl text-glow-cyan font-black mt-2 inline-block">$${prize} USD</span></p>
+                <button onclick="this.parentElement.parentElement.remove()" class="bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black py-3 px-10 rounded-full border border-pink-400 shadow-[0_0_20px_magenta] hover:scale-110 transition-transform text-lg uppercase tracking-widest">¡Genial!</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
     // --- LÓGICA PRINCIPAL ---
     async function loadRankings() {
       const myEmail = sanitizeEmail(currentUser);
-      const now = new Date();
-      const currentDay = now.getDate();
-      
-      let cycleStartDate;
-      if (currentDay >= 11) {
-          cycleStartDate = new Date(now.getFullYear(), now.getMonth(), 11, 0, 0, 0);
-      } else {
-          cycleStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 11, 0, 0, 0);
-      }
+      const dates = getCycleDates();
 
       try {
         const snapshot = await db.ref('users').once('value');
         const usersData = snapshot.val();
         if (!usersData) return;
 
+        // Comprobar historial y dar premios si el ciclo terminó
+        await checkAndSavePastWinners(usersData, dates);
+
         const rankingData = [];
 
         Object.keys(usersData).forEach(key => {
             let displayName = key.replace(/_gmail_com|_hotmail_com|_outlook_com/g, "").replace(/_/g, "");
-            // Excluir al propio LK-XT de la lista si se desea, o dejarlo
             if (displayName === "LK-XT" || displayName === "LK XT" || key.includes("LK-XT")) return;
 
             const u = usersData[key];
@@ -306,7 +421,7 @@
                 Object.values(u.purchases).forEach(p => {
                     const price = parseFloat(p.price || 0);
                     const pDate = new Date(p.date);
-                    if (pDate >= cycleStartDate) cycleSpent += price;
+                    if (pDate >= dates.currentCycleStart) cycleSpent += price;
                 });
             }
 
@@ -315,11 +430,10 @@
                 Object.values(u.recharge_history).forEach(r => {
                     const amount = parseFloat(r.amount || 0);
                     const rDate = new Date(r.date);
-                    if (rDate >= cycleStartDate) cycleRecharged += amount;
+                    if (rDate >= dates.currentCycleStart) cycleRecharged += amount;
                 });
             }
 
-            // Nombre corto para que quepa en celular
             if(displayName.length > 7) displayName = displayName.substring(0, 7) + "..";
 
             rankingData.push({
@@ -342,7 +456,7 @@
       }
     }
 
-    // --- RENDERIZADO CON NUEVOS ESTILOS NEON ---
+    // --- RENDERIZADO CON ESTILOS NEON ---
     function renderList(data, container, valueKey, myAlert, prefix) {
         container.innerHTML = "";
         const topData = data.slice(0, 20); // Top 20
@@ -350,7 +464,6 @@
         topData.forEach((user, index) => {
             const rank = index + 1;
             
-            // Definir clases dinámicas según la posición
             let rowClass = "row-other";
             let circleClass = "circle-other";
             let textClass = "text-gray-500 font-semibold";
@@ -380,9 +493,7 @@
 
             const finalAmountClass = (valueKey === 'cycleSpent' && user[valueKey] > 0) ? "text-pink-300 drop-shadow-[0_0_3px_magenta]" : (user[valueKey] > 0 ? "text-cyan-300 drop-shadow-[0_0_3px_cyan]" : "text-gray-700");
 
-            // --- LÓGICA DE BOTÓN EDITAR PARA LK-XT ---
             let adminBtnHtml = "";
-            // Solo mostrar lápiz si está activado el modo admin Y es la lista de recargas
             if (isAdminMode && valueKey === 'cycleRecharged') {
                 adminBtnHtml = `<button onclick="editPoints('${user.id}', '${user.name}')" class="admin-edit-btn">✏️</button>`;
             }
@@ -424,7 +535,7 @@
             else nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 11, 0, 0, 0);
 
             const diff = nextReset - now;
-            if (diff <= 0) { countdownTimer.innerHTML = "<div class='col-span-4 text-glow-pink font-bold animate-pulse'>¡CIERRE DE CICLO!</div>"; return; }
+            if (diff <= 0) { countdownTimer.innerHTML = "<div class='col-span-4 text-glow-pink font-bold animate-pulse py-2'>¡NUEVO CICLO INICIADO! REINICIANDO...</div>"; return; }
 
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
