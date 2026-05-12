@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugerencias - SociosXIT</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* =========================================
+           1. FUENTES Y VARIABLES CÓSMICAS
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
+        
+        * { user-select: none; box-sizing: border-box; }
+        
+        :root { 
+            --neon-pink: #ff0055;
+            --neon-blue: #00eeff;
+            --neon-purple: #bc13fe;
+            --neon-green: #00ffcc; 
+            --bg-deep: #030008;
+            --glass-bg: rgba(10, 2, 20, 0.85); 
+        }
+
+        body { 
+            background-color: var(--bg-deep); 
+            background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
+            color: white; 
+            font-family: 'Exo 2', sans-serif; 
+            margin: 0; padding: 0; 
+            min-height: 100dvh; 
+            display: flex; justify-content: center; align-items: center; flex-direction: column; 
+            overflow-x: hidden; 
+        }
+
+        /* Fondos */
+        .cosmic-portal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100vw; height: 100vh; z-index: -2;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: none; overflow: hidden;
+        }
+
+        .stars {
+            position: absolute; width: 100%; height: 100%;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat; background-size: 200px 200px; animation: twinkle 4s infinite alternate; opacity: 0.4;
+        }
+
+        @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.7; } }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.8; }
+
+        /* Barra superior */
+        .top-bar { 
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%); 
+            width: 95%; max-width: 700px; 
+            background: rgba(10, 2, 20, 0.7); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(188, 19, 254, 0.4); border-radius: 15px; 
+            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.2); z-index: 100; 
+        }
+
+        .back-btn { 
+            background: transparent; border: 1px solid var(--neon-purple); color: var(--neon-purple); 
+            border-radius: 8px; padding: 6px 12px; font-size: 1.2rem; cursor: pointer; 
+            transition: 0.3s; display: flex; align-items: center; gap: 5px; text-decoration: none; font-family: 'Orbitron';
+        }
+        .back-btn:hover { background: rgba(188, 19, 254, 0.1); box-shadow: 0 0 15px var(--neon-purple); color: white;}
+
+        /* Contenedor Principal */
+        .main-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; z-index: 10; margin-top: 100px; margin-bottom: 50px;}
+
+        .hub-container { 
+            width: 90%; max-width: 500px; text-align: center; 
+            animation: slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            background: var(--glass-bg); backdrop-filter: blur(20px);
+            padding: 2.5rem 2rem; border-radius: 20px; border: 1px solid rgba(0, 238, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 238, 255, 0.1);
+            position: relative; overflow: hidden;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hub-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin-bottom: 10px; }
+        .hub-desc { color: #cceeff; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; }
+
+        /* Formulario */
+        .input-group { width: 100%; margin-bottom: 20px; text-align: left; }
+        textarea { 
+            width: 100%; min-height: 120px; background: rgba(0, 0, 0, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; 
+            padding: 15px; color: white; font-family: 'Exo 2', sans-serif; font-size: 1rem; 
+            resize: none; outline: none; transition: 0.3s; 
+        }
+        textarea:focus { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255, 0, 85, 0.3); }
+
+        .btn-submit { 
+            width: 100%; padding: 15px; border: none; border-radius: 12px; 
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); 
+            color: white; font-family: 'Orbitron', sans-serif; font-weight: bold; font-size: 1.1rem; 
+            cursor: pointer; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 0, 85, 0.4); 
+            display: flex; justify-content: center; align-items: center; gap: 10px; text-transform: uppercase;
+        }
+        .btn-submit:hover { transform: scale(1.03); box-shadow: 0 0 30px var(--neon-pink); }
+
+        .btn-toggle {
+            background: transparent; border: 2px solid var(--neon-blue); color: var(--neon-blue);
+            width: 100%; padding: 12px; border-radius: 12px; margin-top: 15px; font-family: 'Orbitron';
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-toggle:hover { background: rgba(0, 238, 255, 0.1); box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.3); color: white;}
+
+        /* Lista de Sugerencias */
+        #suggestions-board {
+            width: 100%; margin-top: 30px; display: none; flex-direction: column; gap: 15px;
+            animation: slideUp 0.5s ease;
+        }
+        
+        .suggestion-card {
+            background: rgba(255, 255, 255, 0.03); border-left: 4px solid var(--neon-blue);
+            border-radius: 10px; padding: 15px; text-align: left; position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-right: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .sug-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-family: 'Orbitron'; font-size: 0.85rem;}
+        .sug-user { color: var(--neon-green); font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .sug-date { color: #888; font-family: 'Exo 2'; font-size: 0.8rem;}
+        .sug-text { color: #ddd; font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; user-select: text; }
+
+    </style>
+</head>
+<body>
+
+    <div class="cosmic-portal">
+        <div class="stars"></div>
+    </div>
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="top-bar">
+        <a href="dashboard.html" class="back-btn"><i class='bx bx-chevron-left'></i> Volver</a>
+        <div style="font-family: 'Orbitron'; color: white; font-weight: bold; letter-spacing: 1px;">SOCIOS XIT</div>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="hub-container">
+            <h1 class="hub-title"><i class='bx bx-bulb'></i> BUZÓN DE IDEAS</h1>
+            <p class="hub-desc">¿Qué nueva función te gustaría ver en la web? Envíanos tus sugerencias y ayudanos a mejorar SociosXIT.</p>
+            
+            <div class="input-group">
+                <textarea id="suggestionInput" placeholder="Ej: Me gustaría que agreguen un botón para..."></textarea>
+            </div>
+            
+            <button class="btn-submit" id="sendBtn"><i class='bx bx-send'></i> Enviar Sugerencia</button>
+            <button class="btn-toggle" id="toggleBtn"><i class='bx bx-list-ul'></i> Ver Sugerencias de la Comunidad</button>
+
+            <div id="suggestions-board">
+                <!-- Las sugerencias aparecerán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Partículas -->
+    <script>
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5)*0.5; this.vy = (Math.random() - 0.5)*0.5; this.size = Math.random() * 2 + 1; this.color = 'rgba(0, 238, 255, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+
+        // Control de mostrar/ocultar panel
+        const toggleBtn = document.getElementById('toggleBtn');
+        const board = document.getElementById('suggestions-board');
+        let isBoardVisible = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isBoardVisible = !isBoardVisible;
+            if(isBoardVisible) {
+                board.style.display = 'flex';
+                toggleBtn.innerHTML = "<i class='bx bx-hide'></i> Ocultar Sugerencias";
+            } else {
+                board.style.display = 'none';
+                toggleBtn.innerHTML = "<i class='bx bx-list-ul'></i> Ver Sugerencias de la Comunidad";
+            }
+        });
+    </script>
+
+    <!-- Script de Firebase -->
+    <script type="module">
+        import { auth, db, onAuthStateChanged, ref, get } from './firebase-config.js';
+        import { onValue, push, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        let currentUsername = "Usuario Anónimo";
+        let currentUid = null;
+
+        // Verificar sesión y obtener datos del usuario
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUid = user.uid;
+                const userRef = ref(db, `users/${user.uid}`);
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    currentUsername = snapshot.val().username || "Usuario";
+                }
+                loadSuggestions();
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        // Enviar Sugerencia
+        document.getElementById('sendBtn').addEventListener('click', async () => {
+            const input = document.getElementById('suggestionInput');
+            const text = input.value.trim();
+            const btn = document.getElementById('sendBtn');
+
+            if (!text) {
+                alert("Por favor, escribe una sugerencia antes de enviar.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Enviando...";
+
+            try {
+                const sugerenciasRef = ref(db, 'sugerencias');
+                const nuevaSugerenciaRef = push(sugerenciasRef);
+                
+                await set(nuevaSugerenciaRef, {
+                    uid: currentUid,
+                    usuario: currentUsername,
+                    texto: text,
+                    fecha: serverTimestamp()
+                });
+
+                input.value = '';
+                alert("¡Gracias! Tu sugerencia ha sido enviada con éxito.");
+                
+                // Si la tabla estaba oculta, la abrimos para que vea su mensaje
+                if(!isBoardVisible){
+                    document.getElementById('toggleBtn').click();
+                }
+
+            } catch (error) {
+                console.error("Error al enviar sugerencia: ", error);
+                alert("Hubo un error al enviar tu sugerencia. Inténtalo de nuevo.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "<i class='bx bx-send'></i> Enviar Sugerencia";
+            }
+        });
+
+        // Cargar Sugerencias en tiempo real
+        function loadSuggestions() {
+            const sugerenciasRef = ref(db, 'sugerencias');
+            onValue(sugerenciasRef, (snapshot) => {
+                const board = document.getElementById('suggestions-board');
+                board.innerHTML = ''; // Limpiar lista
+                
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    // Convertir objeto a array para poder ordenarlo por fecha (más reciente primero)
+                    const sugerenciasArray = Object.keys(data).map(key => ({
+                        id: key,
+                        ...data[key]
+                    })).sort((a, b) => (b.fecha || 0) - (a.fecha || 0));
+
+                    sugerenciasArray.forEach(sug => {
+                        let dateString = "Recientemente";
+                        if(sug.fecha) {
+                            const d = new Date(sug.fecha);
+                            dateString = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+                        }
+
+                        const card = document.createElement('div');
+                        card.className = 'suggestion-card';
+                        
+                        // Si la sugerencia es del usuario actual, cambiar el color del borde a rosa
+                        if(sug.uid === currentUid) {
+                            card.style.borderLeftColor = 'var(--neon-pink)';
+                        }
+
+                        card.innerHTML = `
+                            <div class="sug-header">
+                                <span class="sug-user"><i class='bx bxs-user-circle'></i> ${sug.usuario}</span>
+                                <span class="sug-date">${dateString}</span>
+                            </div>
+                            <div class="sug-text">${sug.texto.replace(/\n/g, '<br>')}</div>
+                        `;
+                        board.appendChild(card);
+                    });
+                } else {
+                    board.innerHTML = '<p style="color:#aaa; font-size:0.9rem;">Aún no hay sugerencias. ¡Sé el primero en aportar una idea!</p>';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
