@@ -11,399 +11,72 @@
            ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
 
-        * {
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --neon-pink: #ff0055;
-            --neon-blue: #00eeff;
-            --neon-purple: #bc13fe;
-            --bg-deep: #030008;
-            --text-light: #e0f7fa;
-        }
+        * { -webkit-user-select: none; -ms-user-select: none; user-select: none; -webkit-touch-callout: none; box-sizing: border-box; }
+        :root { --neon-pink: #ff0055; --neon-blue: #00eeff; --neon-purple: #bc13fe; --bg-deep: #030008; --text-light: #e0f7fa; }
 
         body {
-            background-color: var(--bg-deep);
-            background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
-            color: var(--text-light);
-            font-family: 'Exo 2', sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            position: relative;
+            background-color: var(--bg-deep); background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
+            color: var(--text-light); font-family: 'Exo 2', sans-serif; margin: 0; padding: 0;
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-x: hidden; position: relative;
         }
 
-        /* =========================================
-           2. FONDOS ÉPICOS: ANILLOS MÁGICOS GIRATORIOS
-           ========================================= */
-        .cosmic-portal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-            overflow: hidden;
-        }
+        /* FONDOS ÉPICOS */
+        .cosmic-portal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; z-index: -1; display: flex; justify-content: center; align-items: center; pointer-events: none; overflow: hidden; }
+        .magic-ring { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+        .ring-outer { width: 900px; height: 900px; border: 4px dashed rgba(188, 19, 254, 0.4); box-shadow: 0 0 80px rgba(188, 19, 254, 0.6), inset 0 0 80px rgba(188, 19, 254, 0.4); animation: spinRing 60s linear infinite; }
+        .ring-middle { width: 700px; height: 700px; border: 2px solid rgba(0, 238, 255, 0.3); box-shadow: 0 0 50px rgba(0, 238, 255, 0.5), inset 0 0 30px rgba(0, 238, 255, 0.3); animation: spinRingReverse 30s linear infinite; }
+        .ring-inner { width: 550px; height: 550px; border: 6px dotted rgba(255, 0, 85, 0.6); box-shadow: 0 0 60px rgba(255, 0, 85, 0.8), inset 0 0 40px rgba(255, 0, 85, 0.5); animation: spinRing 20s linear infinite; }
 
-        .magic-ring {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
-        }
-
-        .ring-outer {
-            width: 900px;
-            height: 900px;
-            border: 4px dashed rgba(188, 19, 254, 0.4);
-            box-shadow: 0 0 80px rgba(188, 19, 254, 0.6), inset 0 0 80px rgba(188, 19, 254, 0.4);
-            animation: spinRing 60s linear infinite;
-        }
-
-        .ring-middle {
-            width: 700px;
-            height: 700px;
-            border: 2px solid rgba(0, 238, 255, 0.3);
-            box-shadow: 0 0 50px rgba(0, 238, 255, 0.5), inset 0 0 30px rgba(0, 238, 255, 0.3);
-            animation: spinRingReverse 30s linear infinite;
-        }
-
-        .ring-inner {
-            width: 550px;
-            height: 550px;
-            border: 6px dotted rgba(255, 0, 85, 0.6);
-            box-shadow: 0 0 60px rgba(255, 0, 85, 0.8), inset 0 0 40px rgba(255, 0, 85, 0.5);
-            animation: spinRing 20s linear infinite;
-        }
-
-        .stars {
-            position: absolute;
-            width: 100%; height: 100%;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            animation: twinkle 4s infinite alternate;
-            opacity: 0.5;
-        }
+        .stars { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)), radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)); background-repeat: repeat; background-size: 200px 200px; animation: twinkle 4s infinite alternate; opacity: 0.5; }
 
         @keyframes spinRing { 100% { transform: rotate(360deg); } }
         @keyframes spinRingReverse { 100% { transform: rotate(-360deg); } }
         @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
 
-        /* =========================================
-           3. CONTENEDOR PRINCIPAL
-           ========================================= */
-        .main-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            z-index: 10;
-            padding: 20px;
-        }
+        /* CONTENEDOR PRINCIPAL */
+        .main-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; z-index: 10; padding: 20px; }
+        .hex-wrapper { position: relative; filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.5)) drop-shadow(0 0 40px rgba(255, 0, 85, 0.3)); animation: hoverFloat 4s ease-in-out infinite; width: 100%; max-width: 420px; margin-bottom: 30px; }
+        @keyframes hoverFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .hex-container { background: rgba(10, 2, 20, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 3rem 2.5rem; text-align: center; clip-path: polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%); border: 1px solid transparent; position: relative; }
+        .hex-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--neon-purple), transparent, var(--neon-pink), transparent, var(--neon-blue)); background-size: 300% 300%; z-index: -1; opacity: 0.3; animation: borderPulse 6s ease infinite; }
+        @keyframes borderPulse { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        .hex-wrapper {
-            position: relative;
-            filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.5)) drop-shadow(0 0 40px rgba(255, 0, 85, 0.3));
-            animation: hoverFloat 4s ease-in-out infinite;
-            width: 100%;
-            max-width: 420px;
-            margin-bottom: 30px; 
-        }
+        .logo { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; margin: 0 auto 1.5rem auto; display: block; border: 2px solid var(--neon-blue); box-shadow: 0 0 20px var(--neon-blue); }
+        h1 { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.8rem; margin-bottom: 2rem; color: #fff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-blue); }
 
-        @keyframes hoverFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .hex-container {
-            background: rgba(10, 2, 20, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 3rem 2.5rem;
-            text-align: center;
-            clip-path: polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%);
-            border: 1px solid transparent; 
-            position: relative;
-        }
-
-        .hex-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, var(--neon-purple), transparent, var(--neon-pink), transparent, var(--neon-blue));
-            background-size: 300% 300%;
-            z-index: -1;
-            opacity: 0.3;
-            animation: borderPulse 6s ease infinite;
-        }
-
-        @keyframes borderPulse {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .logo {
-            width: 90px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin: 0 auto 1.5rem auto;
-            display: block;
-            border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 20px var(--neon-blue);
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-blue);
-        }
-
-        /* =========================================
-           4. INPUTS Y BOTONES
-           ========================================= */
-        .input-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #fff;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s ease;
-            text-align: center;
-            -webkit-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-        }
-
+        /* INPUTS Y BOTONES */
+        .input-box { position: relative; margin-bottom: 20px; }
+        input { width: 100%; padding: 15px 20px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; font-family: 'Exo 2', sans-serif; font-size: 1rem; outline: none; transition: all 0.3s ease; text-align: center; -webkit-user-select: text; -ms-user-select: text; user-select: text; }
         input::placeholder { color: rgba(255, 255, 255, 0.3); }
+        input:focus { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255, 0, 85, 0.4), inset 0 0 10px rgba(255, 0, 85, 0.2); transform: scale(1.02); background: rgba(20, 0, 10, 0.8); }
+        .reg-only { display: none; opacity: 0; transform: translateY(-15px); transition: opacity 0.4s ease, transform 0.4s ease; }
 
-        input:focus {
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4), inset 0 0 10px rgba(255, 0, 85, 0.2);
-            transform: scale(1.02);
-            background: rgba(20, 0, 10, 0.8);
-        }
-
-        .reg-only {
-            display: none;
-            opacity: 0;
-            transform: translateY(-15px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-
-        #actionBtn {
-            width: 100%;
-            padding: 16px;
-            margin-top: 10px;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(188, 19, 254, 0.5);
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #actionBtn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-20deg);
-            animation: lightSweep 3s infinite;
-        }
-
+        #actionBtn { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink)); border: none; border-radius: 12px; color: white; font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(188, 19, 254, 0.5); letter-spacing: 2px; position: relative; overflow: hidden; }
+        #actionBtn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: lightSweep 3s infinite; }
         @keyframes lightSweep { 0% { left: -100%; } 50%, 100% { left: 200%; } }
-
-        #actionBtn:hover {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 0 30px var(--neon-pink), 0 0 10px var(--neon-blue);
-        }
+        #actionBtn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 0 30px var(--neon-pink), 0 0 10px var(--neon-blue); }
         #actionBtn:active { transform: scale(0.95); }
 
-        .btn-secondary {
-            background: transparent;
-            border: none;
-            color: var(--neon-blue);
-            margin-top: 25px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: 0.3s;
-            font-family: 'Exo 2', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .btn-secondary { background: transparent; border: none; color: var(--neon-blue); margin-top: 25px; font-size: 0.95rem; cursor: pointer; transition: 0.3s; font-family: 'Exo 2', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-secondary:hover { color: #fff; text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue); }
+        .error { color: #ff3333; font-size: 0.85rem; margin: 10px 0; min-height: 20px; text-shadow: 0 0 8px rgba(255, 0, 0, 0.8); font-weight: 700; letter-spacing: 0.5px; }
 
-        .btn-secondary:hover {
-            color: #fff;
-            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
-        }
-
-        .error {
-            color: #ff3333;
-            font-size: 0.85rem;
-            margin: 10px 0;
-            min-height: 20px;
-            text-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        /* =========================================
-           5. CONTENEDOR DE ANUNCIOS (ABAJO)
-           ========================================= */
-        #ads-container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .ad-slot, .adsbox {
-            width: 100%;
-            min-height: 90px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px dashed rgba(0, 238, 255, 0.3);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.3);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-
-        /* =========================================
-           6. PANTALLA DE CARGA ÉPICA
-           ========================================= */
-        #loader-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 0, 8, 0.95);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        #loader-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
+        /* PANTALLA DE CARGA ÉPICA */
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 0, 8, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease; }
+        #loader-overlay.active { opacity: 1; visibility: visible; }
         .loader-atom { position: relative; width: 100px; height: 100px; }
-
-        .orbit {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: var(--neon-blue);
-            border-bottom-color: var(--neon-pink);
-            animation: orbitSpin 1s linear infinite;
-        }
-
+        .orbit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--neon-blue); border-bottom-color: var(--neon-pink); animation: orbitSpin 1s linear infinite; }
         .orbit:nth-child(2) { transform: rotateX(60deg) rotateY(45deg); animation: orbitSpin2 1.2s linear infinite; border-top-color: var(--neon-purple); border-bottom-color: var(--neon-blue); }
         .orbit:nth-child(3) { transform: rotateX(60deg) rotateY(-45deg); animation: orbitSpin3 1.4s linear infinite; border-top-color: var(--neon-pink); border-bottom-color: var(--neon-purple); }
-
-        .loader-text {
-            margin-top: 30px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            color: #fff;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px var(--neon-blue);
-            animation: pulseText 1.5s infinite alternate;
-        }
+        .loader-text { margin-top: 30px; font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #fff; letter-spacing: 4px; text-shadow: 0 0 10px var(--neon-blue); animation: pulseText 1.5s infinite alternate; }
 
         @keyframes orbitSpin { 100% { transform: rotateZ(360deg); } }
         @keyframes orbitSpin2 { 100% { transform: rotateX(60deg) rotateY(45deg) rotateZ(360deg); } }
         @keyframes orbitSpin3 { 100% { transform: rotateX(60deg) rotateY(-45deg) rotateZ(360deg); } }
         @keyframes pulseText { 0% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* =========================================
-           7. AD-BLOCKER SCREEN (CÓSMICO)
-           ========================================= */
-        .adblock-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(3, 0, 8, 0.98); backdrop-filter: blur(15px); 
-            z-index: 10000; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; text-align: center; padding: 20px; 
-        }
-        .adblock-overlay i { font-size: 5rem; color: var(--neon-pink); margin-bottom: 20px; text-shadow: 0 0 20px var(--neon-pink); animation: pulseGlowAd 2s infinite; }
-        .adblock-overlay h1 { font-family: 'Orbitron'; color: white; margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-pink); letter-spacing: 2px;}
-        .adblock-overlay p { color: #ccc; max-width: 450px; margin-bottom: 30px; font-family: 'Exo 2'; line-height: 1.6; }
-        
-        .btn-reload { 
-            padding: 15px 35px; background: transparent; border: 2px solid var(--neon-pink); 
-            color: white; border-radius: 12px; font-weight: bold; cursor: pointer; 
-            font-family: 'Orbitron'; transition: 0.3s; box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.2); 
-            letter-spacing: 1px;
-        }
-        .btn-reload:hover { background: var(--neon-pink); color: #000; box-shadow: 0 0 30px var(--neon-pink); }
-
-        @keyframes pulseGlowAd { 0%, 100% { transform: scale(1); text-shadow: 0 0 20px var(--neon-pink); } 50% { transform: scale(1.1); text-shadow: 0 0 40px var(--neon-pink); } }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
-
-    <div class="adblock-overlay" id="adblockScreen" style="display: none;">
-        <i class='bx bx-shield-x'></i>
-        <h1>ADBLOCK DETECTADO</h1>
-        <p>Para acceder a SociosXIT, necesitamos que desactives tu bloqueador de anuncios. Nuestros creadores mantienen este servicio gracias a la publicidad.</p>
-        <button class="btn-reload" onclick="location.reload()">YA LO DESACTIVÉ</button>
-    </div>
 
     <div class="cosmic-portal">
         <div class="stars"></div>
@@ -422,7 +95,6 @@
     </div>
 
     <div class="main-wrapper">
-        
         <div class="hex-wrapper">
             <div class="hex-container">
                 <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo SociosXIT" class="logo" onerror="this.src='https://via.placeholder.com/90/1a0033/00eeff?text=XIT'">
@@ -432,15 +104,12 @@
                 <div class="input-box reg-only">
                     <input type="email" id="emailReal" placeholder="Correo Electrónico" autocomplete="off">
                 </div>
-                
                 <div class="input-box reg-only">
                     <input type="tel" id="phone" placeholder="Teléfono / WhatsApp" autocomplete="off">
                 </div>
-                
                 <div class="input-box">
                     <input type="text" id="username" placeholder="Usuario" autocomplete="off">
                 </div>
-                
                 <div class="input-box">
                     <input type="password" id="password" placeholder="Contraseña">
                 </div>
@@ -451,35 +120,7 @@
                 <button id="toggleBtn" class="btn-secondary">No tengo cuenta, Registrarme</button>
             </div>
         </div>
-
-        <div id="ads-container">
-            <div class="ad-slot adsbox">TU ANUNCIO O SCRIPT AQUÍ 1</div>
-            <div class="ad-slot adsbox">TU ANUNCIO O SCRIPT AQUÍ 2</div>
-        </div>
-
     </div>
-
-    <script>
-        function checkAdBlock() {
-            const ad = document.createElement('div');
-            ad.className = 'adsbox'; 
-            ad.style.height = '1px';
-            ad.style.width = '1px';
-            ad.style.position = 'absolute';
-            ad.style.left = '-1000px';
-            document.body.appendChild(ad);
-            
-            setTimeout(() => {
-                const isBlocked = ad.offsetHeight === 0;
-                ad.remove();
-                if (isBlocked) {
-                    document.getElementById('adblockScreen').style.display = 'flex';
-                }
-            }, 300);
-        }
-        
-        window.addEventListener('load', checkAdBlock);
-    </script>
 
     <script type="module">
         import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, set } from './firebase-config.js';
@@ -499,7 +140,6 @@
         const loaderMsg = document.getElementById('loader-msg');
         
         const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
-        
         let isLogin = true;
 
         toggleBtn.addEventListener('click', () => {
@@ -534,15 +174,9 @@
             const phone = phoneIn.value.trim();
 
             if(isLogin) {
-                if(!userClean || !pass) { 
-                    msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
-                    return; 
-                }
+                if(!userClean || !pass) { msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; return; }
             } else {
-                if(!userClean || !pass || !emailReal || !phone) { 
-                    msg.innerText = "LLENA TODOS LOS CAMPOS"; 
-                    return; 
-                }
+                if(!userClean || !pass || !emailReal || !phone) { msg.innerText = "LLENA TODOS LOS CAMPOS"; return; }
             }
 
             try {
@@ -551,7 +185,7 @@
 
                 if(isLogin) {
                     await signInWithEmailAndPassword(auth, fakeEmail, pass);
-                    audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
+                    audioBienvenida.play().catch(e => console.log("Audio no disponible", e));
                 } else {
                     const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
                     const uid = userCredential.user.uid;
@@ -569,46 +203,37 @@
                 loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
-                // === AQUÍ ESTÁ LA MAGIA DEL REDIRECT DE LUCK XIT OFC ===
+                // === EL REDIRECT INTELIGENTE ===
                 setTimeout(() => {
-                    const redirectLocal = localStorage.getItem('redirectSociosXit');
-                    
-                    // ESTO CAPTURA EL LINK Y TE DEVUELVE TRAS LOGUEARTE
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirectUrl = urlParams.get('redirect');
+                    const redirectLocal = localStorage.getItem('redirectSociosXit');
                     
                     if (redirectLocal) {
                         localStorage.removeItem('redirectSociosXit'); 
                         window.location.href = redirectLocal;
                     } else if (redirectUrl) {
-                        // Magia activa: Te devuelve a la ventana exacta con tu token
+                        // Si trae el parámetro redirect (ej: ?redirect=sugerencias.html)
                         window.location.href = redirectUrl;
                     } else {
-                        // Si entraste normal a la web, te manda al inicio general
+                        // Entrada normal
                         window.location.href = "dashboard.html"; 
                     }
                 }, 2000);
 
             } catch (error) {
                 console.error(error);
-                if (error.code === 'auth/email-already-in-use') {
-                    msg.innerText = "ESTE NOMBRE DE USUARIO YA EXISTE.";
-                } else if (error.code === 'auth/weak-password') {
-                    msg.innerText = "CONTRASEÑA MUY CORTA (MIN 6).";
-                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                    msg.innerText = "USUARIO O CONTRASEÑA INCORRECTOS.";
-                } else {
-                    msg.innerText = "ERROR: " + error.code;
-                }
+                if (error.code === 'auth/email-already-in-use') msg.innerText = "ESTE NOMBRE DE USUARIO YA EXISTE.";
+                else if (error.code === 'auth/weak-password') msg.innerText = "CONTRASEÑA MUY CORTA (MIN 6).";
+                else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') msg.innerText = "USUARIO O CONTRASEÑA INCORRECTOS.";
+                else msg.innerText = "ERROR: " + error.code;
                 
                 actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
                 actionBtn.disabled = false;
             }
         });
         
-        document.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') actionBtn.click();
-        });
+        document.addEventListener('keypress', (e) => { if(e.key === 'Enter') actionBtn.click(); });
     </script>
 </body>
 </html>
