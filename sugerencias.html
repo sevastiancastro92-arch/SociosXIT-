@@ -193,7 +193,7 @@
         let currentUsername = "Usuario Anónimo";
         let currentUid = null;
 
-        // Verificar sesión y obtener datos del usuario
+        // Verificar sesión (AQUÍ ESTÁ LA MAGIA LIMPIA)
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUid = user.uid;
@@ -204,7 +204,8 @@
                 }
                 loadSuggestions();
             } else {
-                window.location.href = "login.html";
+                // Solo este archivo manda la orden de devolverse exactamente aquí
+                window.location.href = "login.html?redirect=sugerencias.html";
             }
         });
 
