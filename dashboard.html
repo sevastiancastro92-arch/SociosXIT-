@@ -74,7 +74,7 @@
             box-shadow: 0 0 20px rgba(0, 238, 255, 0.2); z-index: 100; 
         }
         .menu-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
-        .menu-btn:hover { background: rgba(0, 238, 255, 0.1); box-shadow: 0 0 15px var(--neon-blue); }
+        .menu-btn:hover { background: rgba(0, 238, 255, 0.1); box-shadow: 0 0 15px var(--neon-blue); transform: scale(1.05); }
         
         .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
         .top-bar-right::-webkit-scrollbar { display: none; }
@@ -85,11 +85,11 @@
             padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-family: 'Orbitron', sans-serif; 
             color: #ddd; white-space: nowrap; cursor: pointer; transition: 0.3s;
         }
-        .badge:hover { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); color: #fff; }
+        .badge:hover { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); color: #fff; transform: translateY(-2px); }
         .badge img { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; }
         .badge span { color: #fff; font-weight: 700; }
         .badge.green { border-color: rgba(0, 255, 204, 0.4); cursor: default; }
-        .badge.green:hover { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 204, 0.4); }
+        .badge.green:hover { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 204, 0.4); transform: none; }
         .badge.green span { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); font-size: 0.95rem; }
 
         /* =========================================
@@ -116,16 +116,18 @@
             display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; 
             padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; 
             font-size: 1rem; font-family: 'Exo 2', sans-serif; transition: 0.3s; border: 1px solid transparent;
+            position: relative; overflow: hidden;
         }
-        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s; }
         .sidebar-item:hover { 
             background: rgba(0, 238, 255, 0.05); border-color: rgba(0, 238, 255, 0.3);
             border-left: 4px solid var(--neon-blue); color: #fff; box-shadow: inset 10px 0 20px rgba(0, 238, 255, 0.1); 
+            transform: translateX(5px);
         }
-        .sidebar-item:hover i { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+        .sidebar-item:hover i { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); transform: scale(1.1); }
 
         /* =========================================
-           5. HUB CENTRAL (CONTENEDOR PRINCIPAL)
+           5. HUB CENTRAL (CONTENEDOR PRINCIPAL) Y 3D
            ========================================= */
         .main-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; z-index: 10; margin-top: 80px; }
 
@@ -136,8 +138,9 @@
             background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             padding: 2.5rem 2rem; border-radius: 20px; border: 1px solid rgba(188, 19, 254, 0.3);
             box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(188, 19, 254, 0.1);
-            position: relative; overflow: hidden;
+            position: relative; overflow: hidden; transition: all 0.3s ease;
         }
+        .hub-container:hover { box-shadow: 0 0 40px rgba(188, 19, 254, 0.3), inset 0 0 30px rgba(188, 19, 254, 0.2); }
         
         .hub-container::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
@@ -148,13 +151,33 @@
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(50px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
         
-        .center-icon { 
-            width: 90px; height: 90px; background: rgba(0,0,0,0.5); border-radius: 50%; 
-            display: flex; justify-content: center; align-items: center; font-size: 3.5rem; color: var(--neon-blue); 
-            box-shadow: 0 0 20px rgba(0, 238, 255, 0.3); margin-bottom: 20px; 
-            animation: floatIcon 4s ease-in-out infinite; border: 2px solid var(--neon-blue); 
+        /* CUBO 3D NEÓN ANIMADO */
+        .center-3d-wrapper {
+            width: 90px; height: 90px; margin-bottom: 25px;
+            perspective: 600px;
+            animation: float3D 4s ease-in-out infinite;
         }
-        @keyframes floatIcon { 0%, 100% { transform: translateY(0); box-shadow: 0 0 20px rgba(0, 238, 255, 0.3); } 50% { transform: translateY(-12px); box-shadow: 0 0 40px var(--neon-pink); border-color: var(--neon-pink); color: var(--neon-pink); } }
+        .cube {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d;
+            animation: rotateCube 10s infinite linear;
+        }
+        .cube-face {
+            position: absolute; width: 90px; height: 90px;
+            border: 2px solid var(--neon-blue);
+            background: rgba(0, 238, 255, 0.1);
+            box-shadow: inset 0 0 20px rgba(0, 238, 255, 0.4), 0 0 10px rgba(0, 238, 255, 0.3);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .cube-face.front  { transform: translateZ(45px); }
+        .cube-face.back   { transform: rotateY(180deg) translateZ(45px); }
+        .cube-face.right  { transform: rotateY(90deg) translateZ(45px); background: rgba(188, 19, 254, 0.1); border-color: var(--neon-purple); box-shadow: inset 0 0 20px rgba(188, 19, 254, 0.4), 0 0 10px rgba(188, 19, 254, 0.3); }
+        .cube-face.left   { transform: rotateY(-90deg) translateZ(45px); background: rgba(188, 19, 254, 0.1); border-color: var(--neon-purple); box-shadow: inset 0 0 20px rgba(188, 19, 254, 0.4), 0 0 10px rgba(188, 19, 254, 0.3); }
+        .cube-face.top    { transform: rotateX(90deg) translateZ(45px); background: rgba(255, 0, 85, 0.1); border-color: var(--neon-pink); box-shadow: inset 0 0 20px rgba(255, 0, 85, 0.4), 0 0 10px rgba(255, 0, 85, 0.3); }
+        .cube-face.bottom { transform: rotateX(-90deg) translateZ(45px); background: rgba(255, 0, 85, 0.1); border-color: var(--neon-pink); box-shadow: inset 0 0 20px rgba(255, 0, 85, 0.4), 0 0 10px rgba(255, 0, 85, 0.3); }
+        
+        @keyframes rotateCube { from { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); } to { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); } }
+        @keyframes float3D { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         
         .hub-title { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 900; background: linear-gradient(to right, var(--neon-blue), var(--neon-purple), var(--neon-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 10px 0; filter: drop-shadow(0 0 5px rgba(188, 19, 254, 0.5)); }
         .hub-desc { color: #cceeff; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6; }
@@ -420,6 +443,10 @@
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
             <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
+            
+            <!-- NUEVO BOTÓN DE HACER SUGERENCIA -->
+            <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
+
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-pink);"><i class='bx bx-shield-quarter' style="color: var(--neon-pink);"></i> Panel Admin</a>
             <a href="#" class="sidebar-item" id="logoutMenuBtn" style="border-top: 1px dashed rgba(188,19,254,0.4); margin-top: 10px; color: var(--neon-pink);"><i class='bx bx-log-out' style="color: var(--neon-pink);"></i> Cerrar Sesión</a>
         </div>
@@ -431,7 +458,18 @@
     <div class="main-wrapper">
         
         <div class="hub-container">
-            <div class="center-icon"><i class='bx bx-game'></i></div>
+            <!-- NUEVO DIBUJO 3D ANIMADO (REEMPLAZA AL PACMAN) -->
+            <div class="center-3d-wrapper">
+                <div class="cube">
+                    <div class="cube-face front"></div>
+                    <div class="cube-face back"></div>
+                    <div class="cube-face right"></div>
+                    <div class="cube-face left"></div>
+                    <div class="cube-face top"></div>
+                    <div class="cube-face bottom"></div>
+                </div>
+            </div>
+            
             <h1 class="hub-title">SOCIOS XIT</h1>
             <p class="hub-desc">La mejor tienda de productos y llaves digitales. Compra rápido, seguro y al instante con soporte 24/7.</p>
             <div class="action-buttons">
@@ -585,7 +623,11 @@
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                        if(data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'luck xit ofc') document.getElementById('adminMenuBtn').style.display = 'flex';
+                        
+                        // LÓGICA DE DETECCIÓN DE ROL ADMIN MEJORADA
+                        if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'luck xit ofc') {
+                            document.getElementById('adminMenuBtn').style.display = 'flex';
+                        }
 
                         // LÓGICA DE DETECCIÓN DE WHATSAPP FALTANTE
                         if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) {
