@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranking & Premios - SociosXIT</title>
+    <title>Ranking & Premios - LUCK XIT</title>
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
@@ -243,6 +243,52 @@
         .rank-amount { font-family: 'Orbitron', sans-serif; font-weight: bold; text-align: right; font-size: 1.1rem; }
         .amount-purple { color: var(--neon-purple); text-shadow: 0 0 8px rgba(188,19,254,0.6); }
 
+        /* =========================================
+           4. ESTILOS DE INSIGNIAS 2X1
+           ========================================= */
+        .badge-2x1-list {
+            background: linear-gradient(90deg, #ffcc00, #ff6600);
+            color: #000;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 6px;
+            margin-left: 8px;
+            font-weight: 900;
+            box-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+            display: inline-block;
+            animation: pulse2x1 1.5s infinite alternate;
+        }
+
+        .podium-2x1-badge {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #ffcc00, #ff6600);
+            color: #000;
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: 900;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+            font-family: 'Orbitron', sans-serif;
+            white-space: nowrap;
+            animation: pulse2x1Podium 1.5s infinite alternate;
+            z-index: 10;
+        }
+
+        @keyframes pulse2x1 {
+            from { box-shadow: 0 0 5px rgba(255, 204, 0, 0.5); transform: scale(1); }
+            to { box-shadow: 0 0 15px rgba(255, 204, 0, 0.9); transform: scale(1.05); }
+        }
+
+        @keyframes pulse2x1Podium {
+            from { box-shadow: 0 0 5px rgba(255, 204, 0, 0.5); transform: translateX(-50%) scale(1); }
+            to { box-shadow: 0 0 15px rgba(255, 204, 0, 0.9); transform: translateX(-50%) scale(1.05); }
+        }
+
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -263,7 +309,7 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        <div class="sidebar-header"><h2>LUCK XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
         
         <div class="sidebar-menu">
             <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
@@ -297,7 +343,7 @@
         <!-- PODIO TOP 3 -->
         <div class="podium-container" id="podiumContainer" style="display: none;">
             <!-- TOP 2 -->
-            <div class="podium-card top2">
+            <div class="podium-card top2" id="cardTop2">
                 <div class="medal">🥈</div>
                 <img id="top2Avatar" src="" alt="Top 2">
                 <div class="prize-tag">$3</div>
@@ -305,7 +351,7 @@
             </div>
             
             <!-- TOP 1 -->
-            <div class="podium-card top1">
+            <div class="podium-card top1" id="cardTop1">
                 <div class="medal">👑</div>
                 <img id="top1Avatar" src="" alt="Top 1">
                 <div class="prize-tag">$5</div>
@@ -313,7 +359,7 @@
             </div>
             
             <!-- TOP 3 -->
-            <div class="podium-card top3">
+            <div class="podium-card top3" id="cardTop3">
                 <div class="medal">🥉</div>
                 <img id="top3Avatar" src="" alt="Top 3">
                 <div class="prize-tag">$1</div>
@@ -522,8 +568,20 @@
             document.body.appendChild(overlay);
         }
 
+        function setPodiumBadge(cardId, isActive) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            const existingBadge = card.querySelector('.podium-2x1-badge');
+            if (existingBadge) existingBadge.remove();
+            
+            if (isActive) {
+                card.insertAdjacentHTML('beforeend', '<div class="podium-2x1-badge">🔥 2X1 ACTIVO</div>');
+            }
+        }
+
         async function loadRankings() {
             const dates = getCycleDates();
+            const nowTime = Date.now();
 
             try {
                 const snapshot = await get(ref(db, 'users'));
@@ -543,6 +601,7 @@
                     if (dName.toLowerCase() === "sebasxit") continue;
 
                     let cycleSpent = 0; 
+                    let is2x1Active = u.promo2x1End && u.promo2x1End > nowTime;
 
                     if (u.history) {
                         Object.values(u.history).forEach(p => {
@@ -561,7 +620,8 @@
                         name: dName,
                         avatar: avatarUrl,
                         cycleSpent: cycleSpent,
-                        isMe: uid === currentUserUid
+                        isMe: uid === currentUserUid,
+                        is2x1Active: is2x1Active
                     });
                 }
 
@@ -575,23 +635,28 @@
                     // TOP 1
                     document.getElementById('top1Avatar').src = sortSales[0].avatar;
                     document.getElementById('top1Name').innerText = sortSales[0].name;
+                    setPodiumBadge('cardTop1', sortSales[0].is2x1Active);
                     
                     // TOP 2
                     if(sortSales[1] && sortSales[1].cycleSpent > 0) {
                         document.getElementById('top2Avatar').src = sortSales[1].avatar;
                         document.getElementById('top2Name').innerText = sortSales[1].name;
+                        setPodiumBadge('cardTop2', sortSales[1].is2x1Active);
                     } else {
                         document.getElementById('top2Avatar').src = "https://via.placeholder.com/150/111/555?text=?";
                         document.getElementById('top2Name').innerText = "Vacío";
+                        setPodiumBadge('cardTop2', false);
                     }
 
                     // TOP 3
                     if(sortSales[2] && sortSales[2].cycleSpent > 0) {
                         document.getElementById('top3Avatar').src = sortSales[2].avatar;
                         document.getElementById('top3Name').innerText = sortSales[2].name;
+                        setPodiumBadge('cardTop3', sortSales[2].is2x1Active);
                     } else {
                         document.getElementById('top3Avatar').src = "https://via.placeholder.com/150/111/555?text=?";
                         document.getElementById('top3Name').innerText = "Vacío";
+                        setPodiumBadge('cardTop3', false);
                     }
                 } else {
                     podiumContainer.style.display = 'none';
@@ -627,6 +692,8 @@
 
                 if (user.isMe) { rowClass += " is-me-row"; textClass = "text-me"; }
 
+                const badge2x1 = user.is2x1Active ? `<span class="badge-2x1-list">🔥 2x1</span>` : '';
+
                 const html = `
                     <div class="rank-row ${rowClass}">
                         <div class="rank-info">
@@ -635,7 +702,7 @@
                                 <div class="rank-circle ${circleClass}">${rank}</div>
                             </div>
                             <span class="rank-name ${textClass}">
-                                ${user.name} <span style="font-size: 0.8rem;">${icon}</span>
+                                ${user.name} <span style="font-size: 0.8rem;">${icon}</span> ${badge2x1}
                             </span>
                         </div>
                         <div class="rank-amount ${amountClass}">
