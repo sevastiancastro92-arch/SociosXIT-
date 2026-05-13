@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - SociosXIT</title>
+    <title>Dashboard - LUCK XIT</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* =========================================
@@ -73,8 +73,9 @@
             padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; 
             box-shadow: 0 0 20px rgba(0, 238, 255, 0.2); z-index: 100; 
         }
-        .menu-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
         .menu-btn:hover { background: rgba(0, 238, 255, 0.1); box-shadow: 0 0 15px var(--neon-blue); transform: scale(1.05); }
+        .menu-btn:active { transform: scale(0.9); }
         
         .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
         .top-bar-right::-webkit-scrollbar { display: none; }
@@ -83,19 +84,21 @@
             display: flex; align-items: center; gap: 6px; 
             background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); 
             padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-family: 'Orbitron', sans-serif; 
-            color: #ddd; white-space: nowrap; cursor: pointer; transition: 0.3s;
+            color: #ddd; white-space: nowrap; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .badge:hover { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); color: #fff; transform: translateY(-2px); }
+        .badge:active { transform: scale(0.95); }
         .badge img { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; }
         .badge span { color: #fff; font-weight: 700; }
         .badge.green { border-color: rgba(0, 255, 204, 0.4); cursor: default; }
         .badge.green:hover { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 204, 0.4); transform: none; }
+        .badge.green:active { transform: scale(0.95); }
         .badge.green span { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); font-size: 0.95rem; }
 
         /* =========================================
-           4. MENÚ LATERAL CYBERPUNK
+           4. MENÚ LATERAL CYBERPUNK DINÁMICO
            ========================================= */
-        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.4s ease; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
         
         .sidebar { 
@@ -108,23 +111,83 @@
         .sidebar.active { left: 0; }
         .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(188, 19, 254, 0.4); padding-bottom: 15px; margin-bottom: 20px; }
         .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-blue); }
-        .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: 0.3s; }
-        .close-btn:hover { transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
         
-        .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: all 0.3s ease; }
+        .close-btn:hover { transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
+        .close-btn:active { transform: scale(0.9) rotate(90deg); }
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; overflow-x: hidden; }
+        .sidebar-menu::-webkit-scrollbar { display: none; }
+
+        /* Efecto Cascada (Stagger) para los botones */
         .sidebar-item { 
             display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; 
             padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; 
-            font-size: 1rem; font-family: 'Exo 2', sans-serif; transition: 0.3s; border: 1px solid transparent;
-            position: relative; overflow: hidden;
+            font-size: 1rem; font-family: 'Exo 2', sans-serif; border: 1px solid transparent;
+            position: relative; overflow: hidden; flex-shrink: 0;
+            border-left: 4px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0; transform: translateX(-30px);
         }
+        
+        .sidebar.active .sidebar-item { animation: slideInItem 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .sidebar.active .sidebar-item:nth-child(1) { animation-delay: 0.1s; }
+        .sidebar.active .sidebar-item:nth-child(2) { animation-delay: 0.15s; }
+        .sidebar.active .sidebar-item:nth-child(3) { animation-delay: 0.2s; }
+        .sidebar.active .sidebar-item:nth-child(4) { animation-delay: 0.25s; }
+        .sidebar.active .sidebar-item:nth-child(5) { animation-delay: 0.3s; }
+        .sidebar.active .sidebar-item:nth-child(6) { animation-delay: 0.35s; }
+        .sidebar.active .sidebar-item:nth-child(7) { animation-delay: 0.4s; }
+        .sidebar.active .sidebar-item:nth-child(8) { animation-delay: 0.45s; }
+        .sidebar.active .sidebar-item:nth-child(9) { animation-delay: 0.5s; }
+        .sidebar.active .sidebar-item:nth-child(10) { animation-delay: 0.55s; }
+
+        @keyframes slideInItem { to { opacity: 1; transform: translateX(0); } }
+
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s; }
+        
         .sidebar-item:hover { 
-            background: rgba(0, 238, 255, 0.05); border-color: rgba(0, 238, 255, 0.3);
-            border-left: 4px solid var(--neon-blue); color: #fff; box-shadow: inset 10px 0 20px rgba(0, 238, 255, 0.1); 
-            transform: translateX(5px);
+            background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); 
+            border-left: 4px solid var(--neon-blue); color: #fff; box-shadow: -5px 0 15px rgba(0, 238, 255, 0.2); 
+            transform: translateX(8px);
         }
         .sidebar-item:hover i { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); transform: scale(1.1); }
+        .sidebar-item:active { transform: scale(0.95) translateX(5px); }
+        
+        .sidebar-footer { margin-top: auto; border-top: 1px dashed rgba(188, 19, 254, 0.4); padding-top: 20px; flex-shrink: 0; }
+        
+        /* Botón Logout Dinámico */
+        .logout-btn {
+            width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink);
+            padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron';
+            cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+            position: relative; overflow: hidden; z-index: 1;
+        }
+        .logout-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 85, 0.4), transparent);
+            transition: left 0.5s ease; z-index: -1;
+        }
+        .logout-btn:hover { background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); text-shadow: 0 0 5px var(--neon-pink); }
+        .logout-btn:hover::before { left: 100%; }
+        .logout-btn:active { transform: scale(0.92); }
+
+        /* Información de Versión Animada */
+        .sidebar-version {
+            text-align: center; margin-top: 20px; font-family: 'Exo 2', sans-serif; color: #666; font-size: 0.75rem; display: flex; flex-direction: column; gap: 5px;
+        }
+        .sidebar-version p { margin: 0; transition: color 0.3s; }
+        .sidebar-version:hover p { color: #aaa; }
+        .version-badge {
+            display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+            color: var(--neon-blue); font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 238, 255, 0.6); margin-top: 5px;
+            animation: pulseV4 2s infinite alternate ease-in-out;
+        }
+        @keyframes pulseV4 {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 238, 255, 0.4)); }
+            100% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(0, 238, 255, 0.9)); }
+        }
 
         /* =========================================
            5. HUB CENTRAL (CONTENEDOR PRINCIPAL) Y 3D
@@ -194,12 +257,15 @@
         
         .btn-ranking { background: linear-gradient(90deg, #FFD700, #ff0055); color: #000; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); border: 1px solid #fff; }
         .btn-ranking:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 30px #FFD700; color: white;}
+        .btn-ranking:active { transform: scale(0.95); }
         
         .btn-store { background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color: #fff; box-shadow: 0 0 20px rgba(0, 238, 255, 0.4); border: 1px solid rgba(255,255,255,0.2); }
         .btn-store:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 30px var(--neon-blue); }
+        .btn-store:active { transform: scale(0.95); }
         
         .btn-history { background: transparent; border: 2px solid var(--neon-pink); color: var(--neon-pink); box-shadow: inset 0 0 10px rgba(255, 0, 85, 0.2); }
         .btn-history:hover { background: rgba(255, 0, 85, 0.1); transform: translateY(-3px) scale(1.03); box-shadow: 0 0 20px rgba(255, 0, 85, 0.4), inset 0 0 20px rgba(255, 0, 85, 0.4); color: white; }
+        .btn-history:active { transform: scale(0.95); }
 
         /* =========================================
            6. ESPACIO PARA ANUNCIOS
@@ -284,7 +350,7 @@
             z-index: 9500; display: flex; justify-content: center; align-items: center;
             opacity: 0; visibility: hidden; transition: all 0.5s ease;
         }
-        .wa-group-overlay { z-index: 9600; } /* Un poco por encima por si acaso */
+        .wa-group-overlay { z-index: 9600; } 
         .wa-alert-overlay.show, .wa-group-overlay.show { opacity: 1; visibility: visible; }
         
         .wa-alert-box {
@@ -332,8 +398,8 @@
            ========================================= */
         .wa-float-btn {
             position: fixed;
-            bottom: 30px; /* Separado del borde inferior */
-            right: 30px; /* Separado del borde derecho */
+            bottom: 30px; 
+            right: 30px; 
             width: 60px;
             height: 60px;
             background-color: var(--wa-green);
@@ -365,7 +431,7 @@
     <div class="adblock-overlay" id="adblockScreen" style="display: none;">
         <i class='bx bx-shield-x'></i>
         <h1>ADBLOCK DETECTADO</h1>
-        <p>Para acceder a SociosXIT, necesitamos que desactives tu bloqueador de anuncios. Nuestros creadores mantienen este servicio gracias a la publicidad.</p>
+        <p>Para acceder a LUCK XIT, necesitamos que desactives tu bloqueador de anuncios. Nuestros creadores mantienen este servicio gracias a la publicidad.</p>
         <button class="btn-reload" onclick="location.reload()">YA LO DESACTIVÉ</button>
     </div>
 
@@ -432,9 +498,13 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        <div class="sidebar-header">
+            <h2>LUCK XIT</h2>
+            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
+        </div>
+        
         <div class="sidebar-menu">
-            <a href="dashboard.html" class="sidebar-item" style="border-left: 4px solid var(--neon-blue); background: rgba(0, 238, 255, 0.1); color: var(--neon-blue);"><i class='bx bx-home-alt-2' style="color: var(--neon-blue);"></i> Inicio</a>
+            <a href="dashboard.html" class="sidebar-item" style="border-left: 4px solid var(--neon-blue); background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); color: var(--neon-blue); box-shadow: -5px 0 15px rgba(0, 238, 255, 0.1); transform: translateX(5px); opacity: 1;"><i class='bx bx-home-alt-2' style="color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue);"></i> Inicio</a>
             <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
             <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
             <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
@@ -443,14 +513,17 @@
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
             <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
-            
-            <!-- NUEVO BOTÓN DE HACER SUGERENCIA -->
             <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
-
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-pink);"><i class='bx bx-shield-quarter' style="color: var(--neon-pink);"></i> Panel Admin</a>
-            <a href="#" class="sidebar-item" id="logoutMenuBtn" style="border-top: 1px dashed rgba(188,19,254,0.4); margin-top: 10px; color: var(--neon-pink);"><i class='bx bx-log-out' style="color: var(--neon-pink);"></i> Cerrar Sesión</a>
         </div>
-        <div class="sidebar-footer"></div>
+        
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutMenuBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
+            <div class="sidebar-version">
+                <p>Copyright SebasXit 2024 - 2026</p>
+                <div class="version-badge"><i class='bx bx-code-alt'></i> V4</div>
+            </div>
+        </div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
@@ -458,7 +531,6 @@
     <div class="main-wrapper">
         
         <div class="hub-container">
-            <!-- NUEVO DIBUJO 3D ANIMADO (REEMPLAZA AL PACMAN) -->
             <div class="center-3d-wrapper">
                 <div class="cube">
                     <div class="cube-face front"></div>
@@ -470,7 +542,7 @@
                 </div>
             </div>
             
-            <h1 class="hub-title">SOCIOS XIT</h1>
+            <h1 class="hub-title">LUCK XIT</h1>
             <p class="hub-desc">La mejor tienda de productos y llaves digitales. Compra rápido, seguro y al instante con soporte 24/7.</p>
             <div class="action-buttons">
                 <a href="ranking.html" class="neon-btn btn-ranking"><i class='bx bx-trophy'></i> Ver Rankings y Premios</a>
@@ -493,7 +565,7 @@
     <script>
         function checkAdBlock() {
             const ad = document.createElement('div');
-            ad.className = 'adsbox'; // Usamos la misma clase trampa
+            ad.className = 'adsbox'; 
             ad.style.height = '1px';
             ad.style.width = '1px';
             ad.style.position = 'absolute';
@@ -509,25 +581,21 @@
             }, 300);
         }
         
-        // Se ejecuta apenas carga la página
         window.addEventListener('load', () => {
             checkAdBlock();
             
-            // Lógica del Grupo de WhatsApp (Aparece si no le han dado a 'No mostrar más')
             setTimeout(() => {
                 if (!localStorage.getItem('waGroupDismissed')) {
                     document.getElementById('waGroupOverlay').classList.add('show');
                 }
-            }, 1000); // Aparece 1 segundo después de cargar
+            }, 1000); 
         });
 
-        // Control de cierre para no volver a mostrar Grupo WhatsApp
         document.getElementById('btnCerrarWaGroup').onclick = () => {
             localStorage.setItem('waGroupDismissed', 'true');
             document.getElementById('waGroupOverlay').classList.remove('show');
         };
 
-        // Control de cierre de alerta de WhatsApp (Perfil)
         document.getElementById('btnCerrarWaAlert').onclick = () => {
             sessionStorage.setItem('waAlertDismissed', 'true');
             document.getElementById('waAlertOverlay').classList.remove('show');
@@ -624,14 +692,11 @@
                         
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         
-                        // LÓGICA DE DETECCIÓN DE ROL ADMIN MEJORADA
                         if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'luck xit ofc') {
                             document.getElementById('adminMenuBtn').style.display = 'flex';
                         }
 
-                        // LÓGICA DE DETECCIÓN DE WHATSAPP FALTANTE
                         if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) {
-                            // Retraso para no chocar con la alerta de grupo (aparece a los 2s si falta el wpp)
                             setTimeout(() => {
                                 document.getElementById('waAlertOverlay').classList.add('show');
                             }, 2000);
@@ -666,7 +731,6 @@
                     }
                 });
             } else { 
-                // AQUÍ SE CAPTURA LA URL PARA LUEGO REDIRIGIR DESPUÉS DEL LOGIN
                 const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
                 window.location.href = "login.html?redirect=" + currentPath; 
             }
