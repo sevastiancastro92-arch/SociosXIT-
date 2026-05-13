@@ -7,7 +7,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* =========================================
-           1. FUENTES Y VARIABLES CÓSMICAS
+           1. FUENTES Y VARIABLES CYBER-NEÓN
            ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
 
@@ -15,25 +15,23 @@
             -webkit-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            -webkit-touch-callout: none;
             box-sizing: border-box;
+            margin: 0; padding: 0;
         }
 
         :root {
-            --neon-pink: #ff0055;
-            --neon-blue: #00eeff;
-            --neon-purple: #bc13fe;
-            --bg-deep: #030008;
+            --neon-pink: #ff007f;
+            --neon-blue: #00f2ff;
+            --neon-purple: #8a2be2;
+            --bg-deep: #0a0a12;
             --text-light: #e0f7fa;
         }
 
         body {
             background-color: var(--bg-deep);
-            background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
+            background-image: radial-gradient(circle at center, #1a0a2e 0%, var(--bg-deep) 80%);
             color: var(--text-light);
             font-family: 'Exo 2', sans-serif;
-            margin: 0;
-            padding: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -44,367 +42,219 @@
         }
 
         /* =========================================
-           2. FONDOS ÉPICOS: ANILLOS MÁGICOS GIRATORIOS
+           2. BOTÓN DE AUDIO FLOTANTE
            ========================================= */
-        .cosmic-portal {
+        .audio-btn-container {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #audioBtn {
+            background: rgba(10, 10, 18, 0.8);
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
             display: flex;
             justify-content: center;
             align-items: center;
-            pointer-events: none;
-            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
-        .magic-ring {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
+        #audioBtn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 0 25px var(--neon-blue);
+            background: var(--neon-blue);
+            color: #000;
         }
 
-        .ring-outer {
-            width: 900px;
-            height: 900px;
-            border: 4px dashed rgba(188, 19, 254, 0.4);
-            box-shadow: 0 0 80px rgba(188, 19, 254, 0.6), inset 0 0 80px rgba(188, 19, 254, 0.4);
-            animation: spinRing 60s linear infinite;
+        /* =========================================
+           3. FONDOS ÉPICOS: PORTAL CÓSMICO
+           ========================================= */
+        .cosmic-portal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100vw; height: 100vh; z-index: -1;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: none; overflow: hidden;
         }
-
-        .ring-middle {
-            width: 700px;
-            height: 700px;
-            border: 2px solid rgba(0, 238, 255, 0.3);
-            box-shadow: 0 0 50px rgba(0, 238, 255, 0.5), inset 0 0 30px rgba(0, 238, 255, 0.3);
-            animation: spinRingReverse 30s linear infinite;
-        }
-
-        .ring-inner {
-            width: 550px;
-            height: 550px;
-            border: 6px dotted rgba(255, 0, 85, 0.6);
-            box-shadow: 0 0 60px rgba(255, 0, 85, 0.8), inset 0 0 40px rgba(255, 0, 85, 0.5);
-            animation: spinRing 20s linear infinite;
-        }
-
+        .magic-ring { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+        .ring-outer { width: 900px; height: 900px; border: 4px dashed rgba(138, 43, 226, 0.4); box-shadow: 0 0 80px rgba(138, 43, 226, 0.6); animation: spinRing 60s linear infinite; }
+        .ring-middle { width: 700px; height: 700px; border: 2px solid rgba(0, 242, 255, 0.3); box-shadow: 0 0 50px rgba(0, 242, 255, 0.5); animation: spinRingReverse 30s linear infinite; }
+        .ring-inner { width: 550px; height: 550px; border: 6px dotted rgba(255, 0, 127, 0.6); box-shadow: 0 0 60px rgba(255, 0, 127, 0.8); animation: spinRing 20s linear infinite; }
         .stars {
-            position: absolute;
-            width: 100%; height: 100%;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            animation: twinkle 4s infinite alternate;
-            opacity: 0.5;
+            position: absolute; width: 100%; height: 100%;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0));
+            background-size: 200px 200px; animation: twinkle 4s infinite alternate; opacity: 0.5;
         }
-
         @keyframes spinRing { 100% { transform: rotate(360deg); } }
         @keyframes spinRingReverse { 100% { transform: rotate(-360deg); } }
         @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
 
         /* =========================================
-           3. CONTENEDOR PRINCIPAL
+           4. CONTENEDOR PRINCIPAL Y ANIMACIÓN
            ========================================= */
         .main-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            z-index: 10;
-            padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; width: 100%; z-index: 10; padding: 20px;
         }
 
         .hex-wrapper {
             position: relative;
-            filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.5)) drop-shadow(0 0 40px rgba(255, 0, 85, 0.3));
-            animation: hoverFloat 4s ease-in-out infinite;
             width: 100%;
             max-width: 420px;
             margin-bottom: 30px; 
+            padding: 3px; /* Espacio para el borde animado */
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue), var(--neon-pink));
+            border-radius: 25px;
+            animation: rotateBorder 5s linear infinite;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.4);
         }
 
-        @keyframes hoverFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        @keyframes rotateBorder { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
         .hex-container {
-            background: rgba(10, 2, 20, 0.85);
+            background: rgba(10, 10, 18, 0.95);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             padding: 3rem 2.5rem;
             text-align: center;
-            clip-path: polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%);
-            border: 1px solid transparent; 
-            position: relative;
-        }
-
-        .hex-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, var(--neon-purple), transparent, var(--neon-pink), transparent, var(--neon-blue));
-            background-size: 300% 300%;
-            z-index: -1;
-            opacity: 0.3;
-            animation: borderPulse 6s ease infinite;
-        }
-
-        @keyframes borderPulse {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .logo {
-            width: 90px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin: 0 auto 1.5rem auto;
-            display: block;
-            border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 20px var(--neon-blue);
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-blue);
-        }
-
-        /* =========================================
-           4. INPUTS Y BOTONES
-           ========================================= */
-        .input-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #fff;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s ease;
-            text-align: center;
-            -webkit-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-        }
-
-        input::placeholder { color: rgba(255, 255, 255, 0.3); }
-
-        input:focus {
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4), inset 0 0 10px rgba(255, 0, 85, 0.2);
-            transform: scale(1.02);
-            background: rgba(20, 0, 10, 0.8);
-        }
-
-        .reg-only {
-            display: none;
-            opacity: 0;
-            transform: translateY(-15px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-
-        #actionBtn {
-            width: 100%;
-            padding: 16px;
-            margin-top: 10px;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(188, 19, 254, 0.5);
-            letter-spacing: 2px;
+            border-radius: 22px;
             position: relative;
             overflow: hidden;
         }
 
-        #actionBtn::before {
-            content: '';
+        .logo {
+            width: 90px; height: 90px; object-fit: cover; border-radius: 50%;
+            margin: 0 auto 1.5rem auto; display: block;
+            border: 2px solid var(--neon-blue); box-shadow: 0 0 20px var(--neon-blue);
+            animation: pulseText 2s infinite alternate;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.8rem;
+            margin-bottom: 2rem; color: #fff; text-transform: uppercase;
+            letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-blue);
+            transition: all 0.4s ease;
+        }
+
+        /* =========================================
+           5. INPUTS Y BOTONES CON OJITO DE CONTRASEÑA
+           ========================================= */
+        .input-box {
+            position: relative;
+            margin-bottom: 20px;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        input {
+            width: 100%; padding: 15px 45px 15px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+            color: #fff; font-family: 'Exo 2', sans-serif; font-size: 1rem;
+            outline: none; transition: all 0.3s ease;
+            -webkit-user-select: text; user-select: text;
+        }
+
+        input::placeholder { color: rgba(255, 255, 255, 0.4); }
+
+        input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+            background: rgba(20, 20, 30, 0.9);
+        }
+
+        /* Ojito de contraseña */
+        .toggle-password {
             position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-20deg);
-            animation: lightSweep 3s infinite;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neon-blue);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .toggle-password:hover { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
+
+        /* Campos ocultos de registro animado */
+        .reg-wrapper {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
         }
 
-        @keyframes lightSweep { 0% { left: -100%; } 50%, 100% { left: 200%; } }
-
-        #actionBtn:hover {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 0 30px var(--neon-pink), 0 0 10px var(--neon-blue);
+        .reg-wrapper.active {
+            max-height: 200px; /* Suficiente para los dos inputs */
+            opacity: 1;
         }
+
+        #actionBtn {
+            width: 100%; padding: 16px; margin-top: 10px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            border: none; border-radius: 12px; color: white;
+            font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 1.1rem;
+            text-transform: uppercase; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); letter-spacing: 2px;
+        }
+
+        #actionBtn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 30px var(--neon-pink), 0 0 15px var(--neon-blue); }
         #actionBtn:active { transform: scale(0.95); }
 
         .btn-secondary {
-            background: transparent;
-            border: none;
-            color: var(--neon-blue);
-            margin-top: 25px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: 0.3s;
-            font-family: 'Exo 2', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: transparent; border: none; color: var(--neon-blue);
+            margin-top: 25px; font-size: 0.95rem; cursor: pointer; transition: 0.3s;
+            font-family: 'Exo 2', sans-serif; text-transform: uppercase; letter-spacing: 1px;
         }
+        .btn-secondary:hover { color: #fff; text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue); }
 
-        .btn-secondary:hover {
-            color: #fff;
-            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
-        }
-
-        .error {
-            color: #ff3333;
-            font-size: 0.85rem;
-            margin: 10px 0;
-            min-height: 20px;
-            text-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
+        .error { color: #ff3333; font-size: 0.85rem; margin: 10px 0; min-height: 20px; font-weight: 700; text-shadow: 0 0 8px rgba(255, 0, 0, 0.8); }
 
         /* =========================================
-           5. CONTENEDOR DE ANUNCIOS (ABAJO)
+           6. COMPONENTES EXTRA (LOADER, ADS, ADBLOCK)
            ========================================= */
-        #ads-container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .ad-slot, .adsbox {
-            width: 100%;
-            min-height: 90px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px dashed rgba(0, 238, 255, 0.3);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.3);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-
-        /* =========================================
-           6. PANTALLA DE CARGA ÉPICA
-           ========================================= */
-        #loader-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 0, 8, 0.95);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        #loader-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
+        #ads-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
+        .adsbox { width: 100%; min-height: 90px; background: rgba(0, 0, 0, 0.4); border: 1px dashed rgba(0, 242, 255, 0.3); border-radius: 8px; display: flex; justify-content: center; align-items: center; color: rgba(255, 255, 255, 0.3); font-family: 'Orbitron', sans-serif; font-size: 0.8rem; }
+        
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 18, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.5s ease; }
+        #loader-overlay.active { opacity: 1; visibility: visible; }
         .loader-atom { position: relative; width: 100px; height: 100px; }
-
-        .orbit {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: var(--neon-blue);
-            border-bottom-color: var(--neon-pink);
-            animation: orbitSpin 1s linear infinite;
-        }
-
+        .orbit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--neon-blue); border-bottom-color: var(--neon-pink); animation: orbitSpin 1s linear infinite; }
         .orbit:nth-child(2) { transform: rotateX(60deg) rotateY(45deg); animation: orbitSpin2 1.2s linear infinite; border-top-color: var(--neon-purple); border-bottom-color: var(--neon-blue); }
         .orbit:nth-child(3) { transform: rotateX(60deg) rotateY(-45deg); animation: orbitSpin3 1.4s linear infinite; border-top-color: var(--neon-pink); border-bottom-color: var(--neon-purple); }
-
-        .loader-text {
-            margin-top: 30px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            color: #fff;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px var(--neon-blue);
-            animation: pulseText 1.5s infinite alternate;
-        }
-
-        @keyframes orbitSpin { 100% { transform: rotateZ(360deg); } }
-        @keyframes orbitSpin2 { 100% { transform: rotateX(60deg) rotateY(45deg) rotateZ(360deg); } }
-        @keyframes orbitSpin3 { 100% { transform: rotateX(60deg) rotateY(-45deg) rotateZ(360deg); } }
-        @keyframes pulseText { 0% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* =========================================
-           7. AD-BLOCKER SCREEN (CÓSMICO)
-           ========================================= */
-        .adblock-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(3, 0, 8, 0.98); backdrop-filter: blur(15px); 
-            z-index: 10000; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; text-align: center; padding: 20px; 
-        }
-        .adblock-overlay i { font-size: 5rem; color: var(--neon-pink); margin-bottom: 20px; text-shadow: 0 0 20px var(--neon-pink); animation: pulseGlowAd 2s infinite; }
-        .adblock-overlay h1 { font-family: 'Orbitron'; color: white; margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-pink); letter-spacing: 2px;}
-        .adblock-overlay p { color: #ccc; max-width: 450px; margin-bottom: 30px; font-family: 'Exo 2'; line-height: 1.6; }
+        .loader-text { margin-top: 30px; font-family: 'Orbitron'; font-size: 1.2rem; color: #fff; letter-spacing: 4px; animation: pulseText 1.5s infinite alternate; }
+        @keyframes pulseText { 0% { opacity: 0.5; text-shadow: 0 0 10px var(--neon-blue); } 100% { opacity: 1; text-shadow: 0 0 20px var(--neon-blue), 0 0 30px var(--neon-pink); } }
         
-        .btn-reload { 
-            padding: 15px 35px; background: transparent; border: 2px solid var(--neon-pink); 
-            color: white; border-radius: 12px; font-weight: bold; cursor: pointer; 
-            font-family: 'Orbitron'; transition: 0.3s; box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.2); 
-            letter-spacing: 1px;
-        }
-        .btn-reload:hover { background: var(--neon-pink); color: #000; box-shadow: 0 0 30px var(--neon-pink); }
-
-        @keyframes pulseGlowAd { 0%, 100% { transform: scale(1); text-shadow: 0 0 20px var(--neon-pink); } 50% { transform: scale(1.1); text-shadow: 0 0 40px var(--neon-pink); } }
+        .adblock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 18, 0.98); backdrop-filter: blur(15px); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .adblock-overlay i { font-size: 5rem; color: var(--neon-pink); margin-bottom: 20px; animation: pulseText 2s infinite; }
+        .btn-reload { padding: 15px 35px; background: transparent; border: 2px solid var(--neon-pink); color: white; border-radius: 12px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s; }
+        .btn-reload:hover { background: var(--neon-pink); box-shadow: 0 0 30px var(--neon-pink); }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
+    <!-- Botón Flotante de Audio -->
+    <div class="audio-btn-container">
+        <button id="audioBtn" title="Activar/Desactivar Sonido">
+            <i class='bx bx-volume-full' id="audioIcon"></i>
+        </button>
+    </div>
+
+    <!-- AdBlock -->
     <div class="adblock-overlay" id="adblockScreen" style="display: none;">
         <i class='bx bx-shield-x'></i>
-        <h1>ADBLOCK DETECTADO</h1>
-        <p>Para acceder a SociosXIT, necesitamos que desactives tu bloqueador de anuncios. Nuestros creadores mantienen este servicio gracias a la publicidad.</p>
+        <h1 style="font-family: 'Orbitron'; margin-bottom: 10px;">ADBLOCK DETECTADO</h1>
+        <p style="color: #ccc; max-width: 450px; margin-bottom: 30px;">Para acceder a SociosXIT, necesitamos que desactives tu bloqueador. Mantenemos esto gracias a la publicidad.</p>
         <button class="btn-reload" onclick="location.reload()">YA LO DESACTIVÉ</button>
     </div>
 
+    <!-- Fondos -->
     <div class="cosmic-portal">
         <div class="stars"></div>
         <div class="magic-ring ring-outer"></div>
@@ -412,6 +262,7 @@
         <div class="magic-ring ring-inner"></div>
     </div>
 
+    <!-- Loader -->
     <div id="loader-overlay">
         <div class="loader-atom">
             <div class="orbit"></div>
@@ -422,27 +273,30 @@
     </div>
 
     <div class="main-wrapper">
-        
         <div class="hex-wrapper">
             <div class="hex-container">
-                <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo SociosXIT" class="logo" onerror="this.src='https://via.placeholder.com/90/1a0033/00eeff?text=XIT'">
+                <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/90/1a0033/00eeff?text=XIT'">
                 
                 <h1 id="title">Iniciar Sesión</h1>
                 
-                <div class="input-box reg-only">
-                    <input type="email" id="emailReal" placeholder="Correo Electrónico" autocomplete="off">
+                <!-- Contenedor Deslizante para Registro -->
+                <div class="reg-wrapper" id="regFields">
+                    <div class="input-box">
+                        <input type="email" id="emailReal" placeholder="Correo Electrónico" autocomplete="off">
+                    </div>
+                    <div class="input-box">
+                        <input type="tel" id="phone" placeholder="Teléfono / WhatsApp" autocomplete="off">
+                    </div>
                 </div>
                 
-                <div class="input-box reg-only">
-                    <input type="tel" id="phone" placeholder="Teléfono / WhatsApp" autocomplete="off">
-                </div>
-                
+                <!-- Campos Fijos -->
                 <div class="input-box">
                     <input type="text" id="username" placeholder="Usuario" autocomplete="off">
                 </div>
                 
                 <div class="input-box">
                     <input type="password" id="password" placeholder="Contraseña">
+                    <i class='bx bx-show toggle-password' id="togglePassword"></i>
                 </div>
                 
                 <p id="msg" class="error"></p>
@@ -456,31 +310,52 @@
             <div class="ad-slot adsbox">TU ANUNCIO O SCRIPT AQUÍ 1</div>
             <div class="ad-slot adsbox">TU ANUNCIO O SCRIPT AQUÍ 2</div>
         </div>
-
     </div>
 
+    <!-- LOGICA DE INTERFAZ -->
     <script>
-        function checkAdBlock() {
+        // 1. Detección de AdBlock
+        window.addEventListener('load', () => {
             const ad = document.createElement('div');
-            ad.className = 'adsbox'; 
-            ad.style.height = '1px';
-            ad.style.width = '1px';
-            ad.style.position = 'absolute';
-            ad.style.left = '-1000px';
+            ad.className = 'adsbox'; ad.style.height = '1px'; ad.style.width = '1px'; ad.style.position = 'absolute'; ad.style.left = '-1000px';
             document.body.appendChild(ad);
-            
             setTimeout(() => {
-                const isBlocked = ad.offsetHeight === 0;
+                if (ad.offsetHeight === 0) document.getElementById('adblockScreen').style.display = 'flex';
                 ad.remove();
-                if (isBlocked) {
-                    document.getElementById('adblockScreen').style.display = 'flex';
-                }
             }, 300);
-        }
+        });
+
+        // 2. Control de Audio con LocalStorage
+        const audioBtn = document.getElementById('audioBtn');
+        const audioIcon = document.getElementById('audioIcon');
+        let isAudioEnabled = localStorage.getItem('audioState') !== 'false'; // Por defecto true
+
+        const updateAudioUI = () => {
+            audioIcon.className = isAudioEnabled ? 'bx bx-volume-full' : 'bx bx-volume-mute';
+            audioIcon.style.color = isAudioEnabled ? 'var(--neon-blue)' : '#ff3333';
+            audioBtn.style.borderColor = isAudioEnabled ? 'var(--neon-blue)' : '#ff3333';
+        };
+        updateAudioUI();
+
+        audioBtn.addEventListener('click', () => {
+            isAudioEnabled = !isAudioEnabled;
+            localStorage.setItem('audioState', isAudioEnabled);
+            updateAudioUI();
+        });
+
+        // 3. Mostrar/Ocultar Contraseña
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
         
-        window.addEventListener('load', checkAdBlock);
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.classList.toggle('bx-show');
+            togglePassword.classList.toggle('bx-hide');
+        });
     </script>
 
+    <!-- LOGICA FIREBASE (INTACTA) -->
     <script type="module">
         import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, set } from './firebase-config.js';
 
@@ -493,7 +368,7 @@
         const toggleBtn = document.getElementById('toggleBtn');
         const title = document.getElementById('title');
         const msg = document.getElementById('msg');
-        const regFields = document.querySelectorAll('.reg-only');
+        const regFields = document.getElementById('regFields'); // Contenedor animado
         
         const loaderOverlay = document.getElementById('loader-overlay');
         const loaderMsg = document.getElementById('loader-msg');
@@ -502,26 +377,27 @@
         
         let isLogin = true;
 
+        // Alternar Deslizamiento de Formulario
         toggleBtn.addEventListener('click', () => {
             isLogin = !isLogin;
-            title.innerText = isLogin ? "Iniciar Sesión" : "Crear Cuenta";
-            actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
-            toggleBtn.innerText = isLogin ? "No tengo cuenta, Registrarme" : "Ya tengo cuenta, Iniciar";
+            
+            // Animación de cambio de texto
+            title.style.opacity = 0;
+            setTimeout(() => {
+                title.innerText = isLogin ? "Iniciar Sesión" : "Crear Cuenta";
+                actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
+                toggleBtn.innerText = isLogin ? "No tengo cuenta, Registrarme" : "Ya tengo cuenta, Iniciar";
+                title.style.opacity = 1;
+            }, 200);
+
             msg.innerText = "";
 
-            regFields.forEach(field => {
-                if (isLogin) {
-                    field.style.opacity = '0';
-                    field.style.transform = 'translateY(-15px)';
-                    setTimeout(() => field.style.display = 'none', 400);
-                } else {
-                    field.style.display = 'block';
-                    setTimeout(() => {
-                        field.style.opacity = '1';
-                        field.style.transform = 'translateY(0)';
-                    }, 10);
-                }
-            });
+            // Deslizar campos de registro
+            if (isLogin) {
+                regFields.classList.remove('active');
+            } else {
+                regFields.classList.add('active');
+            }
         });
 
         actionBtn.addEventListener('click', async () => {
@@ -534,15 +410,9 @@
             const phone = phoneIn.value.trim();
 
             if(isLogin) {
-                if(!userClean || !pass) { 
-                    msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
-                    return; 
-                }
+                if(!userClean || !pass) return msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
             } else {
-                if(!userClean || !pass || !emailReal || !phone) { 
-                    msg.innerText = "LLENA TODOS LOS CAMPOS"; 
-                    return; 
-                }
+                if(!userClean || !pass || !emailReal || !phone) return msg.innerText = "LLENA TODOS LOS CAMPOS"; 
             }
 
             try {
@@ -551,7 +421,10 @@
 
                 if(isLogin) {
                     await signInWithEmailAndPassword(auth, fakeEmail, pass);
-                    audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
+                    // Reproducir audio solo si el LocalStorage lo permite
+                    if(isAudioEnabled) {
+                        audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
+                    }
                 } else {
                     const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
                     const uid = userCredential.user.uid;
@@ -569,31 +442,22 @@
                 loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
-                // === EL REDIRECT INTELIGENTE (SOLO PARA SUGERENCIAS) ===
                 setTimeout(() => {
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirectUrl = urlParams.get('redirect');
-                    
-                    // Si viene exactamente del link de sugerencias, lo devuelve allá
                     if (redirectUrl === 'sugerencias.html') {
                         window.location.href = "sugerencias.html";
                     } else {
-                        // Si viene de cualquier otro lado (dashboard, index, etc), lo manda al dashboard normal
                         window.location.href = "dashboard.html"; 
                     }
                 }, 2000);
 
             } catch (error) {
                 console.error(error);
-                if (error.code === 'auth/email-already-in-use') {
-                    msg.innerText = "ESTE NOMBRE DE USUARIO YA EXISTE.";
-                } else if (error.code === 'auth/weak-password') {
-                    msg.innerText = "CONTRASEÑA MUY CORTA (MIN 6).";
-                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                    msg.innerText = "USUARIO O CONTRASEÑA INCORRECTOS.";
-                } else {
-                    msg.innerText = "ERROR: " + error.code;
-                }
+                if (error.code === 'auth/email-already-in-use') msg.innerText = "ESTE NOMBRE DE USUARIO YA EXISTE.";
+                else if (error.code === 'auth/weak-password') msg.innerText = "CONTRASEÑA MUY CORTA (MIN 6).";
+                else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') msg.innerText = "USUARIO O CONTRASEÑA INCORRECTOS.";
+                else msg.innerText = "ERROR: " + error.code;
                 
                 actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
                 actionBtn.disabled = false;
