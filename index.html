@@ -16,7 +16,7 @@
         
         * { 
             -webkit-user-select: none; user-select: none; box-sizing: border-box; 
-            touch-action: manipulation; /* Previene el lag de doble toque y bloquea zoom extra */
+            touch-action: manipulation; 
         }
         
         :root { 
@@ -38,7 +38,8 @@
             min-height: 100dvh; 
             display: flex; justify-content: flex-start; align-items: center; flex-direction: column; 
             overflow-x: hidden; 
-            overscroll-behavior-y: none; /* Previene el "pull-to-refresh" visual */
+            overscroll-behavior-y: none; 
+            transition: background-image 0.5s ease-in-out;
         }
 
         /* =========================================
@@ -49,10 +50,10 @@
             width: 100vw; height: 100vh; z-index: -2;
             display: flex; justify-content: center; align-items: center;
             pointer-events: none; overflow: hidden;
-            will-change: transform; /* Optimización de renderizado */
+            will-change: transform;
         }
 
-        .magic-ring { position: absolute; border-radius: 50%; mix-blend-mode: screen; will-change: transform; }
+        .magic-ring { position: absolute; border-radius: 50%; mix-blend-mode: screen; will-change: transform; transition: 0.5s; }
         .ring-outer { width: 900px; height: 900px; border: 4px dashed rgba(188, 19, 254, 0.3); box-shadow: 0 0 80px rgba(188, 19, 254, 0.4); animation: spinRing 60s linear infinite; }
         .ring-middle { width: 700px; height: 700px; border: 2px solid rgba(0, 238, 255, 0.2); box-shadow: 0 0 50px rgba(0, 238, 255, 0.3); animation: spinRingReverse 30s linear infinite; }
         .ring-inner { width: 550px; height: 550px; border: 6px dotted rgba(255, 0, 85, 0.3); box-shadow: 0 0 60px rgba(255, 0, 85, 0.4); animation: spinRing 20s linear infinite; }
@@ -139,18 +140,49 @@
         .logout-btn:hover { background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 15px rgba(255, 0, 85, 0.3); }
 
         /* =========================================
-           5. CONTENEDOR DEL CATÁLOGO
+           5. SISTEMA DE PROMO 2X1
+           ========================================= */
+        .promo-container {
+            width: 95%; max-width: 600px; margin: 90px auto 10px auto; 
+            background: rgba(0,0,0,0.6); border: 2px dashed var(--neon-purple);
+            border-radius: 15px; padding: 15px; text-align: center;
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); transition: all 0.5s ease-in-out;
+            z-index: 10; position: relative; backdrop-filter: blur(5px);
+        }
+        .promo-title { font-family: 'Orbitron'; color: var(--neon-blue); margin: 0 0 10px 0; font-size: 1.1rem; text-shadow: 0 0 8px var(--neon-blue); transition: 0.5s; }
+        .promo-progress-bg { background: rgba(255,255,255,0.1); width: 100%; height: 22px; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid rgba(0, 238, 255, 0.4); }
+        .promo-progress-fill { background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); height: 100%; width: 0%; transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 15px var(--neon-purple); }
+        .promo-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 0.85rem; font-weight: bold; color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        
+        .countdown { font-size: 1.8rem; font-family: 'Orbitron'; font-weight: 900; color: #ffcc00; text-shadow: 0 0 15px #ffcc00; margin-top: 10px; display: none; }
+
+        /* MODO 2X1 ACTIVO (ESTADO ALEGRE) */
+        body.mode-2x1 { background-image: radial-gradient(circle at center, #3a2200 0%, #0a0500 70%); }
+        body.mode-2x1 .promo-container { border-color: #ffcc00; box-shadow: 0 0 40px rgba(255, 204, 0, 0.5); background: rgba(40, 25, 0, 0.8); transform: scale(1.02); }
+        body.mode-2x1 .promo-title { color: #ffcc00; text-shadow: 0 0 15px #ffcc00; font-size: 1.25rem; animation: pulseTitle 1s infinite alternate; }
+        body.mode-2x1 .ring-outer { border-color: rgba(255, 204, 0, 0.6); box-shadow: 0 0 80px rgba(255, 204, 0, 0.5); }
+        body.mode-2x1 .ring-middle { border-color: rgba(255, 100, 0, 0.5); box-shadow: 0 0 50px rgba(255, 100, 0, 0.4); }
+        body.mode-2x1 .ring-inner { border-color: rgba(255, 255, 0, 0.5); box-shadow: 0 0 60px rgba(255, 255, 0, 0.4); }
+        body.mode-2x1 .btn-select { background: linear-gradient(90deg, #ffcc00, #ff6600); color: #000; box-shadow: 0 0 20px rgba(255, 204, 0, 0.5); }
+        body.mode-2x1 .btn-select:hover { box-shadow: 0 0 30px rgba(255, 204, 0, 0.8); }
+        body.mode-2x1 .catalog-container { border-color: rgba(255, 204, 0, 0.4); }
+        body.mode-2x1 .header-title i { color: #ffcc00; filter: drop-shadow(0 0 5px #ffcc00); }
+
+        @keyframes pulseTitle { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+        /* =========================================
+           6. CONTENEDOR DEL CATÁLOGO
            ========================================= */
         .catalog-container { 
-            width: 95%; max-width: 600px; margin: 90px auto 30px auto; 
+            width: 95%; max-width: 600px; margin: 15px auto 30px auto; 
             display: flex; flex-direction: column; gap: 15px; z-index: 10; 
             background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
             padding: 20px; border-radius: 20px; border: 1px solid rgba(188, 19, 254, 0.2);
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5); transition: 0.5s;
         }
         
         .header-title { display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; font-size: 1.6rem; font-weight: 700; margin: 0; color: #fff; text-shadow: 0 0 10px var(--neon-purple); text-transform: uppercase; }
-        .header-title i { color: var(--neon-blue); font-size: 2rem; filter: drop-shadow(0 0 5px var(--neon-blue)); }
+        .header-title i { color: var(--neon-blue); font-size: 2rem; filter: drop-shadow(0 0 5px var(--neon-blue)); transition: 0.5s; }
         
         .filter-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
         
@@ -171,7 +203,7 @@
         .toggle-stock.active { background: rgba(0, 255, 204, 0.1); border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 204, 0.3); }
 
         /* =========================================
-           6. TARJETAS DE PRODUCTOS (CÓSMICAS)
+           7. TARJETAS DE PRODUCTOS (CÓSMICAS)
            ========================================= */
         .products-grid { display: flex; flex-direction: column; gap: 20px; }
         
@@ -216,7 +248,7 @@
         .btn-select:active { transform: scale(0.98); }
 
         /* =========================================
-           7. MODALES Y SELECCIÓN DE COMPRA
+           8. MODALES Y SELECCIÓN DE COMPRA
            ========================================= */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 2000; animation: fadeIn 0.3s; }
         
@@ -331,6 +363,19 @@
     
     <canvas id="particle-canvas"></canvas>
 
+    <!-- SISTEMA DE PROMOCIÓN 2X1 -->
+    <div class="promo-container" id="promoContainer">
+        <h3 class="promo-title" id="promoTitle">🔥 ¡Gasta $10 esta semana y obtén 2x1! 🔥</h3>
+        <p id="promoDesc" style="font-size: 0.85rem; color: #ccc; margin-top: 0; margin-bottom: 15px; font-family: 'Exo 2';">El conteo se reinicia cada 7 días. ¡Al llegar a $10 tendrás 24 horas de 2x1 en todos los productos!</p>
+        
+        <div class="promo-progress-bg" id="promoProgressBg">
+            <div class="promo-progress-fill" id="promoProgressFill"></div>
+            <div class="promo-text" id="promoText">$0.00 / $10.00</div>
+        </div>
+        
+        <div class="countdown" id="promoCountdown">24:00:00</div>
+    </div>
+
     <div class="catalog-container">
         <h2 class="header-title"><i class='bx bx-package'></i> Catálogo de Productos</h2>
         <div class="filter-controls">
@@ -355,7 +400,7 @@
             <p class="modal-subtitle" id="purchaseProdDur">DURACIÓN</p>
             
             <div class="purchase-info-box">
-                <p>Stock Disponible: <span id="purchaseStock" class="highlight">0</span></p>
+                <p>Stock <span id="stockLabel">Disponible</span>: <span id="purchaseStock" class="highlight">0</span></p>
                 <p>Precio Unitario: <span id="purchasePrice" class="highlight">$0.00</span></p>
             </div>
 
@@ -395,7 +440,20 @@
 
         setPersistence(auth, browserSessionPersistence).catch(console.error);
 
-        let currentUser = null; let currentBalance = 0; let allProducts = []; let filterStockOnly = false;
+        let currentUser = null; 
+        let currentBalance = 0; 
+        let allProducts = []; 
+        let filterStockOnly = false;
+        
+        // Variables Promoción 2x1
+        let weeklySpent = 0;
+        let lastReset = 0;
+        let promo2x1End = 0;
+        let is2x1Active = false;
+        let countdownInterval = null;
+        const WEEKLY_GOAL = 10.00;
+        const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+        const DAY_MS = 24 * 60 * 60 * 1000;
         
         // Estado de la compra actual
         let currentPurchaseData = { productId: '', durId: '', durInfo: null, prodName: '', maxStock: 0, unitPrice: 0 };
@@ -423,6 +481,21 @@
                         
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
+                        
+                        // Lógica del modo 2x1
+                        let now = Date.now();
+                        weeklySpent = data.weeklySpent || 0;
+                        lastReset = data.lastReset || now;
+                        promo2x1End = data.promo2x1End || 0;
+
+                        // Reiniciar el conteo semanal si pasaron 7 días
+                        if (now - lastReset > WEEK_MS) {
+                            weeklySpent = 0;
+                            lastReset = now;
+                            update(ref(db, `users/${user.uid}`), { weeklySpent: 0, lastReset: now });
+                        }
+
+                        update2x1Status();
                     }
                 });
                 loadProductsData();
@@ -431,6 +504,49 @@
                 window.location.href = "login.html?redirect=" + currentPath; 
             }
         });
+
+        // Actualizar UI del modo 2x1
+        function update2x1Status() {
+            let now = Date.now();
+            
+            if (promo2x1End > now) {
+                is2x1Active = true;
+                document.body.classList.add('mode-2x1');
+                document.getElementById('promoTitle').innerHTML = "✨ ¡ESTÁS EN MODO 2X1! APROVECHA ✨";
+                document.getElementById('promoDesc').innerText = "¡Pagas 1 producto y el sistema te entregará 2 keys automáticamente!";
+                document.getElementById('promoProgressBg').style.display = 'none';
+                document.getElementById('promoCountdown').style.display = 'block';
+                
+                if (countdownInterval) clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    let timeLeft = promo2x1End - Date.now();
+                    if (timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        promo2x1End = 0;
+                        weeklySpent = 0; // Se reinicia para que pueda volver a intentarlo
+                        update(ref(db, `users/${currentUser.uid}`), { promo2x1End: 0, weeklySpent: 0 });
+                        update2x1Status(); // Volver al modo normal
+                    } else {
+                        let h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        let m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        let s = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                        document.getElementById('promoCountdown').innerText = 
+                            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                    }
+                }, 1000);
+            } else {
+                is2x1Active = false;
+                document.body.classList.remove('mode-2x1');
+                document.getElementById('promoTitle').innerHTML = "🔥 ¡Gasta $10 esta semana y obtén 2x1! 🔥";
+                document.getElementById('promoDesc').innerText = "El conteo se reinicia cada 7 días. ¡Al llegar a $10 tendrás 24 horas de 2x1 en todos los productos!";
+                document.getElementById('promoProgressBg').style.display = 'block';
+                document.getElementById('promoCountdown').style.display = 'none';
+                
+                let percent = Math.min((weeklySpent / WEEKLY_GOAL) * 100, 100);
+                document.getElementById('promoProgressFill').style.width = percent + '%';
+                document.getElementById('promoText').innerText = `$${weeklySpent.toFixed(2)} / $${WEEKLY_GOAL.toFixed(2)}`;
+            }
+        }
 
         async function loadProductsData() {
             const container = document.getElementById('productsGrid');
@@ -485,22 +601,28 @@
         document.getElementById('searchInput').addEventListener('input', renderProducts);
         document.getElementById('stockToggleBtn').addEventListener('click', (e) => { filterStockOnly = !filterStockOnly; e.currentTarget.classList.toggle('active'); renderProducts(); });
 
-        // PASO 1: Abrir lista de duraciones
+        // PASO 1: Abrir lista de duraciones (Calculando stock inteligente para 2x1)
         window.openVariants = (product) => {
             document.getElementById('modalProdTitle').innerText = product.name;
             const vList = document.getElementById('variantList'); vList.innerHTML = '';
 
             if(product.durations) {
                 Object.keys(product.durations).forEach(durId => {
-                    const dur = product.durations[durId]; const stock = dur.keys ? Object.keys(dur.keys).length : 0;
+                    const dur = product.durations[durId]; 
+                    const actualStock = dur.keys ? Object.keys(dur.keys).length : 0;
+                    
+                    // Si está en 2x1, cada compra cuesta 1 pero roba 2 del stock, por lo que el máximo de compras posibles es stock/2
+                    const maxPurchasable = is2x1Active ? Math.floor(actualStock / 2) : actualStock;
+                    
                     const vItem = document.createElement('div'); vItem.className = 'variant-item';
                     
-                    if(stock > 0) {
-                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>Stock: ${stock} unidades</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
-                        vItem.onclick = () => openPurchaseModal(product.id, durId, dur, product.name, stock);
+                    if(maxPurchasable > 0) {
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>${is2x1Active ? 'Stock (Pares Disponibles):' : 'Stock:'} ${maxPurchasable}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
+                        vItem.onclick = () => openPurchaseModal(product.id, durId, dur, product.name, maxPurchasable);
                     } else {
                         vItem.style.opacity = '0.5'; vItem.style.cursor = 'not-allowed';
-                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span style="color:var(--neon-pink)">Agotado temporalmente</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
+                        let errorTxt = (is2x1Active && actualStock === 1) ? 'Requiere 2 keys min. (Modo 2x1)' : 'Agotado temporalmente';
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span style="color:var(--neon-pink)">${errorTxt}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
                     }
                     vList.appendChild(vItem);
                 });
@@ -511,20 +633,18 @@
         window.closeVariants = () => document.getElementById('variantModal').style.display = 'none';
 
         // PASO 2: Abrir modal de compra específica
-        window.openPurchaseModal = (productId, durId, durInfo, prodName, stock) => {
+        window.openPurchaseModal = (productId, durId, durInfo, prodName, stockVisual) => {
             document.getElementById('variantModal').style.display = 'none';
             document.getElementById('errorMsg').style.display = 'none';
             
-            // Guardar estado actual
-            currentPurchaseData = { productId, durId, durInfo, prodName, maxStock: stock, unitPrice: durInfo.price };
+            currentPurchaseData = { productId, durId, durInfo, prodName, maxStock: stockVisual, unitPrice: durInfo.price };
             
-            // Configurar UI
             document.getElementById('purchaseProdTitle').innerText = prodName;
             document.getElementById('purchaseProdDur').innerText = durInfo.duration;
-            document.getElementById('purchaseStock').innerText = stock;
+            document.getElementById('purchaseStock').innerText = stockVisual;
+            document.getElementById('stockLabel').innerText = is2x1Active ? "de Pares (2x1)" : "Disponible";
             document.getElementById('purchasePrice').innerText = `$${durInfo.price.toFixed(2)}`;
             
-            // Reset cantidad y calcular total
             document.getElementById('purchaseQty').value = 1;
             updateTotalDisplay();
 
@@ -536,7 +656,6 @@
             document.getElementById('variantModal').style.display = 'flex';
         };
 
-        // Lógica de los botones de cantidad (+ y -)
         const qtyInput = document.getElementById('purchaseQty');
         
         function updateTotalDisplay() {
@@ -555,11 +674,14 @@
             if (qty < currentPurchaseData.maxStock) { qtyInput.value = qty + 1; updateTotalDisplay(); }
         };
 
-        // Evento principal de compra
+        // Evento principal de compra (Con inyección de 2x1)
         document.getElementById('btnConfirmPurchase').onclick = async () => {
             const errorEl = document.getElementById('errorMsg'); 
             let quantity = parseInt(qtyInput.value) || 1;
             const totalCost = currentPurchaseData.unitPrice * quantity;
+
+            // Si está activo el 2x1, las llaves a extraer serán el doble
+            let keysRequired = is2x1Active ? quantity * 2 : quantity;
 
             if (currentBalance < totalCost) { 
                 errorEl.style.color = "var(--neon-pink)";
@@ -569,7 +691,7 @@
             }
 
             errorEl.style.color = "var(--neon-green)"; 
-            errorEl.innerText = `PROCESANDO COMPRA DE ${quantity} UNIDAD(ES)...`; 
+            errorEl.innerText = `PROCESANDO TRANSACCIÓN...`; 
             errorEl.style.display = 'block';
             
             try {
@@ -583,8 +705,9 @@
                     
                     if (targetDur && targetDur.keys) {
                         const keyIds = Object.keys(targetDur.keys);
-                        if (keyIds.length >= quantity) { 
-                            for(let i = 0; i < quantity; i++) {
+                        // Extaer en base a keysRequired (2x si hay promo)
+                        if (keyIds.length >= keysRequired) { 
+                            for(let i = 0; i < keysRequired; i++) {
                                 const keyId = keyIds[i];
                                 keysToDeliver.push(targetDur.keys[keyId]);
                                 delete targetDur.keys[keyId];
@@ -595,23 +718,39 @@
                     return; 
                 });
 
-                if (result.committed && keysToDeliver.length === quantity) {
+                if (result.committed && keysToDeliver.length === keysRequired) {
                     const newBalance = parseFloat((currentBalance - totalCost).toFixed(2));
                     const updates = { [`users/${currentUser.uid}/balance`]: newBalance };
                     
+                    // Guardar todas las keys en el historial individualmente
                     keysToDeliver.forEach(k => {
                         const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
                         updates[`users/${currentUser.uid}/history/${historyRef.key}`] = { 
-                            product: `${currentPurchaseData.prodName} - ${currentPurchaseData.durInfo.duration}`, 
+                            product: `${currentPurchaseData.prodName} - ${currentPurchaseData.durInfo.duration} ${is2x1Active ? '[MODO 2X1]' : ''}`, 
                             key: k, 
-                            price: currentPurchaseData.unitPrice, 
+                            price: currentPurchaseData.unitPrice / (is2x1Active ? 2 : 1), 
                             date: Date.now() 
                         };
                     });
 
+                    // Progreso del 2x1 si NO está activo actualmente
+                    if (!is2x1Active) {
+                        weeklySpent += totalCost;
+                        updates[`users/${currentUser.uid}/weeklySpent`] = weeklySpent;
+                        
+                        // Si alcanzó la meta, activar 24 horas de modo 2x1
+                        if (weeklySpent >= WEEKLY_GOAL) {
+                            promo2x1End = Date.now() + DAY_MS;
+                            updates[`users/${currentUser.uid}/promo2x1End`] = promo2x1End;
+                        }
+                    }
+
                     await update(ref(db), updates);
                     currentBalance = newBalance; 
                     document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
+                    
+                    // Refrescar UI visual de la promoción
+                    update2x1Status();
                     
                     document.getElementById('purchaseModal').style.display = 'none'; 
                     document.getElementById('deliveredKeyNeon').innerHTML = keysToDeliver.join('<br><br>'); 
@@ -641,7 +780,7 @@
         overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=>window.location.href="login.html");
         
-        // Optimización del canvas para evitar lag: Reducción de partículas e integers
+        // Optimización del canvas
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { 
@@ -649,7 +788,7 @@
             update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } 
             draw() { ctx.beginPath(); ctx.arc(this.x | 0, this.y | 0, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } 
         }
-        for (let i = 0; i < 20; i++) particles.push(new Particle()); // Reducido a 20 partículas para mejor rendimiento
+        for (let i = 0; i < 20; i++) particles.push(new Particle());
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
 </body>
