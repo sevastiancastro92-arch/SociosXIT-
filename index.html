@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Catálogo - SociosXIT</title>
+    <title>Catálogo - LUCK XIT</title>
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2505548585376357" crossorigin="anonymous"></script>
 
@@ -118,7 +118,7 @@
         }
         .sidebar.active { left: 0; }
         .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(188, 19, 254, 0.4); padding-bottom: 15px; margin-bottom: 20px; }
-        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-blue); }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.5rem; text-shadow: 0 0 10px var(--neon-blue); }
         .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: 0.3s; }
         .close-btn:hover { transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
         
@@ -346,7 +346,7 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        <div class="sidebar-header"><h2>LUCK XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
         <div class="sidebar-menu">
             <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
             <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
@@ -400,7 +400,7 @@
             <p class="modal-subtitle" id="purchaseProdDur">DURACIÓN</p>
             
             <div class="purchase-info-box">
-                <p>Stock <span id="stockLabel">Disponible</span>: <span id="purchaseStock" class="highlight">0</span></p>
+                <p>Stock <span id="stockLabel">Total Real</span>: <span id="purchaseStock" class="highlight">0</span></p>
                 <p>Precio Unitario: <span id="purchasePrice" class="highlight">$0.00</span></p>
             </div>
 
@@ -421,6 +421,26 @@
                 <i class='bx bx-check-double'></i> PROCESAR PAGO
             </button>
             <button class="btn-cancel-modal" onclick="backToVariants()">VOLVER A OPCIONES</button>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMACIÓN STOCK INCOMPLETO PARA 2X1 -->
+    <div id="confirmPartialModal" class="modal-overlay">
+        <div class="modal-box" style="border-color: #ffcc00; box-shadow: 0 0 40px rgba(255, 204, 0, 0.3);">
+            <h3 class="modal-title" style="color: #ffcc00;">⚠️ AVISO DE STOCK ⚠️</h3>
+            <p class="modal-subtitle" style="color: #ddd; font-family: 'Exo 2'; text-transform: none; line-height: 1.4;">
+                No hay suficientes keys para entregarte la promoción 2x1 completa.
+            </p>
+            <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px dashed #ffcc00; text-align: center;">
+                <p style="margin: 0; color: #fff; font-size: 1rem;">Si continúas, pagarás el monto total pero solo se te entregarán:</p>
+                <p style="margin: 5px 0 0 0; color: #ffcc00; font-size: 1.5rem; font-family: 'Orbitron'; font-weight: bold;"><span id="partialKeysCount">0</span> KEYS</p>
+            </div>
+            <button class="btn-select" id="btnProceedPartial" style="background: linear-gradient(90deg, #ffcc00, #ff6600); box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); color: #000; margin-bottom: 10px;">
+                SÍ, COMPRAR LO DISPONIBLE
+            </button>
+            <button class="btn-cancel-modal" onclick="document.getElementById('confirmPartialModal').style.display='none'" style="border-color: #ffcc00; color: #ffcc00; margin-top: 0;">
+                CANCELAR
+            </button>
         </div>
     </div>
 
@@ -601,7 +621,7 @@
         document.getElementById('searchInput').addEventListener('input', renderProducts);
         document.getElementById('stockToggleBtn').addEventListener('click', (e) => { filterStockOnly = !filterStockOnly; e.currentTarget.classList.toggle('active'); renderProducts(); });
 
-        // PASO 1: Abrir lista de duraciones (Calculando stock inteligente para 2x1)
+        // PASO 1: Abrir lista de duraciones (Mostrando stock real siempre)
         window.openVariants = (product) => {
             document.getElementById('modalProdTitle').innerText = product.name;
             const vList = document.getElementById('variantList'); vList.innerHTML = '';
@@ -611,18 +631,14 @@
                     const dur = product.durations[durId]; 
                     const actualStock = dur.keys ? Object.keys(dur.keys).length : 0;
                     
-                    // Si está en 2x1, cada compra cuesta 1 pero roba 2 del stock, por lo que el máximo de compras posibles es stock/2
-                    const maxPurchasable = is2x1Active ? Math.floor(actualStock / 2) : actualStock;
-                    
                     const vItem = document.createElement('div'); vItem.className = 'variant-item';
                     
-                    if(maxPurchasable > 0) {
-                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>${is2x1Active ? 'Stock (Pares Disponibles):' : 'Stock:'} ${maxPurchasable}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
-                        vItem.onclick = () => openPurchaseModal(product.id, durId, dur, product.name, maxPurchasable);
+                    if(actualStock > 0) {
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>Stock Total: ${actualStock}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
+                        vItem.onclick = () => openPurchaseModal(product.id, durId, dur, product.name, actualStock);
                     } else {
                         vItem.style.opacity = '0.5'; vItem.style.cursor = 'not-allowed';
-                        let errorTxt = (is2x1Active && actualStock === 1) ? 'Requiere 2 keys min. (Modo 2x1)' : 'Agotado temporalmente';
-                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span style="color:var(--neon-pink)">${errorTxt}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span style="color:var(--neon-pink)">Agotado temporalmente</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
                     }
                     vList.appendChild(vItem);
                 });
@@ -633,16 +649,15 @@
         window.closeVariants = () => document.getElementById('variantModal').style.display = 'none';
 
         // PASO 2: Abrir modal de compra específica
-        window.openPurchaseModal = (productId, durId, durInfo, prodName, stockVisual) => {
+        window.openPurchaseModal = (productId, durId, durInfo, prodName, realStock) => {
             document.getElementById('variantModal').style.display = 'none';
             document.getElementById('errorMsg').style.display = 'none';
             
-            currentPurchaseData = { productId, durId, durInfo, prodName, maxStock: stockVisual, unitPrice: durInfo.price };
+            currentPurchaseData = { productId, durId, durInfo, prodName, maxStock: realStock, unitPrice: durInfo.price };
             
             document.getElementById('purchaseProdTitle').innerText = prodName;
             document.getElementById('purchaseProdDur').innerText = durInfo.duration;
-            document.getElementById('purchaseStock').innerText = stockVisual;
-            document.getElementById('stockLabel').innerText = is2x1Active ? "de Pares (2x1)" : "Disponible";
+            document.getElementById('purchaseStock').innerText = realStock;
             document.getElementById('purchasePrice').innerText = `$${durInfo.price.toFixed(2)}`;
             
             document.getElementById('purchaseQty').value = 1;
@@ -674,14 +689,14 @@
             if (qty < currentPurchaseData.maxStock) { qtyInput.value = qty + 1; updateTotalDisplay(); }
         };
 
-        // Evento principal de compra (Con inyección de 2x1)
-        document.getElementById('btnConfirmPurchase').onclick = async () => {
+        // Evento de validación de pago e intercepción de 2x1 incompleto
+        document.getElementById('btnConfirmPurchase').onclick = () => {
             const errorEl = document.getElementById('errorMsg'); 
             let quantity = parseInt(qtyInput.value) || 1;
             const totalCost = currentPurchaseData.unitPrice * quantity;
 
-            // Si está activo el 2x1, las llaves a extraer serán el doble
             let keysRequired = is2x1Active ? quantity * 2 : quantity;
+            let availableKeys = currentPurchaseData.maxStock;
 
             if (currentBalance < totalCost) { 
                 errorEl.style.color = "var(--neon-pink)";
@@ -690,6 +705,25 @@
                 return; 
             }
 
+            // Si el 2x1 está activo pero los requisitos superan el stock real...
+            if (is2x1Active && keysRequired > availableKeys) {
+                document.getElementById('partialKeysCount').innerText = availableKeys;
+                document.getElementById('confirmPartialModal').style.display = 'flex';
+                
+                // Si el usuario acepta, procedemos con lo disponible
+                document.getElementById('btnProceedPartial').onclick = () => {
+                    document.getElementById('confirmPartialModal').style.display = 'none';
+                    executePurchase(quantity, totalCost, availableKeys);
+                };
+            } else {
+                // Proceder normalmente
+                executePurchase(quantity, totalCost, keysRequired);
+            }
+        };
+
+        // Función principal de transacción en Firebase
+        async function executePurchase(purchaseQuantity, totalCost, finalKeysCount) {
+            const errorEl = document.getElementById('errorMsg'); 
             errorEl.style.color = "var(--neon-green)"; 
             errorEl.innerText = `PROCESANDO TRANSACCIÓN...`; 
             errorEl.style.display = 'block';
@@ -705,9 +739,8 @@
                     
                     if (targetDur && targetDur.keys) {
                         const keyIds = Object.keys(targetDur.keys);
-                        // Extaer en base a keysRequired (2x si hay promo)
-                        if (keyIds.length >= keysRequired) { 
-                            for(let i = 0; i < keysRequired; i++) {
+                        if (keyIds.length >= finalKeysCount) { 
+                            for(let i = 0; i < finalKeysCount; i++) {
                                 const keyId = keyIds[i];
                                 keysToDeliver.push(targetDur.keys[keyId]);
                                 delete targetDur.keys[keyId];
@@ -718,17 +751,18 @@
                     return; 
                 });
 
-                if (result.committed && keysToDeliver.length === keysRequired) {
+                if (result.committed && keysToDeliver.length === finalKeysCount) {
                     const newBalance = parseFloat((currentBalance - totalCost).toFixed(2));
                     const updates = { [`users/${currentUser.uid}/balance`]: newBalance };
                     
-                    // Guardar todas las keys en el historial individualmente
+                    // Guardar todas las keys en el historial calculando el costo unitario de lo que realmente recibió
+                    const pricePerKey = totalCost / finalKeysCount;
                     keysToDeliver.forEach(k => {
                         const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
                         updates[`users/${currentUser.uid}/history/${historyRef.key}`] = { 
                             product: `${currentPurchaseData.prodName} - ${currentPurchaseData.durInfo.duration} ${is2x1Active ? '[MODO 2X1]' : ''}`, 
                             key: k, 
-                            price: currentPurchaseData.unitPrice / (is2x1Active ? 2 : 1), 
+                            price: pricePerKey, 
                             date: Date.now() 
                         };
                     });
@@ -749,7 +783,6 @@
                     currentBalance = newBalance; 
                     document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
                     
-                    // Refrescar UI visual de la promoción
                     update2x1Status();
                     
                     document.getElementById('purchaseModal').style.display = 'none'; 
@@ -764,7 +797,7 @@
                 errorEl.innerText = "ERROR DE CONEXIÓN AL SERVIDOR."; 
                 console.error(error);
             }
-        };
+        }
 
         window.copyKey = () => { 
             navigator.clipboard.writeText(document.getElementById('deliveredKeyNeon').innerText).then(() => { 
