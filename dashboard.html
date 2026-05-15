@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - LUCK XIT</title>
+    <title>Dashboard - Socios XIT </title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* =========================================
@@ -431,7 +431,7 @@
     <div class="adblock-overlay" id="adblockScreen" style="display: none;">
         <i class='bx bx-shield-x'></i>
         <h1>ADBLOCK DETECTADO</h1>
-        <p>Para acceder a LUCK XIT, necesitamos que desactives tu bloqueador de anuncios. Nuestros creadores mantienen este servicio gracias a la publicidad.</p>
+        <p>Para acceder a Socios XIT , necesitamos que desactives tu bloqueador de anuncios. Nuestros creadores mantienen este servicio gracias a la publicidad.</p>
         <button class="btn-reload" onclick="location.reload()">YA LO DESACTIVÉ</button>
     </div>
 
@@ -499,7 +499,7 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>LUCK XIT</h2>
+            <h2>Socios XIT </h2>
             <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
         </div>
         
@@ -512,6 +512,9 @@
             <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
+            <a href="diamantes.html" class="sidebar-item">
+  <i class='bx bxs-diamond'></i> Diamantes FF
+</a>
             <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
             <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-pink);"><i class='bx bx-shield-quarter' style="color: var(--neon-pink);"></i> Panel Admin</a>
@@ -542,7 +545,7 @@
                 </div>
             </div>
             
-            <h1 class="hub-title">LUCK XIT</h1>
+            <h1 class="hub-title">Socios XIT </h1>
             <p class="hub-desc">La mejor tienda de productos y llaves digitales. Compra rápido, seguro y al instante con soporte 24/7.</p>
             <div class="action-buttons">
                 <a href="ranking.html" class="neon-btn btn-ranking"><i class='bx bx-trophy'></i> Ver Rankings y Premios</a>
@@ -692,7 +695,7 @@
                         
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         
-                        if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'luck xit ofc') {
+                        if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'Socios XIT  ofc') {
                             document.getElementById('adminMenuBtn').style.display = 'flex';
                         }
 
