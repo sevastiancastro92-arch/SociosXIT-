@@ -8,11 +8,22 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&family=Exo+2:wght@300;500;700&display=swap');
 
         * { user-select: none; box-sizing: border-box; }
 
-        :root { --neon-purple: #bc13fe; --neon-red: #ff073a; --neon-cyan: #00f3ff; --neon-green: #00ffcc; --glass-bg: rgba(15, 0, 25, 0.7); }
+        :root { 
+            /* Variables Operaciones */
+            --neon-purple: #bc13fe; 
+            --neon-red: #ff073a; 
+            --neon-cyan: #00f3ff; 
+            --neon-green: #00ffcc; 
+            --glass-bg: rgba(15, 0, 25, 0.7); 
+            /* Variables Menú */
+            --neon-pink: #ff0055;
+            --neon-blue: #00eeff;
+            --sidebar-bg: rgba(5, 0, 15, 0.95);
+        }
 
         body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
@@ -24,49 +35,96 @@
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #020202; } ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 4px; box-shadow: 0 0 10px var(--neon-purple); }
 
+        /* BARRA SUPERIOR */
         .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 900px; background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-purple); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(188, 19, 254, 0.15); z-index: 100; }
+        .top-bar-left { display: flex; gap: 10px; }
         .menu-btn { background: transparent; border: 1px solid var(--neon-purple); color: var(--neon-purple); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
         .menu-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--neon-purple); background: rgba(188, 19, 254, 0.1); }
         .top-bar-right { display: flex; align-items: center; gap: 10px; }
         .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; }
         .badge i { font-size: 1.1rem; color: var(--neon-purple); } .badge span { color: #fff; font-weight: 600; }
 
-        .admin-container { width: 95%; max-width: 900px; margin: 90px auto 30px auto; z-index: 10; animation: popIn 0.6s ease-out; }
-        .header-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 20px 0; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px; }
+        /* MENÚ LATERAL CYBERPUNK */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.4s ease; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        
+        .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 2px solid var(--neon-purple); box-shadow: 10px 0 30px rgba(188, 19, 254, 0.2); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; overflow-y: auto; }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(188, 19, 254, 0.4); padding-bottom: 15px; margin-bottom: 20px; flex-shrink: 0;}
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-blue); }
+        
+        .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: all 0.3s ease; }
+        .close-btn:hover { transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
+        .close-btn:active { transform: scale(0.9) rotate(90deg); }
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; padding-bottom: 20px; overflow-x: hidden; }
 
-        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; }
-        .admin-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; animation: float 4s ease-in-out infinite; }
-        .admin-card:nth-child(even) { animation-delay: 1s; } .admin-card:nth-child(3n) { animation-delay: 2s; }
-        .admin-card:hover { transform: translateY(-5px) scale(1.02) !important; border-color: var(--neon-purple); box-shadow: 0 5px 25px rgba(188, 19, 254, 0.3); z-index: 2; animation-play-state: paused; }
-        .card-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; font-size: 1.8rem; color: var(--neon-purple); transition: 0.3s; }
-        .admin-card:hover .card-icon { transform: rotate(10deg) scale(1.1); text-shadow: 0 0 10px currentColor; }
-        .card-info h3 { margin: 0 0 5px 0; font-family: 'Orbitron', sans-serif; font-size: 1rem; color: #fff; transition: 0.3s; }
-        .admin-card:hover .card-info h3 { color: var(--neon-purple); } .card-info p { margin: 0; font-size: 0.75rem; color: #aaa; }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 1rem; font-family: 'Exo 2', sans-serif; border: 1px solid transparent; position: relative; overflow: hidden; flex-shrink: 0; border-left: 4px solid transparent; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); opacity: 0; transform: translateX(-30px); }
+        
+        .sidebar.active .sidebar-item { animation: slideInItem 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .sidebar.active .sidebar-item:nth-child(1) { animation-delay: 0.1s; } .sidebar.active .sidebar-item:nth-child(2) { animation-delay: 0.15s; } .sidebar.active .sidebar-item:nth-child(3) { animation-delay: 0.2s; } .sidebar.active .sidebar-item:nth-child(4) { animation-delay: 0.25s; } .sidebar.active .sidebar-item:nth-child(5) { animation-delay: 0.3s; } .sidebar.active .sidebar-item:nth-child(6) { animation-delay: 0.35s; } .sidebar.active .sidebar-item:nth-child(7) { animation-delay: 0.4s; } .sidebar.active .sidebar-item:nth-child(8) { animation-delay: 0.45s; } .sidebar.active .sidebar-item:nth-child(9) { animation-delay: 0.5s; } .sidebar.active .sidebar-item:nth-child(10) { animation-delay: 0.55s; } .sidebar.active .sidebar-item:nth-child(11) { animation-delay: 0.6s; } .sidebar.active .sidebar-item:nth-child(12) { animation-delay: 0.65s; }
+
+        @keyframes slideInItem { to { opacity: 1; transform: translateX(0); } }
+
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s; }
+        .sidebar-item:hover { background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); border-left: 4px solid var(--neon-blue); color: #fff; box-shadow: -5px 0 15px rgba(0, 238, 255, 0.2); transform: translateX(8px); }
+        .sidebar-item:hover i { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); transform: scale(1.1); }
+        .sidebar-item:active { transform: scale(0.95) translateX(5px); }
+        
+        .sidebar-footer { margin-top: auto; border-top: 1px dashed rgba(188, 19, 254, 0.4); padding-top: 20px; flex-shrink: 0; }
+        
+        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron'; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; z-index: 1; }
+        .logout-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 0, 85, 0.4), transparent); transition: left 0.5s ease; z-index: -1; }
+        .logout-btn:hover { background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); text-shadow: 0 0 5px var(--neon-pink); }
+        .logout-btn:hover::before { left: 100%; }
+        .logout-btn:active { transform: scale(0.92); }
+
+        .sidebar-version { text-align: center; margin-top: 20px; font-family: 'Exo 2', sans-serif; color: #666; font-size: 0.75rem; display: flex; flex-direction: column; gap: 5px; }
+        .version-badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: var(--neon-blue); font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; text-shadow: 0 0 8px rgba(0, 238, 255, 0.6); margin-top: 5px; animation: pulseV4 2s infinite alternate ease-in-out; }
+        @keyframes pulseV4 { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 238, 255, 0.4)); } 100% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(0, 238, 255, 0.9)); } }
+
+        /* DISEÑO DE CATEGORÍAS EN PANEL */
+        .admin-container { width: 95%; max-width: 1000px; margin: 90px auto 30px auto; z-index: 10; animation: popIn 0.6s ease-out; }
+        .header-title { font-family: 'Orbitron', sans-serif; font-size: 2rem; margin: 0 0 10px 0; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px; text-align: center; animation: gradientScroll 4s linear infinite; background-size: 200%; filter: drop-shadow(0 0 5px rgba(188, 19, 254, 0.5));}
+        
+        .section-divider { width: 100%; border-bottom: 2px dashed rgba(188, 19, 254, 0.4); padding-bottom: 10px; margin: 40px 0 20px 0; font-family: 'Orbitron'; color: var(--neon-cyan); font-size: 1.2rem; text-transform: uppercase; text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); display: flex; align-items: center; gap: 10px; }
+        .section-divider i { font-size: 1.6rem; color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .admin-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
+        .admin-card:hover { transform: translateY(-5px) scale(1.02); border-color: var(--neon-purple); box-shadow: 0 5px 25px rgba(188, 19, 254, 0.2), inset 0 0 15px rgba(188, 19, 254, 0.05); z-index: 2; }
+        
+        .card-icon { width: 55px; height: 55px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; font-size: 2rem; color: var(--neon-purple); transition: 0.3s; flex-shrink: 0; }
+        .admin-card:hover .card-icon { transform: rotate(10deg) scale(1.1); text-shadow: 0 0 15px currentColor; }
+        .card-info h3 { margin: 0 0 5px 0; font-family: 'Orbitron', sans-serif; font-size: 1.05rem; color: #fff; transition: 0.3s; }
+        .admin-card:hover .card-info h3 { color: var(--neon-purple); text-shadow: 0 0 5px var(--neon-purple); } 
+        .card-info p { margin: 0; font-size: 0.8rem; color: #aaa; font-family: 'Exo 2'; line-height: 1.4; }
 
         .color-red .card-icon { color: var(--neon-red); background: rgba(255, 7, 58, 0.1); }
-        .color-red:hover { border-color: var(--neon-red); box-shadow: 0 5px 25px rgba(255, 7, 58, 0.3); } .color-red:hover .card-info h3 { color: var(--neon-red); }
-        .color-green .card-icon { color: #25D366; background: rgba(37, 211, 102, 0.1); }
-        .color-green:hover { border-color: #25D366; box-shadow: 0 5px 25px rgba(37, 211, 102, 0.3); } .color-green:hover .card-info h3 { color: #25D366; }
+        .color-red:hover { border-color: var(--neon-red); box-shadow: 0 5px 25px rgba(255, 7, 58, 0.2), inset 0 0 15px rgba(255, 7, 58, 0.05); } .color-red:hover .card-info h3 { color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red); }
+        .color-green .card-icon { color: var(--neon-green); background: rgba(0, 255, 204, 0.1); }
+        .color-green:hover { border-color: var(--neon-green); box-shadow: 0 5px 25px rgba(0, 255, 204, 0.2), inset 0 0 15px rgba(0, 255, 204, 0.05); } .color-green:hover .card-info h3 { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
         .color-cyan .card-icon { color: var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
-        .color-cyan:hover { border-color: var(--neon-cyan); box-shadow: 0 5px 25px rgba(0, 243, 255, 0.3); } .color-cyan:hover .card-info h3 { color: var(--neon-cyan); }
+        .color-cyan:hover { border-color: var(--neon-cyan); box-shadow: 0 5px 25px rgba(0, 243, 255, 0.2), inset 0 0 15px rgba(0, 243, 255, 0.05); } .color-cyan:hover .card-info h3 { color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); }
         .color-blue .card-icon { color: #3b3dff; background: rgba(59, 61, 255, 0.1); }
-        .color-blue:hover { border-color: #3b3dff; box-shadow: 0 5px 25px rgba(59, 61, 255, 0.3); } .color-blue:hover .card-info h3 { color: #3b3dff; }
+        .color-blue:hover { border-color: #3b3dff; box-shadow: 0 5px 25px rgba(59, 61, 255, 0.2), inset 0 0 15px rgba(59, 61, 255, 0.05); } .color-blue:hover .card-info h3 { color: #3b3dff; text-shadow: 0 0 5px #3b3dff; }
         .color-gold .card-icon { color: #ffd700; background: rgba(255, 215, 0, 0.1); }
-        .color-gold:hover { border-color: #ffd700; box-shadow: 0 5px 25px rgba(255, 215, 0, 0.3); } .color-gold:hover .card-info h3 { color: #ffd700; }
+        .color-gold:hover { border-color: #ffd700; box-shadow: 0 5px 25px rgba(255, 215, 0, 0.2), inset 0 0 15px rgba(255, 215, 0, 0.05); } .color-gold:hover .card-info h3 { color: #ffd700; text-shadow: 0 0 5px #ffd700; }
+        .color-pink .card-icon { color: var(--neon-pink); background: rgba(255, 0, 85, 0.1); }
+        .color-pink:hover { border-color: var(--neon-pink); box-shadow: 0 5px 25px rgba(255, 0, 85, 0.2), inset 0 0 15px rgba(255, 0, 85, 0.05); } .color-pink:hover .card-info h3 { color: var(--neon-pink); text-shadow: 0 0 5px var(--neon-pink); }
 
         /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; }
         .modal-box { background: linear-gradient(145deg, #0a0a0a, #050505); padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid var(--neon-purple); text-align: center; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 30px rgba(188, 19, 254, 0.1) inset; }
         .modal-overlay[style*="display: flex"] .modal-box { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        #modalRecharges .modal-box { max-width: 550px; } #modalAdminLogs .modal-box { max-width: 600px; border-color: var(--neon-red); }
-        #banksContainer::-webkit-scrollbar, #logsContainer::-webkit-scrollbar { width: 4px; } #banksContainer::-webkit-scrollbar-thumb, #logsContainer::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 2px; }
+        
+        #banksContainer::-webkit-scrollbar, #logsContainer::-webkit-scrollbar, #refundsContainer::-webkit-scrollbar { width: 4px; } 
+        #banksContainer::-webkit-scrollbar-thumb, #logsContainer::-webkit-scrollbar-thumb, #refundsContainer::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 2px; }
         
         .cyber-box { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 3px solid var(--neon-purple); border-radius: 10px; padding: 15px; margin-bottom: 15px; transition: 0.3s; }
         .cyber-box:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.1); }
         .cyber-box-title { color: #aaa; font-size: 0.75rem; text-align: left; margin-bottom: 10px; font-weight: bold; font-family: 'Orbitron'; letter-spacing: 1px; }
-        .bank-field { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(188, 19, 254, 0.3); text-align: left; transition: 0.3s; }
-        .bank-field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; } .bank-field-header strong { color: var(--neon-purple); font-size: 0.85rem; font-family: 'Orbitron'; }
-        .btn-trash { background: none; border: none; color: var(--neon-red); cursor: pointer; font-size: 1.2rem; transition: 0.3s; } .btn-trash:hover { transform: scale(1.2) rotate(15deg); text-shadow: 0 0 10px var(--neon-red); }
+        
         .input-group { margin-bottom: 12px; text-align: left; }
         .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-family: inherit; transition: 0.3s; }
@@ -77,19 +135,17 @@
         .perm-checkbox:hover { background: rgba(188, 19, 254, 0.1); color: #fff; }
         .perm-checkbox input { accent-color: #ffd700; width: 16px; height: 16px; cursor: pointer; }
 
-        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 8px; background: linear-gradient(90deg, #5e097f, var(--neon-purple), #5e097f); background-size: 200% auto; animation: gradientScroll 3s linear infinite; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 8px; background: linear-gradient(90deg, #5e097f, var(--neon-purple), #5e097f); background-size: 200% auto; animation: gradientScroll 3s linear infinite; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .btn-action:hover { box-shadow: 0 0 20px var(--neon-purple); transform: scale(1.03); letter-spacing: 1px; }
-        .btn-cancel { width: 100%; background: transparent; border: 1px solid #444; color: #888; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-cancel { width: 100%; background: transparent; border: 1px solid #444; color: #888; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; font-weight: bold; margin-top: 10px; }
         .btn-cancel:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.1); }
         .code-display-box { background: #000; border: 1px solid #333; padding: 15px; border-radius: 10px; margin-top: 15px; font-family: 'Orbitron', sans-serif; font-size: 1.5rem; letter-spacing: 5px; color: #25D366; text-align: center; box-shadow: inset 0 0 20px rgba(37, 211, 102, 0.1); animation: borderPulse 2s infinite; }
-        .log-item { background: rgba(255,0,0,0.05); border-left: 3px solid var(--neon-red); padding: 12px; margin-bottom: 10px; text-align: left; border-radius: 5px; transition: 0.3s; }
-        .log-item p { margin: 3px 0; font-size: 0.85rem; color: #ddd; } .log-item strong { color: var(--neon-cyan); } .log-item .log-date { font-size: 0.7rem; color: #888; font-family: 'Orbitron'; }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
     <div id="loadingScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#020005; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h2 style="font-family:'Orbitron'; color:var(--neon-purple); text-shadow:0 0 15px var(--neon-purple); animation:popIn 1s infinite alternate;">Cargando Herramientas...</h2>
+        <h2 style="font-family:'Orbitron'; color:var(--neon-purple); text-shadow:0 0 15px var(--neon-purple); animation:popIn 1s infinite alternate;"><i class='bx bx-loader-alt bx-spin'></i> Cargando Herramientas...</h2>
         <div id="quickLoadingText" style="margin-top: 10px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: var(--neon-cyan); display: none;">Buscando Ticket Rápido...</div>
     </div>
 
@@ -97,6 +153,7 @@
 
     <div class="top-bar">
         <div class="top-bar-left">
+            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu-alt-left'></i></button>
             <button class="menu-btn" onclick="window.location.href='admin.html'"><i class='bx bx-arrow-back'></i></button>
         </div>
         <div class="top-bar-right">
@@ -104,99 +161,157 @@
         </div>
     </div>
 
-    <div class="admin-container" id="adminMainPanel" style="display: none;">
-        <h1 class="header-title"><i class='bx bx-server'></i> Panel de Control</h1>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Socios XIT</h2>
+            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
+            <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
+            <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
+            <a href="recarga.html" class="sidebar-item"><i class='bx bx-wallet'></i> Recargar Saldo</a>
+            <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
+            <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
+            <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
+            <a href="diamantes.html" class="sidebar-item"><i class='bx bxs-diamond'></i> Diamantes FF</a>
+            <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
+            <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="border-left: 4px solid var(--neon-pink); background: linear-gradient(90deg, rgba(255, 0, 85, 0.15), transparent); color: var(--neon-pink); box-shadow: -5px 0 15px rgba(255, 0, 85, 0.1); transform: translateX(5px); opacity: 1;"><i class='bx bx-shield-quarter' style="color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);"></i> Panel Admin</a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutMenuBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
+            <div class="sidebar-version">
+                <p>Copyright SebasXit 2024 - 2026</p>
+                <div class="version-badge"><i class='bx bx-code-alt'></i> V4</div>
+            </div>
+        </div>
+    </div>
 
+    <!-- PANEL CENTRAL -->
+    <div class="admin-container" id="adminMainPanel" style="display: none;">
+        <h1 class="header-title"><i class='bx bx-command'></i> NÚCLEO DE OPERACIONES</h1>
+
+        <!-- SECCIÓN FINANZAS -->
+        <h2 class="section-divider"><i class='bx bx-dollar-circle'></i> Finanzas y Pagos</h2>
         <div class="admin-grid">
             <div class="admin-card color-cyan" onclick="openRechargesModal()">
                 <div class="card-icon"><i class='bx bx-receipt'></i></div>
-                <div class="card-info"><h3>Validar Recargas</h3><p>Aprobar pagos de usuarios.</p></div>
+                <div class="card-info"><h3>Validar Recargas</h3><p>Aprobar pagos pendientes.</p></div>
+            </div>
+            
+            <div class="admin-card color-pink" onclick="openRefundsModal()">
+                <div class="card-icon"><i class='bx bx-money-withdraw'></i></div>
+                <div class="card-info"><h3>Revisar Reembolsos</h3><p>Gestionar devoluciones de Keys.</p></div>
+            </div>
+
+            <div class="admin-card color-green" onclick="openModal('modalAddBalance')">
+                <div class="card-icon"><i class='bx bx-wallet-alt'></i></div>
+                <div class="card-info"><h3>Añadir Saldo</h3><p>Dar USD directo a un usuario.</p></div>
             </div>
 
             <div class="admin-card color-blue" onclick="openPaymentsModal()">
                 <div class="card-icon"><i class='bx bx-credit-card-front'></i></div>
-                <div class="card-info"><h3>Métodos de Pago</h3><p>Añadir, editar o borrar bancos.</p></div>
+                <div class="card-info"><h3>Métodos de Pago</h3><p>Configurar bancos y rutas.</p></div>
             </div>
+        </div>
 
+        <!-- SECCIÓN INVENTARIO -->
+        <h2 class="section-divider"><i class='bx bx-box'></i> Inventario y Productos</h2>
+        <div class="admin-grid">
             <div class="admin-card" onclick="openModal('modalCreateProduct')">
-                <div class="card-icon"><i class='bx bx-plus-circle'></i></div>
-                <div class="card-info"><h3>Crear Producto</h3><p>Nuevo ítem en catálogo.</p></div>
+                <div class="card-icon"><i class='bx bx-layer-plus'></i></div>
+                <div class="card-info"><h3>Crear Producto</h3><p>Forjar nuevo ítem en catálogo.</p></div>
             </div>
             
             <div class="admin-card color-gold" onclick="openEditProductModal()">
                 <div class="card-icon"><i class='bx bx-edit'></i></div>
-                <div class="card-info"><h3>Editar Producto</h3><p>Modificar info y planes.</p></div>
+                <div class="card-info"><h3>Editar Producto</h3><p>Modificar información o planes.</p></div>
             </div>
 
             <div class="admin-card color-blue" onclick="openAddDurationModal()">
                 <div class="card-icon"><i class='bx bx-time-five'></i></div>
-                <div class="card-info"><h3>Añadir Duración</h3><p>Nuevos planes a productos.</p></div>
+                <div class="card-info"><h3>Añadir Duración</h3><p>Agregar nuevos planes/variantes.</p></div>
             </div>
 
             <div class="admin-card" onclick="openStockModal()">
                 <div class="card-icon"><i class='bx bx-key'></i></div>
-                <div class="card-info"><h3>Añadir Stock</h3><p>Subir llaves a un producto.</p></div>
+                <div class="card-info"><h3>Añadir Stock</h3><p>Sincronizar Keys crudas.</p></div>
             </div>
             
             <div class="admin-card color-red" onclick="openManageKeysModal()">
                 <div class="card-icon"><i class='bx bx-list-ul'></i></div>
-                <div class="card-info"><h3>Gestionar Keys</h3><p>Editar o borrar llaves.</p></div>
+                <div class="card-info"><h3>Gestionar Keys</h3><p>Modificar o eliminar llaves.</p></div>
             </div>
+        </div>
 
-            <div class="admin-card color-green" onclick="openModal('modalAddBalance')">
-                <div class="card-icon"><i class='bx bx-money-withdraw'></i></div>
-                <div class="card-info"><h3>Añadir Saldo</h3><p>Dar USD directo a un usuario.</p></div>
-            </div>
-
+        <!-- SECCIÓN COMUNIDAD Y AJUSTES -->
+        <h2 class="section-divider"><i class='bx bx-shield-quarter'></i> Comunidad y Ajustes</h2>
+        <div class="admin-grid">
             <div class="admin-card color-purple" onclick="openModal('modalTransferUser')">
                 <div class="card-icon"><i class='bx bx-transfer'></i></div>
-                <div class="card-info"><h3>Transferir Datos</h3><p>Mover 100% a cuenta nueva.</p></div>
+                <div class="card-info"><h3>Transferir Datos</h3><p>Migrar 100% a cuenta nueva.</p></div>
             </div>
 
             <div class="admin-card color-red" onclick="openModal('modalDeleteUser')">
                 <div class="card-icon"><i class='bx bx-user-x'></i></div>
-                <div class="card-info"><h3>Eliminar Usuario</h3><p>Borrar cuenta y datos.</p></div>
+                <div class="card-info"><h3>Eliminar Usuario</h3><p>Borrado total de entidad.</p></div>
             </div>
 
             <div class="admin-card color-purple" onclick="openModal('modalBroadcast')">
                 <div class="card-icon"><i class='bx bx-broadcast'></i></div>
-                <div class="card-info"><h3>Mensaje Global</h3><p>Notificar a todos vía WhatsApp.</p></div>
+                <div class="card-info"><h3>Mensaje Global</h3><p>Difusión masiva por WhatsApp.</p></div>
             </div>
 
             <div class="admin-card color-green" onclick="openWaModal()" id="cardWaBot">
                 <div class="card-icon"><i class='bx bxl-whatsapp'></i></div>
-                <div class="card-info"><h3>Vincular WhatsApp</h3><p>Código de sesión de bot.</p></div>
+                <div class="card-info"><h3>Vincular WhatsApp</h3><p>Sincronizar bot al sistema.</p></div>
             </div>
 
             <div class="admin-card color-gold" id="cardManageAdmins" style="display: none;" onclick="openManageAdminsModal()">
-                <div class="card-icon"><i class='bx bx-shield-alt-2'></i></div>
-                <div class="card-info"><h3>Gestión de Admins</h3><p>Dar permisos a tu equipo.</p></div>
+                <div class="card-icon"><i class='bx bx-group'></i></div>
+                <div class="card-info"><h3>Gestión de Admins</h3><p>Control de equipo y permisos.</p></div>
             </div>
 
             <div class="admin-card color-red" id="cardAdminLogs" style="display: none;" onclick="openAdminLogsModal()">
                 <div class="card-icon"><i class='bx bx-cctv'></i></div>
-                <div class="card-info"><h3>Registro de Seguridad</h3><p>Auditoría de IPs y Acciones.</p></div>
+                <div class="card-info"><h3>Auditoría (Logs)</h3><p>Registro de acciones e IPs.</p></div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL DE REEMBOLSOS CON IMÁGENES -->
+    <div class="modal-overlay" id="modalRefunds">
+        <div class="modal-box" style="max-width: 650px; border-color: var(--neon-pink);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-pink);"><i class='bx bx-money-withdraw'></i> Gestión de Reembolsos</h3>
+            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 15px;">Las keys aprobadas serán borradas automáticamente del historial del usuario y el saldo será retornado.</p>
+            <div class="cyber-box" style="border-left-color: var(--neon-pink); background: rgba(255,0,85,0.02);">
+                <div id="refundsContainer" style="max-height: 400px; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;"></div>
+            </div>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cerrar Panel</button>
+        </div>
+    </div>
+
+    <!-- RESTO DE MODALES EXISTENTES (Limpios de emojis) -->
     <div class="modal-overlay" id="modalQuickApproval" style="z-index: 3000;">
         <div class="modal-box" style="border-color: var(--neon-cyan); max-width: 400px; padding: 20px;">
             <h3 style="font-family:'Orbitron'; color: var(--neon-cyan); margin-top: 0;"><i class='bx bx-zap'></i> APROBACIÓN RÁPIDA</h3>
-            <div class="cyber-box" id="quickApprovalContent" style="border-left-color: var(--neon-cyan); text-align: center; padding: 10px;">
-                </div>
+            <div class="cyber-box" id="quickApprovalContent" style="border-left-color: var(--neon-cyan); text-align: center; padding: 10px;"></div>
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button id="btnQuickApprove" style="flex: 1; padding: 15px; border: none; border-radius: 8px; background: var(--neon-green); color: #000; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s;"><i class='bx bx-check-double'></i> APROBAR</button>
                 <button id="btnQuickReject" style="flex: 1; padding: 15px; border: none; border-radius: 8px; background: var(--neon-red); color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s;"><i class='bx bx-block'></i> RECHAZAR</button>
             </div>
-            <button class="btn-cancel" onclick="closeQuickModal()" style="margin-top: 15px;">Ignorar y Cerrar</button>
+            <button class="btn-cancel" onclick="closeQuickModal()" style="margin-top: 15px;"><i class='bx bx-x'></i> Ignorar y Cerrar</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="modalEditProduct">
-        <div class="modal-box" style="border-color: #ffd700;">
+        <div class="modal-box" style="border-color: #ffd700; max-width: 550px;">
             <h3 style="font-family:'Orbitron'; color: #ffd700;"><i class='bx bx-edit'></i> Editar Catálogo</h3>
-            
             <div class="cyber-box" style="border-left-color: #ffd700;">
                 <div class="cyber-box-title" style="color: #ffd700;">SELECCIÓN BASE</div>
                 <div class="input-group"><label>Producto a Editar</label><select id="editProdSelect" onchange="loadProductDetailsForEdit()"></select></div>
@@ -205,9 +320,8 @@
                     <div class="input-group" style="flex:1;"><label>Ecosistema</label><select id="editPCat"><option value="Android">Android</option><option value="iPhone">iPhone</option><option value="PC">PC</option></select></div>
                 </div>
                 <button class="btn-action" style="background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); color: #000; padding: 10px;" onclick="funcUpdateProduct()"><i class='bx bx-save'></i> ACTUALIZAR PRODUCTO BASE</button>
-                <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none; padding: 10px; margin-top: 5px;" onclick="funcDeleteProduct()"><i class='bx bx-trash'></i> ELIMINAR PRODUCTO Y SUS PLANES</button>
+                <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none; padding: 10px; margin-top: 5px;" onclick="funcDeleteProduct()"><i class='bx bx-trash'></i> ELIMINAR PRODUCTO Y PLANES</button>
             </div>
-
             <div class="cyber-box" style="border-left-color: var(--neon-cyan);">
                 <div class="cyber-box-title" style="color: var(--neon-cyan);">MODIFICAR PLAN / DURACIÓN</div>
                 <div class="input-group"><label>Plan Específico</label><select id="editDurSelect" onchange="loadDurationDetailsForEdit()"></select></div>
@@ -219,8 +333,7 @@
                 <button class="btn-action" style="background: rgba(0, 243, 255, 0.2); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); box-shadow: none; padding: 10px;" onclick="funcUpdateDuration()"><i class='bx bx-save'></i> ACTUALIZAR PLAN</button>
                 <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none; padding: 10px; margin-top: 5px;" onclick="funcDeleteDuration()"><i class='bx bx-trash'></i> ELIMINAR PLAN</button>
             </div>
-
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cerrar</button>
         </div>
     </div>
     
@@ -238,17 +351,17 @@
                 </div>
             </div>
             <button class="btn-action" style="background: var(--neon-cyan); color:#000;" onclick="funcAddDuration()"><i class='bx bx-save'></i> GUARDAR</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cancelar</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="modalAdminLogs">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width: 600px; border-color: var(--neon-red);">
             <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-cctv'></i> Auditoría de Seguridad</h3>
             <div class="cyber-box" style="border-left-color: var(--neon-red); background: rgba(255,0,0,0.02);">
                 <div id="logsContainer" style="max-height: 350px; overflow-y: auto; padding-right: 5px;"></div>
             </div>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar Monitor</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cerrar Monitor</button>
         </div>
     </div>
 
@@ -263,7 +376,7 @@
                 <p style="font-size: 0.85rem; color: #aaa;">Ingresa esto en tu WhatsApp:</p>
                 <div class="code-display-box" id="waTheCode">ESPERANDO...</div>
             </div>
-            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 15px;">Cerrar</button>
+            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 15px;"><i class='bx bx-x'></i> Cerrar</button>
         </div>
     </div>
 
@@ -277,19 +390,19 @@
             <div class="cyber-box" style="border-left-color: #ffd700;">
                 <div class="cyber-box-title" style="color: #ffd700;">ASIGNACIÓN DE PERMISOS</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left;">
-                    <label class="perm-checkbox"><input type="checkbox" id="permRecharges"> 🧾 Validar Recargas</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permBalance"> 💰 Añadir Saldo</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permProducts"> 📦 Prod/Stock</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permUsers"> ☠️ Eliminar/Transferir</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permPayments"> 🏦 Métodos de Pago</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permWaBot"> 🤖 WhatsApp Bot</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permBroadcast"> 📡 Mensaje Global</label>
-                    <label class="perm-checkbox"><input type="checkbox" id="permMaintenance"> 🛠️ Mantenimiento</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permRecharges"> <i class='bx bx-receipt'></i> Validar Recargas</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permRefunds"> <i class='bx bx-revision'></i> Reembolsos</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permBalance"> <i class='bx bx-wallet'></i> Añadir Saldo</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permProducts"> <i class='bx bx-box'></i> Prod/Stock</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permUsers"> <i class='bx bx-user-x'></i> Eliminar/Transferir</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permPayments"> <i class='bx bxs-bank'></i> Métodos de Pago</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permWaBot"> <i class='bx bx-bot'></i> WhatsApp Bot</label>
+                    <label class="perm-checkbox"><input type="checkbox" id="permBroadcast"> <i class='bx bx-broadcast'></i> Mensaje Global</label>
                 </div>
             </div>
             <button class="btn-action" style="background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); color: #000;" onclick="funcSetAdmin()"><i class='bx bx-check-shield'></i> ACTUALIZAR ROL</button>
             <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none;" onclick="funcRemoveAdmin()"><i class='bx bx-user-minus'></i> QUITAR PERMISOS</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cerrar</button>
         </div>
     </div>
 
@@ -321,7 +434,7 @@
                 <button class="btn-action" onclick="savePaymentConfig()" style="flex: 2; margin-bottom: 0; background: #3b3dff; color:#fff;"><i class='bx bx-save'></i> GUARDAR INFO</button>
                 <button class="btn-action" onclick="clearPaymentInputs()" style="flex: 1; background: #222; border: 1px solid #555; color: white; margin-bottom: 0; box-shadow: none;"><i class='bx bx-reset'></i> LIMPIAR</button>
             </div>
-            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 10px;">Cerrar</button>
+            <button class="btn-cancel" onclick="closeAllModals()" style="margin-top: 10px;"><i class='bx bx-x'></i> Cerrar</button>
         </div>
     </div>
 
@@ -331,7 +444,7 @@
             <div class="cyber-box">
                 <div id="rechargesList" style="max-height: 400px; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;"></div>
             </div>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar Bandeja</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cerrar Bandeja</button>
         </div>
     </div>
 
@@ -350,7 +463,7 @@
                 <div class="input-group"><label>Cobertura Garantía (Hrs)</label><input type="number" id="pWarr" value="0"></div>
             </div>
             <button class="btn-action" onclick="funcCreateProduct()"><i class='bx bx-layer-plus'></i> INYECTAR A TIENDA</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cancelar</button>
         </div>
     </div>
 
@@ -362,7 +475,7 @@
                 <div class="input-group"><label>Datos Crudos (1 por línea)</label><textarea id="stockKeysArea" rows="5"></textarea></div>
             </div>
             <button class="btn-action" onclick="funcAddStock()"><i class='bx bx-data'></i> SINCRONIZAR KEYS</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cerrar</button>
         </div>
     </div>
     
@@ -375,19 +488,19 @@
             <div class="cyber-box" style="border-left-color: var(--neon-red); padding-right: 5px;">
                 <div id="keysContainer" style="max-height: 300px; overflow-y: auto; text-align: left; padding-right: 5px;"></div>
             </div>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cerrar</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="modalAddBalance">
         <div class="modal-box" style="border-color: var(--neon-green);">
-            <h3 style="font-family:'Orbitron'; color: var(--neon-green);"><i class='bx bx-money-withdraw'></i> Inyección de Capital</h3>
+            <h3 style="font-family:'Orbitron'; color: var(--neon-green);"><i class='bx bx-wallet-alt'></i> Inyección de Capital</h3>
             <div class="cyber-box" style="border-left-color: var(--neon-green);">
                 <div class="input-group"><label>ID de Usuario (Username)</label><input type="text" id="balUser" placeholder="Ej: sebasxit"></div>
                 <div class="input-group"><label>Monto a transferir (USD)</label><input type="number" id="balAmt" step="0.1" placeholder="0.00"></div>
             </div>
             <button class="btn-action" style="background: linear-gradient(90deg, #008066, var(--neon-green), #008066); color: #000;" onclick="funcAddBalance()"><i class='bx bx-send'></i> EJECUTAR TRANSFERENCIA</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cancelar Operación</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cancelar Operación</button>
         </div>
     </div>
 
@@ -399,7 +512,7 @@
                 <div class="input-group"><label>Username Destino (Nuevo)</label><input type="text" id="transferNewUser" autocomplete="off" placeholder="Ej: newuser456"></div>
             </div>
             <button class="btn-action" onclick="funcTransferUser()"><i class='bx bx-git-merge'></i> INICIAR MIGRACIÓN</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Abortar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Abortar</button>
         </div>
     </div>
 
@@ -410,7 +523,7 @@
                 <div class="input-group"><label>Fijar Objetivo (Username)</label><input type="text" id="delUserUsername" placeholder="Ej: JuanPerez" autocomplete="off"></div>
             </div>
             <button class="btn-action" style="background: linear-gradient(90deg, #80001d, var(--neon-red), #80001d); color: white;" onclick="funcDeleteUser()"><i class='bx bx-skull'></i> EJECUTAR PURGA</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cancelar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cancelar</button>
         </div>
     </div>
 
@@ -421,12 +534,12 @@
                 <div class="input-group"><label>Mensaje Vía WhatsApp</label><textarea id="bcText" rows="4" placeholder="Escribe el comunicado..."></textarea></div>
             </div>
             <button class="btn-action" onclick="funcBroadcast()"><i class='bx bx-radar'></i> DIFUNDIR A TODOS</button>
-            <button class="btn-cancel" onclick="closeAllModals()">Cerrar</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cerrar</button>
         </div>
     </div>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, ref, get, child, update, push, set, onValue } from './firebase-config.js';
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, push, set, onValue } from './firebase-config.js';
 
         let adminUser = null; 
         let isSuperAdmin = false;
@@ -475,43 +588,121 @@
 
                         const urlParams = new URLSearchParams(window.location.search);
                         const token = urlParams.get('token');
-                        if (token) {
-                            checkQuickApprovalToken(token);
-                        }
+                        if (token) checkQuickApprovalToken(token);
 
                     } else { 
-                        alert("⚠️ Acceso Denegado. Intervención bloqueada.");
+                        alert("DENEGADO: Intervención bloqueada.");
                         window.location.href = "login.html"; 
                     }
                 }).catch((error) => {
-                    document.getElementById('loadingScreen').innerHTML = `<h2 style="color:red; font-family:'Orbitron';">ERROR: ${error.message}</h2>`;
+                    document.getElementById('loadingScreen').innerHTML = `<h2 style="color:red; font-family:'Orbitron';"><i class='bx bx-x'></i> ERROR: ${error.message}</h2>`;
                 });
             } else { 
-                // AQUÍ ESTÁ LA ADAPTACIÓN PARCERO: CAPTURAR Y REDIRIGIR
                 const currentUrl = window.location.href;
                 window.location.href = "login.html?redirect=" + encodeURIComponent(currentUrl); 
             }
         });
 
+        // =========================================
+        //  SISTEMA DE REEMBOLSOS CON IMÁGENES
+        // =========================================
+        window.openRefundsModal = async () => {
+            if (!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.refunds)) return alert("ERROR: Acceso denegado a Reembolsos.");
+            openModal('modalRefunds');
+            const container = document.getElementById('refundsContainer');
+            container.innerHTML = "<p style='text-align:center; color:#aaa;'><i class='bx bx-loader-alt bx-spin'></i> Extrayendo solicitudes...</p>";
+            
+            try {
+                const snap = await get(ref(db, 'refund_requests'));
+                if (!snap.exists()) { container.innerHTML = "<p style='text-align:center; color:#888;'><i class='bx bx-check-circle'></i> No hay solicitudes pendientes.</p>"; return; }
+                
+                let html = "";
+                snap.forEach(child => {
+                    const data = child.val();
+                    if (data.status === 'pending') {
+                        const dateStr = new Date(data.timestamp).toLocaleString('es-ES');
+                        
+                        const proofHtml = data.proofUrl ? `
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <a href="${data.proofUrl}" target="_blank" style="color:var(--neon-blue); border: 1px solid var(--neon-blue); padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-family:'Orbitron'; transition: 0.3s; display: inline-block;">
+                                    <i class='bx bx-image'></i> VER CAPTURA DE ERROR
+                                </a>
+                            </div>
+                        ` : '';
+
+                        html += `
+                        <div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,0,85,0.4); margin-bottom: 10px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                <strong style="color:var(--neon-cyan); font-size:1.1rem;"><i class='bx bx-user'></i> ${data.username}</strong>
+                                <span style="color:#888; font-size:0.75rem;"><i class='bx bx-calendar'></i> ${dateStr}</span>
+                            </div>
+                            <p style="margin:0 0 5px 0; color:#fff; font-size:0.9rem;"><strong>Producto:</strong> ${data.product}</p>
+                            <div style="background: rgba(0,0,0,0.8); border: 1px dashed var(--neon-green); padding: 8px; border-radius: 8px; margin-bottom: 10px;">
+                                <span style="font-family:monospace; color:var(--neon-green); word-break: break-all; font-size: 0.85rem;">${data.secretKey}</span>
+                            </div>
+                            ${proofHtml}
+                            <p style="margin:0 0 15px 0; color:#ddd; font-size:0.85rem; font-style: italic;"><strong>Motivo del fallo:</strong> "${data.reason}"</p>
+                            
+                            <div style="display:flex; gap:10px;">
+                                <button onclick="processRefund('${child.key}', '${data.uid}', '${data.historyId}', 'approve', '${data.username}')" style="flex:1; background:var(--neon-green); color:#000; padding:12px; border:none; border-radius:8px; font-weight:bold; font-family:'Orbitron'; cursor:pointer;"><i class='bx bx-check'></i> APROBAR</button>
+                                <button onclick="processRefund('${child.key}', '${data.uid}', '${data.historyId}', 'reject', '${data.username}')" style="flex:1; background:var(--neon-red); color:#fff; padding:12px; border:none; border-radius:8px; font-weight:bold; font-family:'Orbitron'; cursor:pointer;"><i class='bx bx-block'></i> DENEGAR</button>
+                            </div>
+                        </div>`;
+                    }
+                });
+                container.innerHTML = html || "<p style='text-align:center; color:#888;'><i class='bx bx-check-circle'></i> No hay solicitudes pendientes.</p>";
+            } catch(e) { container.innerHTML = `<p style='color:red;'>Error de Base de Datos: ${e.message}</p>`; }
+        };
+
+        window.processRefund = async (reqId, uid, historyId, action, username) => {
+            const isApprove = action === 'approve';
+            if (!confirm(`ATENCION: ¿Seguro que deseas ${isApprove ? 'APROBAR (Se devolverá el dinero y se borrará la key)' : 'DENEGAR'} el reembolso a ${username}?`)) return;
+            
+            try {
+                const hSnap = await get(ref(db, `users/${uid}/history/${historyId}`));
+                if (!hSnap.exists()) return alert("ERROR: Los datos de esta compra ya no existen en el perfil del usuario.");
+                const hData = hSnap.val();
+                
+                const updates = {};
+                updates[`refund_requests/${reqId}/status`] = action;
+                updates[`users/${uid}/history/${historyId}/refundStatus`] = action;
+
+                if (isApprove) {
+                    const uSnap = await get(ref(db, `users/${uid}/balance`));
+                    const currentBal = parseFloat(uSnap.val() || 0);
+                    const refundAmount = parseFloat(hData.price || 0);
+                    
+                    updates[`users/${uid}/balance`] = currentBal + refundAmount;
+                    updates[`users/${uid}/history/${historyId}/key`] = "ELIMINADA_POR_REEMBOLSO";
+                    updates[`users/${uid}/history/${historyId}/product`] = "[REEMBOLSADO] " + hData.product;
+                    
+                    await logAdminAction("Reembolso Aprobado", username, `Se retornó $${refundAmount.toFixed(2)} USD y se destruyó la Key.`);
+                    alert(`EXITO: Reembolso completado. Se añadieron $${refundAmount.toFixed(2)} al saldo de ${username} y la Key fue destruida.`);
+                } else {
+                    await logAdminAction("Reembolso Denegado", username, `Solicitud rechazada para el producto ${hData.product}.`);
+                    alert("DENEGADO: Solicitud de reembolso denegada y cerrada.");
+                }
+                
+                await update(ref(db), updates);
+                openRefundsModal(); 
+            } catch (e) { alert("ERROR en el proceso: " + e.message); }
+        };
+
+        // =========================================
+        //  RESTO DE FUNCIONES DEL PANEL
+        // =========================================
         window.checkQuickApprovalToken = async (token) => {
             try {
                 document.getElementById('loadingScreen').style.display = 'flex';
                 document.getElementById('quickLoadingText').style.display = 'block';
-                
                 const snap = await get(ref(db, 'pending_receipts'));
-                let foundReceiptId = null;
-                let foundData = null;
-
+                let foundReceiptId = null; let foundData = null;
                 if (snap.exists()) {
                     snap.forEach(childSnap => {
                         const data = childSnap.val();
-                        if (data.actionToken === token) {
-                            foundReceiptId = childSnap.key;
-                            foundData = data;
-                        }
+                        if (data.actionToken === token) { foundReceiptId = childSnap.key; foundData = data; }
                     });
                 }
-
                 document.getElementById('loadingScreen').style.display = 'none';
                 document.getElementById('quickLoadingText').style.display = 'none';
 
@@ -522,54 +713,32 @@
                         <p style="margin: 0 0 5px 0; font-size: 1.1rem;"><strong>Usuario:</strong> <span style="color:var(--neon-purple);">${foundData.username}</span></p>
                         <p style="margin: 0 0 5px 0; font-size: 1.3rem;"><strong>Monto:</strong> <span style="color:var(--neon-green);">$${parseFloat(foundData.amountUsd).toFixed(2)} USD</span></p>
                         ${foundData.amountLocal ? `<p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #aaa;">(Local: ${foundData.amountLocal})</p>` : ''}
-                        
                         <div style="width: 100%; height: 350px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; background: rgba(0,0,0,0.5);">
                             <img src="${foundData.receiptUrl}" style="width: 100%; height: 100%; object-fit: contain; cursor: pointer;" onclick="window.open('${foundData.receiptUrl}', '_blank')">
-                        </div>
-                        <p style="font-size: 0.8rem; color: #888;">Toca la imagen para ver en grande</p>
+                        </div><p style="font-size: 0.8rem; color: #888;">Toca la imagen para ver en grande</p>
                     `;
-
-                    document.getElementById('btnQuickApprove').onclick = () => {
-                        approveRecharge(foundReceiptId, foundData.uid, foundData.amountUsd, foundData.username, true);
-                    };
-                    
-                    document.getElementById('btnQuickReject').onclick = () => {
-                        rejectRecharge(foundReceiptId, foundData.uid, true);
-                    };
+                    document.getElementById('btnQuickApprove').onclick = () => approveRecharge(foundReceiptId, foundData.uid, foundData.amountUsd, foundData.username, true);
+                    document.getElementById('btnQuickReject').onclick = () => rejectRecharge(foundReceiptId, foundData.uid, true);
                 } else {
-                    alert("⚠️ Este pago ya fue procesado o el enlace es inválido.");
-                    closeQuickModal();
+                    alert("ATENCION: Este pago ya fue procesado o el enlace es inválido."); closeQuickModal();
                 }
-            } catch (error) {
-                alert("❌ Error al buscar el ticket: " + error.message);
-                closeQuickModal();
-            }
+            } catch (error) { alert("ERROR al buscar el ticket: " + error.message); closeQuickModal(); }
         };
 
-        window.closeQuickModal = () => {
-            document.getElementById('modalQuickApproval').style.display = 'none';
-            const url = new URL(window.location);
-            url.searchParams.delete('token');
-            window.history.replaceState({}, document.title, url);
-        };
-
+        window.closeQuickModal = () => { document.getElementById('modalQuickApproval').style.display = 'none'; const url = new URL(window.location); url.searchParams.delete('token'); window.history.replaceState({}, document.title, url); };
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
 
         window.openAdminLogsModal = async () => {
-            if (!isSuperAdmin) return;
-            openModal('modalAdminLogs');
-            const container = document.getElementById('logsContainer');
-            container.innerHTML = "<p style='color:#aaa; font-size:12px; text-align:center;'>Extrayendo registros...</p>";
+            if (!isSuperAdmin) return; openModal('modalAdminLogs');
+            const container = document.getElementById('logsContainer'); container.innerHTML = "<p style='color:#aaa; font-size:12px; text-align:center;'><i class='bx bx-loader-alt bx-spin'></i> Extrayendo registros...</p>";
             try {
                 const snap = await get(ref(db, 'admin_logs'));
                 if (!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size:12px; text-align:center;'>Base de datos limpia.</p>"; return; }
-                let logsHtml = ""; const logsData = [];
-                snap.forEach(child => { logsData.push(child.val()); });
-                logsData.reverse(); 
+                let logsHtml = ""; const logsData = []; snap.forEach(child => { logsData.push(child.val()); }); logsData.reverse(); 
                 logsData.forEach(log => {
                     const dateStr = new Date(log.timestamp).toLocaleString('es-ES');
-                    logsHtml += `<div class="log-item"><p><strong>Admin:</strong> ${log.admin} | <strong>IP:</strong> ${log.ip}</p><p><strong>Operación:</strong> <span style="color:var(--neon-green)">${log.action}</span></p><p><strong>Target:</strong> ${log.target}</p><p><strong>Info:</strong> ${log.details}</p><p class="log-date">${dateStr}</p></div>`;
+                    logsHtml += `<div class="log-item"><p><strong>Admin:</strong> ${log.admin} | <strong>IP:</strong> ${log.ip}</p><p><strong>Operación:</strong> <span style="color:var(--neon-green)">${log.action}</span></p><p><strong>Target:</strong> ${log.target}</p><p><strong>Info:</strong> ${log.details}</p><p class="log-date"><i class='bx bx-time'></i> ${dateStr}</p></div>`;
                 });
                 container.innerHTML = logsHtml;
             } catch(e) { container.innerHTML = `<p style="color:red; font-size:12px;">Error: ${e.message}</p>`; }
@@ -577,82 +746,59 @@
 
         window.openManageAdminsModal = () => {
             if(!isSuperAdmin) return;
-            document.getElementById('adminTargetUser').value = ""; 
-            document.getElementById('permRecharges').checked = false; 
-            document.getElementById('permBalance').checked = false; 
-            document.getElementById('permProducts').checked = false; 
-            document.getElementById('permUsers').checked = false;
-            document.getElementById('permPayments').checked = false;
-            document.getElementById('permWaBot').checked = false;
-            document.getElementById('permBroadcast').checked = false;
-            document.getElementById('permMaintenance').checked = false;
-            openModal('modalManageAdmins');
+            document.getElementById('adminTargetUser').value = ""; document.getElementById('permRecharges').checked = false; document.getElementById('permBalance').checked = false; document.getElementById('permProducts').checked = false; document.getElementById('permUsers').checked = false; document.getElementById('permPayments').checked = false; document.getElementById('permWaBot').checked = false; document.getElementById('permBroadcast').checked = false; document.getElementById('permRefunds').checked = false; openModal('modalManageAdmins');
         };
 
         window.funcSetAdmin = async () => {
             if(!isSuperAdmin) return;
-            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); 
-            if(!targetUser) return alert("❌ Define el target.");
-            
+            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); if(!targetUser) return alert("ATENCION: Define el target.");
             const perms = { 
                 recharges: document.getElementById('permRecharges').checked, 
+                refunds: document.getElementById('permRefunds').checked,
                 balance: document.getElementById('permBalance').checked, 
                 products: document.getElementById('permProducts').checked, 
                 users: document.getElementById('permUsers').checked,
                 payments: document.getElementById('permPayments').checked,
                 wabot: document.getElementById('permWaBot').checked,
-                broadcast: document.getElementById('permBroadcast').checked,
-                maintenance: document.getElementById('permMaintenance').checked
+                broadcast: document.getElementById('permBroadcast').checked
             };
-            
             try {
-                const uSnap = await get(ref(db, 'users')); let foundId = null; 
-                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
-                if(foundId) { await update(ref(db, `users/${foundId}`), { role: 'admin', permissions: perms }); alert(`✅ Nivel otorgado.`); closeAllModals(); } else { alert("❌ Usuario no encontrado."); }
-            } catch(e) { alert("❌ Error: " + e.message); }
+                const uSnap = await get(ref(db, 'users')); let foundId = null; uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
+                if(foundId) { await update(ref(db, `users/${foundId}`), { role: 'admin', permissions: perms }); alert(`EXITO: Nivel otorgado.`); closeAllModals(); } else { alert("ERROR: Usuario no encontrado."); }
+            } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.funcRemoveAdmin = async () => {
             if(!isSuperAdmin) return;
-            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); if(!targetUser) return alert("❌ Define el target.");
+            const targetUser = document.getElementById('adminTargetUser').value.trim().toLowerCase(); if(!targetUser) return alert("ATENCION: Define el target.");
             try {
                 const uSnap = await get(ref(db, 'users')); let foundId = null; uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === targetUser) foundId = u.key; });
-                if(foundId) { await update(ref(db, `users/${foundId}`), { role: 'user', permissions: null }); alert(`✅ Accesos revocados.`); closeAllModals(); } else { alert("❌ Usuario no encontrado."); }
-            } catch(e) { alert("❌ Error: " + e.message); }
+                if(foundId) { await update(ref(db, `users/${foundId}`), { role: 'user', permissions: null }); alert(`EXITO: Accesos revocados.`); closeAllModals(); } else { alert("ERROR: Usuario no encontrado."); }
+            } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.openWaModal = () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.wabot)) return alert("❌ Requiere autorización.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.wabot)) return alert("ERROR: Requiere autorización.");
             openModal('modalWaAuth'); document.getElementById('waCodeSection').style.display = 'none'; document.getElementById('waPairNumber').value = "";
         };
         window.funcRequestWaCode = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.wabot)) return;
-            const number = document.getElementById('waPairNumber').value.trim();
-            if(!number) return alert("❌ Ingresa el número.");
+            const number = document.getElementById('waPairNumber').value.trim(); if(!number) return alert("ERROR: Ingresa el número.");
             document.getElementById('waCodeSection').style.display = 'block'; document.getElementById('waTheCode').innerText = "GENERANDO...";
-            try { await set(ref(db, 'whatsapp_control/command'), { action: 'request_code', number: number, timestamp: Date.now() }); } catch(e) { alert("❌ Error: " + e.message); }
+            try { await set(ref(db, 'whatsapp_control/command'), { action: 'request_code', number: number, timestamp: Date.now() }); } catch(e) { alert("ERROR: " + e.message); }
         };
-        function listenToWaCode() {
-            onValue(ref(db, 'whatsapp_control/code'), (snapshot) => {
-                const data = snapshot.val();
-                if (data && data.code && document.getElementById('modalWaAuth').style.display === 'flex') document.getElementById('waTheCode').innerText = data.code;
-            });
-        }
+        function listenToWaCode() { onValue(ref(db, 'whatsapp_control/code'), (snapshot) => { const data = snapshot.val(); if (data && data.code && document.getElementById('modalWaAuth').style.display === 'flex') document.getElementById('waTheCode').innerText = data.code; }); }
 
         let banksList = [];
         window.openPaymentsModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return alert("❌ Acceso denegado a las bóvedas de pago.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return alert("ERROR: Acceso denegado a las bóvedas de pago.");
             clearPaymentInputs(); openModal('modalManagePayments'); await loadConfiguredCountries();
         };
-        window.clearPaymentInputs = () => {
-            document.getElementById('payCode').value = ""; document.getElementById('payCode').readOnly = false; document.getElementById('payFlag').value = ""; document.getElementById('payName').value = ""; document.getElementById('payCurr').value = ""; document.getElementById('payRate').value = "";
-            document.getElementById('payModeText').innerText = "MODO: CREAR NUEVO PAÍS"; document.getElementById('payModeText').style.color = "var(--neon-green)"; banksList = []; addBankField(); renderBanks();
-        };
+        window.clearPaymentInputs = () => { document.getElementById('payCode').value = ""; document.getElementById('payCode').readOnly = false; document.getElementById('payFlag').value = ""; document.getElementById('payName').value = ""; document.getElementById('payCurr').value = ""; document.getElementById('payRate').value = ""; document.getElementById('payModeText').innerText = "MODO: CREAR NUEVO PAÍS"; document.getElementById('payModeText').style.color = "var(--neon-green)"; banksList = []; addBankField(); renderBanks(); };
         window.loadConfiguredCountries = async () => {
-            const container = document.getElementById('existingCountriesList'); container.innerHTML = "<p style='color:#aaa; font-size: 0.8rem;'>Cargando...</p>";
+            const container = document.getElementById('existingCountriesList'); container.innerHTML = "<p style='color:#aaa; font-size: 0.8rem;'><i class='bx bx-loader-alt bx-spin'></i> Cargando...</p>";
             try {
-                const snap = await get(ref(db, 'config/countries'));
-                if(!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size: 0.8rem;'>Ninguna ruta configurada.</p>"; return; }
+                const snap = await get(ref(db, 'config/countries')); if(!snap.exists()) { container.innerHTML = "<p style='color:#888; font-size: 0.8rem;'>Ninguna ruta configurada.</p>"; return; }
                 container.innerHTML = "";
                 snap.forEach(child => {
                     const code = child.key; const data = child.val();
@@ -670,15 +816,11 @@
                 const snap = await get(ref(db, `config/countries/${code}`));
                 if(snap.exists()) {
                     const data = snap.val(); document.getElementById('payCode').value = code; document.getElementById('payCode').readOnly = true; document.getElementById('payFlag').value = data.flag || ""; document.getElementById('payName').value = data.name || ""; document.getElementById('payCurr').value = data.currency || ""; document.getElementById('payRate').value = data.rate || "";
-                    document.getElementById('payModeText').innerText = `MODO: EDITANDO ${data.name.toUpperCase()}`; document.getElementById('payModeText').style.color = "#3b3dff";
-                    banksList = data.paymentMethods || []; if(banksList.length === 0) addBankField(); renderBanks();
+                    document.getElementById('payModeText').innerText = `MODO: EDITANDO ${data.name.toUpperCase()}`; document.getElementById('payModeText').style.color = "#3b3dff"; banksList = data.paymentMethods || []; if(banksList.length === 0) addBankField(); renderBanks();
                 }
-            } catch(e) { alert("❌ Error: " + e.message); }
+            } catch(e) { alert("ERROR: " + e.message); }
         };
-        window.deleteCountry = async (code, name) => { 
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return;
-            if(confirm(`⚠️ ¿Borrar ${name}?`)) { try { await set(ref(db, `config/countries/${code}`), null); alert(`✅ Borrado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error: " + e.message); } } 
-        };
+        window.deleteCountry = async (code, name) => { if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return; if(confirm(`ATENCION: ¿Borrar ${name}?`)) { try { await set(ref(db, `config/countries/${code}`), null); alert(`EXITO: Borrado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("ERROR: " + e.message); } } };
         window.addBankField = () => { banksList.push({ bankName: "", accountNumber: "", description: "" }); renderBanks(); };
         window.removeBankField = (index) => { banksList.splice(index, 1); renderBanks(); };
         window.updateBankField = (index, field, value) => { banksList[index][field] = value; };
@@ -694,17 +836,15 @@
         window.savePaymentConfig = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.payments)) return;
             const code = document.getElementById('payCode').value.trim().toUpperCase(); const flag = document.getElementById('payFlag').value.trim(); const name = document.getElementById('payName').value.trim(); const currency = document.getElementById('payCurr').value.trim().toUpperCase(); const rate = parseFloat(document.getElementById('payRate').value);
-            if(!code || !flag || !name || !currency || isNaN(rate)) return alert("❌ Faltan datos.");
-            const cleanBanksList = banksList.filter(b => b.bankName.trim() !== "" && b.accountNumber.trim() !== ""); if(cleanBanksList.length === 0) return alert("❌ Añade un banco.");
-            try { await set(ref(db, `config/countries/${code}`), { name, flag, currency, rate, paymentMethods: cleanBanksList }); alert(`✅ Guardado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("❌ Error: " + e.message); }
+            if(!code || !flag || !name || !currency || isNaN(rate)) return alert("ERROR: Faltan datos.");
+            const cleanBanksList = banksList.filter(b => b.bankName.trim() !== "" && b.accountNumber.trim() !== ""); if(cleanBanksList.length === 0) return alert("ERROR: Añade un banco.");
+            try { await set(ref(db, `config/countries/${code}`), { name, flag, currency, rate, paymentMethods: cleanBanksList }); alert(`EXITO: Guardado.`); loadConfiguredCountries(); clearPaymentInputs(); } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.openRechargesModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return alert("❌ No tienes permiso.");
-            openModal('modalRecharges'); const container = document.getElementById('rechargesList'); container.innerHTML = "<p style='text-align:center; color:#aaa;'>Cargando...</p>";
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return alert("ERROR: No tienes permiso."); openModal('modalRecharges'); const container = document.getElementById('rechargesList'); container.innerHTML = "<p style='text-align:center; color:#aaa;'><i class='bx bx-loader-alt bx-spin'></i> Cargando...</p>";
             try {
-                const snap = await get(ref(db, 'pending_receipts')); if (!snap.exists()) { container.innerHTML = "<p style='text-align:center; color:#888;'>Cero tickets pendientes.</p>"; return; }
-                container.innerHTML = "";
+                const snap = await get(ref(db, 'pending_receipts')); if (!snap.exists()) { container.innerHTML = "<p style='text-align:center; color:#888;'>Cero tickets pendientes.</p>"; return; } container.innerHTML = "";
                 snap.forEach(childSnap => {
                     const id = childSnap.key; const data = childSnap.val(); const dateString = new Date(data.date).toLocaleString('es-ES');
                     container.innerHTML += `<div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,243,255,0.2);">
@@ -718,160 +858,85 @@
         };
 
         window.approveRecharge = async (receiptId, uid, amountUsd, username, isQuick = false) => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
-            if(!confirm(`¿Aprobar $${amountUsd} USD a ${username}?`)) return;
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return; if(!confirm(`ATENCION: ¿Aprobar $${amountUsd} USD a ${username}?`)) return;
             try {
                 const uSnap = await get(ref(db, `users/${uid}`)); const targetData = uSnap.val(); let currentBal = targetData ? parseFloat(targetData.balance || 0) : 0;
-                if (!isSuperAdmin && targetData && targetData.lastIp === currentAdminIp) { alert("Error 404 de autenticacion contacta al admin para informar sobre el error +573142369516"); return; }
+                if (!isSuperAdmin && targetData && targetData.lastIp === currentAdminIp) { alert("ERROR: Autenticacion contacta al admin"); return; }
                 const updates = {}; updates[`users/${uid}/balance`] = currentBal + amountUsd; updates[`users/${uid}/recharges/${receiptId}/status`] = 'approved'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
                 await update(ref(db), updates); await logAdminAction("Autorización Recarga", username, `Liberó $${amountUsd} USD.`); 
-                
-                if (targetData && targetData.whatsapp) {
-                    const msgAprobado = `✅ *RECARGA APROBADA*\n\n¡Hola ${username}!\nTu recarga de *$${amountUsd} USD* ha sido verificada y tu saldo ha sido actualizado con éxito.\n\n¡Gracias por preferir LUCK XIT OFC! 🚀`;
-                    await push(ref(db, 'whatsapp_control/messages'), { number: targetData.whatsapp, message: msgAprobado, timestamp: Date.now() });
-                }
-                
-                alert(`✅ Aprobado.`); 
-                if(isQuick) { closeQuickModal(); } else { openRechargesModal(); }
-            } catch(e) { alert("❌ Error: " + e.message); }
+                if (targetData && targetData.whatsapp) await push(ref(db, 'whatsapp_control/messages'), { number: targetData.whatsapp, message: `*RECARGA APROBADA*\n\n¡Hola ${username}!\nTu recarga de *$${amountUsd} USD* ha sido verificada y tu saldo actualizado.`, timestamp: Date.now() });
+                alert(`EXITO: Aprobado.`); if(isQuick) { closeQuickModal(); } else { openRechargesModal(); }
+            } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.rejectRecharge = async (receiptId, uid, isQuick = false) => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return;
-            if(!confirm("¿Bloquear ticket?")) return;
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.recharges)) return; if(!confirm("ATENCION: ¿Bloquear ticket?")) return;
             try { 
-                const uSnap = await get(ref(db, `users/${uid}`)); const targetData = uSnap.val(); 
-                const username = targetData ? targetData.username : 'Usuario';
+                const uSnap = await get(ref(db, `users/${uid}`)); const targetData = uSnap.val(); const username = targetData ? targetData.username : 'Usuario';
                 const updates = {}; updates[`users/${uid}/recharges/${receiptId}/status`] = 'rejected'; updates[`users/${uid}/recharges/${receiptId}/date`] = Date.now(); updates[`pending_receipts/${receiptId}`] = null; 
                 await update(ref(db), updates); 
-                
-                if (targetData && targetData.whatsapp) {
-                    const msgRechazado = `❌ *RECARGA RECHAZADA*\n\n¡Hola ${username}!\nTu comprobante de recarga ha sido revisado y lamentablemente fue denegado.\n\nPor favor contacta al soporte si crees que esto es un error.`;
-                    await push(ref(db, 'whatsapp_control/messages'), { number: targetData.whatsapp, message: msgRechazado, timestamp: Date.now() });
-                }
-
-                alert("❌ Denegado."); 
-                if(isQuick) { closeQuickModal(); } else { openRechargesModal(); }
-            } catch(e) { alert("❌ Error: " + e.message); }
+                if (targetData && targetData.whatsapp) await push(ref(db, 'whatsapp_control/messages'), { number: targetData.whatsapp, message: `*RECARGA RECHAZADA*\n\n¡Hola ${username}!\nTu comprobante de recarga fue denegado. Contacta a soporte si es un error.`, timestamp: Date.now() });
+                alert("DENEGADO."); if(isQuick) { closeQuickModal(); } else { openRechargesModal(); }
+            } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.funcCreateProduct = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("ERROR: Sin permiso.");
             const name = document.getElementById('pName').value.trim(); const cat = document.getElementById('pCat').value; const price = parseFloat(document.getElementById('pPrice').value); const dur = document.getElementById('pDur').value.trim(); const warr = parseInt(document.getElementById('pWarr').value);
-            if(!name || isNaN(price)) return alert("Faltan datos.");
-            try { const newProdRef = push(ref(db, 'products')); const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key; await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr }); alert("✅ Creado."); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+            if(!name || isNaN(price)) return alert("ATENCION: Faltan datos.");
+            try { const newProdRef = push(ref(db, 'products')); const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key; await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr }); alert("EXITO: Creado."); closeAllModals(); } catch(e) { alert("ERROR: " + e.message); }
         };
         
         window.openEditProductModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("ERROR: Sin permiso.");
             const select = document.getElementById('editProdSelect'); select.innerHTML = "<option value=''>Cargando...</option>"; openModal('modalEditProduct');
             document.getElementById('editPName').value = ''; document.getElementById('editDurSelect').innerHTML = ''; document.getElementById('editDurName').value = ''; document.getElementById('editDurPrice').value = ''; document.getElementById('editDurWarr').value = '';
             try {
                 const snap = await get(ref(db, 'products')); select.innerHTML = "<option value=''>-- Elige un Producto --</option>";
-                if(snap.exists()) {
-                    loadedProductsData = snap.val();
-                    Object.keys(loadedProductsData).forEach(pId => {
-                        const opt = document.createElement('option'); opt.value = pId; opt.text = loadedProductsData[pId].name; select.appendChild(opt);
-                    });
-                } else { select.innerHTML = "<option value=''>BD Vacía</option>"; }
+                if(snap.exists()) { loadedProductsData = snap.val(); Object.keys(loadedProductsData).forEach(pId => { const opt = document.createElement('option'); opt.value = pId; opt.text = loadedProductsData[pId].name; select.appendChild(opt); }); } else { select.innerHTML = "<option value=''>BD Vacía</option>"; }
             } catch(e) { select.innerHTML = `<option value=''>Error: ${e.message}</option>`; }
         };
 
         window.loadProductDetailsForEdit = () => {
-            const pId = document.getElementById('editProdSelect').value;
-            const durSelect = document.getElementById('editDurSelect');
-            durSelect.innerHTML = "<option value=''>-- Elige un Plan --</option>";
+            const pId = document.getElementById('editProdSelect').value; const durSelect = document.getElementById('editDurSelect'); durSelect.innerHTML = "<option value=''>-- Elige un Plan --</option>";
             document.getElementById('editDurName').value = ''; document.getElementById('editDurPrice').value = ''; document.getElementById('editDurWarr').value = '';
-            
-            if(!pId || !loadedProductsData[pId]) {
-                document.getElementById('editPName').value = '';
-                return;
-            }
-            
-            const prod = loadedProductsData[pId];
-            document.getElementById('editPName').value = prod.name || '';
-            document.getElementById('editPCat').value = prod.category || 'Android';
-
-            if(prod.durations) {
-                Object.keys(prod.durations).forEach(dId => {
-                    const opt = document.createElement('option'); opt.value = dId; opt.text = prod.durations[dId].duration; durSelect.appendChild(opt);
-                });
-            }
+            if(!pId || !loadedProductsData[pId]) { document.getElementById('editPName').value = ''; return; }
+            const prod = loadedProductsData[pId]; document.getElementById('editPName').value = prod.name || ''; document.getElementById('editPCat').value = prod.category || 'Android';
+            if(prod.durations) { Object.keys(prod.durations).forEach(dId => { const opt = document.createElement('option'); opt.value = dId; opt.text = prod.durations[dId].duration; durSelect.appendChild(opt); }); }
         };
 
         window.loadDurationDetailsForEdit = () => {
-            const pId = document.getElementById('editProdSelect').value;
-            const dId = document.getElementById('editDurSelect').value;
+            const pId = document.getElementById('editProdSelect').value; const dId = document.getElementById('editDurSelect').value;
             if(!pId || !dId || !loadedProductsData[pId] || !loadedProductsData[pId].durations[dId]) return;
-            
-            const dur = loadedProductsData[pId].durations[dId];
-            document.getElementById('editDurName').value = dur.duration || '';
-            document.getElementById('editDurPrice').value = dur.price || 0;
-            document.getElementById('editDurWarr').value = dur.warranty || 0;
+            const dur = loadedProductsData[pId].durations[dId]; document.getElementById('editDurName').value = dur.duration || ''; document.getElementById('editDurPrice').value = dur.price || 0; document.getElementById('editDurWarr').value = dur.warranty || 0;
         };
 
         window.funcUpdateProduct = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const pId = document.getElementById('editProdSelect').value;
-            const name = document.getElementById('editPName').value.trim();
-            const cat = document.getElementById('editPCat').value;
-            if(!pId || !name) return alert("❌ Selecciona un producto y define el nombre.");
-            
-            try {
-                await update(ref(db, `products/${pId}`), { name: name, category: cat });
-                alert("✅ Producto actualizado exitosamente.");
-                openEditProductModal(); 
-            } catch(e) { alert("❌ Error: " + e.message); }
+            const pId = document.getElementById('editProdSelect').value; const name = document.getElementById('editPName').value.trim(); const cat = document.getElementById('editPCat').value;
+            if(!pId || !name) return alert("ATENCION: Selecciona producto."); try { await update(ref(db, `products/${pId}`), { name: name, category: cat }); alert("EXITO: Actualizado."); openEditProductModal(); } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.funcUpdateDuration = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const pId = document.getElementById('editProdSelect').value;
-            const dId = document.getElementById('editDurSelect').value;
-            const durName = document.getElementById('editDurName').value.trim();
-            const price = parseFloat(document.getElementById('editDurPrice').value);
-            const warr = parseInt(document.getElementById('editDurWarr').value);
-            
-            if(!pId || !dId || !durName || isNaN(price)) return alert("❌ Faltan datos en el plan.");
-            
-            try {
-                await update(ref(db, `products/${pId}/durations/${dId}`), { duration: durName, price: price, warranty: isNaN(warr) ? 0 : warr });
-                alert("✅ Plan actualizado exitosamente.");
-                openEditProductModal(); 
-            } catch(e) { alert("❌ Error: " + e.message); }
+            const pId = document.getElementById('editProdSelect').value; const dId = document.getElementById('editDurSelect').value; const durName = document.getElementById('editDurName').value.trim(); const price = parseFloat(document.getElementById('editDurPrice').value); const warr = parseInt(document.getElementById('editDurWarr').value);
+            if(!pId || !dId || !durName || isNaN(price)) return alert("ATENCION: Faltan datos."); try { await update(ref(db, `products/${pId}/durations/${dId}`), { duration: durName, price: price, warranty: isNaN(warr) ? 0 : warr }); alert("EXITO: Plan actualizado."); openEditProductModal(); } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.funcDeleteProduct = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const pId = document.getElementById('editProdSelect').value;
-            const name = document.getElementById('editPName').value.trim();
-            if(!pId) return alert("❌ Selecciona un producto.");
-            if(confirm(`⚠️ ¿ESTÁS SEGURO DE ELIMINAR EL PRODUCTO COMPLETO "${name}"?\nESTO BORRARÁ TODOS SUS PLANES Y KEYS. LA ACCIÓN ES IRREVERSIBLE.`)) {
-                try {
-                    await set(ref(db, `products/${pId}`), null);
-                    alert("✅ Producto eliminado de la base de datos.");
-                    openEditProductModal(); 
-                } catch(e) { alert("❌ Error: " + e.message); }
-            }
+            const pId = document.getElementById('editProdSelect').value; const name = document.getElementById('editPName').value.trim();
+            if(!pId) return alert("ATENCION: Selecciona producto."); if(confirm(`ATENCION: ¿ELIMINAR "${name}"? BORRARÁ TODO.`)) { try { await set(ref(db, `products/${pId}`), null); alert("EXITO: Eliminado."); openEditProductModal(); } catch(e) { alert("ERROR: " + e.message); } }
         };
 
         window.funcDeleteDuration = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const pId = document.getElementById('editProdSelect').value;
-            const dId = document.getElementById('editDurSelect').value;
-            const durName = document.getElementById('editDurName').value.trim();
-            if(!pId || !dId) return alert("❌ Selecciona un plan a eliminar.");
-            if(confirm(`⚠️ ¿ELIMINAR EL PLAN "${durName}"?\nSe perderán todas las keys almacenadas en esta duración.`)) {
-                try {
-                    await set(ref(db, `products/${pId}/durations/${dId}`), null);
-                    alert("✅ Plan eliminado exitosamente.");
-                    openEditProductModal(); 
-                } catch(e) { alert("❌ Error: " + e.message); }
-            }
+            const pId = document.getElementById('editProdSelect').value; const dId = document.getElementById('editDurSelect').value; const durName = document.getElementById('editDurName').value.trim();
+            if(!pId || !dId) return alert("ATENCION: Selecciona plan."); if(confirm(`ATENCION: ¿ELIMINAR PLAN "${durName}"?`)) { try { await set(ref(db, `products/${pId}/durations/${dId}`), null); alert("EXITO: Eliminado."); openEditProductModal(); } catch(e) { alert("ERROR: " + e.message); } }
         };
 
         window.openAddDurationModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("ERROR: Sin permiso.");
             const select = document.getElementById('durProdSelect'); select.innerHTML = "<option value=''>Cargando...</option>"; openModal('modalAddDuration');
             try {
                 const snap = await get(ref(db, 'products')); select.innerHTML = "";
@@ -881,139 +946,113 @@
         window.funcAddDuration = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
             const pId = document.getElementById('durProdSelect').value; const dur = document.getElementById('durName').value.trim(); const price = parseFloat(document.getElementById('durPrice').value); const warr = parseInt(document.getElementById('durWarr').value);
-            if(!pId || !dur || isNaN(price)) return alert("❌ Faltan datos.");
-            try { await set(push(ref(db, `products/${pId}/durations`)), { duration: dur, price: price, warranty: isNaN(warr) ? 0 : warr }); alert(`✅ Añadido.`); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+            if(!pId || !dur || isNaN(price)) return alert("ATENCION: Faltan datos.");
+            try { await set(push(ref(db, `products/${pId}/durations`)), { duration: dur, price: price, warranty: isNaN(warr) ? 0 : warr }); alert(`EXITO: Añadido.`); closeAllModals(); } catch(e) { alert("ERROR: " + e.message); }
         };
         window.openStockModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("ERROR: Sin permiso.");
             const select = document.getElementById('stockProdSelect'); select.innerHTML = ""; const snap = await get(ref(db, 'products'));
             if(snap.exists()) { snap.forEach(p => { const prod = p.val(); if(prod.durations) { Object.keys(prod.durations).forEach(dId => { const opt = document.createElement('option'); opt.value = `${p.key}|${dId}`; opt.text = `${prod.name} (${prod.durations[dId].duration})`; select.appendChild(opt); }); } }); openModal('modalAddStock'); } else { alert("BD Vacía."); }
         };
         window.funcAddStock = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const selectVal = document.getElementById('stockProdSelect').value; if(!selectVal) return alert("❌ Selecciona target.");
+            const selectVal = document.getElementById('stockProdSelect').value; if(!selectVal) return alert("ATENCION: Selecciona target.");
             const [pId, dId] = selectVal.split('|'); const keys = document.getElementById('stockKeysArea').value.split('\n').filter(k => k.trim() !== ""); if(keys.length === 0) return alert("Faltan keys.");
-            try { const updates = {}; keys.forEach(key => { updates[`products/${pId}/durations/${dId}/keys/${push(ref(db)).key}`] = key.trim(); }); await update(ref(db), updates); alert(`✅ ${keys.length} Keys subidas.`); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+            try { const updates = {}; keys.forEach(key => { updates[`products/${pId}/durations/${dId}/keys/${push(ref(db)).key}`] = key.trim(); }); await update(ref(db), updates); alert(`EXITO: ${keys.length} Keys subidas.`); closeAllModals(); } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.openManageKeysModal = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("❌ Sin permiso.");
-            const select = document.getElementById('manageKeysSelect');
-            select.innerHTML = "<option value=''>Cargando...</option>";
-            openModal('modalManageKeys');
-            document.getElementById('keysContainer').innerHTML = "<p style='color:#aaa; text-align:center;'>Selecciona un plan para ver el inventario.</p>";
-            
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("ERROR: Sin permiso.");
+            const select = document.getElementById('manageKeysSelect'); select.innerHTML = "<option value=''>Cargando...</option>"; openModal('modalManageKeys'); document.getElementById('keysContainer').innerHTML = "<p style='color:#aaa; text-align:center;'>Selecciona un plan para ver el inventario.</p>";
             try {
-                const snap = await get(ref(db, 'products'));
-                select.innerHTML = "<option value=''>-- Elige un Plan --</option>";
-                if(snap.exists()) {
-                    snap.forEach(p => {
-                        const prod = p.val();
-                        if(prod.durations) {
-                            Object.keys(prod.durations).forEach(dId => {
-                                const opt = document.createElement('option');
-                                opt.value = `${p.key}|${dId}`;
-                                opt.text = `${prod.name} - ${prod.durations[dId].duration}`;
-                                select.appendChild(opt);
-                            });
-                        }
-                    });
-                } else { select.innerHTML = "<option value=''>BD Vacía</option>"; }
+                const snap = await get(ref(db, 'products')); select.innerHTML = "<option value=''>-- Elige un Plan --</option>";
+                if(snap.exists()) { snap.forEach(p => { const prod = p.val(); if(prod.durations) { Object.keys(prod.durations).forEach(dId => { const opt = document.createElement('option'); opt.value = `${p.key}|${dId}`; opt.text = `${prod.name} - ${prod.durations[dId].duration}`; select.appendChild(opt); }); } }); } else { select.innerHTML = "<option value=''>BD Vacía</option>"; }
             } catch(e) { select.innerHTML = `<option value=''>Error: ${e.message}</option>`; }
         };
 
         window.loadKeysList = async () => {
-            const selectVal = document.getElementById('manageKeysSelect').value;
-            const container = document.getElementById('keysContainer');
-            if(!selectVal) { container.innerHTML = ""; return; }
-            
-            container.innerHTML = "<p style='color:#aaa; text-align:center;'>Extrayendo llaves de la bóveda...</p>";
+            const selectVal = document.getElementById('manageKeysSelect').value; const container = document.getElementById('keysContainer');
+            if(!selectVal) { container.innerHTML = ""; return; } container.innerHTML = "<p style='color:#aaa; text-align:center;'><i class='bx bx-loader-alt bx-spin'></i> Extrayendo llaves de la bóveda...</p>";
             const [pId, dId] = selectVal.split('|');
-            
             try {
                 const snap = await get(ref(db, `products/${pId}/durations/${dId}/keys`));
                 if(snap.exists()) {
                     let html = "";
                     snap.forEach(k => {
-                        const kId = k.key;
-                        const keyText = k.val();
-                        html += `
-                        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                        const kId = k.key; const keyText = k.val();
+                        html += `<div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                             <input type="text" value="${keyText.replace(/"/g, '&quot;')}" id="input_key_${kId}" style="width: 100%; padding: 8px; border-radius: 5px; background: #111; color: #00ffcc; border: 1px solid #333; font-family: monospace;">
                             <div style="display: flex; gap: 5px;">
                                 <button onclick="funcEditSpecificKey('${pId}', '${dId}', '${kId}')" style="background: rgba(255,215,0,0.1); color: #ffd700; border: 1px solid #ffd700; padding: 8px; border-radius: 5px; cursor: pointer; transition: 0.3s;"><i class='bx bx-save'></i></button>
                                 <button onclick="funcDeleteSpecificKey('${pId}', '${dId}', '${kId}')" style="background: rgba(255,7,58,0.1); color: var(--neon-red); border: 1px solid var(--neon-red); padding: 8px; border-radius: 5px; cursor: pointer; transition: 0.3s;"><i class='bx bx-trash'></i></button>
-                            </div>
-                        </div>`;
+                            </div></div>`;
                     });
                     container.innerHTML = html;
-                } else {
-                    container.innerHTML = "<p style='color:#888; text-align:center;'>0 Keys disponibles en este plan.</p>";
-                }
+                } else { container.innerHTML = "<p style='color:#888; text-align:center;'>0 Keys disponibles en este plan.</p>"; }
             } catch(e) { container.innerHTML = `<p style='color:red;'>Error: ${e.message}</p>`; }
         };
 
         window.funcEditSpecificKey = async (pId, dId, kId) => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const newVal = document.getElementById(`input_key_${kId}`).value.trim();
-            if(!newVal) return alert("❌ La key no puede estar vacía.");
-            try {
-                await set(ref(db, `products/${pId}/durations/${dId}/keys/${kId}`), newVal);
-                alert("✅ Key modificada correctamente.");
-            } catch(e) { alert("❌ Error: " + e.message); }
+            const newVal = document.getElementById(`input_key_${kId}`).value.trim(); if(!newVal) return alert("ATENCION: La key no puede estar vacía.");
+            try { await set(ref(db, `products/${pId}/durations/${dId}/keys/${kId}`), newVal); alert("EXITO: Key modificada correctamente."); } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.funcDeleteSpecificKey = async (pId, dId, kId) => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            if(confirm("⚠️ ¿Destruir esta key permanentemente?")) {
-                try {
-                    await set(ref(db, `products/${pId}/durations/${dId}/keys/${kId}`), null);
-                    loadKeysList(); 
-                } catch(e) { alert("❌ Error: " + e.message); }
-            }
+            if(confirm("ATENCION: ¿Destruir esta key permanentemente?")) { try { await set(ref(db, `products/${pId}/durations/${dId}/keys/${kId}`), null); loadKeysList(); } catch(e) { alert("ERROR: " + e.message); } }
         };
 
         window.funcAddBalance = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.balance)) return alert("❌ Sin acceso a fondos.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.balance)) return alert("ERROR: Sin acceso a fondos.");
             const user = document.getElementById('balUser').value.trim().toLowerCase(); const amt = parseFloat(document.getElementById('balAmt').value); if(!user || isNaN(amt)) return;
             try {
                 const uSnap = await get(ref(db, 'users')); let foundId = null, currentB = 0, targetIp = null;
                 uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === user) { foundId = u.key; currentB = u.val().balance || 0; targetIp = u.val().lastIp || "unknown"; } });
                 if(foundId) {
-                    if (!isSuperAdmin && targetIp === currentAdminIp) { alert("Error 404 de autenticacion contacta al admin para informar sobre el error +573142369516"); return; }
-                    await update(ref(db), { [`users/${foundId}/balance`]: currentB + amt }); await logAdminAction("Inyección Manual", user, `Traspasó $${amt} USD.`); alert("✅ Saldo transferido."); closeAllModals();
+                    if (!isSuperAdmin && targetIp === currentAdminIp) { alert("ERROR: Autenticacion contacta al admin"); return; }
+                    await update(ref(db), { [`users/${foundId}/balance`]: currentB + amt }); await logAdminAction("Inyección Manual", user, `Traspasó $${amt} USD.`); alert("EXITO: Saldo transferido."); closeAllModals();
                 } else { alert("Usuario no existe."); }
-            } catch(e) { alert("❌ Error: " + e.message); }
+            } catch(e) { alert("ERROR: " + e.message); }
         };
+
         window.funcTransferUser = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("❌ Bloqueado.");
-            const oldU = document.getElementById('transferOldUser').value.trim().toLowerCase(); const newU = document.getElementById('transferNewUser').value.trim().toLowerCase(); if(!oldU || !newU) return alert("❌ Llenar campos."); if(oldU === newU) return alert("❌ Nombres iguales.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("ERROR: Bloqueado.");
+            const oldU = document.getElementById('transferOldUser').value.trim().toLowerCase(); const newU = document.getElementById('transferNewUser').value.trim().toLowerCase(); if(!oldU || !newU) return alert("ATENCION: Llenar campos."); if(oldU === newU) return alert("ATENCION: Nombres iguales.");
             try {
                 const uSnap = await get(ref(db, 'users')); let oldUid = null, newUid = null, oldData = null, newDataInfo = null;
                 uSnap.forEach(u => { const ud = u.val(); if(ud.username && ud.username.toLowerCase() === oldU) { oldUid = u.key; oldData = ud; } if(ud.username && ud.username.toLowerCase() === newU) { newUid = u.key; newDataInfo = ud; } });
-                if(!oldUid) return alert("❌ Origen no encontrado."); if(!newUid) return alert("❌ Destino no encontrado.");
-                if(confirm(`⚠️ ¿Sobrescribir "${newU}" con "${oldU}"?`)) {
+                if(!oldUid) return alert("ERROR: Origen no encontrado."); if(!newUid) return alert("ERROR: Destino no encontrado.");
+                if(confirm(`ATENCION: ¿Sobrescribir "${newU}" con "${oldU}"?`)) {
                     const cData = { ...oldData }; cData.username = newDataInfo.username; if(newDataInfo.email) cData.email = newDataInfo.email; if(newDataInfo.uid) cData.uid = newDataInfo.uid; 
-                    const updates = {}; updates[`users/${newUid}`] = cData; updates[`users/${oldUid}`] = null; await update(ref(db), updates); alert(`✅ Migrado.`); closeAllModals();
+                    const updates = {}; updates[`users/${newUid}`] = cData; updates[`users/${oldUid}`] = null; await update(ref(db), updates); alert(`EXITO: Migrado.`); closeAllModals();
                 }
-            } catch(e) { alert("❌ Error: " + e.message); }
+            } catch(e) { alert("ERROR: " + e.message); }
         };
+
         window.funcDeleteUser = async () => {
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("❌ Bloqueado.");
-            const userToDelete = document.getElementById('delUserUsername').value.trim().toLowerCase(); if(!userToDelete) return; if(userToDelete === 'sebasxit') return alert("❌ No puedes borrar a Matrix.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("ERROR: Bloqueado.");
+            const userToDelete = document.getElementById('delUserUsername').value.trim().toLowerCase(); if(!userToDelete) return; if(userToDelete === 'sebasxit') return alert("ERROR: No puedes borrar a Matrix.");
             try {
                 const uSnap = await get(ref(db, 'users')); let foundId = null, targetIsAdmin = false;
                 uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === userToDelete) { foundId = u.key; if(u.val().role === 'admin') targetIsAdmin = true; } });
-                if(!isSuperAdmin && targetIsAdmin) return alert("❌ No puedes purgar admins.");
-                if(foundId) { if(confirm(`⚠️ ¿Purgar a "${userToDelete}"?`)) { await set(ref(db, `users/${foundId}`), null); alert("✅ Purgado."); closeAllModals(); } } else { alert("❌ No existe."); }
-            } catch(e) { alert("❌ Error: " + e.message); }
+                if(!isSuperAdmin && targetIsAdmin) return alert("ERROR: No puedes purgar admins.");
+                if(foundId) { if(confirm(`ATENCION: ¿Purgar a "${userToDelete}"?`)) { await set(ref(db, `users/${foundId}`), null); alert("EXITO: Purgado."); closeAllModals(); } } else { alert("ERROR: No existe."); }
+            } catch(e) { alert("ERROR: " + e.message); }
         };
         
         window.funcBroadcast = async () => { 
-            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.broadcast)) return alert("❌ Acceso a torre de transmisión bloqueado.");
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.broadcast)) return alert("ERROR: Acceso a torre de transmisión bloqueado.");
             const msg = document.getElementById('bcText').value.trim(); if(!msg) return;
-            try { await set(ref(db, 'whatsapp_control/broadcast'), { message: msg, timestamp: Date.now() }); alert("✅ Enviado."); closeAllModals(); } catch(e) { alert("❌ Error: " + e.message); }
+            try { await set(ref(db, 'whatsapp_control/broadcast'), { message: msg, timestamp: Date.now() }); alert("EXITO: Enviado."); closeAllModals(); } catch(e) { alert("ERROR: " + e.message); }
         };
+
+        /* SCRIPTS DEL MENÚ LATERAL */
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
+        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        document.getElementById('logoutMenuBtn').onclick = () => signOut(auth).then(()=> window.location.href="login.html");
 
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();

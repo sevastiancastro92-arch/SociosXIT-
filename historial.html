@@ -3,238 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial - SociosXIT</title>
+    <title>Historial y Reembolsos - SociosXIT</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* =========================================
-           1. FUENTES Y PROTECCIÓN
+           FUENTES Y VARIABLES CÓSMICAS
            ========================================= */
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
+        
         * { user-select: none; box-sizing: border-box; }
-
-        :root {
+        
+        :root { 
+            --neon-pink: #ff0055;
+            --neon-blue: #00eeff;
             --neon-purple: #bc13fe;
+            --neon-green: #00ffcc; 
             --neon-red: #ff073a;
-            --neon-cyan: #00f3ff;
-            --neon-green: #00ffcc;
-            --glass-bg: rgba(15, 0, 25, 0.7);
-            --sidebar-bg: rgba(5, 10, 20, 0.95);
+            --bg-deep: #030008;
+            --glass-bg: rgba(10, 2, 20, 0.85); 
+            --sidebar-bg: rgba(5, 0, 15, 0.95); 
         }
 
-        body {
-            background-color: #020005;
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            margin: 0; padding: 0;
-            min-height: 100dvh; 
-            display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden;
+        body { 
+            background-color: var(--bg-deep); 
+            background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
+            color: white; font-family: 'Exo 2', sans-serif; 
+            margin: 0; padding: 0; min-height: 100dvh; 
+            display: flex; justify-content: flex-start; align-items: center; flex-direction: column; 
+            overflow-x: hidden; 
         }
-
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #020202; }
-        ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 4px; box-shadow: 0 0 10px var(--neon-purple); }
 
-        /* =========================================
-           2. BARRA DE NAVEGACIÓN Y MENÚ (ESTÁNDAR)
-           ========================================= */
-        .top-bar {
-            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 700px;
-            background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px);
-            border: 1px solid var(--neon-cyan); border-radius: 12px;
-            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); z-index: 100;
-        }
+        .cosmic-portal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; z-index: -2; display: flex; justify-content: center; align-items: center; pointer-events: none; overflow: hidden; }
+        .stars { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)); background-repeat: repeat; background-size: 200px 200px; animation: twinkle 4s infinite alternate; opacity: 0.4; }
+        @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.7; } }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.6; }
 
-        .menu-btn {
-            background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
-            border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
-        }
-        .menu-btn:hover { box-shadow: 0 0 10px var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
-
+        /* BARRA SUPERIOR */
+        .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(10, 2, 20, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0, 238, 255, 0.4); border-radius: 15px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 20px rgba(0, 238, 255, 0.2); z-index: 100; }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
+        .menu-btn:hover { background: rgba(0, 238, 255, 0.1); box-shadow: 0 0 15px var(--neon-blue); transform: scale(1.05); }
         .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
         .top-bar-right::-webkit-scrollbar { display: none; }
-        
-        .badge {
-            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px;
-            font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: #aaa; white-space: nowrap; cursor: pointer; transition: 0.3s;
-        }
-        .badge:hover { border-color: var(--neon-cyan); }
-        .badge i { font-size: 1.1rem; color: var(--neon-cyan); }
-        .badge span { color: #fff; font-weight: 600; }
-        .badge.green { border-color: rgba(0, 255, 204, 0.3); cursor: default;}
-        .badge.green i, .badge.green span { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-family: 'Orbitron', sans-serif; color: #ddd; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        .badge:hover { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); color: #fff; }
+        .badge img { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; }
+        .badge span { color: #fff; font-weight: 700; }
+        .badge.green { border-color: rgba(0, 255, 204, 0.4); cursor: default; }
+        .badge.green span { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
 
-        /* Sidebar */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 998;
-            opacity: 0; visibility: hidden; transition: 0.3s;
-        }
+        /* MENÚ LATERAL */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.4s ease; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
-        .sidebar {
-            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; 
-            background: var(--sidebar-bg); border-right: 1px solid var(--neon-cyan);
-            box-shadow: 5px 0 20px rgba(0, 243, 255, 0.1); z-index: 999;
-            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
-        }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 2px solid var(--neon-purple); box-shadow: 10px 0 30px rgba(188, 19, 254, 0.2); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; }
         .sidebar.active { left: 0; }
-
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
-        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-cyan); }
-        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
-        .close-btn:hover { color: var(--neon-red); transform: rotate(90deg); }
-
-        .sidebar-menu { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
-        .sidebar-menu::-webkit-scrollbar { display: none; }
-
-        .sidebar-item {
-            display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;
-            padding: 12px 15px; background: rgba(255,255,255,0.05); border-radius: 10px;
-            font-size: 0.95rem; transition: 0.3s; flex-shrink: 0; 
-        }
-        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); }
-        .sidebar-item:hover { background: rgba(0, 243, 255, 0.1); border-left: 4px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(188, 19, 254, 0.4); padding-bottom: 15px; margin-bottom: 20px; }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-blue); }
+        .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
         
-        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; flex-shrink: 0; }
-        .logout-btn {
-            width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red);
-            padding: 12px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .logout-btn:hover { background: var(--neon-red); color: white; box-shadow: 0 0 20px var(--neon-red); }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; overflow-x: hidden; }
+        .sidebar-menu::-webkit-scrollbar { display: none; }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 1rem; font-family: 'Exo 2', sans-serif; border: 1px solid transparent; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s; }
+        .sidebar-item:hover { background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); border-left: 4px solid var(--neon-blue); color: #fff; box-shadow: -5px 0 15px rgba(0, 238, 255, 0.2); transform: translateX(8px); }
+        .sidebar-item:hover i { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); transform: scale(1.1); }
+        
+        .sidebar-footer { margin-top: auto; border-top: 1px dashed rgba(188, 19, 254, 0.4); padding-top: 20px; flex-shrink: 0; }
+        .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; z-index: 1; }
+        .logout-btn:hover { background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); text-shadow: 0 0 5px var(--neon-pink); }
+        .sidebar-version { text-align: center; margin-top: 20px; font-family: 'Exo 2', sans-serif; color: #666; font-size: 0.75rem; display: flex; flex-direction: column; gap: 5px; }
+        .version-badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: var(--neon-blue); font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; }
 
-        /* =========================================
-           3. ESTILOS DEL HISTORIAL
-           ========================================= */
-        .history-container {
-            background: var(--glass-bg); backdrop-filter: blur(12px);
-            padding: 2rem; border-radius: 20px;
-            box-shadow: 0 0 30px rgba(188, 19, 254, 0.15), inset 0 0 20px rgba(255, 7, 58, 0.05);
-            width: 95%; max-width: 600px; border: 1px solid rgba(188, 19, 254, 0.3);
-            animation: slideIn 0.5s ease-out; margin-top: 90px; margin-bottom: 30px;
-            display: flex; flex-direction: column; max-height: 80dvh;
-        }
+        /* HISTORIAL DE DATOS */
+        .history-container { background: var(--glass-bg); backdrop-filter: blur(12px); padding: 2rem; border-radius: 20px; box-shadow: 0 0 30px rgba(188, 19, 254, 0.15), inset 0 0 20px rgba(188, 19, 254, 0.05); width: 95%; max-width: 600px; border: 1px solid rgba(188, 19, 254, 0.3); margin-top: 90px; margin-bottom: 30px; display: flex; flex-direction: column; max-height: 80dvh; }
+        .header-title { display: flex; align-items: center; gap: 10px; justify-content: center; font-size: 1.4rem; font-weight: 900; margin: 0 0 20px 0; color: #fff; font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-purple); }
 
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .tabs { display: flex; justify-content: space-between; margin-bottom: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; padding: 5px; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+        .tab-btn { flex: 1; background: transparent; border: none; color: #aaa; padding: 12px; font-family: 'Orbitron', sans-serif; font-weight: bold; cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 0.85rem; letter-spacing: 1px; }
+        .tab-btn.active { background: rgba(188, 19, 254, 0.2); color: #fff; text-shadow: 0 0 8px var(--neon-purple); box-shadow: inset 0 0 10px rgba(188, 19, 254, 0.5); border: 1px solid rgba(188, 19, 254, 0.4); }
 
-        .header-title {
-            display: flex; align-items: center; gap: 10px; justify-content: center;
-            font-size: 1.4rem; font-weight: 700; margin: 0 0 20px 0; color: #fff;
-            font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 2px;
-            background: linear-gradient(90deg, var(--neon-purple), #fff, var(--neon-cyan));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 5px var(--neon-purple));
-        }
-
-        /* --- PESTAÑAS (Filtros) --- */
-        .tabs {
-            display: flex; justify-content: space-between; margin-bottom: 20px;
-            background: rgba(0,0,0,0.5); border-radius: 10px; padding: 5px;
-            border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
-        }
-
-        .tab-btn {
-            flex: 1; background: transparent; border: none; color: #aaa;
-            padding: 10px; font-family: 'Orbitron', sans-serif; font-weight: bold;
-            cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 0.8rem;
-        }
-        @media (min-width: 480px) { .tab-btn { font-size: 0.9rem; } }
-
-        .tab-btn.active {
-            background: rgba(188, 19, 254, 0.2); color: #fff;
-            text-shadow: 0 0 8px var(--neon-purple); box-shadow: inset 0 0 10px rgba(188, 19, 254, 0.5);
-        }
-
-        /* --- LISTA DE HISTORIAL --- */
-        .history-list {
-            flex-grow: 1; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 15px;
-        }
-
-        .history-list::-webkit-scrollbar { width: 6px; }
-        .history-list::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 3px; }
-        .history-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
-
-        .history-item {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px; border-radius: 12px; position: relative; transition: 0.3s;
-        }
-        .history-item:hover { background: rgba(255,255,255,0.05); transform: translateX(3px); }
-
-        .history-item.purchase { border-left: 4px solid var(--neon-red); }
-        .history-item.purchase:hover { box-shadow: -5px 0 15px rgba(255, 7, 58, 0.2); border-color: rgba(255, 7, 58, 0.5); }
-
+        .history-list { flex-grow: 1; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 15px; }
+        .history-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; transition: 0.3s; position: relative; }
+        .history-item:hover { background: rgba(255,255,255,0.06); transform: translateX(3px); }
+        .history-item.purchase { border-left: 4px solid var(--neon-blue); }
+        .history-item.purchase:hover { box-shadow: -5px 0 15px rgba(0, 238, 255, 0.2); border-color: rgba(0, 238, 255, 0.5); }
         .history-item.recharge { border-left: 4px solid var(--neon-green); }
         .history-item.recharge:hover { box-shadow: -5px 0 15px rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.5); }
 
         .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
         .item-title-box { display: flex; flex-direction: column; }
-        .item-title { font-weight: bold; font-size: 1.05rem; color: #fff; display: flex; align-items: center; gap: 5px; }
+        .item-title { font-weight: bold; font-size: 1.05rem; color: #fff; display: flex; align-items: center; gap: 5px; font-family: 'Orbitron'; }
         .item-date { font-size: 0.75rem; color: #888; margin-top: 3px; }
-
         .item-amount { font-family: 'Orbitron', sans-serif; font-weight: bold; font-size: 1.1rem; }
-        .item-amount.negative { color: var(--neon-red); text-shadow: 0 0 5px rgba(255,7,58,0.5); }
+        .item-amount.negative { color: var(--neon-blue); text-shadow: 0 0 5px rgba(0, 238, 255, 0.5); }
         .item-amount.positive { color: var(--neon-green); text-shadow: 0 0 5px rgba(0,255,204,0.5); }
+        .item-key { background: rgba(0,0,0,0.8); padding: 12px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; color: var(--neon-green); font-size: 0.95rem; margin-top: 12px; word-break: break-all; border: 1px dashed rgba(0, 255, 204, 0.4); text-shadow: 0 0 5px rgba(0, 255, 204, 0.3); text-align: center; font-weight: bold; letter-spacing: 2px; }
 
-        .item-key {
-            background: #000; padding: 10px; border-radius: 8px;
-            font-family: 'Courier New', Courier, monospace; color: var(--neon-cyan);
-            font-size: 0.9rem; margin-top: 12px; word-break: break-all;
-            border: 1px dashed rgba(0, 243, 255, 0.4); text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
-        }
+        .refund-container { margin-top: 15px; display: flex; flex-direction: column; gap: 5px; }
+        .btn-refund { width: 100%; background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 10px; border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; font-size: 0.85rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .btn-refund:hover { background: rgba(255, 7, 58, 0.1); box-shadow: 0 0 15px rgba(255, 7, 58, 0.4); transform: scale(1.02); }
+        .btn-refund.disabled { border-color: #555; color: #777; cursor: not-allowed; background: rgba(255,255,255,0.02); box-shadow: none; transform: none; }
+        .refund-info { font-size: 0.75rem; color: #888; text-align: center; font-style: italic; }
 
-        .empty-msg { text-align: center; color: #666; font-style: italic; padding: 20px; font-size: 0.9rem; }
+        .empty-msg { text-align: center; color: #888; padding: 20px; font-size: 0.9rem; font-family: 'Exo 2'; }
+        .back-btn { width: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); border: none; color: white; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; margin-top: 20px; font-family: 'Orbitron', sans-serif; font-weight: bold; flex-shrink: 0; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
+        .back-btn:hover { box-shadow: 0 0 25px var(--neon-blue); transform: scale(1.02); }
 
-        .back-btn {
-            width: 100%; background: transparent; border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s;
-            margin-top: 20px; font-family: 'Orbitron', sans-serif; font-weight: bold; flex-shrink: 0;
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-        }
-        .back-btn:hover { border-color: var(--neon-cyan); color: white; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); background: rgba(0, 243, 255, 0.1); }
+        /* MODAL DE REEMBOLSO + SUBIDA DE FOTO */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 2000; animation: fadeIn 0.3s; }
+        .modal-box { background: rgba(10, 2, 20, 0.95); padding: 30px 25px; border-radius: 20px; width: 90%; max-width: 450px; border: 2px solid var(--neon-red); box-shadow: 0 0 40px rgba(255, 7, 58, 0.2); animation: slideUpModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } 
+        @keyframes slideUpModal { from { transform: translateY(50px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        
+        .modal-title { font-family: 'Orbitron'; font-size: 1.4rem; margin: 0 0 15px 0; color: var(--neon-red); text-transform: uppercase; text-shadow: 0 0 10px var(--neon-red); }
+        .modal-desc { color: #ccc; font-size: 0.85rem; margin-bottom: 20px; }
+        
+        .refund-textarea { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255, 7, 58, 0.4); color: white; padding: 15px; border-radius: 10px; font-family: 'Exo 2'; resize: none; outline: none; margin-bottom: 15px; transition: 0.3s; }
+        .refund-textarea:focus { border-color: var(--neon-red); box-shadow: inset 0 0 10px rgba(255, 7, 58, 0.2); }
+
+        .file-upload-label { display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; padding: 12px; background: rgba(0, 238, 255, 0.05); color: var(--neon-cyan); border: 1px dashed var(--neon-cyan); border-radius: 10px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; font-size: 0.9rem; }
+        .file-upload-label:hover { background: rgba(0, 238, 255, 0.2); box-shadow: 0 0 15px rgba(0, 238, 255, 0.3); }
+
+        .btn-submit-refund { width: 100%; background: var(--neon-red); color: #fff; border: none; padding: 15px; border-radius: 10px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 7, 58, 0.4); margin-bottom: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-submit-refund:hover { box-shadow: 0 0 25px var(--neon-red); transform: scale(1.02); }
+        .btn-submit-refund:disabled { background: #555; box-shadow: none; cursor: not-allowed; transform: none; }
+        
+        .btn-cancel-modal { width: 100%; background: transparent; border: 1px dashed #777; color: #aaa; padding: 12px; border-radius: 10px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-cancel-modal:hover { border-color: #fff; color: #fff; }
 
     </style>
 </head>
 <body oncontextmenu="return false;"> 
 
+    <div class="cosmic-portal"><div class="stars"></div></div>
+
     <div class="top-bar">
-        <div class="top-bar-left">
-            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
-        </div>
+        <div class="top-bar-left"><button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button></div>
         <div class="top-bar-right">
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
             <div class="badge" onclick="window.location.href='perfil.html'">
-                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-cyan);"> 
+                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U"> 
                 <span id="topUserDisplay">...</span>
             </div>
             <div class="badge green"><i class='bx bx-wallet'></i> $<span id="balanceDisplay">0.00</span></div>
         </div>
     </div>
 
+    <!-- MENÚ LATERAL CYBERPUNK -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h2>SOCIOS XIT</h2><button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button></div>
+        <div class="sidebar-header">
+            <h2>Socios XIT</h2>
+            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
+        </div>
         
         <div class="sidebar-menu">
             <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
             <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
             <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
-            <a href="recarga.html" class="sidebar-item"><i class='bx bx-plus-circle'></i> Recargar Saldo</a>
             <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
+            <a href="recarga.html" class="sidebar-item"><i class='bx bx-wallet'></i> Recargar Saldo</a>
+            <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
-            <a href="historial.html" class="sidebar-item" style="border-left: 4px solid var(--neon-purple); background: rgba(188, 19, 254, 0.1); color: var(--neon-purple);"><i class='bx bx-history' style="color: var(--neon-purple);"></i> Mis Compras</a>
-            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-red);"><i class='bx bx-shield-quarter' style="color: var(--neon-red);"></i> Panel Admin</a>
+            <a href="historial.html" class="sidebar-item" style="border-left: 4px solid var(--neon-blue); background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); color: var(--neon-blue); box-shadow: -5px 0 15px rgba(0, 238, 255, 0.1); transform: translateX(5px); opacity: 1;"><i class='bx bx-history' style="color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue);"></i> Mis Compras</a>
+            <a href="diamantes.html" class="sidebar-item"><i class='bx bxs-diamond'></i> Diamantes FF</a>
+            <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
+            <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
+            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-pink);"><i class='bx bx-shield-quarter' style="color: var(--neon-pink);"></i> Panel Admin</a>
         </div>
-
+        
         <div class="sidebar-footer">
-            <button class="logout-btn" id="logoutBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
+            <button class="logout-btn" id="logoutMenuBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
+            <div class="sidebar-version">
+                <p>Copyright SebasXit 2024 - 2026</p>
+                <div class="version-badge"><i class='bx bx-code-alt'></i> V4</div>
+            </div>
         </div>
     </div>
 
@@ -242,92 +189,89 @@
 
     <div class="history-container">
         <h2 class="header-title"><i class='bx bx-data'></i> REGISTRO DE DATOS</h2>
-
         <div class="tabs">
-            <button class="tab-btn active" onclick="setFilter('all', this)">TODO</button>
-            <button class="tab-btn" onclick="setFilter('purchase', this)">COMPRAS</button>
-            <button class="tab-btn" onclick="setFilter('recharge', this)">RECARGAS</button>
+            <button class="tab-btn active" onclick="setFilter('all', this)"><i class='bx bx-list-ul'></i> TODO</button>
+            <button class="tab-btn" onclick="setFilter('purchase', this)"><i class='bx bx-cart'></i> COMPRAS</button>
+            <button class="tab-btn" onclick="setFilter('recharge', this)"><i class='bx bx-wallet'></i> RECARGAS</button>
         </div>
-
         <div class="history-list" id="historyContainer">
-            <div class="empty-msg" style="animation: blink 1s infinite;">Sincronizando con la red...</div>
+            <div class="empty-msg" style="animation: blink 1s infinite;"><i class='bx bx-loader-alt bx-spin'></i> Sincronizando con la red...</div>
         </div>
-
         <button class="back-btn" onclick="window.location.href='index.html'">
             <i class='bx bx-store-alt'></i> VOLVER A LA TIENDA
         </button>
     </div>
 
-    <script>
-        // --- CONTROL DEL MENÚ LATERAL ---
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        document.getElementById('openMenuBtn').addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
-        document.getElementById('closeMenuBtn').addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
-        overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+    <!-- MODAL DE SOLICITUD DE REEMBOLSO CON IMAGEN -->
+    <div id="refundModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title"><i class='bx bx-error-circle'></i> Solicitar Reembolso</h3>
+            <p class="modal-desc">Explica detalladamente por qué la key no funciona y adjunta una captura de pantalla clara del error mostrado en la aplicación.</p>
+            
+            <textarea id="refundReason" class="refund-textarea" rows="3" placeholder="Ej: La key dice que ya fue usada en otro dispositivo..."></textarea>
+            
+            <div style="margin-bottom: 20px;">
+                <label for="refundImage" class="file-upload-label">
+                    <i class='bx bx-image-add'></i> SUBIR CAPTURA DE ERROR
+                </label>
+                <input type="file" id="refundImage" accept="image/*" style="display:none;" onchange="updateFileName()">
+                <div id="fileNameDisplay" style="color: var(--neon-cyan); font-size: 0.8rem; margin-top: 5px; font-family: 'Exo 2';"></div>
+            </div>
 
-        // --- SCRIPT DE FONDO DE PARTÍCULAS ---
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height; let particles = [];
-        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize); resize();
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width; this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1.5; this.vy = (Math.random() - 0.5) * 1.5;
-                this.size = Math.random() * 2 + 1;
-                this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, ';
-                this.alpha = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-            draw() {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill();
-            }
-        }
-        function initParticles() { particles = []; for (let i = 0; i < 60; i++) { particles.push(new Particle()); } }
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update(); particles[i].draw();
-                for (let j = i; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 120) {
-                        ctx.beginPath(); ctx.strokeStyle = 'rgba(150, 50, 255, ' + (1 - distance/120) * 0.15 + ')';
-                        ctx.lineWidth = 1; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-        initParticles(); animate();
-    </script>
+            <button class="btn-submit-refund" id="btnSubmitRefund"><i class='bx bx-send'></i> ENVIAR REPORTE</button>
+            <button class="btn-cancel-modal" onclick="document.getElementById('refundModal').style.display='none'"><i class='bx bx-x'></i> CANCELAR</button>
+        </div>
+    </div>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child, update, push, set } from './firebase-config.js';
 
         let allRecords = [];
         let currentFilter = 'all';
+        let currentUser = null;
+        let currentUsername = "";
+        
+        const REFUND_LIMIT_DAYS = 10;
+        let selectedRecordForRefund = null;
 
-        // VERIFICAR AUTENTICACIÓN
+        // UI Updates for file input
+        window.updateFileName = () => {
+            const fileInput = document.getElementById('refundImage');
+            const display = document.getElementById('fileNameDisplay');
+            if (fileInput.files.length > 0) {
+                display.innerHTML = `<i class='bx bx-check-circle'></i> Archivo: ${fileInput.files[0].name}`;
+            } else {
+                display.innerHTML = "";
+            }
+        };
+
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
+        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        document.getElementById('logoutMenuBtn').onclick = () => signOut(auth).then(()=>window.location.href="login.html");
+
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 1; this.vy = (Math.random() - 0.5) * 1; this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 238, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                currentUser = user;
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        document.getElementById('topUserDisplay').innerText = data.username;
+                        currentUsername = data.username || "Usuario";
+                        document.getElementById('topUserDisplay').innerText = currentUsername;
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         
-                        if(data.username && data.username.toLowerCase() === 'sebasxit') {
+                        if(data.username && data.username.toLowerCase() === 'sebasxit' || data.role === 'admin') {
                             document.getElementById('adminMenuBtn').style.display = 'flex';
                         }
                     }
@@ -339,24 +283,16 @@
             }
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = "login.html");
-        });
-
-        // OBTENER DATOS DE FIREBASE
         async function fetchHistoryData(uid) {
             const userRef = ref(db, 'users/' + uid);
-            
             try {
                 const snapshot = await get(userRef);
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     const purchases = data.history || {};
                     const recharges = data.recharges || {}; 
-
                     allRecords = [];
 
-                    // Formatear compras
                     for (let key in purchases) {
                         allRecords.push({
                             id: key,
@@ -364,35 +300,33 @@
                             title: purchases[key].product,
                             amount: purchases[key].price,
                             date: purchases[key].date,
-                            secretKey: purchases[key].key
+                            secretKey: purchases[key].key,
+                            refundStatus: purchases[key].refundStatus || null
                         });
                     }
 
-                    // Formatear recargas
                     for (let key in recharges) {
-                        allRecords.push({
-                            id: key,
-                            type: 'recharge',
-                            title: 'Saldo Añadido',
-                            amount: recharges[key].amount,
-                            date: recharges[key].date || recharges[key].timestamp || Date.now(), 
-                        });
+                        if (recharges[key].status === 'approved') {
+                            allRecords.push({
+                                id: key,
+                                type: 'recharge',
+                                title: 'Recarga Aprobada',
+                                amount: recharges[key].amount,
+                                date: recharges[key].date || recharges[key].timestamp || Date.now(), 
+                            });
+                        }
                     }
 
-                    // Ordenar por fecha (más reciente primero)
                     allRecords.sort((a, b) => b.date - a.date);
                     renderHistory();
-
                 } else {
-                    document.getElementById('historyContainer').innerHTML = `<div class="empty-msg">No se encontraron registros en tu cuenta.</div>`;
+                    document.getElementById('historyContainer').innerHTML = `<div class="empty-msg"><i class='bx bx-folder-open'></i> No se encontraron registros en tu cuenta.</div>`;
                 }
             } catch (error) {
-                console.error("Error al obtener historial:", error);
-                document.getElementById('historyContainer').innerHTML = `<div class="empty-msg" style="color:var(--neon-red);">Error de conexión con el servidor.</div>`;
+                document.getElementById('historyContainer').innerHTML = `<div class="empty-msg" style="color:var(--neon-red);"><i class='bx bx-wifi-off'></i> Error de conexión con el servidor.</div>`;
             }
         }
 
-        // RENDERIZAR LISTA
         function renderHistory() {
             const container = document.getElementById('historyContainer');
             container.innerHTML = '';
@@ -403,9 +337,11 @@
             });
 
             if (filteredRecords.length === 0) {
-                container.innerHTML = `<div class="empty-msg">No hay movimientos en esta categoría.</div>`;
+                container.innerHTML = `<div class="empty-msg"><i class='bx bx-search'></i> No hay movimientos en esta categoría.</div>`;
                 return;
             }
+
+            const now = Date.now();
 
             filteredRecords.forEach(record => {
                 const dateObj = new Date(record.date);
@@ -414,37 +350,117 @@
                 const isPurchase = record.type === 'purchase';
                 const amountClass = isPurchase ? 'negative' : 'positive';
                 const amountPrefix = isPurchase ? '-' : '+';
-                const icon = isPurchase ? "<i class='bx bx-cart'></i>" : "<i class='bx bx-money-withdraw'></i>";
+                const icon = isPurchase ? "<i class='bx bx-cart-download'></i>" : "<i class='bx bx-wallet'></i>";
+                
+                const cardDiv = document.createElement('div');
+                cardDiv.className = `history-item ${record.type}`;
                 
                 let html = `
-                    <div class="history-item ${record.type}">
-                        <div class="item-header">
-                            <div class="item-title-box">
-                                <span class="item-title">${icon} ${record.title}</span>
-                                <span class="item-date">${dateString}</span>
-                            </div>
-                            <div class="item-amount ${amountClass}">${amountPrefix}$${parseFloat(record.amount).toFixed(2)}</div>
+                    <div class="item-header">
+                        <div class="item-title-box">
+                            <span class="item-title">${icon} ${record.title}</span>
+                            <span class="item-date">${dateString}</span>
                         </div>
+                        <div class="item-amount ${amountClass}">${amountPrefix}$${parseFloat(record.amount).toFixed(2)}</div>
+                    </div>
                 `;
 
                 if (isPurchase && record.secretKey) {
                     html += `<div class="item-key">${record.secretKey}</div>`;
+                    
+                    const daysPassed = (now - record.date) / (1000 * 60 * 60 * 24);
+                    
+                    if (record.refundStatus === 'pending') {
+                        html += `<div class="refund-container"><button class="btn-refund disabled"><i class='bx bx-time-five'></i> REVISIÓN EN PROCESO</button><span class="refund-info">Admin evaluando solicitud...</span></div>`;
+                    } else if (record.refundStatus === 'approved') {
+                        html += `<div class="refund-container"><button class="btn-refund disabled" style="color:var(--neon-green); border-color:var(--neon-green);"><i class='bx bx-check-shield'></i> REEMBOLSADO</button></div>`;
+                    } else if (record.refundStatus === 'rejected') {
+                        html += `<div class="refund-container"><button class="btn-refund disabled" style="color:#555; border-color:#333;"><i class='bx bx-block'></i> REEMBOLSO DENEGADO</button></div>`;
+                    } else {
+                        if (daysPassed <= REFUND_LIMIT_DAYS) {
+                            html += `<div class="refund-container"><button class="btn-refund" onclick="openRefundModal('${record.id}', '${record.secretKey.replace(/'/g, "\\'")}', '${record.title.replace(/'/g, "\\'")}')"><i class='bx bx-error-circle'></i> SOLICITAR REEMBOLSO</button><span class="refund-info">Disponible hasta los 10 días de compra.</span></div>`;
+                        } else {
+                            html += `<div class="refund-container"><button class="btn-refund disabled"><i class='bx bx-x-circle'></i> TIEMPO EXPIRADO</button><span class="refund-info">Han pasado más de 10 días.</span></div>`;
+                        }
+                    }
                 }
-
-                html += `</div>`;
-                container.innerHTML += html;
+                cardDiv.innerHTML = html;
+                container.appendChild(cardDiv);
             });
         }
 
-        // FILTROS
         window.setFilter = (filterType, btnElement) => {
             currentFilter = filterType;
-            
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
-            
             renderHistory();
         };
+
+        window.openRefundModal = (recordId, secretKey, productTitle) => {
+            selectedRecordForRefund = { id: recordId, key: secretKey, title: productTitle };
+            document.getElementById('refundReason').value = "";
+            document.getElementById('refundImage').value = "";
+            document.getElementById('fileNameDisplay').innerHTML = "";
+            document.getElementById('refundModal').style.display = 'flex';
+        };
+
+        document.getElementById('btnSubmitRefund').addEventListener('click', async () => {
+            const reason = document.getElementById('refundReason').value.trim();
+            const fileInput = document.getElementById('refundImage');
+            const file = fileInput.files[0];
+
+            if (!reason) return alert("ATENCION: Debes explicar el motivo del fallo para que el admin lo revise.");
+            if (reason.length < 10) return alert("ATENCION: Por favor sé más detallado en tu explicación.");
+            if (!file) return alert("ERROR: Es obligatorio adjuntar una captura de pantalla que demuestre el error.");
+
+            const btn = document.getElementById('btnSubmitRefund');
+            btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> SUBIENDO EVIDENCIA..."; 
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const imgbbRes = await fetch('https://api.imgbb.com/1/upload?key=fd76f06048b34773ba64f11cc4535ff4', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const imgbbData = await imgbbRes.json();
+                if (!imgbbData.success) throw new Error("Fallo al subir la imagen al servidor.");
+                
+                const proofUrl = imgbbData.data.url;
+
+                const refundRef = push(ref(db, 'refund_requests'));
+                await set(refundRef, {
+                    uid: currentUser.uid,
+                    username: currentUsername,
+                    historyId: selectedRecordForRefund.id,
+                    product: selectedRecordForRefund.title,
+                    secretKey: selectedRecordForRefund.key,
+                    reason: reason,
+                    proofUrl: proofUrl,
+                    timestamp: Date.now(),
+                    status: 'pending' 
+                });
+
+                await update(ref(db, `users/${currentUser.uid}/history/${selectedRecordForRefund.id}`), {
+                    refundStatus: 'pending'
+                });
+
+                alert("EXITO: Reporte enviado correctamente. El administrador revisará la key y la evidencia pronto.");
+                document.getElementById('refundModal').style.display = 'none';
+                
+                fetchHistoryData(currentUser.uid);
+
+            } catch (error) {
+                alert("ERROR al enviar solicitud: " + error.message);
+            } finally {
+                btn.innerHTML = "<i class='bx bx-send'></i> ENVIAR REPORTE"; 
+                btn.disabled = false;
+            }
+        });
+
     </script>
 </body>
 </html>
