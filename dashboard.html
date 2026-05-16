@@ -384,6 +384,22 @@
         }
         .ia-title { display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; font-weight: bold; color: #fff; font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-blue); }
         .ia-title i { font-size: 1.8rem; color: var(--neon-blue); animation: pulseGlow 2s infinite; }
+        
+        .ia-version { 
+            font-size: 0.65rem; 
+            background: rgba(188, 19, 254, 0.15); 
+            color: var(--neon-purple); 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            border: 1px solid var(--neon-purple); 
+            margin-left: 10px; 
+            letter-spacing: 1px; 
+            font-family: 'Exo 2', sans-serif;
+            text-transform: uppercase;
+            text-shadow: none;
+            box-shadow: 0 0 8px rgba(188, 19, 254, 0.3);
+        }
+
         .ia-close { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: 0.3s; }
         .ia-close:hover { transform: scale(1.2) rotate(90deg); text-shadow: 0 0 15px var(--neon-pink); }
         
@@ -540,9 +556,6 @@
         </div>
     </div>
 
-    <!-- =========================================
-         MENÚ FLOTANTE DE SOPORTE
-         ========================================= -->
     <div class="support-wrapper">
         <div class="support-menu" id="supportMenu">
             <button class="support-item support-ia" id="openIaBtn">
@@ -557,13 +570,13 @@
         </button>
     </div>
 
-    <!-- =========================================
-         MODAL DEL CHAT DE INTELIGENCIA ARTIFICIAL
-         ========================================= -->
     <div class="ia-modal-overlay" id="iaModalOverlay">
         <div class="ia-chat-box">
             <div class="ia-header">
-                <div class="ia-title"><i class='bx bx-bot'></i> Asistente XIT</div>
+                <div class="ia-title">
+                    <i class='bx bx-bot'></i> Asistente XIT
+                    <span class="ia-version">Xit IA v1 lite</span>
+                </div>
                 <button class="ia-close" id="closeIaBtn"><i class='bx bx-x'></i></button>
             </div>
             
@@ -601,7 +614,7 @@
         });
 
         document.getElementById('btnCerrarWaGroup').onclick = () => { localStorage.setItem('waGroupDismissed', 'true'); document.getElementById('waGroupOverlay').classList.remove('show'); };
-        document.getElementById('btnCerrarWaAlert').onclick = () => { sessionStorage.setItem('waAlertDismissed', 'true'); document.getElementById('waAlertOverlay').classList.remove('show'); };
+        document.getElementById('btnCerrarWaAlert').onclick = () => { localStorage.setItem('waAlertDismissed', 'true'); document.getElementById('waAlertOverlay').classList.remove('show'); };
 
         // --- CONTROL DEL POPUP ÉPICO ---
         function showEpicPopup(type, amount) {
@@ -652,7 +665,6 @@
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
 
-    <!-- Script de Firebase (Mantenido intacto) -->
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
         import { onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -676,7 +688,7 @@
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'socios xit ofc') { document.getElementById('adminMenuBtn').style.display = 'flex'; }
-                        if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) { setTimeout(() => { document.getElementById('waAlertOverlay').classList.add('show'); }, 2000); }
+                        if (!data.whatsapp && !localStorage.getItem('waAlertDismissed')) { setTimeout(() => { if (!localStorage.getItem('waAlertDismissed')) document.getElementById('waAlertOverlay').classList.add('show'); }, 2000); }
                         if (data.recharges) {
                             if (!initialLoad) {
                                 for (let key in data.recharges) {
@@ -689,7 +701,7 @@
                             }
                             knownRecharges = JSON.parse(JSON.stringify(data.recharges));
                         }
-                        if (!data.linked_devices && !localStorage.getItem('welcomeXITDismissed')) {
+                        if (!data.linked_devices && !localStorage.getItem('welcomeXITDismissed') && !document.getElementById('welcomeModal').classList.contains('active')) {
                             const wm = document.getElementById('welcomeModal'); const cBtn = document.getElementById('closeWelcomeBtn');
                             wm.classList.add('active'); let tl = 5; cBtn.innerText = `Cerrar (${tl}s)`;
                             const timer = setInterval(() => { tl--; if(tl>0) cBtn.innerText = `Cerrar (${tl}s)`; else { clearInterval(timer); cBtn.innerText = "Cerrar y no mostrar más"; cBtn.disabled = false; cBtn.classList.add('ready'); } }, 1000);
@@ -702,7 +714,6 @@
         });
     </script>
 
-    <!-- AQUÍ SE CARGA LA LÓGICA DE LA IA -->
     <script type="module" src="ia.js"></script>
 </body>
 </html>
