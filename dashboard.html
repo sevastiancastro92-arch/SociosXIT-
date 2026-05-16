@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Socios XIT </title>
+    <title>Dashboard - Socios XIT</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* =========================================
@@ -119,7 +119,6 @@
         .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; overflow-x: hidden; }
         .sidebar-menu::-webkit-scrollbar { display: none; }
 
-        /* Efecto Cascada (Stagger) para los botones */
         .sidebar-item { 
             display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; 
             padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; 
@@ -156,7 +155,6 @@
         
         .sidebar-footer { margin-top: auto; border-top: 1px dashed rgba(188, 19, 254, 0.4); padding-top: 20px; flex-shrink: 0; }
         
-        /* Botón Logout Dinámico */
         .logout-btn {
             width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink);
             padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron';
@@ -172,10 +170,7 @@
         .logout-btn:hover::before { left: 100%; }
         .logout-btn:active { transform: scale(0.92); }
 
-        /* Información de Versión Animada */
-        .sidebar-version {
-            text-align: center; margin-top: 20px; font-family: 'Exo 2', sans-serif; color: #666; font-size: 0.75rem; display: flex; flex-direction: column; gap: 5px;
-        }
+        .sidebar-version { text-align: center; margin-top: 20px; font-family: 'Exo 2', sans-serif; color: #666; font-size: 0.75rem; display: flex; flex-direction: column; gap: 5px; }
         .sidebar-version p { margin: 0; transition: color 0.3s; }
         .sidebar-version:hover p { color: #aaa; }
         .version-badge {
@@ -184,10 +179,7 @@
             text-shadow: 0 0 8px rgba(0, 238, 255, 0.6); margin-top: 5px;
             animation: pulseV4 2s infinite alternate ease-in-out;
         }
-        @keyframes pulseV4 {
-            0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 238, 255, 0.4)); }
-            100% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(0, 238, 255, 0.9)); }
-        }
+        @keyframes pulseV4 { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 238, 255, 0.4)); } 100% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(0, 238, 255, 0.9)); } }
 
         /* =========================================
            5. HUB CENTRAL (CONTENEDOR PRINCIPAL) Y 3D
@@ -211,25 +203,13 @@
             animation: lightSweep 3s infinite;
         }
         @keyframes lightSweep { 0% { background-position: -200px 0; } 100% { background-position: 400px 0; } }
-
         @keyframes slideUp { from { opacity: 0; transform: translateY(50px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
         
-        /* CUBO 3D NEÓN ANIMADO */
-        .center-3d-wrapper {
-            width: 90px; height: 90px; margin-bottom: 25px;
-            perspective: 600px;
-            animation: float3D 4s ease-in-out infinite;
-        }
-        .cube {
-            width: 100%; height: 100%; position: relative;
-            transform-style: preserve-3d;
-            animation: rotateCube 10s infinite linear;
-        }
+        .center-3d-wrapper { width: 90px; height: 90px; margin-bottom: 25px; perspective: 600px; animation: float3D 4s ease-in-out infinite; }
+        .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateCube 10s infinite linear; }
         .cube-face {
-            position: absolute; width: 90px; height: 90px;
-            border: 2px solid var(--neon-blue);
-            background: rgba(0, 238, 255, 0.1);
-            box-shadow: inset 0 0 20px rgba(0, 238, 255, 0.4), 0 0 10px rgba(0, 238, 255, 0.3);
+            position: absolute; width: 90px; height: 90px; border: 2px solid var(--neon-blue);
+            background: rgba(0, 238, 255, 0.1); box-shadow: inset 0 0 20px rgba(0, 238, 255, 0.4), 0 0 10px rgba(0, 238, 255, 0.3);
             display: flex; justify-content: center; align-items: center;
         }
         .cube-face.front  { transform: translateZ(45px); }
@@ -246,7 +226,6 @@
         .hub-desc { color: #cceeff; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6; }
         
         .action-buttons { display: flex; flex-direction: column; gap: 15px; width: 100%; }
-        
         .neon-btn { 
             padding: 18px; border: none; border-radius: 12px; color: white; 
             font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 1.05rem; 
@@ -254,18 +233,12 @@
             text-decoration: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden;
         }
-        
         .btn-ranking { background: linear-gradient(90deg, #FFD700, #ff0055); color: #000; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); border: 1px solid #fff; }
         .btn-ranking:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 30px #FFD700; color: white;}
-        .btn-ranking:active { transform: scale(0.95); }
-        
         .btn-store { background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color: #fff; box-shadow: 0 0 20px rgba(0, 238, 255, 0.4); border: 1px solid rgba(255,255,255,0.2); }
         .btn-store:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 30px var(--neon-blue); }
-        .btn-store:active { transform: scale(0.95); }
-        
         .btn-history { background: transparent; border: 2px solid var(--neon-pink); color: var(--neon-pink); box-shadow: inset 0 0 10px rgba(255, 0, 85, 0.2); }
         .btn-history:hover { background: rgba(255, 0, 85, 0.1); transform: translateY(-3px) scale(1.03); box-shadow: 0 0 20px rgba(255, 0, 85, 0.4), inset 0 0 20px rgba(255, 0, 85, 0.4); color: white; }
-        .btn-history:active { transform: scale(0.95); }
 
         /* =========================================
            6. ESPACIO PARA ANUNCIOS
@@ -277,7 +250,6 @@
             display: flex; justify-content: center; align-items: center; color: rgba(255, 255, 255, 0.3); 
             font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 1px; transition: 0.3s;
         }
-        .ad-slot:hover, .adsbox:hover { border-color: var(--neon-blue); box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.1); }
 
         /* =========================================
            7. MODALES (BIENVENIDA, RECARGAS, ADBLOCK)
@@ -297,133 +269,144 @@
         .epic-popup-overlay.show .epic-popup-box { transform: scale(1) translateY(0); }
         .epic-popup-box.approved { border: 2px solid var(--neon-green); box-shadow: 0 0 40px rgba(0, 255, 204, 0.3); }
         .epic-popup-box.rejected { border: 2px solid var(--neon-pink); box-shadow: 0 0 40px rgba(255, 0, 85, 0.3); }
-
         .epic-icon-wrapper { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; font-size: 4rem; animation: pulseGlow 2s infinite; }
         .epic-popup-box.approved .epic-icon-wrapper { background: rgba(0, 255, 204, 0.1); color: var(--neon-green); border: 2px solid var(--neon-green); }
         .epic-popup-box.rejected .epic-icon-wrapper { background: rgba(255, 0, 85, 0.1); color: var(--neon-pink); border: 2px solid var(--neon-pink); }
-
         @keyframes pulseGlow { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
-
         .epic-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; }
         .epic-popup-box.approved .epic-title { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
         .epic-popup-box.rejected .epic-title { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
-
         .epic-msg { font-size: 1rem; color: #ddd; margin-bottom: 30px; line-height: 1.6; }
         .epic-msg strong { font-family: 'Orbitron'; font-size: 1.2rem; color: #fff; }
-
         .epic-buttons { display: flex; flex-direction: column; gap: 15px; }
         .btn-epic-primary { width: 100%; padding: 18px; border: none; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; text-decoration: none; }
         .btn-epic-primary.green { background: var(--neon-green); color: #000; box-shadow: 0 0 20px var(--neon-green); }
         .btn-epic-primary.green:hover { transform: scale(1.05); }
         .btn-epic-secondary { background: transparent; border: 2px solid #555; color: #aaa; padding: 15px; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-epic-secondary:hover { border-color: #fff; color: #fff; }
-        .btn-whatsapp { background: #25D366; color: #000; box-shadow: 0 0 20px rgba(37, 211, 102, 0.5); }
-        .btn-whatsapp:hover { transform: scale(1.05); box-shadow: 0 0 30px #25D366; }
 
-        /* Pantalla Anti-Adblock */
-        .adblock-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(3, 0, 8, 0.98); backdrop-filter: blur(15px); 
-            z-index: 10000; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; text-align: center; padding: 20px; 
-        }
+        .adblock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 0, 8, 0.98); backdrop-filter: blur(15px); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .adblock-overlay i { font-size: 5rem; color: var(--neon-pink); margin-bottom: 20px; text-shadow: 0 0 20px var(--neon-pink); animation: pulseGlowAd 2s infinite; }
         .adblock-overlay h1 { font-family: 'Orbitron'; color: white; margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-pink); letter-spacing: 2px;}
         .adblock-overlay p { color: #ccc; max-width: 450px; margin-bottom: 30px; font-family: 'Exo 2'; line-height: 1.6; }
-        
-        .btn-reload { 
-            padding: 15px 35px; background: transparent; border: 2px solid var(--neon-pink); 
-            color: white; border-radius: 12px; font-weight: bold; cursor: pointer; 
-            font-family: 'Orbitron'; transition: 0.3s; box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.2); 
-            letter-spacing: 1px;
-        }
+        .btn-reload { padding: 15px 35px; background: transparent; border: 2px solid var(--neon-pink); color: white; border-radius: 12px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s; box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.2); letter-spacing: 1px; }
         .btn-reload:hover { background: var(--neon-pink); color: #000; box-shadow: 0 0 30px var(--neon-pink); }
-
         @keyframes pulseGlowAd { 0%, 100% { transform: scale(1); text-shadow: 0 0 20px var(--neon-pink); } 50% { transform: scale(1.1); text-shadow: 0 0 40px var(--neon-pink); } }
 
         /* =========================================
            8. MODAL DE ALERTA WHATSAPP CYBERPUNK
            ========================================= */
-        .wa-alert-overlay, .wa-group-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            z-index: 9500; display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; transition: all 0.5s ease;
-        }
+        .wa-alert-overlay, .wa-group-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9500; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.5s ease; }
         .wa-group-overlay { z-index: 9600; } 
         .wa-alert-overlay.show, .wa-group-overlay.show { opacity: 1; visibility: visible; }
-        
-        .wa-alert-box {
-            background: var(--glass-bg); border-radius: 20px; padding: 40px 25px;
-            width: 90%; max-width: 450px; text-align: center;
-            transform: scale(0.8) translateY(50px); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 50px rgba(37, 211, 102, 0.15), inset 0 0 20px rgba(37, 211, 102, 0.1);
-            position: relative; overflow: hidden; border: 2px solid var(--wa-green);
-        }
+        .wa-alert-box { background: var(--glass-bg); border-radius: 20px; padding: 40px 25px; width: 90%; max-width: 450px; text-align: center; transform: scale(0.8) translateY(50px); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 50px rgba(37, 211, 102, 0.15), inset 0 0 20px rgba(37, 211, 102, 0.1); position: relative; overflow: hidden; border: 2px solid var(--wa-green); }
         .wa-alert-overlay.show .wa-alert-box, .wa-group-overlay.show .wa-alert-box { transform: scale(1) translateY(0); }
-        
-        .wa-icon-wrapper {
-            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px auto;
-            display: flex; justify-content: center; align-items: center; font-size: 4.5rem;
-            background: rgba(37, 211, 102, 0.1); color: var(--wa-green); border: 2px solid var(--wa-green);
-            animation: pulseGlowWa 2s infinite;
-        }
-        
-        @keyframes pulseGlowWa {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(37, 211, 102, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-        }
-        
+        .wa-icon-wrapper { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; font-size: 4.5rem; background: rgba(37, 211, 102, 0.1); color: var(--wa-green); border: 2px solid var(--wa-green); animation: pulseGlowWa 2s infinite; }
+        @keyframes pulseGlowWa { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(37, 211, 102, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
         .wa-title { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; color: var(--wa-green); text-shadow: 0 0 10px var(--wa-green); margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
         .wa-msg { font-size: 1rem; color: #ddd; margin-bottom: 30px; line-height: 1.6; }
         .wa-msg strong { font-family: 'Orbitron'; color: #fff; font-size: 1.1rem; }
-        
-        .wa-btn-primary {
-            width: 100%; padding: 18px; border: none; border-radius: 12px; font-family: 'Orbitron';
-            font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-            background: var(--wa-green); color: #000; box-shadow: 0 0 20px var(--wa-green); text-decoration: none;
-        }
+        .wa-btn-primary { width: 100%; padding: 18px; border: none; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; background: var(--wa-green); color: #000; box-shadow: 0 0 20px var(--wa-green); text-decoration: none; }
         .wa-btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--wa-green); }
-        
-        .wa-btn-close {
-            background: transparent; border: none; color: #888; margin-top: 18px;
-            font-family: 'Exo 2'; font-size: 0.95rem; cursor: pointer; transition: 0.3s; text-decoration: underline; width: 100%; text-align: center;
-        }
+        .wa-btn-close { background: transparent; border: none; color: #888; margin-top: 18px; font-family: 'Exo 2'; font-size: 0.95rem; cursor: pointer; transition: 0.3s; text-decoration: underline; width: 100%; text-align: center; }
         .wa-btn-close:hover { color: #fff; }
 
         /* =========================================
-           9. BOTÓN FLOTANTE SOPORTE WHATSAPP
+           10. MENÚ DE SOPORTE Y CHAT IA
            ========================================= */
-        .wa-float-btn {
-            position: fixed;
-            bottom: 30px; 
-            right: 30px; 
-            width: 60px;
-            height: 60px;
-            background-color: var(--wa-green);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            box-shadow: 0 0 20px rgba(37, 211, 102, 0.5);
-            z-index: 9999;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            animation: floatPulseWa 2s infinite;
+        .support-wrapper {
+            position: fixed; bottom: 30px; right: 30px; z-index: 9999;
+            display: flex; flex-direction: column; align-items: flex-end; gap: 15px;
         }
-        .wa-float-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px var(--wa-green);
+        
+        .support-menu {
+            display: flex; flex-direction: column; gap: 12px;
+            opacity: 0; visibility: hidden; transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes floatPulseWa {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        .support-menu.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        
+        .support-item {
+            display: flex; align-items: center; gap: 10px; padding: 12px 20px;
+            border-radius: 30px; font-family: 'Orbitron'; font-weight: bold;
+            text-decoration: none; font-size: 1rem; cursor: pointer;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid transparent; transition: all 0.3s ease;
         }
+        
+        .support-wa {
+            background: rgba(37, 211, 102, 0.15); color: var(--wa-green);
+            border-color: rgba(37, 211, 102, 0.4); box-shadow: 0 0 15px rgba(37, 211, 102, 0.2);
+        }
+        .support-wa:hover { background: var(--wa-green); color: #000; box-shadow: 0 0 25px var(--wa-green); transform: scale(1.05) translateX(-5px); }
+        
+        .support-ia {
+            background: rgba(0, 238, 255, 0.15); color: var(--neon-blue);
+            border-color: rgba(0, 238, 255, 0.4); box-shadow: 0 0 15px rgba(0, 238, 255, 0.2);
+        }
+        .support-ia:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 25px var(--neon-blue); transform: scale(1.05) translateX(-5px); }
+        
+        .support-main-btn {
+            width: 65px; height: 65px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+            color: white; display: flex; justify-content: center; align-items: center;
+            font-size: 2.5rem; cursor: pointer; border: none;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.5); transition: all 0.3s ease;
+            animation: floatSupport 3s infinite ease-in-out;
+        }
+        .support-main-btn:hover { transform: scale(1.1); box-shadow: 0 0 35px var(--neon-blue); }
+        .support-main-btn i { transition: transform 0.3s ease; }
+        .support-main-btn.active i { transform: rotate(135deg); }
+        
+        @keyframes floatSupport { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+        /* --- MODAL DEL CHAT DE IA --- */
+        .ia-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 10000; display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: 0.4s ease;
+        }
+        .ia-modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .ia-chat-box {
+            width: 90%; max-width: 450px; height: 75vh; max-height: 700px;
+            background: var(--glass-bg); border: 1px solid var(--neon-blue);
+            border-radius: 20px; box-shadow: 0 0 40px rgba(0, 238, 255, 0.2), inset 0 0 20px rgba(0, 238, 255, 0.05);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.9) translateY(30px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .ia-modal-overlay.active .ia-chat-box { transform: scale(1) translateY(0); }
+        
+        .ia-header {
+            background: rgba(0, 238, 255, 0.1); border-bottom: 1px dashed rgba(0, 238, 255, 0.4);
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .ia-title { display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; font-weight: bold; color: #fff; font-size: 1.2rem; text-shadow: 0 0 10px var(--neon-blue); }
+        .ia-title i { font-size: 1.8rem; color: var(--neon-blue); animation: pulseGlow 2s infinite; }
+        .ia-close { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: 0.3s; }
+        .ia-close:hover { transform: scale(1.2) rotate(90deg); text-shadow: 0 0 15px var(--neon-pink); }
+        
+        .ia-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth;}
+        .ia-body::-webkit-scrollbar { width: 4px; }
+        .ia-body::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 4px; }
+        
+        .msg-bubble { max-width: 85%; padding: 12px 16px; border-radius: 15px; font-size: 0.95rem; line-height: 1.5; font-family: 'Exo 2'; word-wrap: break-word; position: relative; }
+        .msg-ia { background: rgba(0, 238, 255, 0.1); border: 1px solid rgba(0, 238, 255, 0.3); color: #fff; align-self: flex-start; border-top-left-radius: 2px; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5); }
+        .msg-user { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.4); color: #fff; align-self: flex-end; border-top-right-radius: 2px; box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5); }
+        .typing-indicator { display: flex; gap: 5px; padding: 15px; align-self: flex-start; }
+        .typing-indicator span { width: 8px; height: 8px; background: var(--neon-blue); border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        .ia-footer { padding: 15px; border-top: 1px dashed rgba(0, 238, 255, 0.3); display: flex; gap: 10px; background: rgba(5, 0, 15, 0.9); }
+        .ia-input { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 15px; border-radius: 12px; font-family: 'Exo 2'; font-size: 1rem; outline: none; transition: 0.3s; }
+        .ia-input:focus { border-color: var(--neon-blue); box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
+        .ia-input::placeholder { color: #666; }
+        
+        .ia-send-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); width: 48px; height: 48px; border-radius: 12px; font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.1); }
+        .ia-send-btn:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px var(--neon-blue); transform: scale(1.05); }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -512,9 +495,7 @@
             <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
-            <a href="diamantes.html" class="sidebar-item">
-  <i class='bx bxs-diamond'></i> Diamantes FF
-</a>
+            <a href="diamantes.html" class="sidebar-item"><i class='bx bxs-diamond'></i> Diamantes FF</a>
             <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
             <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-pink);"><i class='bx bx-shield-quarter' style="color: var(--neon-pink);"></i> Panel Admin</a>
@@ -532,7 +513,6 @@
     <canvas id="particle-canvas"></canvas>
 
     <div class="main-wrapper">
-        
         <div class="hub-container">
             <div class="center-3d-wrapper">
                 <div class="cube">
@@ -558,95 +538,106 @@
             <div class="ad-slot adsbox">ESPACIO PUBLICITARIO 1</div>
             <div class="ad-slot adsbox">ESPACIO PUBLICITARIO 2</div>
         </div>
-
     </div>
 
-    <a href="https://wa.me/573142369516" target="_blank" class="wa-float-btn">
-        <i class='bx bxl-whatsapp'></i>
-    </a>
+    <!-- =========================================
+         MENÚ FLOTANTE DE SOPORTE
+         ========================================= -->
+    <div class="support-wrapper">
+        <div class="support-menu" id="supportMenu">
+            <button class="support-item support-ia" id="openIaBtn">
+                <i class='bx bx-bot'></i> Soporte de IA
+            </button>
+            <a href="https://wa.me/573142369516" target="_blank" class="support-item support-wa">
+                <i class='bx bxl-whatsapp'></i> Vía WhatsApp
+            </a>
+        </div>
+        <button class="support-main-btn" id="supportToggleBtn">
+            <i class='bx bx-support'></i>
+        </button>
+    </div>
+
+    <!-- =========================================
+         MODAL DEL CHAT DE INTELIGENCIA ARTIFICIAL
+         ========================================= -->
+    <div class="ia-modal-overlay" id="iaModalOverlay">
+        <div class="ia-chat-box">
+            <div class="ia-header">
+                <div class="ia-title"><i class='bx bx-bot'></i> Asistente XIT</div>
+                <button class="ia-close" id="closeIaBtn"><i class='bx bx-x'></i></button>
+            </div>
+            
+            <div class="ia-body" id="iaChatBody">
+                <div class="msg-bubble msg-ia">
+                    ¡Hola! Soy la IA de soporte de Socios XIT. Conozco cada rincón de la plataforma. ¿En qué te puedo ayudar hoy? (No puedo generar keys ni dar saldo, pero te guío en lo que necesites buscar).
+                </div>
+            </div>
+            
+            <div class="ia-footer">
+                <input type="text" class="ia-input" id="iaInput" placeholder="Escribe tu consulta aquí..." autocomplete="off">
+                <button class="ia-send-btn" id="iaSendBtn">
+                    <i class='bx bx-send'></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
+        // --- CONTROL DE ADBLOCK Y NOTIFICACIONES WA ---
         function checkAdBlock() {
             const ad = document.createElement('div');
-            ad.className = 'adsbox'; 
-            ad.style.height = '1px';
-            ad.style.width = '1px';
-            ad.style.position = 'absolute';
-            ad.style.left = '-1000px';
+            ad.className = 'adsbox'; ad.style.height = '1px'; ad.style.width = '1px'; ad.style.position = 'absolute'; ad.style.left = '-1000px';
             document.body.appendChild(ad);
-            
             setTimeout(() => {
                 const isBlocked = ad.offsetHeight === 0;
                 ad.remove();
-                if (isBlocked) {
-                    document.getElementById('adblockScreen').style.display = 'flex';
-                }
+                if (isBlocked) document.getElementById('adblockScreen').style.display = 'flex';
             }, 300);
         }
         
         window.addEventListener('load', () => {
             checkAdBlock();
-            
-            setTimeout(() => {
-                if (!localStorage.getItem('waGroupDismissed')) {
-                    document.getElementById('waGroupOverlay').classList.add('show');
-                }
-            }, 1000); 
+            setTimeout(() => { if (!localStorage.getItem('waGroupDismissed')) document.getElementById('waGroupOverlay').classList.add('show'); }, 1000); 
         });
 
-        document.getElementById('btnCerrarWaGroup').onclick = () => {
-            localStorage.setItem('waGroupDismissed', 'true');
-            document.getElementById('waGroupOverlay').classList.remove('show');
-        };
+        document.getElementById('btnCerrarWaGroup').onclick = () => { localStorage.setItem('waGroupDismissed', 'true'); document.getElementById('waGroupOverlay').classList.remove('show'); };
+        document.getElementById('btnCerrarWaAlert').onclick = () => { sessionStorage.setItem('waAlertDismissed', 'true'); document.getElementById('waAlertOverlay').classList.remove('show'); };
 
-        document.getElementById('btnCerrarWaAlert').onclick = () => {
-            sessionStorage.setItem('waAlertDismissed', 'true');
-            document.getElementById('waAlertOverlay').classList.remove('show');
-        };
-    </script>
-
-    <script>
         // --- CONTROL DEL POPUP ÉPICO ---
         function showEpicPopup(type, amount) {
-            const overlay = document.getElementById('epicPopupOverlay');
-            const box = document.getElementById('epicPopupBox');
-            const icon = document.getElementById('epicIcon');
-            const title = document.getElementById('epicTitle');
-            const msg = document.getElementById('epicMsg');
-            const buttonsContainer = document.getElementById('epicButtons');
-
-            box.className = `epic-popup-box ${type}`;
-            buttonsContainer.innerHTML = '';
-
+            const overlay = document.getElementById('epicPopupOverlay'); const box = document.getElementById('epicPopupBox'); const icon = document.getElementById('epicIcon'); const title = document.getElementById('epicTitle'); const msg = document.getElementById('epicMsg'); const buttonsContainer = document.getElementById('epicButtons');
+            box.className = `epic-popup-box ${type}`; buttonsContainer.innerHTML = '';
             if (type === 'approved') {
-                icon.innerHTML = "<i class='bx bxs-check-shield'></i>";
-                title.innerText = "¡RECARGA APROBADA!";
-                msg.innerHTML = `Comprobante de pago <strong>REAL</strong> verificado con éxito.<br><br>Se han añadido <strong style="color:var(--neon-green); font-size:1.5rem;">$${parseFloat(amount).toFixed(2)} USD</strong> a tu saldo.`;
-                
-                buttonsContainer.innerHTML = `
-                    <button onclick="location.reload()" class="btn-epic-primary green">
-                        <i class='bx bx-refresh' style="font-size:1.5rem;"></i> ACTUALIZAR SALDO
-                    </button>
-                `;
+                icon.innerHTML = "<i class='bx bxs-check-shield'></i>"; title.innerText = "¡RECARGA APROBADA!";
+                msg.innerHTML = `Comprobante de pago verificado.<br><br>Añadido <strong style="color:var(--neon-green); font-size:1.5rem;">$${parseFloat(amount).toFixed(2)} USD</strong>.`;
+                buttonsContainer.innerHTML = `<button onclick="location.reload()" class="btn-epic-primary green"><i class='bx bx-refresh'></i> ACTUALIZAR SALDO</button>`;
             } else {
-                icon.innerHTML = "<i class='bx bxs-error-circle'></i>";
-                title.innerText = "¡PAGO RECHAZADO!";
-                msg.innerHTML = `Tu comprobante de pago ha sido <strong>denegado</strong> por el sistema o administrador.<br><br>Si crees que es un error, por favor contacta a soporte inmediatamente.`;
-                
-                buttonsContainer.innerHTML = `
-                    <a href="https://wa.me/34642459475" target="_blank" class="btn-epic-primary btn-whatsapp">
-                        <i class='bx bxl-whatsapp' style="font-size:1.5rem;"></i> CONTACTAR A SOPORTE
-                    </a>
-                    <button onclick="closeEpicPopup()" class="btn-epic-secondary">CERRAR VENTANA</button>
-                `;
+                icon.innerHTML = "<i class='bx bxs-error-circle'></i>"; title.innerText = "¡PAGO RECHAZADO!";
+                msg.innerHTML = `Comprobante <strong>denegado</strong>. Contacta a soporte si es un error.`;
+                buttonsContainer.innerHTML = `<a href="https://wa.me/573142369516" target="_blank" class="btn-epic-primary btn-whatsapp"><i class='bx bxl-whatsapp'></i> SOPORTE</a><button onclick="closeEpicPopup()" class="btn-epic-secondary">CERRAR</button>`;
             }
-
             overlay.classList.add('show');
         }
+        function closeEpicPopup() { document.getElementById('epicPopupOverlay').classList.remove('show'); }
 
-        function closeEpicPopup() {
-            document.getElementById('epicPopupOverlay').classList.remove('show');
-        }
+        // --- CONTROL DEL MENÚ DE SOPORTE Y CHAT IA ---
+        const supportToggleBtn = document.getElementById('supportToggleBtn');
+        const supportMenu = document.getElementById('supportMenu');
+        const iaModalOverlay = document.getElementById('iaModalOverlay');
+        const openIaBtn = document.getElementById('openIaBtn');
+        const closeIaBtn = document.getElementById('closeIaBtn');
+
+        supportToggleBtn.addEventListener('click', () => {
+            supportMenu.classList.toggle('active'); supportToggleBtn.classList.toggle('active');
+        });
+
+        openIaBtn.addEventListener('click', () => {
+            iaModalOverlay.classList.add('active');
+            supportMenu.classList.remove('active'); supportToggleBtn.classList.remove('active');
+            setTimeout(() => document.getElementById('iaInput').focus(), 100);
+        });
+
+        closeIaBtn.addEventListener('click', () => { iaModalOverlay.classList.remove('active'); });
 
         // --- CONTROL DEL MENÚ LATERAL Y PARTÍCULAS ---
         const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
@@ -661,83 +652,57 @@
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
 
+    <!-- Script de Firebase (Mantenido intacto) -->
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
         import { onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        setPersistence(auth, browserSessionPersistence)
-            .catch((error) => {
-                console.error("Error ajustando la persistencia de sesión:", error);
-            });
+        setPersistence(auth, browserSessionPersistence).catch((error) => { console.error("Error persistencia:", error); });
 
-        let initialLoad = true;
-        let knownRecharges = {};
+        let initialLoad = true; let knownRecharges = {};
 
-        document.getElementById('logoutMenuBtn').onclick = (e) => {
-            e.preventDefault();
-            signOut(auth).then(()=>window.location.href="login.html");
-        };
+        document.getElementById('logoutMenuBtn').onclick = (e) => { e.preventDefault(); signOut(auth).then(()=>window.location.href="login.html"); };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-
                 const userRef = ref(db, `users/${user.uid}`);
-                
                 onValue(userRef, (snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        
                         document.getElementById('topUserDisplay').innerText = data.username;
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
-                        
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                        
-                        if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'Socios XIT  ofc') {
-                            document.getElementById('adminMenuBtn').style.display = 'flex';
-                        }
-
-                        if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) {
-                            setTimeout(() => {
-                                document.getElementById('waAlertOverlay').classList.add('show');
-                            }, 2000);
-                        }
-
+                        if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'socios xit ofc') { document.getElementById('adminMenuBtn').style.display = 'flex'; }
+                        if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) { setTimeout(() => { document.getElementById('waAlertOverlay').classList.add('show'); }, 2000); }
                         if (data.recharges) {
                             if (!initialLoad) {
                                 for (let key in data.recharges) {
-                                    const currentStatus = data.recharges[key].status;
-                                    const oldStatus = knownRecharges[key] ? knownRecharges[key].status : null;
-                                    
+                                    const currentStatus = data.recharges[key].status; const oldStatus = knownRecharges[key] ? knownRecharges[key].status : null;
                                     if (oldStatus === 'pending_approval' || oldStatus === 'waiting_proof') {
-                                        if (currentStatus === 'approved') {
-                                            showEpicPopup('approved', data.recharges[key].amount);
-                                        } else if (currentStatus === 'rejected') {
-                                            showEpicPopup('rejected', 0);
-                                        }
+                                        if (currentStatus === 'approved') showEpicPopup('approved', data.recharges[key].amount);
+                                        else if (currentStatus === 'rejected') showEpicPopup('rejected', 0);
                                     }
                                 }
                             }
                             knownRecharges = JSON.parse(JSON.stringify(data.recharges));
                         }
-
                         if (!data.linked_devices && !localStorage.getItem('welcomeXITDismissed')) {
                             const wm = document.getElementById('welcomeModal'); const cBtn = document.getElementById('closeWelcomeBtn');
                             wm.classList.add('active'); let tl = 5; cBtn.innerText = `Cerrar (${tl}s)`;
                             const timer = setInterval(() => { tl--; if(tl>0) cBtn.innerText = `Cerrar (${tl}s)`; else { clearInterval(timer); cBtn.innerText = "Cerrar y no mostrar más"; cBtn.disabled = false; cBtn.classList.add('ready'); } }, 1000);
                             cBtn.onclick = () => { localStorage.setItem('welcomeXITDismissed', 'true'); wm.classList.remove('active'); };
                         }
-
                         initialLoad = false; 
                     }
                 });
-            } else { 
-                const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
-                window.location.href = "login.html?redirect=" + currentPath; 
-            }
+            } else { window.location.href = "login.html?redirect=" + encodeURIComponent(window.location.pathname + window.location.search); }
         });
     </script>
+
+    <!-- AQUÍ SE CARGA LA LÓGICA DE LA IA -->
+    <script type="module" src="ia.js"></script>
 </body>
 </html>
