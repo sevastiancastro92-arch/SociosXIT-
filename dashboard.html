@@ -511,6 +511,9 @@
             <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
+            <a href="redes_sociales.html" class="sidebar-item">
+  <i class='bx bx-globe'></i> Seguidores Redes Sociales
+</a>
             <a href="diamantes.html" class="sidebar-item"><i class='bx bxs-diamond'></i> Diamantes FF</a>
             <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
             <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
@@ -614,7 +617,7 @@
         });
 
         document.getElementById('btnCerrarWaGroup').onclick = () => { localStorage.setItem('waGroupDismissed', 'true'); document.getElementById('waGroupOverlay').classList.remove('show'); };
-        document.getElementById('btnCerrarWaAlert').onclick = () => { localStorage.setItem('waAlertDismissed', 'true'); document.getElementById('waAlertOverlay').classList.remove('show'); };
+        document.getElementById('btnCerrarWaAlert').onclick = () => { sessionStorage.setItem('waAlertDismissed', 'true'); document.getElementById('waAlertOverlay').classList.remove('show'); };
 
         // --- CONTROL DEL POPUP ÉPICO ---
         function showEpicPopup(type, amount) {
@@ -688,7 +691,7 @@
                         document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'socios xit ofc') { document.getElementById('adminMenuBtn').style.display = 'flex'; }
-                        if (!data.whatsapp && !localStorage.getItem('waAlertDismissed')) { setTimeout(() => { if (!localStorage.getItem('waAlertDismissed')) document.getElementById('waAlertOverlay').classList.add('show'); }, 2000); }
+                        if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) { setTimeout(() => { document.getElementById('waAlertOverlay').classList.add('show'); }, 2000); }
                         if (data.recharges) {
                             if (!initialLoad) {
                                 for (let key in data.recharges) {
@@ -701,7 +704,7 @@
                             }
                             knownRecharges = JSON.parse(JSON.stringify(data.recharges));
                         }
-                        if (!data.linked_devices && !localStorage.getItem('welcomeXITDismissed') && !document.getElementById('welcomeModal').classList.contains('active')) {
+                        if (!data.linked_devices && !localStorage.getItem('welcomeXITDismissed')) {
                             const wm = document.getElementById('welcomeModal'); const cBtn = document.getElementById('closeWelcomeBtn');
                             wm.classList.add('active'); let tl = 5; cBtn.innerText = `Cerrar (${tl}s)`;
                             const timer = setInterval(() => { tl--; if(tl>0) cBtn.innerText = `Cerrar (${tl}s)`; else { clearInterval(timer); cBtn.innerText = "Cerrar y no mostrar más"; cBtn.disabled = false; cBtn.classList.add('ready'); } }, 1000);
