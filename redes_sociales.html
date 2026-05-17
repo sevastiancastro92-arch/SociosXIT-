@@ -59,11 +59,7 @@
         .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
         .top-bar-right::-webkit-scrollbar { display: none; }
         
-        .badge { 
-            display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-family: 'Orbitron', sans-serif; 
-            color: #ddd; white-space: nowrap; cursor: pointer; transition: 0.3s;
-        }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-family: 'Orbitron', sans-serif; color: #ddd; white-space: nowrap; cursor: pointer; transition: 0.3s; }
         .badge:hover { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); color: #fff; transform: translateY(-2px); }
         .badge img { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; }
         .badge span { color: #fff; font-weight: 700; }
@@ -76,18 +72,12 @@
            ========================================= */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.4s ease; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
-        
-        .sidebar { 
-            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 2px solid var(--neon-purple); 
-            box-shadow: 10px 0 30px rgba(188, 19, 254, 0.2); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
-        }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 2px solid var(--neon-purple); box-shadow: 10px 0 30px rgba(188, 19, 254, 0.2); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; }
         .sidebar.active { left: 0; }
         .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(188, 19, 254, 0.4); padding-bottom: 15px; margin-bottom: 20px; }
         .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-blue); }
         .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: 0.3s; }
         .close-btn:hover { transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
-        
         .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; overflow-x: hidden; }
         .sidebar-menu::-webkit-scrollbar { display: none; }
         .sidebar-item { display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 1rem; font-family: 'Exo 2', sans-serif; border: 1px solid transparent; border-left: 4px solid transparent; transition: all 0.3s; opacity: 0; transform: translateX(-30px); }
@@ -97,16 +87,14 @@
         .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s; }
         .sidebar-item:hover { background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); border-left: 4px solid var(--neon-blue); color: #fff; box-shadow: -5px 0 15px rgba(0, 238, 255, 0.2); transform: translateX(8px); }
         .sidebar-item:hover i { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); transform: scale(1.1); }
-        
         .sidebar-footer { margin-top: auto; border-top: 1px dashed rgba(188, 19, 254, 0.4); padding-top: 20px; flex-shrink: 0; }
         .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .logout-btn:hover { background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); text-shadow: 0 0 5px var(--neon-pink); }
-        
         .sidebar-version { text-align: center; margin-top: 20px; font-family: 'Exo 2', sans-serif; color: #666; font-size: 0.75rem; }
         .version-badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: var(--neon-blue); font-family: 'Orbitron'; font-weight: bold; text-shadow: 0 0 8px rgba(0, 238, 255, 0.6); margin-top: 5px; }
 
         /* =========================================
-           5. MENÚ DE SOPORTE Y CHAT IA
+           5. MENÚ DE SOPORTE E IA
            ========================================= */
         .support-wrapper { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
         .support-menu { display: flex; flex-direction: column; gap: 12px; opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.3s; }
@@ -116,7 +104,6 @@
         .support-wa:hover { background: var(--wa-green); color: #000; box-shadow: 0 0 25px var(--wa-green); transform: scale(1.05) translateX(-5px); }
         .support-ia { background: rgba(0, 238, 255, 0.15); color: var(--neon-blue); border: 1px solid rgba(0, 238, 255, 0.4); }
         .support-ia:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 25px var(--neon-blue); transform: scale(1.05) translateX(-5px); }
-        
         .support-main-btn { width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue)); color: white; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; cursor: pointer; border: none; box-shadow: 0 0 20px rgba(188, 19, 254, 0.5); transition: 0.3s; animation: floatSupport 3s infinite ease-in-out; }
         .support-main-btn:hover { transform: scale(1.1); box-shadow: 0 0 35px var(--neon-blue); }
         .support-main-btn.active i { transform: rotate(135deg); }
@@ -138,15 +125,14 @@
         .ia-send-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); width: 48px; height: 48px; border-radius: 12px; font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
 
         /* =========================================
-           6. FORMULARIO SMM PRINCIPAL
+           6. FORMULARIO SMM
            ========================================= */
         .smm-container {
-            width: 95%; max-width: 600px; margin: 90px auto 30px auto; 
+            width: 95%; max-width: 600px; margin: 90px auto 10px auto; 
             background: var(--glass-bg); backdrop-filter: blur(10px);
             padding: 25px; border-radius: 20px; border: 1px solid rgba(188, 19, 254, 0.3);
             box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(188, 19, 254, 0.1); z-index: 10;
         }
-
         .header-title { font-family: 'Orbitron'; font-size: 1.5rem; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); text-align: center; margin-bottom: 25px; text-transform: uppercase; }
 
         .btn-open-modal {
@@ -158,79 +144,88 @@
         }
         .btn-open-modal:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 25px var(--neon-purple); transform: scale(1.02); }
 
-        .selected-service-box {
-            background: rgba(0, 238, 255, 0.1); border: 1px solid var(--neon-blue);
-            padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none;
-            box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.1); text-align: center;
-        }
+        .selected-service-box { background: rgba(0, 238, 255, 0.1); border: 1px solid var(--neon-blue); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.1); text-align: center; }
         .selected-service-box h4 { margin: 0 0 10px 0; color: #fff; font-family: 'Orbitron'; font-size: 1rem; }
         .selected-service-box p { margin: 5px 0; font-size: 0.9rem; color: #ccc; }
         .selected-service-box .highlight { color: var(--neon-green); font-family: 'Orbitron'; font-weight: bold; }
 
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-family: 'Orbitron'; color: var(--neon-purple); margin-bottom: 8px; font-size: 0.9rem; letter-spacing: 1px; }
-        .form-control {
-            width: 100%; background: rgba(10, 2, 20, 0.8); border: 1px solid rgba(188, 19, 254, 0.4);
-            color: white; padding: 12px 15px; border-radius: 10px; font-family: 'Exo 2'; font-size: 1rem;
-            outline: none; transition: 0.3s;
-        }
+        .form-control { width: 100%; background: rgba(10, 2, 20, 0.8); border: 1px solid rgba(188, 19, 254, 0.4); color: white; padding: 12px 15px; border-radius: 10px; font-family: 'Exo 2'; font-size: 1rem; outline: none; transition: 0.3s; }
         .form-control:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 238, 255, 0.3); }
 
-        .price-display {
-            background: rgba(0, 0, 0, 0.6); border: 1px dashed var(--neon-pink);
-            padding: 15px; border-radius: 10px; display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 20px;
-        }
+        .price-display { background: rgba(0, 0, 0, 0.6); border: 1px dashed var(--neon-pink); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .price-label { font-family: 'Orbitron'; font-size: 1rem; color: white; }
         .price-value { font-family: 'Orbitron'; font-size: 1.8rem; font-weight: 900; color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
 
-        .btn-order {
-            width: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-            color: white; border: none; padding: 15px; border-radius: 10px; font-family: 'Orbitron';
-            font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 0 15px rgba(188, 19, 254, 0.4); letter-spacing: 1px;
-        }
+        .btn-order { width: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color: white; border: none; padding: 15px; border-radius: 10px; font-family: 'Orbitron'; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(188, 19, 254, 0.4); letter-spacing: 1px; }
         .btn-order:hover { transform: scale(1.02); box-shadow: 0 0 25px var(--neon-blue); }
         .btn-order:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         /* =========================================
-           7. MODALES CHIDOS (CATEGORÍAS Y SERVICIOS)
+           7. HISTORIAL SMM INTEGRADO
+           ========================================= */
+        .smm-history-container {
+            width: 95%; max-width: 600px; margin: 15px auto; 
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            padding: 20px; border-radius: 20px; border: 1px dashed rgba(0, 238, 255, 0.3); z-index: 10;
+        }
+        
+        .history-grid { display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .history-grid::-webkit-scrollbar { width: 5px; } .history-grid::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 5px; }
+
+        .hist-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 8px; transition: 0.3s; }
+        .hist-card:hover { border-color: var(--neon-blue); box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.1); }
+        .hist-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .hist-order-id { font-family: 'Orbitron'; color: var(--neon-purple); font-weight: bold; font-size: 0.9rem; }
+        .hist-date { font-size: 0.8rem; color: #888; font-family: 'Exo 2'; }
+        
+        .hist-body { font-family: 'Exo 2'; font-size: 0.9rem; color: #ddd; line-height: 1.4; }
+        .hist-body strong { color: #fff; }
+        .hist-link { color: var(--neon-blue); word-break: break-all; font-size: 0.8rem; text-decoration: none; }
+        
+        .hist-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+        .hist-price { color: var(--neon-green); font-family: 'Orbitron'; font-weight: bold; font-size: 1.1rem; }
+        
+        .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-family: 'Orbitron'; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .status-pending { background: rgba(255, 215, 0, 0.2); color: #FFD700; border: 1px solid #FFD700; }
+        .status-processing { background: rgba(0, 238, 255, 0.2); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
+        .status-completed { background: rgba(0, 255, 204, 0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
+        .status-canceled { background: rgba(255, 0, 85, 0.2); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
+        .status-partial { background: rgba(255, 100, 0, 0.2); color: #ff6400; border: 1px solid #ff6400; }
+
+        /* =========================================
+           8. TOP RANKING SMM
+           ========================================= */
+        .rank-card {
+            background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 12px;
+        }
+        .rank-pos { font-size: 1.5rem; font-family: 'Orbitron'; font-weight: bold; width: 30px; text-align: center; }
+        .rank-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid; object-fit: cover; }
+        .rank-info { flex: 1; }
+        .rank-name { font-family: 'Orbitron'; color: #fff; font-size: 1rem; margin-bottom: 3px; }
+        .rank-spent { color: var(--neon-green); font-family: 'Orbitron'; font-weight: bold; font-size: 0.9rem; }
+        .rank-last { font-size: 0.75rem; color: #aaa; font-family: 'Exo 2'; margin-top: 3px; }
+
+        /* =========================================
+           9. MODALES CHIDOS (CATEGORÍAS Y SERVICIOS)
            ========================================= */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 2000; animation: fadeIn 0.3s; }
         .modal-box { background: var(--glass-bg); padding: 25px; border-radius: 20px; width: 90%; max-width: 550px; border: 2px solid var(--neon-blue); box-shadow: 0 0 40px rgba(0, 238, 255, 0.3); max-height: 85vh; display: flex; flex-direction: column; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } } 
-        
         .modal-title { font-family: 'Orbitron'; font-size: 1.4rem; margin: 0 0 15px 0; color: var(--neon-blue); text-transform: uppercase; text-align: center; text-shadow: 0 0 10px var(--neon-blue); }
         
-        /* Grid de Categorías Chida */
-        .category-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; 
-            overflow-y: auto; padding: 10px 5px; flex: 1;
-        }
-        .category-grid::-webkit-scrollbar { width: 5px; }
-        .category-grid::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 5px; }
-        
-        .cat-card {
-            background: rgba(188, 19, 254, 0.1); border: 1px solid var(--neon-purple);
-            border-radius: 15px; padding: 20px 10px; text-align: center; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; overflow-y: auto; padding: 10px 5px; flex: 1; }
+        .category-grid::-webkit-scrollbar { width: 5px; } .category-grid::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 5px; }
+        .cat-card { background: rgba(188, 19, 254, 0.1); border: 1px solid var(--neon-purple); border-radius: 15px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .cat-card i { font-size: 2.5rem; color: #fff; text-shadow: 0 0 10px var(--neon-purple); transition: 0.3s; }
         .cat-card span { font-family: 'Exo 2'; font-weight: bold; font-size: 0.9rem; color: #ddd; line-height: 1.2; }
-        .cat-card:hover { background: var(--neon-purple); box-shadow: 0 0 20px var(--neon-purple); transform: translateY(-5px) scale(1.05); }
-        .cat-card:hover span { color: #fff; }
+        .cat-card:hover { background: var(--neon-purple); box-shadow: 0 0 20px var(--neon-purple); transform: translateY(-5px) scale(1.05); } .cat-card:hover span { color: #fff; }
 
-        /* Lista de Servicios (Variantes) */
         .variant-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-right: 5px; flex: 1; }
-        .variant-list::-webkit-scrollbar { width: 5px; }
-        .variant-list::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 5px; }
-        
-        .variant-item { 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 238, 255, 0.2); 
-            padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; 
-            cursor: pointer; transition: 0.3s; 
-        }
+        .variant-list::-webkit-scrollbar { width: 5px; } .variant-list::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 5px; }
+        .variant-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 238, 255, 0.2); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
         .variant-item:hover { background: rgba(0, 238, 255, 0.1); border-color: var(--neon-blue); box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.2); transform: translateX(5px); }
         .var-info strong { display: block; font-size: 0.95rem; font-family: 'Orbitron'; color: #fff; margin-bottom: 5px; line-height: 1.3; } 
         .var-info span { font-size: 0.8rem; color: #aaa; font-family: 'Exo 2'; }
@@ -252,10 +247,9 @@
         <div class="magic-ring ring-middle"></div>
         <div class="magic-ring ring-inner"></div>
     </div>
-    
     <canvas id="particle-canvas"></canvas>
 
-    <!-- Barra Superior Exacta -->
+    <!-- Barra Superior -->
     <div class="top-bar">
         <div class="top-bar-left">
             <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
@@ -263,21 +257,20 @@
         <div class="top-bar-right">
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
             <div class="badge" onclick="window.location.href='perfil.html'">
-                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U"> 
+                <img id="topAvatar" src=""> 
                 <span id="topUserDisplay">...</span>
             </div>
             <div class="badge green"><span>$</span><span id="balanceDisplay">0.00</span></div>
         </div>
     </div>
 
-    <!-- Menú Lateral Exacto de Socios XIT -->
+    <!-- Menú Lateral -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>Socios XIT </h2>
+            <h2>Socios XIT</h2>
             <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
         </div>
-        
         <div class="sidebar-menu">
             <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
             <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
@@ -287,7 +280,6 @@
             <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
             <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
-            <!-- Opción Redes Sociales Activada Visualmente -->
             <a href="redes_sociales.html" class="sidebar-item" style="border-left: 4px solid var(--neon-blue); background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); color: var(--neon-blue); box-shadow: -5px 0 15px rgba(0, 238, 255, 0.1); transform: translateX(5px); opacity: 1;">
                 <i class='bx bx-globe' style="color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue);"></i> Seguidores Redes Sociales
             </a>
@@ -296,43 +288,19 @@
             <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
             <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-pink);"><i class='bx bx-shield-quarter' style="color: var(--neon-pink);"></i> Panel Admin</a>
         </div>
-        
         <div class="sidebar-footer">
             <button class="logout-btn" id="logoutMenuBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
-            <div class="sidebar-version">
-                <p>Copyright SebasXit 2024 - 2026</p>
-                <div class="version-badge"><i class='bx bx-code-alt'></i> V4</div>
-            </div>
+            <div class="sidebar-version"><p>Copyright SebasXit 2024 - 2026</p><div class="version-badge"><i class='bx bx-code-alt'></i> V4</div></div>
         </div>
     </div>
 
-    <!-- Menú de Soporte Flotante e IA -->
+    <!-- Soporte Flotante -->
     <div class="support-wrapper">
         <div class="support-menu" id="supportMenu">
-            <button class="support-item support-ia" id="openIaBtn">
-                <i class='bx bx-bot'></i> Soporte de IA
-            </button>
-            <a href="https://wa.me/573142369516" target="_blank" class="support-item support-wa">
-                <i class='bx bxl-whatsapp'></i> Vía WhatsApp
-            </a>
+            <button class="support-item support-ia" id="openIaBtn"><i class='bx bx-bot'></i> Soporte de IA</button>
+            <a href="https://wa.me/573142369516" target="_blank" class="support-item support-wa"><i class='bx bxl-whatsapp'></i> Vía WhatsApp</a>
         </div>
-        <button class="support-main-btn" id="supportToggleBtn">
-            <i class='bx bx-support'></i>
-        </button>
-    </div>
-
-    <div class="ia-modal-overlay" id="iaModalOverlay">
-        <div class="ia-chat-box">
-            <div class="ia-header">
-                <div class="ia-title"><i class='bx bx-bot'></i> Asistente XIT</div>
-                <button class="ia-close" id="closeIaBtn"><i class='bx bx-x'></i></button>
-            </div>
-            <div class="ia-body"><div class="msg-bubble msg-ia">¡Hola! Soy la IA de soporte. ¿En qué te puedo ayudar hoy?</div></div>
-            <div class="ia-footer">
-                <input type="text" class="ia-input" placeholder="Escribe aquí...">
-                <button class="ia-send-btn"><i class='bx bx-send'></i></button>
-            </div>
-        </div>
+        <button class="support-main-btn" id="supportToggleBtn"><i class='bx bx-support'></i></button>
     </div>
 
     <!-- Contenedor Principal SMM -->
@@ -340,16 +308,14 @@
         <h2 class="header-title"><i class='bx bx-globe'></i> Redes Sociales SMM</h2>
 
         <div id="loadingStatus" style="text-align: center; color: var(--neon-blue); font-family: 'Orbitron'; margin-bottom: 15px;">
-            <i class='bx bx-loader-alt bx-spin'></i> Sincronizando catálogo con el servidor...
+            <i class='bx bx-loader-alt bx-spin'></i> Sincronizando catálogo...
         </div>
 
         <form id="smmForm" style="display: none;">
-            
             <button type="button" id="btnOpenCatModal" class="btn-open-modal">
                 <i class='bx bx-grid-alt'></i> EXPLORAR CATÁLOGO DE SERVICIOS
             </button>
 
-            <!-- Caja que muestra el servicio seleccionado -->
             <div id="selectedServiceBox" class="selected-service-box">
                 <h4 id="selectedServiceName">Ningún servicio seleccionado</h4>
                 <p>Mínimo: <span id="minQty" class="highlight">0</span> | Máximo: <span id="maxQty" class="highlight">0</span></p>
@@ -377,61 +343,68 @@
         </form>
     </div>
 
-    <!-- MODAL 1: Cuadrícula Chida de Categorías -->
+    <!-- HISTORIAL SMM -->
+    <div class="smm-history-container">
+        <h2 class="header-title" style="font-size: 1.2rem; color: var(--neon-purple);"><i class='bx bx-history'></i> Historial de Compras SMM</h2>
+        <button id="btnRefreshStatus" class="btn-open-modal" style="padding: 10px; font-size: 0.9rem; margin-bottom: 15px; border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(0,238,255,0.1); box-shadow: none;">
+            <i class='bx bx-refresh'></i> ACTUALIZAR ESTADOS
+        </button>
+        <div id="smmHistoryList" class="history-grid">
+            <p style="text-align:center; color:#888; font-family:'Exo 2';">Cargando historial...</p>
+        </div>
+    </div>
+
+    <!-- RANKING TOP COMPRADORES SMM -->
+    <div class="smm-history-container" style="margin-bottom: 40px;">
+        <h2 class="header-title" style="font-size: 1.2rem; color: #FFD700;"><i class='bx bx-crown'></i> Top Compradores SMM</h2>
+        <div id="smmRankingList" class="history-grid" style="max-height: none; overflow: visible;">
+            <p style="text-align:center; color:#888; font-family:'Exo 2';">Calculando ranking...</p>
+        </div>
+    </div>
+
+    <!-- MODALES CHIDOS -->
     <div id="categoryModal" class="modal-overlay">
         <div class="modal-box">
             <h3 class="modal-title"><i class='bx bx-category'></i> Categorías SMM</h3>
-            <div class="category-grid" id="categoryGrid">
-                <!-- Se inyectan las tarjetas desde JS -->
-            </div>
+            <div class="category-grid" id="categoryGrid"></div>
             <button class="btn-cancel-modal" onclick="document.getElementById('categoryModal').style.display='none'">CERRAR CATÁLOGO</button>
         </div>
     </div>
 
-    <!-- MODAL 2: Lista de Servicios (Variantes) -->
     <div id="serviceModal" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header-nav">
                 <button class="btn-back-cat" onclick="backToCategories()"><i class='bx bx-chevron-left-circle'></i></button>
                 <h3 class="modal-title" style="margin:0; text-align:left;" id="serviceModalTitle">Servicios</h3>
             </div>
-            
-            <div class="variant-list" id="modalServiceList">
-                <!-- Se inyectan los servicios de la categoría seleccionada -->
-            </div>
+            <div class="variant-list" id="modalServiceList"></div>
             <button class="btn-cancel-modal" onclick="document.getElementById('serviceModal').style.display='none'">CERRAR</button>
         </div>
     </div>
 
-    <!-- Modal de Mensajes del Sistema -->
     <div id="msgModal" class="modal-overlay">
-        <div class="modal-box" style="text-align: center; border-color: var(--neon-pink);">
-            <h3 id="msgModalTitle" class="modal-title" style="color: var(--neon-pink);">Aviso</h3>
+        <div class="modal-box" style="text-align: center; max-width: 400px; border-color: var(--neon-blue);">
+            <h3 id="msgModalTitle" class="modal-title">Aviso</h3>
             <p id="msgModalText" style="color: #ccc; font-family: 'Exo 2'; font-size: 1.1rem; line-height: 1.4;"></p>
-            <button class="btn-cancel-modal" onclick="document.getElementById('msgModal').style.display='none'">ACEPTAR</button>
+            <button class="btn-cancel-modal" style="color: var(--neon-blue); border-color: var(--neon-blue);" onclick="document.getElementById('msgModal').style.display='none'">ACEPTAR</button>
         </div>
     </div>
 
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, update, push } from './firebase-config.js';
+        import { onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // Lógica visual del menú lateral y soporte
-        const sidebar = document.getElementById('sidebar'); 
-        const overlay = document.getElementById('sidebarOverlay');
+        // Lógica visual del menú
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
         document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         document.getElementById('logoutMenuBtn').onclick = (e) => { e.preventDefault(); signOut(auth).then(()=>window.location.href="login.html"); };
 
-        const supportToggleBtn = document.getElementById('supportToggleBtn');
-        const supportMenu = document.getElementById('supportMenu');
-        const iaModalOverlay = document.getElementById('iaModalOverlay');
-        
+        const supportToggleBtn = document.getElementById('supportToggleBtn'); const supportMenu = document.getElementById('supportMenu');
         supportToggleBtn.addEventListener('click', () => { supportMenu.classList.toggle('active'); supportToggleBtn.classList.toggle('active'); });
-        document.getElementById('openIaBtn').addEventListener('click', () => { iaModalOverlay.classList.add('active'); supportMenu.classList.remove('active'); supportToggleBtn.classList.remove('active'); });
-        document.getElementById('closeIaBtn').addEventListener('click', () => { iaModalOverlay.classList.remove('active'); });
 
-        // Animación Partículas (Fondo exacto)
+        // Animación Partículas
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
@@ -446,48 +419,48 @@
         let currentUser = null;
         let groupedServices = {};
         let selectedServiceData = null;
+        let activeSmmOrders = []; 
 
-        // Elementos DOM SMM
-        const loadingStatus = document.getElementById('loadingStatus');
         const smmForm = document.getElementById('smmForm');
-        const selectedServiceBox = document.getElementById('selectedServiceBox');
         const linkInput = document.getElementById('linkInput');
         const qtyInput = document.getElementById('qtyInput');
-        const totalPriceDisplay = document.getElementById('totalPrice');
-        const btnSubmit = document.getElementById('btnSubmit');
+        const smmHistoryList = document.getElementById('smmHistoryList');
 
-        // Modales
-        const categoryModal = document.getElementById('categoryModal');
-        const serviceModal = document.getElementById('serviceModal');
-        const categoryGrid = document.getElementById('categoryGrid');
-        const modalServiceList = document.getElementById('modalServiceList');
-
-        // Inicialización de Usuario
+        // 1. INICIALIZACIÓN Y PERFIL DE USUARIO
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
-                get(ref(db, `users/${user.uid}`)).then((snapshot) => {
+                // Carga de Info del Usuario
+                onValue(ref(db, `users/${user.uid}`), (snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        document.getElementById('topUserDisplay').innerText = data.username;
-                        if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                        if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit') { document.getElementById('adminMenuBtn').style.display = 'flex'; }
-
                         currentBalance = parseFloat(data.balance || 0);
                         document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
                         
-                        loadAPI(); 
+                        // Nombre y Foto
+                        document.getElementById('topUserDisplay').innerText = data.username || 'Usuario';
+                        if(data.avatar) {
+                            document.getElementById('topAvatar').src = data.avatar;
+                        } else {
+                            const firstLetter = (data.username ? data.username.charAt(0) : 'U').toUpperCase();
+                            document.getElementById('topAvatar').src = `https://via.placeholder.com/30/14001e/bc13fe?text=${firstLetter}`;
+                        }
                     }
                 });
+
+                loadAPI(); 
+                loadSMMHistory();
+                loadSMMRanking();
+
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        // Conexión y Organización de Datos de la API
+        // 2. CARGAR API SMMZING
         async function loadAPI() {
             try {
                 const bodyData = new URLSearchParams(); bodyData.append('action', 'services');
@@ -502,17 +475,12 @@
                         groupedServices[srv.category].push(srv);
                     });
                     renderCategoryGrid();
-                    loadingStatus.style.display = 'none';
+                    document.getElementById('loadingStatus').style.display = 'none';
                     smmForm.style.display = 'block';
-                } else {
-                    showSysMsg("Error API", "La API de proveedores no respondió.");
                 }
-            } catch (error) {
-                showSysMsg("Error de Conexión", "No se pudo conectar con el servidor Railway.");
-            }
+            } catch (error) { console.error("Error API SMM:", error); }
         }
 
-        // Función auxiliar para íconos dinámicos basados en la categoría
         function getIconForCategory(catName) {
             const name = catName.toLowerCase();
             if(name.includes('instagram') || name.includes('ig')) return 'bxl-instagram';
@@ -523,155 +491,292 @@
             if(name.includes('spotify')) return 'bxl-spotify';
             if(name.includes('telegram')) return 'bxl-telegram';
             if(name.includes('twitch')) return 'bxl-twitch';
-            return 'bx-layer'; // Por defecto
+            return 'bx-layer'; 
         }
 
-        // MODAL 1: Renderizar Grid de Categorías
         function renderCategoryGrid() {
-            categoryGrid.innerHTML = '';
+            const grid = document.getElementById('categoryGrid'); grid.innerHTML = '';
             Object.keys(groupedServices).forEach(cat => {
-                const iconClass = getIconForCategory(cat);
-                const card = document.createElement('div');
-                card.className = 'cat-card';
-                card.innerHTML = `<i class='bx ${iconClass}'></i><span>${cat}</span>`;
-                card.onclick = () => openServiceModal(cat);
-                categoryGrid.appendChild(card);
+                const card = document.createElement('div'); card.className = 'cat-card';
+                card.innerHTML = `<i class='bx ${getIconForCategory(cat)}'></i><span>${cat}</span>`;
+                card.onclick = () => {
+                    document.getElementById('serviceModalTitle').innerText = cat;
+                    const list = document.getElementById('modalServiceList'); list.innerHTML = ''; 
+                    groupedServices[cat].forEach(srv => {
+                        const item = document.createElement('div'); item.className = 'variant-item';
+                        item.innerHTML = `<div class="var-info"><strong>${srv.name}</strong><span>Min: ${srv.min} | Max: ${srv.max}</span></div><div class="var-price">$${srv.finalRate.toFixed(3)}</div>`;
+                        item.onclick = () => {
+                            selectedServiceData = srv;
+                            document.getElementById('selectedServiceName').innerText = srv.name;
+                            document.getElementById('minQty').innerText = srv.min; document.getElementById('maxQty').innerText = srv.max; document.getElementById('ratePrice').innerText = `$${srv.finalRate.toFixed(3)}`;
+                            document.getElementById('selectedServiceBox').style.display = 'block';
+                            linkInput.disabled = false; qtyInput.disabled = false; document.getElementById('btnSubmit').disabled = false;
+                            qtyInput.min = srv.min; qtyInput.max = srv.max; qtyInput.value = ""; document.getElementById('totalPrice').innerText = "$0.00";
+                            document.getElementById('serviceModal').style.display = 'none';
+                        };
+                        list.appendChild(item);
+                    });
+                    document.getElementById('categoryModal').style.display = 'none';
+                    document.getElementById('serviceModal').style.display = 'flex';
+                };
+                grid.appendChild(card);
             });
         }
+        document.getElementById('btnOpenCatModal').onclick = () => document.getElementById('categoryModal').style.display = 'flex';
+        window.backToCategories = () => { document.getElementById('serviceModal').style.display = 'none'; document.getElementById('categoryModal').style.display = 'flex'; };
 
-        document.getElementById('btnOpenCatModal').onclick = () => { categoryModal.style.display = 'flex'; };
-
-        // MODAL 2: Abrir lista de servicios para la categoría elegida
-        window.openServiceModal = (catName) => {
-            document.getElementById('serviceModalTitle').innerText = catName;
-            modalServiceList.innerHTML = ''; 
-
-            groupedServices[catName].forEach(srv => {
-                const item = document.createElement('div');
-                item.className = 'variant-item';
-                item.innerHTML = `
-                    <div class="var-info">
-                        <strong>${srv.name}</strong>
-                        <span>Min: ${srv.min} | Max: ${srv.max}</span>
-                    </div>
-                    <div class="var-price">$${srv.finalRate.toFixed(3)}<br><span style="font-size:0.7rem; color:#aaa; font-family:'Exo 2';">por 1000</span></div>
-                `;
-                item.onclick = () => selectFinalService(srv);
-                modalServiceList.appendChild(item);
-            });
-
-            categoryModal.style.display = 'none';
-            serviceModal.style.display = 'flex';
-        };
-
-        window.backToCategories = () => {
-            serviceModal.style.display = 'none';
-            categoryModal.style.display = 'flex';
-        };
-
-        // Al seleccionar un servicio final
-        window.selectFinalService = (srv) => {
-            selectedServiceData = srv;
-            
-            document.getElementById('selectedServiceName').innerText = srv.name;
-            document.getElementById('minQty').innerText = srv.min;
-            document.getElementById('maxQty').innerText = srv.max;
-            document.getElementById('ratePrice').innerText = `$${srv.finalRate.toFixed(3)}`;
-            
-            selectedServiceBox.style.display = 'block';
-            linkInput.disabled = false;
-            qtyInput.disabled = false;
-            btnSubmit.disabled = false;
-            
-            qtyInput.min = srv.min;
-            qtyInput.max = srv.max;
-            qtyInput.value = ""; 
-            calculateTotal();
-            
-            serviceModal.style.display = 'none';
-        };
-
-        // Cálculos dinámicos de precio
-        qtyInput.addEventListener('input', calculateTotal);
-        function calculateTotal() {
+        qtyInput.addEventListener('input', () => {
             let qty = parseInt(qtyInput.value) || 0;
-            if (selectedServiceData && qty > 0) {
-                const total = (selectedServiceData.finalRate / 1000) * qty;
-                totalPriceDisplay.innerText = `$${total.toFixed(3)}`;
-            } else {
-                totalPriceDisplay.innerText = `$0.00`;
-            }
-        }
+            document.getElementById('totalPrice').innerText = (selectedServiceData && qty > 0) ? `$${((selectedServiceData.finalRate / 1000) * qty).toFixed(3)}` : `$0.00`;
+        });
 
-        // Procesamiento de Orden a Railway y Firebase
+        // 3. PROCESAR COMPRA SMM
         smmForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!selectedServiceData) { showSysMsg("Aviso", "Selecciona un servicio válido."); return; }
-
-            const link = linkInput.value.trim();
-            const qty = parseInt(qtyInput.value);
-
-            if (qty < parseInt(selectedServiceData.min) || qty > parseInt(selectedServiceData.max)) {
-                showSysMsg("Límites", `La cantidad debe estar entre ${selectedServiceData.min} y ${selectedServiceData.max}.`);
-                return;
-            }
-
+            const qty = parseInt(qtyInput.value); const link = linkInput.value.trim();
             const totalCost = (selectedServiceData.finalRate / 1000) * qty;
 
-            if (currentBalance < totalCost) {
-                showSysMsg("Saldo Insuficiente", `Necesitas $${totalCost.toFixed(2)}. Tu saldo actual es $${currentBalance.toFixed(2)}.`);
-                return;
-            }
+            if (currentBalance < totalCost) { showSysMsg("Saldo Insuficiente", `Necesitas $${totalCost.toFixed(2)}.`); return; }
 
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> PROCESANDO EN EL SERVIDOR...";
+            document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> PROCESANDO...";
 
             try {
-                const bodyData = new URLSearchParams();
-                bodyData.append('action', 'add'); bodyData.append('service', selectedServiceData.service);
-                bodyData.append('link', link); bodyData.append('quantity', qty);
-
+                const bodyData = new URLSearchParams(); bodyData.append('action', 'add'); bodyData.append('service', selectedServiceData.service); bodyData.append('link', link); bodyData.append('quantity', qty);
                 const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: bodyData.toString() });
                 const result = await response.json();
 
                 if (result.order) {
-                    // Descuento en la DB
-                    const newBalance = parseFloat((currentBalance - totalCost).toFixed(2));
                     const updates = {};
-                    updates[`users/${currentUser.uid}/balance`] = newBalance;
+                    updates[`users/${currentUser.uid}/balance`] = parseFloat((currentBalance - totalCost).toFixed(2));
                     
                     const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
                     updates[`users/${currentUser.uid}/history/${historyRef.key}`] = { 
-                        product: `SMM: ${selectedServiceData.name} (ID: ${result.order})`, 
-                        key: `Link: ${link} | Cantidad: ${qty}`, 
+                        type: 'smm', 
+                        smmOrderId: result.order, 
+                        serviceName: selectedServiceData.name,
+                        link: link, 
+                        quantity: qty, 
                         price: parseFloat(totalCost.toFixed(3)), 
-                        date: Date.now() 
+                        date: Date.now(),
+                        smmStatus: 'Pending', 
+                        refunded: false, // Flag vital para el reembolso automático
+                        product: `Redes SMM: ${selectedServiceData.name}` 
                     };
 
                     await update(ref(db), updates);
                     
-                    currentBalance = newBalance;
-                    document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
-                    smmForm.reset();
-                    totalPriceDisplay.innerText = "$0.00";
-                    selectedServiceBox.style.display = 'none';
-                    linkInput.disabled = true; qtyInput.disabled = true; btnSubmit.disabled = true;
-
-                    // Mensaje de éxito en verde
-                    document.getElementById('msgModalTitle').style.color = "var(--neon-green)";
-                    document.getElementById('msgModal').querySelector('.modal-box').style.borderColor = "var(--neon-green)";
-                    showSysMsg("¡Transacción Exitosa!", `Orden generada correctamente. Rastreo SMM: #${result.order}. Costo: $${totalCost.toFixed(2)}.`);
-                } else {
-                    showSysMsg("Error del Proveedor", result.error || "No se pudo procesar la orden en este momento.");
-                }
-
-            } catch (error) {
-                showSysMsg("Error de Red", "Ocurrió un problema de conexión al enviar la orden.");
-            } finally {
-                if(selectedServiceData) btnSubmit.disabled = false;
-                btnSubmit.innerHTML = "<i class='bx bx-check-double'></i> PROCESAR ORDEN";
-            }
+                    smmForm.reset(); document.getElementById('selectedServiceBox').style.display = 'none';
+                    linkInput.disabled = true; qtyInput.disabled = true; document.getElementById('btnSubmit').disabled = true;
+                    showSysMsg("¡Transacción Exitosa!", `Orden generada. Rastreo SMM: #${result.order}.`);
+                } else { showSysMsg("Error SMM", result.error || "No se pudo procesar la orden."); }
+            } catch (error) { showSysMsg("Error de Red", "Ocurrió un problema de conexión al enviar la orden."); } 
+            finally { if(selectedServiceData) document.getElementById('btnSubmit').disabled = false; document.getElementById('btnSubmit').innerHTML = "<i class='bx bx-check-double'></i> PROCESAR ORDEN"; }
         });
+
+        // 4. LECTURA HISTORIAL SMM Y LECTURA DE LEGACY
+        function loadSMMHistory() {
+            onValue(ref(db, `users/${currentUser.uid}/history`), (snapshot) => {
+                smmHistoryList.innerHTML = ''; activeSmmOrders = [];
+                if (snapshot.exists()) {
+                    const allHist = snapshot.val();
+                    
+                    // Filtrar estrictamente compras SMM viejas o nuevas
+                    const smmOrders = Object.keys(allHist).map(k => ({ key: k, ...allHist[k] }))
+                        .filter(item => item.type === 'smm' || item.smmOrderId || (item.product && item.product.includes('Redes SMM')))
+                        .sort((a, b) => b.date - a.date);
+
+                    if (smmOrders.length === 0) { smmHistoryList.innerHTML = '<p style="text-align:center; color:#888;">No tienes pedidos SMM.</p>'; return; }
+
+                    smmOrders.forEach(order => {
+                        const dateObj = new Date(order.date);
+                        const dateStr = `${String(dateObj.getDate()).padStart(2,'0')}/${String(dateObj.getMonth()+1).padStart(2,'0')}/${dateObj.getFullYear()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+                        
+                        let apiId = order.smmOrderId;
+                        let servName = order.serviceName || order.product;
+                        let linkToDisplay = order.link || '#';
+                        let qtyToDisplay = order.quantity || '0';
+
+                        // Compatibilidad con registros viejos
+                        if (!apiId && order.product) {
+                            const idMatch = order.product.match(/\(ID: (\d+)\)/);
+                            if (idMatch) apiId = idMatch[1];
+                            servName = order.product.replace('Redes SMM: ', '').replace(/\(ID: \d+\)/g, '').trim();
+                        }
+                        if (!order.link && order.key) {
+                            const linkMatch = order.key.match(/Link: (.*?) \|/);
+                            const qtyMatch = order.key.match(/Cantidad: (\d+)/);
+                            if(linkMatch) linkToDisplay = linkMatch[1];
+                            if(qtyMatch) qtyToDisplay = qtyMatch[1];
+                        }
+
+                        // Asignación de Estado visual y sistema de reembolso
+                        let statusClass = 'status-pending';
+                        let statusText = order.smmStatus || 'Pending';
+                        
+                        if(order.refunded) {
+                            statusText = 'Refunded / Cancelado';
+                            statusClass = 'status-canceled';
+                        } else if(statusText.toLowerCase() === 'completed') {
+                            statusClass = 'status-completed';
+                        } else if(statusText.toLowerCase() === 'processing' || statusText.toLowerCase() === 'in progress') {
+                            statusClass = 'status-processing';
+                        } else if(statusText.toLowerCase().includes('cancel') || statusText.toLowerCase() === 'error') {
+                            statusClass = 'status-canceled';
+                        } else if(statusText.toLowerCase() === 'partial') {
+                            statusClass = 'status-partial';
+                        }
+
+                        // Si el pedido NO ha terminado, lo preparamos para consultar
+                        if(apiId && statusText.toLowerCase() !== 'completed' && !order.refunded) {
+                            activeSmmOrders.push({ 
+                                apiId: apiId, 
+                                fbKey: order.key,
+                                price: parseFloat(order.price || 0),
+                                refunded: order.refunded || false
+                            });
+                        }
+
+                        const card = document.createElement('div'); card.className = 'hist-card';
+                        card.innerHTML = `
+                            <div class="hist-header">
+                                <span class="hist-order-id">Orden #${apiId || 'N/A'}</span>
+                                <span class="hist-date">${dateStr}</span>
+                            </div>
+                            <div class="hist-body">
+                                <strong>Servicio:</strong> ${servName}<br>
+                                <strong>Link:</strong> <a href="${linkToDisplay}" target="_blank" class="hist-link">${linkToDisplay}</a><br>
+                                <strong>Cantidad:</strong> ${qtyToDisplay}
+                            </div>
+                            <div class="hist-footer">
+                                <span class="hist-price">$${parseFloat(order.price).toFixed(3)}</span>
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </div>
+                        `;
+                        smmHistoryList.appendChild(card);
+                    });
+                } else { smmHistoryList.innerHTML = '<p style="text-align:center; color:#888;">No tienes pedidos SMM.</p>'; }
+            });
+        }
+
+        // SISTEMA DE ACTUALIZACIÓN Y REEMBOLSO AUTOMÁTICO
+        document.getElementById('btnRefreshStatus').addEventListener('click', async () => {
+            const btn = document.getElementById('btnRefreshStatus');
+            if(activeSmmOrders.length === 0) { showSysMsg("Aviso", "No tienes órdenes pendientes de actualización o todas ya están completadas/canceladas."); return; }
+            btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> ACTUALIZANDO..."; btn.disabled = true;
+
+            try {
+                const idsParam = activeSmmOrders.map(o => o.apiId).join(',');
+                const bodyData = newSearchParams(); bodyData.append('action', 'multi_status'); bodyData.append('orders', idsParam);
+                
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: bodyData.toString() });
+                const result = await response.json();
+
+                if(result && typeof result === 'object' && !result.error) {
+                    const updates = {};
+                    let totalRefunded = 0;
+                    let refundCount = 0;
+
+                    activeSmmOrders.forEach(orderObj => {
+                        const apiData = result[orderObj.apiId];
+                        if(apiData && apiData.status) {
+                            updates[`users/${currentUser.uid}/history/${orderObj.fbKey}/smmStatus`] = apiData.status;
+                            
+                            // Lógica de Reembolso Automático
+                            if ((apiData.status.toLowerCase() === 'canceled' || apiData.status.toLowerCase() === 'error') && !orderObj.refunded) {
+                                totalRefunded += orderObj.price;
+                                updates[`users/${currentUser.uid}/history/${orderObj.fbKey}/refunded`] = true;
+                                refundCount++;
+                            }
+                        }
+                    });
+
+                    // Si hubo reembolsos, devolvemos el saldo sumando al balance actual
+                    if(totalRefunded > 0) {
+                        updates[`users/${currentUser.uid}/balance`] = parseFloat((currentBalance + totalRefunded).toFixed(2));
+                    }
+
+                    if(Object.keys(updates).length > 0) {
+                        await update(ref(db), updates);
+                        if(totalRefunded > 0) {
+                            showSysMsg("¡Reembolso Generado!", `Se actualizaron los estados. ${refundCount} pedido(s) no pudieron completarse en el servidor. Se han devuelto automáticamente $${totalRefunded.toFixed(2)} a tu saldo.`);
+                        }
+                    }
+                }
+            } catch(e) { console.error("Error actualizando status", e); } 
+            finally { btn.innerHTML = "<i class='bx bx-refresh'></i> ACTUALIZAR ESTADOS"; btn.disabled = false; }
+        });
+
+        // 5. TOP COMPRADORES SMM (MUESTRA TODOS SIN RESTRICCIÓN DE 10)
+        function loadSMMRanking() {
+            get(ref(db, 'users')).then((snapshot) => {
+                if(snapshot.exists()) {
+                    const usersData = snapshot.val();
+                    let ranking = [];
+                    
+                    Object.values(usersData).forEach(user => {
+                        if(user.history) {
+                            let smmSpent = 0;
+                            let lastPurchase = null;
+                            let lastDate = 0;
+                            
+                            Object.values(user.history).forEach(item => {
+                                // Filtro estricto para compras SMM
+                                const isSmm = item.type === 'smm' || item.smmOrderId || (item.product && item.product.includes('Redes SMM'));
+                                if(isSmm) {
+                                    smmSpent += parseFloat(item.price || 0);
+                                    if(item.date > lastDate) {
+                                        lastDate = item.date;
+                                        lastPurchase = item.serviceName || (item.product ? item.product.replace('Redes SMM: ', '').replace(/\(ID: \d+\)/, '').trim() : 'Servicio SMM');
+                                    }
+                                }
+                            });
+                            
+                            if(smmSpent > 0) {
+                                const defaultLetter = (user.username ? user.username.charAt(0) : 'U').toUpperCase();
+                                ranking.push({
+                                    username: user.username || 'Usuario Anónimo',
+                                    avatar: user.avatar || `https://via.placeholder.com/45/14001e/bc13fe?text=${defaultLetter}`,
+                                    spent: smmSpent,
+                                    lastPurchase: lastPurchase
+                                });
+                            }
+                        }
+                    });
+                    
+                    // Ordenar del que más gastó al que menos
+                    ranking.sort((a, b) => b.spent - a.spent);
+                    const topRanking = ranking; // SIN LÍMITE: Muestra a todos
+                    
+                    const list = document.getElementById('smmRankingList');
+                    list.innerHTML = '';
+                    
+                    if(topRanking.length === 0) { list.innerHTML = '<p style="text-align:center; color:#888;">Nadie ha comprado aún.</p>'; return; }
+                    
+                    topRanking.forEach((user, index) => {
+                        let posColor = index === 0 ? '#FFD700' : (index === 1 ? '#C0C0C0' : (index === 2 ? '#CD7F32' : '#00eeff'));
+                        if (index > 2) posColor = 'var(--neon-purple)'; // Color para los demás puestos
+                        
+                        const card = document.createElement('div');
+                        card.className = 'rank-card';
+                        card.innerHTML = `
+                            <div class="rank-pos" style="color: ${posColor}">${index + 1}</div>
+                            <img src="${user.avatar}" class="rank-avatar" style="border-color: ${posColor}">
+                            <div class="rank-info">
+                                <div class="rank-name">${user.username}</div>
+                                <div class="rank-spent">Total gastado: $${user.spent.toFixed(2)}</div>
+                                <div class="rank-last">Última compra: ${user.lastPurchase}</div>
+                            </div>
+                        `;
+                        list.appendChild(card);
+                    });
+                }
+            });
+        }
+
+        // Utilidad rápida para corrección de error en Fetch
+        function newSearchParams() {
+            return new URLSearchParams();
+        }
 
         function showSysMsg(title, text) {
             document.getElementById('msgModalTitle').innerText = title;
@@ -679,7 +784,5 @@
             document.getElementById('msgModal').style.display = 'flex';
         }
     </script>
-    
-    <script type="module" src="ia.js"></script>
 </body>
 </html>
