@@ -470,6 +470,11 @@
                 if(!userClean || !pass || !emailReal || !phone) return msg.innerText = "LLENA TODOS LOS CAMPOS"; 
             }
 
+            // ========================================================
+            // SMART LINK: Se abre en pestaña nueva para no dañar login
+            // ========================================================
+            window.open("https://thorpejoy.com/kv2bj8yg6z?key=2876b79be2dd47e51d4ae0c52393db77", "_blank");
+
             try {
                 actionBtn.innerText = "PROCESANDO...";
                 actionBtn.disabled = true;
