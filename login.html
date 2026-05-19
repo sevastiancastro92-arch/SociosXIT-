@@ -278,6 +278,11 @@
                 <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/90/1a0033/00eeff?text=XIT'">
                 
                 <h1 id="title">Iniciar Sesión</h1>
+
+                <!-- DIV NUEVO: Mensaje de Referido (Oculto por defecto) -->
+                <div id="refMessage" style="display: none; color: #00ffcc; font-size: 0.95rem; margin-bottom: 20px; font-weight: bold; text-shadow: 0 0 10px rgba(0, 255, 204, 0.8); text-align: center; border: 1px dashed #00ffcc; padding: 12px; border-radius: 8px; background: rgba(0, 255, 204, 0.05); transition: opacity 0.4s ease;">
+                    <!-- El texto se inyecta por JS -->
+                </div>
                 
                 <!-- Contenedor Deslizante para Registro -->
                 <div class="reg-wrapper" id="regFields">
@@ -355,9 +360,10 @@
         });
     </script>
 
-    <!-- LOGICA FIREBASE (INTACTA) -->
+    <!-- LOGICA FIREBASE CON SISTEMA DE REFERIDOS -->
     <script type="module">
-        import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, set } from './firebase-config.js';
+        // IMPORTANTE: Asegúrate de añadir 'get' y 'child' a tu importación de firebase-config.js
+        import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, set, get, child } from './firebase-config.js';
 
         const userIn = document.getElementById('username');
         const passIn = document.getElementById('password');
@@ -368,14 +374,38 @@
         const toggleBtn = document.getElementById('toggleBtn');
         const title = document.getElementById('title');
         const msg = document.getElementById('msg');
-        const regFields = document.getElementById('regFields'); // Contenedor animado
+        const regFields = document.getElementById('regFields'); 
         
         const loaderOverlay = document.getElementById('loader-overlay');
         const loaderMsg = document.getElementById('loader-msg');
+        const refMessage = document.getElementById('refMessage'); // Elemento del mensaje
         
         const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
         
         let isLogin = true;
+
+        // --- LÓGICA DE REFERIDOS ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const referrerUid = urlParams.get('ref');
+        let referrerName = "";
+
+        if (referrerUid) {
+            // Consultar el nombre del socio en Firebase
+            get(child(ref(db), `users/${referrerUid}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    referrerName = snapshot.val().username || "un Socio";
+                    // Si ya se activó la vista de registro, actualizamos el texto al vuelo
+                    if (!isLogin) {
+                        refMessage.innerHTML = `¡Hola! Bienvenido a SociosXIT.<br>Fuiste invitado por <span style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.1rem;">${referrerName}</span>`;
+                    }
+                }
+            }).catch(e => console.log("Error al consultar patrocinador:", e));
+
+            // Si hay un enlace de referido, forzar la vista de "Registro" automáticamente
+            setTimeout(() => {
+                if(isLogin) toggleBtn.click();
+            }, 300);
+        }
 
         // Alternar Deslizamiento de Formulario
         toggleBtn.addEventListener('click', () => {
@@ -383,11 +413,23 @@
             
             // Animación de cambio de texto
             title.style.opacity = 0;
+            refMessage.style.opacity = 0;
+
             setTimeout(() => {
                 title.innerText = isLogin ? "Iniciar Sesión" : "Crear Cuenta";
                 actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
                 toggleBtn.innerText = isLogin ? "No tengo cuenta, Registrarme" : "Ya tengo cuenta, Iniciar";
+                
+                // Controlar visualización de la alerta de referido
+                if (!isLogin && referrerUid) {
+                    refMessage.innerHTML = `¡Hola! Bienvenido a SociosXIT.<br>Fuiste invitado por <span style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.1rem;">${referrerName || 'un Socio'}</span>`;
+                    refMessage.style.display = "block";
+                } else {
+                    refMessage.style.display = "none";
+                }
+
                 title.style.opacity = 1;
+                refMessage.style.opacity = 1;
             }, 200);
 
             msg.innerText = "";
@@ -429,14 +471,31 @@
                     const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
                     const uid = userCredential.user.uid;
 
-                    await set(ref(db, 'users/' + uid), {
+                    const newUserData = {
                         username: userClean,
                         correoReal: emailReal, 
                         telefono: phone,       
                         balance: 0,          
                         role: 'user',        
                         emailAuth: fakeEmail     
-                    });
+                    };
+
+                    // GUARDAR EL DATO DE QUIÉN LO INVITÓ (Si el parámetro ref existe)
+                    if (referrerUid) {
+                        newUserData.referredBy = referrerUid;
+                    }
+
+                    // Guardar los datos del usuario principal
+                    await set(ref(db, 'users/' + uid), newUserData);
+
+                    // Registrar al nuevo usuario en la lista interna de "invitados" del patrocinador
+                    if (referrerUid) {
+                        try {
+                            await set(ref(db, `users/${referrerUid}/referrals/${uid}`), true);
+                        } catch(e) {
+                            console.log("Aviso: No se pudo agregar a la sub-lista del patrocinador por reglas de seguridad:", e);
+                        }
+                    }
                 }
 
                 loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
