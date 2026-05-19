@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Referidos - Socios XIT</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* =========================================
+           1. FUENTES Y VARIABLES CÓSMICAS
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
+        
+        * { user-select: none; box-sizing: border-box; }
+        
+        :root { 
+            --neon-pink: #ff0055;
+            --neon-blue: #00eeff;
+            --neon-purple: #bc13fe;
+            --neon-green: #00ffcc; 
+            --wa-green: #25D366;
+            --bg-deep: #030008;
+            --glass-bg: rgba(10, 2, 20, 0.85); 
+            --sidebar-bg: rgba(5, 0, 15, 0.95); 
+        }
+
+        body { 
+            background-color: var(--bg-deep); 
+            background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
+            color: white; 
+            font-family: 'Exo 2', sans-serif; 
+            margin: 0; padding: 0; 
+            min-height: 100dvh; 
+            display: flex; justify-content: center; align-items: center; flex-direction: column; 
+            overflow-x: hidden; 
+        }
+
+        /* =========================================
+           2. FONDOS ÉPICOS: ANILLOS Y PARTÍCULAS
+           ========================================= */
+        .cosmic-portal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100vw; height: 100vh; z-index: -2;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: none; overflow: hidden;
+        }
+
+        .magic-ring { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+        .ring-outer { width: 900px; height: 900px; border: 4px dashed rgba(188, 19, 254, 0.3); box-shadow: 0 0 80px rgba(188, 19, 254, 0.4); animation: spinRing 60s linear infinite; }
+        .ring-middle { width: 700px; height: 700px; border: 2px solid rgba(0, 238, 255, 0.2); box-shadow: 0 0 50px rgba(0, 238, 255, 0.3); animation: spinRingReverse 30s linear infinite; }
+        .ring-inner { width: 550px; height: 550px; border: 6px dotted rgba(255, 0, 85, 0.3); box-shadow: 0 0 60px rgba(255, 0, 85, 0.4); animation: spinRing 20s linear infinite; }
+
+        .stars {
+            position: absolute; width: 100%; height: 100%;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat; background-size: 200px 200px; animation: twinkle 4s infinite alternate; opacity: 0.4;
+        }
+
+        @keyframes spinRing { 100% { transform: rotate(360deg); } }
+        @keyframes spinRingReverse { 100% { transform: rotate(-360deg); } }
+        @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.7; } }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.8; }
+        
+        /* =========================================
+           3. BARRA SUPERIOR HOLOGRÁFICA
+           ========================================= */
+        .top-bar { 
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%); 
+            width: 95%; max-width: 700px; 
+            background: rgba(10, 2, 20, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 238, 255, 0.4); border-radius: 15px; 
+            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 0 20px rgba(0, 238, 255, 0.2); z-index: 100; 
+        }
+        .menu-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
+        .menu-btn:hover { background: rgba(0, 238, 255, 0.1); box-shadow: 0 0 15px var(--neon-blue); transform: scale(1.05); }
+        .menu-btn:active { transform: scale(0.9); }
+        
+        .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
+        .top-bar-right::-webkit-scrollbar { display: none; }
+        
+        .badge { 
+            display: flex; align-items: center; gap: 6px; 
+            background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-family: 'Orbitron', sans-serif; 
+            color: #ddd; white-space: nowrap; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .badge:hover { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); color: #fff; transform: translateY(-2px); }
+        .badge:active { transform: scale(0.95); }
+        .badge img { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; }
+        .badge span { color: #fff; font-weight: 700; }
+        .badge.green { border-color: rgba(0, 255, 204, 0.4); cursor: default; }
+        .badge.green:hover { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 204, 0.4); transform: none; }
+        .badge.green:active { transform: scale(0.95); }
+        .badge.green span { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); font-size: 0.95rem; }
+
+        /* =========================================
+           4. MENÚ LATERAL CYBERPUNK DINÁMICO
+           ========================================= */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.4s ease; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        
+        .sidebar { 
+            position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; 
+            background: var(--sidebar-bg); border-right: 2px solid var(--neon-purple); 
+            box-shadow: 10px 0 30px rgba(188, 19, 254, 0.2); z-index: 999; 
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; 
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(188, 19, 254, 0.4); padding-bottom: 15px; margin-bottom: 20px; }
+        .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-blue); }
+        
+        .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: all 0.3s ease; }
+        .close-btn:hover { transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
+        .close-btn:active { transform: scale(0.9) rotate(90deg); }
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; overflow-x: hidden; }
+        .sidebar-menu::-webkit-scrollbar { display: none; }
+
+        .sidebar-item { 
+            display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; 
+            padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; 
+            font-size: 1rem; font-family: 'Exo 2', sans-serif; border: 1px solid transparent;
+            position: relative; overflow: hidden; flex-shrink: 0;
+            border-left: 4px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0; transform: translateX(-30px);
+        }
+        
+        .sidebar.active .sidebar-item { animation: slideInItem 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .sidebar.active .sidebar-item:nth-child(n) { animation-delay: 0.1s; } /* Simplificado para no repetir */
+
+        @keyframes slideInItem { to { opacity: 1; transform: translateX(0); } }
+
+        .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s; }
+        
+        .sidebar-item:hover, .sidebar-item.active-menu { 
+            background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); 
+            border-left: 4px solid var(--neon-blue); color: #fff; box-shadow: -5px 0 15px rgba(0, 238, 255, 0.2); 
+            transform: translateX(8px);
+        }
+        .sidebar-item:hover i, .sidebar-item.active-menu i { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); transform: scale(1.1); }
+        .sidebar-item:active { transform: scale(0.95) translateX(5px); }
+        
+        .sidebar-footer { margin-top: auto; border-top: 1px dashed rgba(188, 19, 254, 0.4); padding-top: 20px; flex-shrink: 0; }
+        
+        .logout-btn {
+            width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink);
+            padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron';
+            cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+            position: relative; overflow: hidden; z-index: 1;
+        }
+        .logout-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 85, 0.4), transparent);
+            transition: left 0.5s ease; z-index: -1;
+        }
+        .logout-btn:hover { background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); text-shadow: 0 0 5px var(--neon-pink); }
+        .logout-btn:hover::before { left: 100%; }
+        .logout-btn:active { transform: scale(0.92); }
+
+        .sidebar-version { text-align: center; margin-top: 20px; font-family: 'Exo 2', sans-serif; color: #666; font-size: 0.75rem; display: flex; flex-direction: column; gap: 5px; }
+        .version-badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: var(--neon-blue); font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; text-shadow: 0 0 8px rgba(0, 238, 255, 0.6); margin-top: 5px; animation: pulseV4 2s infinite alternate ease-in-out; }
+        @keyframes pulseV4 { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 238, 255, 0.4)); } 100% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(0, 238, 255, 0.9)); } }
+
+        /* =========================================
+           5. CONTENEDOR CENTRAL DE REFERIDOS
+           ========================================= */
+        .main-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; z-index: 10; margin-top: 80px; margin-bottom: 40px;}
+
+        .hub-container { 
+            width: 95%; max-width: 700px; text-align: center; 
+            animation: slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            display: flex; flex-direction: column; align-items: center; 
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem 2rem; border-radius: 20px; border: 1px solid rgba(188, 19, 254, 0.3);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(188, 19, 254, 0.1);
+            position: relative; overflow: hidden; transition: all 0.3s ease;
+        }
+        .hub-container:hover { box-shadow: 0 0 40px rgba(188, 19, 254, 0.3), inset 0 0 30px rgba(188, 19, 254, 0.2); }
+        
+        .hub-container::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-pink), transparent);
+            animation: lightSweep 3s infinite;
+        }
+        @keyframes lightSweep { 0% { background-position: -200px 0; } 100% { background-position: 400px 0; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        .center-3d-wrapper { width: 70px; height: 70px; margin-bottom: 20px; perspective: 600px; animation: float3D 4s ease-in-out infinite; }
+        .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateCube 10s infinite linear; }
+        .cube-face {
+            position: absolute; width: 70px; height: 70px; border: 2px solid var(--neon-blue);
+            background: rgba(0, 238, 255, 0.1); box-shadow: inset 0 0 20px rgba(0, 238, 255, 0.4), 0 0 10px rgba(0, 238, 255, 0.3);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .cube-face.front  { transform: translateZ(35px); }
+        .cube-face.back   { transform: rotateY(180deg) translateZ(35px); }
+        .cube-face.right  { transform: rotateY(90deg) translateZ(35px); background: rgba(188, 19, 254, 0.1); border-color: var(--neon-purple); }
+        .cube-face.left   { transform: rotateY(-90deg) translateZ(35px); background: rgba(188, 19, 254, 0.1); border-color: var(--neon-purple); }
+        .cube-face.top    { transform: rotateX(90deg) translateZ(35px); background: rgba(255, 0, 85, 0.1); border-color: var(--neon-pink); }
+        .cube-face.bottom { transform: rotateX(-90deg) translateZ(35px); background: rgba(255, 0, 85, 0.1); border-color: var(--neon-pink); }
+        
+        @keyframes rotateCube { from { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); } to { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); } }
+        @keyframes float3D { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .hub-title { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 900; background: linear-gradient(to right, var(--neon-blue), var(--neon-purple), var(--neon-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 10px 0; filter: drop-shadow(0 0 5px rgba(188, 19, 254, 0.5)); }
+        .hub-desc { color: #cceeff; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6; }
+
+        /* =========================================
+           ESTILOS RESTANTES (MODALES, CHAT IA, ETC)
+           Mismos estilos base de tu dashboard original
+           ========================================= */
+        .adblock-overlay, .welcome-overlay, .epic-popup-overlay, .wa-alert-overlay, .wa-group-overlay, .ia-modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 0; visibility: hidden; transition: 0.4s;
+        }
+        .show, .active { opacity: 1 !important; visibility: visible !important; }
+        
+        /* Soporte wrapper */
+        .support-wrapper { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
+        .support-menu { display: flex; flex-direction: column; gap: 12px; opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.3s; }
+        .support-menu.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .support-item { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 30px; font-family: 'Orbitron'; font-weight: bold; text-decoration: none; font-size: 1rem; cursor: pointer; border: 1px solid transparent; transition: all 0.3s ease; }
+        .support-wa { background: rgba(37, 211, 102, 0.15); color: var(--wa-green); border-color: rgba(37, 211, 102, 0.4); box-shadow: 0 0 15px rgba(37, 211, 102, 0.2); }
+        .support-ia { background: rgba(0, 238, 255, 0.15); color: var(--neon-blue); border-color: rgba(0, 238, 255, 0.4); box-shadow: 0 0 15px rgba(0, 238, 255, 0.2); }
+        .support-main-btn { width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue)); color: white; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; cursor: pointer; border: none; box-shadow: 0 0 20px rgba(188, 19, 254, 0.5); transition: all 0.3s ease; animation: floatSupport 3s infinite ease-in-out; }
+        
+        /* Chat IA Modal base */
+        .ia-chat-box { width: 90%; max-width: 450px; height: 75vh; background: var(--glass-bg); border: 1px solid var(--neon-blue); border-radius: 20px; display: flex; flex-direction: column; }
+        .ia-header { background: rgba(0, 238, 255, 0.1); border-bottom: 1px dashed rgba(0, 238, 255, 0.4); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .ia-title { display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; font-weight: bold; color: #fff; }
+        .ia-close { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; }
+        .ia-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg-bubble { max-width: 85%; padding: 12px 16px; border-radius: 15px; font-size: 0.95rem; font-family: 'Exo 2'; }
+        .msg-ia { background: rgba(0, 238, 255, 0.1); border: 1px solid rgba(0, 238, 255, 0.3); color: #fff; align-self: flex-start; }
+        .ia-footer { padding: 15px; border-top: 1px dashed rgba(0, 238, 255, 0.3); display: flex; gap: 10px; }
+        .ia-input { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px; border-radius: 12px; }
+        .ia-send-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); width: 48px; border-radius: 12px; font-size: 1.5rem; cursor: pointer; }
+    </style>
+</head>
+<body oncontextmenu="return false;"> 
+
+    <!-- Modales Base -->
+    <div class="adblock-overlay" id="adblockScreen" style="display: none; z-index: 99999;">
+        <h1 style="font-family:'Orbitron';">ADBLOCK DETECTADO</h1>
+        <button onclick="location.reload()" style="padding:15px; background:var(--neon-pink); border:none; border-radius:8px; cursor:pointer;">RECARGAR</button>
+    </div>
+
+    <!-- Barra Superior -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
+        </div>
+        <div class="top-bar-right">
+            <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
+            <div class="badge" onclick="window.location.href='perfil.html'">
+                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U"> 
+                <span id="topUserDisplay">...</span>
+            </div>
+            <div class="badge green"><span>$</span><span id="balanceDisplay">0.00</span></div>
+        </div>
+    </div>
+
+    <!-- Menú Lateral -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Socios XIT </h2>
+            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
+        </div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="sidebar-item"><i class='bx bx-home-alt-2'></i> Inicio</a>
+            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
+            <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
+            <a href="referidos.html" class="sidebar-item active-menu"><i class='bx bx-share-alt'></i> Referidos</a>
+            <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
+            <a href="recarga.html" class="sidebar-item"><i class='bx bx-wallet'></i> Recargar Saldo</a>
+            <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
+        </div>
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutMenuBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
+            <div class="sidebar-version"><p>Copyright SebasXit 2026</p><div class="version-badge"><i class='bx bx-code-alt'></i> V4</div></div>
+        </div>
+    </div>
+
+    <!-- Fondo -->
+    <div class="cosmic-portal"><div class="stars"></div><div class="magic-ring ring-outer"></div><div class="magic-ring ring-middle"></div><div class="magic-ring ring-inner"></div></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- CONTENIDO PRINCIPAL: SISTEMA DE REFERIDOS -->
+    <div class="main-wrapper">
+        <div class="hub-container">
+            <div class="center-3d-wrapper">
+                <div class="cube">
+                    <div class="cube-face front"><i class='bx bx-share-alt' style="font-size: 2.5rem; color: var(--neon-blue);"></i></div>
+                    <div class="cube-face back"></div>
+                    <div class="cube-face right"></div>
+                    <div class="cube-face left"></div>
+                    <div class="cube-face top"></div>
+                    <div class="cube-face bottom"></div>
+                </div>
+            </div>
+            
+            <h1 class="hub-title">Sistema de Socios</h1>
+            <p class="hub-desc">Invita a tus amigos y gana dinero real. Por cada $5 que ellos gasten, tú ganas <strong>$0.30</strong>. ¡Y cuando ellos gasten sus primeros $15, recibirán <strong>$3 de regalo</strong> automáticamente!</p>
+
+            <!-- Sección del Link -->
+            <div style="background: rgba(0, 238, 255, 0.05); border: 1px solid rgba(0, 238, 255, 0.3); border-radius: 15px; padding: 20px; width: 100%; margin-bottom: 25px; position: relative;">
+                <h3 style="font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 0; font-size: 1.1rem;">Tu Link de Invitación</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="refLinkInput" readonly value="Cargando link..." style="flex: 1; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-family: 'Exo 2'; outline: none;">
+                    <button id="copyRefBtn" style="background: var(--neon-blue); color: #000; border: none; padding: 12px 20px; border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(0, 238, 255, 0.3);">
+                        <i class='bx bx-copy'></i> COPIAR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-bottom: 25px;">
+                <div style="background: rgba(188, 19, 254, 0.1); border: 1px solid var(--neon-purple); border-radius: 15px; padding: 20px; text-align: center;">
+                    <i class='bx bx-group' style="font-size: 2.5rem; color: var(--neon-purple); margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-purple);"></i>
+                    <h4 style="margin: 0; color: #ccc; font-weight: normal; font-size: 0.9rem;">Invitados Totales</h4>
+                    <span id="totalReferrals" style="font-size: 1.8rem; font-family: 'Orbitron'; font-weight: bold; color: #fff;">0</span>
+                </div>
+                <div style="background: rgba(37, 211, 102, 0.1); border: 1px solid var(--wa-green); border-radius: 15px; padding: 20px; text-align: center;">
+                    <i class='bx bx-dollar-circle' style="font-size: 2.5rem; color: var(--wa-green); margin-bottom: 10px; text-shadow: 0 0 10px var(--wa-green);"></i>
+                    <h4 style="margin: 0; color: #ccc; font-weight: normal; font-size: 0.9rem;">Ganancias</h4>
+                    <span style="font-size: 1.8rem; font-family: 'Orbitron'; font-weight: bold; color: var(--wa-green);">$<span id="totalEarned">0.00</span></span>
+                </div>
+            </div>
+
+            <!-- Lista de Referidos -->
+            <div style="width: 100%; text-align: left;">
+                <h3 style="font-family: 'Orbitron'; border-bottom: 1px dashed rgba(255, 255, 255, 0.2); padding-bottom: 10px; font-size: 1.1rem;"><i class='bx bx-list-ul'></i> Progreso de tus invitados</h3>
+                <div id="referralsList" style="max-height: 250px; overflow-y: auto; padding-right: 10px; display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                    <p style="color: #666; text-align: center; font-style: italic;" id="noReferralsMsg">Aún no has invitado a nadie.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soporte Flotante -->
+    <div class="support-wrapper">
+        <div class="support-menu" id="supportMenu">
+            <button class="support-item support-ia" id="openIaBtn"><i class='bx bx-bot'></i> Soporte de IA</button>
+            <a href="https://wa.me/573142369516" target="_blank" class="support-item support-wa"><i class='bx bxl-whatsapp'></i> Vía WhatsApp</a>
+        </div>
+        <button class="support-main-btn" id="supportToggleBtn"><i class='bx bx-support'></i></button>
+    </div>
+
+    <!-- Modal IA -->
+    <div class="ia-modal-overlay" id="iaModalOverlay">
+        <div class="ia-chat-box">
+            <div class="ia-header">
+                <div class="ia-title"><i class='bx bx-bot'></i> Asistente XIT</div>
+                <button class="ia-close" id="closeIaBtn"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="ia-body" id="iaChatBody">
+                <div class="msg-bubble msg-ia">¡Hola! ¿Dudas sobre el sistema de referidos? Te puedo explicar cómo ganar saldo invitando amigos.</div>
+            </div>
+            <div class="ia-footer">
+                <input type="text" class="ia-input" id="iaInput" placeholder="Escribe tu consulta aquí..." autocomplete="off">
+                <button class="ia-send-btn"><i class='bx bx-send'></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE INTERFAZ -->
+    <script>
+        // Menú lateral
+        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
+        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+
+        // Soporte
+        const supportToggleBtn = document.getElementById('supportToggleBtn'); const supportMenu = document.getElementById('supportMenu');
+        const iaModalOverlay = document.getElementById('iaModalOverlay');
+        supportToggleBtn.addEventListener('click', () => { supportMenu.classList.toggle('active'); supportToggleBtn.classList.toggle('active'); });
+        document.getElementById('openIaBtn').addEventListener('click', () => { iaModalOverlay.classList.add('active'); supportMenu.classList.remove('active'); supportToggleBtn.classList.remove('active'); });
+        document.getElementById('closeIaBtn').addEventListener('click', () => { iaModalOverlay.classList.remove('active'); });
+
+        // Partículas
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+    </script>
+
+    <!-- SCRIPT FIREBASE Y LÓGICA DE REFERIDOS -->
+    <script type="module">
+        import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
+        import { onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        setPersistence(auth, browserSessionPersistence).catch((error) => { console.error("Error persistencia:", error); });
+
+        document.getElementById('logoutMenuBtn').onclick = (e) => { e.preventDefault(); signOut(auth).then(()=>window.location.href="login.html"); };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // 1. Datos Top Bar
+                const d = new Date(user.metadata.creationTime);
+                document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+                
+                const userRef = ref(db, `users/${user.uid}`);
+                onValue(userRef, async (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        document.getElementById('topUserDisplay').innerText = data.username;
+                        document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
+                        if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
+                        
+                        // 2. Sistema de Referidos: Estadísticas y Link
+                        const refLink = `${window.location.origin}/login.html?ref=${user.uid}`;
+                        const refInput = document.getElementById('refLinkInput');
+                        refInput.value = refLink;
+
+                        document.getElementById('copyRefBtn').onclick = () => {
+                            refInput.select();
+                            document.execCommand('copy');
+                            const btn = document.getElementById('copyRefBtn');
+                            btn.innerHTML = "<i class='bx bx-check'></i> COPIADO";
+                            btn.style.background = "var(--neon-green)";
+                            setTimeout(() => {
+                                btn.innerHTML = "<i class='bx bx-copy'></i> COPIAR";
+                                btn.style.background = "var(--neon-blue)";
+                            }, 2000);
+                        };
+
+                        document.getElementById('totalEarned').innerText = parseFloat(data.referralEarnings || 0).toFixed(2);
+
+                        if (data.referrals) {
+                            const refKeys = Object.keys(data.referrals);
+                            document.getElementById('totalReferrals').innerText = refKeys.length;
+                            
+                            if (refKeys.length > 0) {
+                                document.getElementById('noReferralsMsg').style.display = 'none';
+                                const listDiv = document.getElementById('referralsList');
+                                listDiv.innerHTML = ''; // Limpiar lista
+                                
+                                for (let refUid of refKeys) {
+                                    const refUserSnap = await get(ref(db, `users/${refUid}`));
+                                    if (refUserSnap.exists()) {
+                                        const refData = refUserSnap.val();
+                                        const spent = parseFloat(refData.totalSpent || 0);
+                                        const progressToBonus = Math.min((spent / 15) * 100, 100);
+                                        
+                                        listDiv.innerHTML += `
+                                            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); padding: 12px 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                                <div>
+                                                    <strong style="color: #fff; font-family: 'Exo 2';">${refData.username || 'Usuario'}</strong>
+                                                    <div style="font-size: 0.8rem; color: #aaa;">Gastado: $${spent.toFixed(2)}</div>
+                                                </div>
+                                                <div style="width: 100px;">
+                                                    <div style="font-size: 0.75rem; text-align: right; color: var(--neon-pink); font-family: 'Orbitron'; margin-bottom: 3px;">${progressToBonus.toFixed(0)}% al bono</div>
+                                                    <div style="width: 100%; background: #222; height: 6px; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: ${progressToBonus}%; height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+    </script>
+</body>
+</html>
