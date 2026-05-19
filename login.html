@@ -219,8 +219,8 @@
         /* =========================================
            6. COMPONENTES EXTRA (LOADER, ADS, ADBLOCK)
            ========================================= */
-        #ads-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
-        .adsbox { width: 100%; min-height: 90px; background: rgba(0, 0, 0, 0.4); border: 1px dashed rgba(0, 242, 255, 0.3); border-radius: 8px; display: flex; justify-content: center; align-items: center; color: rgba(255, 255, 255, 0.3); font-family: 'Orbitron', sans-serif; font-size: 0.8rem; }
+        #ads-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 15px; margin-top: 10px; align-items: center; }
+        .adsbox { width: 100%; min-height: 50px; background: rgba(0, 0, 0, 0.4); border: 1px dashed rgba(0, 242, 255, 0.3); border-radius: 8px; display: flex; justify-content: center; align-items: center; color: rgba(255, 255, 255, 0.3); font-family: 'Orbitron', sans-serif; font-size: 0.8rem; overflow: hidden; padding: 5px; }
         
         #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 18, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.5s ease; }
         #loader-overlay.active { opacity: 1; visibility: visible; }
@@ -312,8 +312,21 @@
         </div>
 
         <div id="ads-container">
-            <div class="ad-slot adsbox">TU ANUNCIO O SCRIPT AQUÍ 1</div>
-            <div class="ad-slot adsbox">TU ANUNCIO O SCRIPT AQUÍ 2</div>
+            <!-- BLOQUE DE ANUNCIO 1: Mediano (300x250) -->
+            <div class="ad-slot adsbox">
+                <script type="text/javascript">
+                    atOptions = { 'key' : 'cee8e337a4322443b8513b91f8f6f91e', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+                </script>
+                <script type="text/javascript" src="https://www.highperformanceformat.com/cee8e337a4322443b8513b91f8f6f91e/invoke.js"></script>
+            </div>
+            
+            <!-- BLOQUE DE ANUNCIO 2: Horizontal pequeño (320x50) -->
+            <div class="ad-slot adsbox">
+                <script type="text/javascript">
+                    atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
+                </script>
+                <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
+            </div>
         </div>
     </div>
 
