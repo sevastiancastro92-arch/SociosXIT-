@@ -267,6 +267,12 @@
                 <div class="card-info"><h3>Banear Usuario</h3><p>Bloquear acceso e IP.</p></div>
             </div>
 
+            <!-- NUEVA TARJETA: DESBANEAR USUARIO -->
+            <div class="admin-card color-green" onclick="openModal('modalUnbanUser')">
+                <div class="card-icon"><i class='bx bx-check-shield'></i></div>
+                <div class="card-info"><h3>Desbanear Usuario</h3><p>Restaurar cuenta e IP.</p></div>
+            </div>
+
             <div class="admin-card color-red" onclick="openModal('modalDeleteUser')">
                 <div class="card-icon"><i class='bx bx-user-x'></i></div>
                 <div class="card-info"><h3>Eliminar Usuario</h3><p>Borrado total de entidad.</p></div>
@@ -547,6 +553,18 @@
                 <div class="input-group"><label>Fijar Objetivo (Username)</label><input type="text" id="banUserUsername" placeholder="Ej: JuanPerez" autocomplete="off"></div>
             </div>
             <button class="btn-action" style="background: linear-gradient(90deg, #80001d, var(--neon-red), #80001d); color: white;" onclick="funcBanUser()"><i class='bx bx-skull'></i> EJECUTAR BANEO</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cancelar</button>
+        </div>
+    </div>
+
+    <!-- NUEVO MODAL: DESBANEAR USUARIO -->
+    <div class="modal-overlay" id="modalUnbanUser">
+        <div class="modal-box" style="border-color: var(--neon-green);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-green);"><i class='bx bx-check-shield'></i> Restaurar Entidad e IP</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-green); background: rgba(0,255,204,0.02);">
+                <div class="input-group"><label>Fijar Objetivo (Username)</label><input type="text" id="unbanUserUsername" placeholder="Ej: JuanPerez" autocomplete="off"></div>
+            </div>
+            <button class="btn-action" style="background: linear-gradient(90deg, #008066, var(--neon-green), #008066); color: #000;" onclick="funcUnbanUser()"><i class='bx bx-shield-plus'></i> EJECUTAR DESBANEO</button>
             <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cancelar</button>
         </div>
     </div>
@@ -1103,6 +1121,45 @@
                     }
                 } else { alert("ERROR: No existe."); }
             } catch(e) { alert("ERROR: " + e.message); }
+        };
+
+        // NUEVA FUNCIÓN: DESBANEAR USUARIO E IP
+        window.funcUnbanUser = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("ERROR: Bloqueado.");
+            const userToUnban = document.getElementById('unbanUserUsername').value.trim().toLowerCase(); 
+            if(!userToUnban) return; 
+            
+            try {
+                const uSnap = await get(ref(db, 'users')); 
+                let foundId = null, targetIp = null;
+                
+                uSnap.forEach(u => { 
+                    if(u.val().username && u.val().username.toLowerCase() === userToUnban) { 
+                        foundId = u.key; 
+                        targetIp = u.val().lastIp; 
+                    } 
+                });
+                
+                if(foundId) {
+                    if(confirm(`ATENCION: ¿Desbanear a "${userToUnban}" y su IP (${targetIp || 'Desconocida'})?`)) {
+                        const updates = {};
+                        updates[`users/${foundId}/banned`] = null; 
+                        updates[`users/${foundId}/status`] = "active";
+                        if (targetIp) {
+                            const ipKey = targetIp.replace(/\./g, '_');
+                            updates[`banned_ips/${ipKey}`] = null;
+                        }
+                        await update(ref(db), updates);
+                        await logAdminAction("Desbaneo de Usuario", userToUnban, `Restauró cuenta e IP (${targetIp}).`);
+                        alert("EXITO: Usuario e IP desbaneados correctamente."); 
+                        closeAllModals();
+                    }
+                } else { 
+                    alert("ERROR: No existe el usuario."); 
+                }
+            } catch(e) { 
+                alert("ERROR: " + e.message); 
+            }
         };
 
         window.funcDeleteUser = async () => {
