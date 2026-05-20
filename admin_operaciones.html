@@ -214,6 +214,11 @@
                 <div class="card-info"><h3>Añadir Saldo</h3><p>Dar USD directo a un usuario.</p></div>
             </div>
 
+            <div class="admin-card color-red" onclick="openModal('modalRemoveBalance')">
+                <div class="card-icon"><i class='bx bx-money-withdraw'></i></div>
+                <div class="card-info"><h3>Quitar Saldo</h3><p>Restar USD a un usuario.</p></div>
+            </div>
+
             <div class="admin-card color-blue" onclick="openPaymentsModal()">
                 <div class="card-icon"><i class='bx bx-credit-card-front'></i></div>
                 <div class="card-info"><h3>Métodos de Pago</h3><p>Configurar bancos y rutas.</p></div>
@@ -255,6 +260,11 @@
             <div class="admin-card color-purple" onclick="openModal('modalTransferUser')">
                 <div class="card-icon"><i class='bx bx-transfer'></i></div>
                 <div class="card-info"><h3>Transferir Datos</h3><p>Migrar 100% a cuenta nueva.</p></div>
+            </div>
+
+            <div class="admin-card color-red" onclick="openModal('modalBanUser')">
+                <div class="card-icon"><i class='bx bx-block'></i></div>
+                <div class="card-info"><h3>Banear Usuario</h3><p>Bloquear acceso e IP.</p></div>
             </div>
 
             <div class="admin-card color-red" onclick="openModal('modalDeleteUser')">
@@ -504,6 +514,19 @@
         </div>
     </div>
 
+    <!-- NUEVO MODAL: QUITAR SALDO -->
+    <div class="modal-overlay" id="modalRemoveBalance">
+        <div class="modal-box" style="border-color: var(--neon-red);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-money-withdraw'></i> Quitar Capital</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-red);">
+                <div class="input-group"><label>ID de Usuario (Username)</label><input type="text" id="remBalUser" placeholder="Ej: sebasxit"></div>
+                <div class="input-group"><label>Monto a restar (USD)</label><input type="number" id="remBalAmt" step="0.1" placeholder="0.00"></div>
+            </div>
+            <button class="btn-action" style="background: linear-gradient(90deg, #80001d, var(--neon-red), #80001d); color: white;" onclick="funcRemoveBalance()"><i class='bx bx-send'></i> EJECUTAR RETIRO</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cancelar Operación</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="modalTransferUser">
         <div class="modal-box" style="border-color: var(--neon-purple);">
             <h3 style="font-family:'Orbitron'; color: var(--neon-purple);"><i class='bx bx-transfer'></i> Migración de Datos</h3>
@@ -513,6 +536,18 @@
             </div>
             <button class="btn-action" onclick="funcTransferUser()"><i class='bx bx-git-merge'></i> INICIAR MIGRACIÓN</button>
             <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Abortar</button>
+        </div>
+    </div>
+
+    <!-- NUEVO MODAL: BANEAR USUARIO -->
+    <div class="modal-overlay" id="modalBanUser">
+        <div class="modal-box" style="border-color: var(--neon-red);">
+            <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-block'></i> Banear Entidad e IP</h3>
+            <div class="cyber-box" style="border-left-color: var(--neon-red); background: rgba(255,0,0,0.02);">
+                <div class="input-group"><label>Fijar Objetivo (Username)</label><input type="text" id="banUserUsername" placeholder="Ej: JuanPerez" autocomplete="off"></div>
+            </div>
+            <button class="btn-action" style="background: linear-gradient(90deg, #80001d, var(--neon-red), #80001d); color: white;" onclick="funcBanUser()"><i class='bx bx-skull'></i> EJECUTAR BANEO</button>
+            <button class="btn-cancel" onclick="closeAllModals()"><i class='bx bx-x'></i> Cancelar</button>
         </div>
     </div>
 
@@ -1016,6 +1051,21 @@
             } catch(e) { alert("ERROR: " + e.message); }
         };
 
+        // NUEVA FUNCIÓN: QUITAR SALDO
+        window.funcRemoveBalance = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.balance)) return alert("ERROR: Sin acceso a fondos.");
+            const user = document.getElementById('remBalUser').value.trim().toLowerCase(); const amt = parseFloat(document.getElementById('remBalAmt').value); if(!user || isNaN(amt)) return;
+            try {
+                const uSnap = await get(ref(db, 'users')); let foundId = null, currentB = 0, targetIp = null;
+                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === user) { foundId = u.key; currentB = u.val().balance || 0; targetIp = u.val().lastIp || "unknown"; } });
+                if(foundId) {
+                    if (!isSuperAdmin && targetIp === currentAdminIp) { alert("ERROR: Autenticacion contacta al admin"); return; }
+                    let newBal = currentB - amt; if(newBal < 0) newBal = 0;
+                    await update(ref(db), { [`users/${foundId}/balance`]: newBal }); await logAdminAction("Retiro Manual", user, `Retiró $${amt} USD.`); alert("EXITO: Saldo retirado exitosamente."); closeAllModals();
+                } else { alert("Usuario no existe."); }
+            } catch(e) { alert("ERROR: " + e.message); }
+        };
+
         window.funcTransferUser = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("ERROR: Bloqueado.");
             const oldU = document.getElementById('transferOldUser').value.trim().toLowerCase(); const newU = document.getElementById('transferNewUser').value.trim().toLowerCase(); if(!oldU || !newU) return alert("ATENCION: Llenar campos."); if(oldU === newU) return alert("ATENCION: Nombres iguales.");
@@ -1027,6 +1077,31 @@
                     const cData = { ...oldData }; cData.username = newDataInfo.username; if(newDataInfo.email) cData.email = newDataInfo.email; if(newDataInfo.uid) cData.uid = newDataInfo.uid; 
                     const updates = {}; updates[`users/${newUid}`] = cData; updates[`users/${oldUid}`] = null; await update(ref(db), updates); alert(`EXITO: Migrado.`); closeAllModals();
                 }
+            } catch(e) { alert("ERROR: " + e.message); }
+        };
+
+        // NUEVA FUNCIÓN: BANEAR USUARIO E IP
+        window.funcBanUser = async () => {
+            if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.users)) return alert("ERROR: Bloqueado.");
+            const userToBan = document.getElementById('banUserUsername').value.trim().toLowerCase(); if(!userToBan) return; if(userToBan === 'sebasxit') return alert("ERROR: No puedes banear a Matrix.");
+            try {
+                const uSnap = await get(ref(db, 'users')); let foundId = null, targetIp = null, targetIsAdmin = false;
+                uSnap.forEach(u => { if(u.val().username && u.val().username.toLowerCase() === userToBan) { foundId = u.key; targetIp = u.val().lastIp; if(u.val().role === 'admin') targetIsAdmin = true; } });
+                if(!isSuperAdmin && targetIsAdmin) return alert("ERROR: No puedes banear admins.");
+                if(foundId) {
+                    if(confirm(`ATENCION: ¿Banear a "${userToBan}" y su IP (${targetIp || 'Desconocida'})?`)) {
+                        const updates = {};
+                        updates[`users/${foundId}/banned`] = true;
+                        updates[`users/${foundId}/status`] = "banned";
+                        if (targetIp) {
+                            const ipKey = targetIp.replace(/\./g, '_');
+                            updates[`banned_ips/${ipKey}`] = true;
+                        }
+                        await update(ref(db), updates);
+                        await logAdminAction("Baneo de Usuario", userToBan, `Baneó cuenta e IP (${targetIp}).`);
+                        alert("EXITO: Usuario e IP baneados permanentemente."); closeAllModals();
+                    }
+                } else { alert("ERROR: No existe."); }
             } catch(e) { alert("ERROR: " + e.message); }
         };
 

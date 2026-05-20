@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESO RESTRINGIDO - SociosXIT</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            margin: 0; padding: 0;
+        }
+
+        body {
+            background-color: #050000;
+            color: #ff003c;
+            font-family: 'Orbitron', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(50, 0, 0, 0.5) 0%, #000 80%),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 0, 0, 0.05) 3px, rgba(255, 0, 0, 0.05) 5px);
+        }
+
+        .glitch-container {
+            position: relative;
+            padding: 20px;
+        }
+
+        .main-icon {
+            font-size: 8rem;
+            color: #ff003c;
+            text-shadow: 0 0 30px #ff003c, 0 0 10px #ff003c;
+            animation: shake 0.4s infinite;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin: 20px 0;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            animation: glitch-anim 1.5s infinite alternate;
+            position: relative;
+        }
+
+        h1::before, h1::after {
+            content: "¡BANEADO!";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #050000;
+        }
+
+        h1::before {
+            left: 3px;
+            text-shadow: -2px 0 #00ffff;
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+            z-index: -1;
+        }
+
+        h1::after {
+            left: -3px;
+            text-shadow: -2px 0 #00ff00;
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+            z-index: -2;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #ccc;
+            letter-spacing: 2px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .mocking-icons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            font-size: 3.5rem;
+            color: #ff003c;
+        }
+
+        .mocking-icons i {
+            filter: drop-shadow(0 0 10px #ff003c);
+            animation: float 2s infinite ease-in-out alternate;
+        }
+        .mocking-icons i:nth-child(2) { animation-delay: 0.3s; color: #660018;}
+        .mocking-icons i:nth-child(3) { animation-delay: 0.6s; }
+
+        /* Keyframes para animaciones intensas */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(-5deg); }
+            100% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-2px, -2px) rotate(-1deg); }
+            20% { transform: translate(2px, 2px) rotate(1deg); }
+            30% { transform: translate(-2px, 2px) rotate(0deg); }
+            40% { transform: translate(2px, -2px) rotate(1deg); }
+            50% { transform: translate(-2px, 1px) rotate(-1deg); }
+            60% { transform: translate(2px, -1px) rotate(0deg); }
+            70% { transform: translate(-1px, -2px) rotate(-1deg); }
+            80% { transform: translate(1px, 2px) rotate(1deg); }
+            90% { transform: translate(-2px, -1px) rotate(0deg); }
+        }
+
+        @keyframes glitch-anim {
+            0% { text-shadow: 3px 3px #00ffff, -3px -3px #00ff00; }
+            25% { text-shadow: -3px 3px #ff003c, 3px -3px #00ffff; }
+            50% { text-shadow: 3px -3px #00ff00, -3px 3px #ff003c; }
+            75% { text-shadow: -3px -3px #00ffff, 3px 3px #00ff00; }
+            100% { text-shadow: 3px 3px #ff003c, -3px -3px #00ffff; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="glitch-container">
+        <i class='bx bxs-skull main-icon'></i>
+        
+        <h1>¡BANEADO!</h1>
+        
+        <p>Fuiste baneado por el equipo SociosXIT suerte</p>
+        
+        <div class="mocking-icons">
+            <i class='bx bx-ghost'></i>
+            <i class='bx bx-trash'></i>
+            <i class='bx bx-bot'></i>
+        </div>
+    </div>
+
+</body>
+</html>
