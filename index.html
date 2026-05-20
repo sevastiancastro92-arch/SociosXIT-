@@ -527,8 +527,10 @@
         let allProducts = []; 
         let filterStockOnly = false;
         
-        // Variables Promoción 2x1
-        let weeklySpent = 0;
+        // Variables Promoción 2x1 y Ranking
+        let weeklySpent = 0;           // Gasto total semanal (PUNTOS PARA RANKING, NO SE BORRA A MITAD DE SEMANA)
+        let promoSpent = 0;            // NUEVO: Cuenta separada para la promoción 2x1
+        let promoUsedThisWeek = false; // NUEVO: Evita que el 2x1 se repita en la misma semana
         let lastReset = 0;
         let promo2x1End = 0;
         let is2x1Active = false;
@@ -564,17 +566,26 @@
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
                         
-                        // Lógica del modo 2x1
+                        // Lógica del modo 2x1 con validaciones independientes
                         let now = Date.now();
                         weeklySpent = data.weeklySpent || 0;
+                        promoSpent = data.promoSpent || 0;
+                        promoUsedThisWeek = data.promoUsedThisWeek || false;
                         lastReset = data.lastReset || now;
                         promo2x1End = data.promo2x1End || 0;
 
-                        // Reiniciar el conteo semanal si pasaron 7 días
+                        // Reiniciar TODAS las variables si pasaron 7 días (reinicio semanal de ranking y promo)
                         if (now - lastReset > WEEK_MS) {
-                            weeklySpent = 0;
+                            weeklySpent = 0; 
+                            promoSpent = 0;
+                            promoUsedThisWeek = false;
                             lastReset = now;
-                            update(ref(db, `users/${user.uid}`), { weeklySpent: 0, lastReset: now });
+                            update(ref(db, `users/${user.uid}`), { 
+                                weeklySpent: 0, 
+                                promoSpent: 0, 
+                                promoUsedThisWeek: false, 
+                                lastReset: now 
+                            });
                         }
 
                         update2x1Status();
@@ -605,8 +616,12 @@
                     if (timeLeft <= 0) {
                         clearInterval(countdownInterval);
                         promo2x1End = 0;
-                        weeklySpent = 0; // Se reinicia para que pueda volver a intentarlo
-                        update(ref(db, `users/${currentUser.uid}`), { promo2x1End: 0, weeklySpent: 0 });
+                        promoSpent = 0; // Borramos SOLO la cantidad de los 10$ gastados en la promo
+                        // IMPORTANTE: promoUsedThisWeek se mantiene en TRUE para no repetir en la misma semana
+                        update(ref(db, `users/${currentUser.uid}`), { 
+                            promo2x1End: 0, 
+                            promoSpent: 0 
+                        });
                         update2x1Status(); // Volver al modo normal
                     } else {
                         let h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -619,14 +634,23 @@
             } else {
                 is2x1Active = false;
                 document.body.classList.remove('mode-2x1');
-                document.getElementById('promoTitle').innerHTML = "🔥 ¡Gasta $10 esta semana y obtén 2x1! 🔥";
-                document.getElementById('promoDesc').innerText = "El conteo se reinicia cada 7 días. ¡Al llegar a $10 tendrás 24 horas de 2x1 en todos los productos!";
-                document.getElementById('promoProgressBg').style.display = 'block';
-                document.getElementById('promoCountdown').style.display = 'none';
                 
-                let percent = Math.min((weeklySpent / WEEKLY_GOAL) * 100, 100);
-                document.getElementById('promoProgressFill').style.width = percent + '%';
-                document.getElementById('promoText').innerText = `$${weeklySpent.toFixed(2)} / $${WEEKLY_GOAL.toFixed(2)}`;
+                // Si la promoción ya se activó y finalizó esta semana:
+                if (promoUsedThisWeek) {
+                    document.getElementById('promoTitle').innerHTML = "⏳ ¡Promo 2x1 Utilizada! ⏳";
+                    document.getElementById('promoDesc').innerText = "Ya disfrutaste tu 2x1 esta semana. Espera al reinicio semanal para volver a participar.";
+                    document.getElementById('promoProgressBg').style.display = 'none';
+                    document.getElementById('promoCountdown').style.display = 'none';
+                } else {
+                    document.getElementById('promoTitle').innerHTML = "🔥 ¡Gasta $10 esta semana y obtén 2x1! 🔥";
+                    document.getElementById('promoDesc').innerText = "El conteo se reinicia cada 7 días. ¡Al llegar a $10 tendrás 24 horas de 2x1 en todos los productos!";
+                    document.getElementById('promoProgressBg').style.display = 'block';
+                    document.getElementById('promoCountdown').style.display = 'none';
+                    
+                    let percent = Math.min((promoSpent / WEEKLY_GOAL) * 100, 100);
+                    document.getElementById('promoProgressFill').style.width = percent + '%';
+                    document.getElementById('promoText').innerText = `$${promoSpent.toFixed(2)} / $${WEEKLY_GOAL.toFixed(2)}`;
+                }
             }
         }
 
@@ -817,7 +841,7 @@
                     const newBalance = parseFloat((currentBalance - totalCost).toFixed(2));
                     const updates = { [`users/${currentUser.uid}/balance`]: newBalance };
                     
-                    // Guardar todas las keys en el historial calculando el costo unitario de lo que realmente recibió
+                    // Guardar todas las keys en el historial
                     const pricePerKey = totalCost / finalKeysCount;
                     keysToDeliver.forEach(k => {
                         const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
@@ -829,15 +853,21 @@
                         };
                     });
 
-                    // Progreso del 2x1 si NO está activo actualmente
-                    if (!is2x1Active) {
-                        weeklySpent += totalCost;
-                        updates[`users/${currentUser.uid}/weeklySpent`] = weeklySpent;
+                    // Siempre sumar el total de la compra al ranking (NO SE RESETEA HASTA QUE PASEN LOS 7 DÍAS)
+                    weeklySpent += totalCost;
+                    updates[`users/${currentUser.uid}/weeklySpent`] = weeklySpent;
+
+                    // Progreso del 2x1 si NO está activo actualmente y NO lo ha usado en esta semana
+                    if (!is2x1Active && !promoUsedThisWeek) {
+                        promoSpent += totalCost;
+                        updates[`users/${currentUser.uid}/promoSpent`] = promoSpent;
                         
-                        // Si alcanzó la meta, activar 24 horas de modo 2x1
-                        if (weeklySpent >= WEEKLY_GOAL) {
+                        // Si alcanzó la meta de la promo ($10), activar 24 horas
+                        if (promoSpent >= WEEKLY_GOAL) {
                             promo2x1End = Date.now() + DAY_MS;
+                            promoUsedThisWeek = true; // Bloquea la repetición
                             updates[`users/${currentUser.uid}/promo2x1End`] = promo2x1End;
+                            updates[`users/${currentUser.uid}/promoUsedThisWeek`] = true;
                         }
                     }
 
@@ -874,7 +904,6 @@
         document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         
-        // El ID del botón se actualizó a 'logoutMenuBtn' para que cierre sesión desde el nuevo menú
         document.getElementById('logoutMenuBtn').onclick = () => signOut(auth).then(()=>window.location.href="login.html");
         
         // Optimización del canvas
