@@ -5,14 +5,14 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, on
 import { getDatabase, ref, set, get, child, update, push, runTransaction, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDrNambFw1VNXSkTR1yGq6_B9jWWA1LsxM",
-    authDomain: "clientesvip-be9bd.firebaseapp.com",
-    projectId: "clientesvip-be9bd",
-    storageBucket: "clientesvip-be9bd.firebasestorage.app",
-    messagingSenderId: "131036295027",
-    appId: "1:131036295027:web:3cc360dca16d4873f55f06",
+    apiKey: "AIzaSyDoIGXJQ2NEgeUXCDHLSFc7YDA6EtDYUSg",
+    authDomain: "socios666-7056e.firebaseapp.com",
+    projectId: "socios666-7056e",
+    storageBucket: "socios666-7056e.firebasestorage.app",
+    messagingSenderId: "328433251001",
+    appId: "1:328433251001:web:141a5bf56127e323afe168"
     // 👇 ESTA LÍNEA ES VITAL PARA QUE CONECTE Y LEA LA REALTIME DATABASE
-    databaseURL: "https://clientesvip-be9bd-default-rtdb.firebaseio.com" 
+    databaseURL: "https://socios666-7056e-default-rtdb.firebaseio.com" 
 };
 
 const app = initializeApp(firebaseConfig);
