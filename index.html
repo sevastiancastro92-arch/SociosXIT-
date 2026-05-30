@@ -518,19 +518,19 @@
 
         <script type="module">
         // ==========================================
-        // 1. TUS IMPORTACIONES ORIGINALES (TAL CUAL ESTABAN)
+        // 1. TUS IMPORTACIONES ORIGINALES (LA BD QUE LEE EL INDEX)
         // ==========================================
         import { auth, db, onAuthStateChanged, signOut, ref, get, update, runTransaction, push, child } from './firebase-config.js';
         import { setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // ==========================================
-        // 2. IMPORTACIONES EXCLUSIVAS PARA LA BD DEL ADMIN
+        // 2. IMPORTACIONES EXCLUSIVAS PARA LA BD DEL ADMIN (FIRESTORE)
         // ==========================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth as getAdminAuth, signInWithEmailAndPassword as signInAdmin } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Inicialización aislada de la Firebase del Admin (Para no chocar con la tuya)
+        // Configuración de la Firebase del Admin
         const firebaseConfigAdmin = {
             apiKey: "AIzaSyC9C47NbBDe0-0LyKVal2jBY9zwLZhMWt8",
             authDomain: "breinerxit-fa44e.firebaseapp.com",
@@ -547,7 +547,7 @@
         setPersistence(auth, browserSessionPersistence).catch(console.error);
 
         // ==========================================
-        // 3. VARIABLES DE ESTADO Y GHOST LOGIN
+        // 3. VARIABLES GLOBALES DE ESTADO
         // ==========================================
         let currentUser = null; 
         let currentBalance = 0; 
@@ -557,6 +557,7 @@
         let availableKeysGlobal = []; 
         let filterStockOnly = false;
         
+        // Variables para la promo 2x1
         let weeklySpent = 0;           
         let promoSpent = 0;            
         let promoUsedThisWeek = false; 
@@ -570,13 +571,21 @@
         
         let currentPurchaseData = { productId: '', durId: '', durInfo: null, prodName: '', maxStock: 0, unitPrice: 0, keysAvailable: [] };
 
-        // Login Real silencioso en la app del Admin para poder leer el inventario
-        signInAdmin(authAdmin, "andresithoff2@gmail.com", "camilithiff099").then(() => {
-            console.log("Conectado con éxito al inventario externo.");
-        }).catch(e => console.error("Error conectando al proveedor:", e));
+        // Función vital: Esperar a estar logueado en la BD del Admin antes de leer
+        async function ensureAdminConnection() {
+            if (!authAdmin.currentUser) {
+                try {
+                    await signInAdmin(authAdmin, "andresithoff@gmail.com", "camilithiff099");
+                    console.log("✅ Conexión establecida con el Inventario del Admin.");
+                } catch (e) {
+                    console.error("❌ Error conectando al proveedor:", e);
+                    throw e;
+                }
+            }
+        }
 
         // ==========================================
-        // 4. FLUJO PRINCIPAL EN TU BASE DE DATOS
+        // 4. FLUJO DE USUARIO EN TU BASE DE DATOS
         // ==========================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -584,16 +593,16 @@
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
-                // Lee de TU Realtime Database original (db)
+                // Leer de tu base de datos
                 const snapshot = await get(child(ref(db), `users/${user.uid}`));
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    document.getElementById('topUserDisplay').innerText = data.username;
+                    document.getElementById('topUserDisplay').innerText = data.username || 'Usuario';
                     currentBalance = data.balance !== undefined ? parseFloat(data.balance) : 0;
                     document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
                     
                     if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                    if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
+                    if(data.username && data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
                     
                     let now = Date.now();
                     weeklySpent = data.weeklySpent || 0;
@@ -603,15 +612,14 @@
                     promo2x1End = data.promo2x1End || 0;
 
                     if (now - lastReset > WEEK_MS) {
-                        weeklySpent = 0; 
-                        promoSpent = 0;
-                        promoUsedThisWeek = false;
-                        lastReset = now;
+                        weeklySpent = 0; promoSpent = 0; promoUsedThisWeek = false; lastReset = now;
                         update(ref(db, `users/${user.uid}`), { weeklySpent: 0, promoSpent: 0, promoUsedThisWeek: false, lastReset: now });
                     }
 
                     update2x1Status();
                 }
+                
+                // Cargar el catálogo
                 await loadCoreData();
             } else { 
                 const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
@@ -619,73 +627,33 @@
             }
         });
 
-        function update2x1Status() {
-            let now = Date.now();
-            if (promo2x1End > now) {
-                is2x1Active = true;
-                document.body.classList.add('mode-2x1');
-                document.getElementById('promoTitle').innerHTML = "✨ ¡ESTÁS EN MODO 2X1! APROVECHA ✨";
-                document.getElementById('promoDesc').innerText = "¡Pagas 1 producto y el sistema te entregará 2 keys automáticamente!";
-                document.getElementById('promoProgressBg').style.display = 'none';
-                document.getElementById('promoCountdown').style.display = 'block';
-                
-                if (countdownInterval) clearInterval(countdownInterval);
-                countdownInterval = setInterval(() => {
-                    let timeLeft = promo2x1End - Date.now();
-                    if (timeLeft <= 0) {
-                        clearInterval(countdownInterval);
-                        promo2x1End = 0; promoSpent = 0;
-                        update(ref(db, `users/${currentUser.uid}`), { promo2x1End: 0, promoSpent: 0 });
-                        update2x1Status();
-                    } else {
-                        let h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        let m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                        let s = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                        document.getElementById('promoCountdown').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-                    }
-                }, 1000);
-            } else {
-                is2x1Active = false;
-                document.body.classList.remove('mode-2x1');
-                if (promoUsedThisWeek) {
-                    document.getElementById('promoTitle').innerHTML = "⏳ ¡Promo 2x1 Utilizada! ⏳";
-                    document.getElementById('promoDesc').innerText = "Ya disfrutaste tu 2x1 esta semana. Espera al reinicio semanal para volver a participar.";
-                    document.getElementById('promoProgressBg').style.display = 'none';
-                    document.getElementById('promoCountdown').style.display = 'none';
-                } else {
-                    document.getElementById('promoTitle').innerHTML = "🔥 ¡Gasta $10 esta semana y obtén 2x1! 🔥";
-                    document.getElementById('promoDesc').innerText = "El conteo se reinicia cada 7 días. ¡Al llegar a $10 tendrás 24 horas de 2x1 en todos los productos!";
-                    document.getElementById('promoProgressBg').style.display = 'block';
-                    document.getElementById('promoCountdown').style.display = 'none';
-                    let percent = Math.min((promoSpent / WEEKLY_GOAL) * 100, 100);
-                    document.getElementById('promoProgressFill').style.width = percent + '%';
-                    document.getElementById('promoText').innerText = `$${promoSpent.toFixed(2)} / $${WEEKLY_GOAL.toFixed(2)}`;
-                }
-            }
-        }
-
         // ==========================================
-        // 5. CRUCE Y FILTRADO DE DATOS (MÉTODO ESPEJO)
+        // 5. OBTENCIÓN Y CRUCE DE INVENTARIO (MAGIA)
         // ==========================================
         async function loadCoreData() {
             const container = document.getElementById('productsGrid');
+            container.innerHTML = "<p style='text-align: center; color: var(--neon-blue); font-family: Orbitron;'>CONECTANDO A SERVIDORES GLOBALES...</p>";
+            
             try {
-                // Leer precios propios y registro anti-duplicados desde TU base de datos original (db)
+                // 1. Iniciar sesión en Firestore PRIMERO
+                await ensureAdminConnection();
+
+                // 2. Leer tus precios y tus keys quemadas desde TU base de datos original
                 const customPricesSnap = await get(ref(db, 'custom_prices'));
                 customPrices = customPricesSnap.exists() ? customPricesSnap.val() : {};
 
                 const purchasedKeysSnap = await get(ref(db, 'keys_compradas'));
                 purchasedKeysRecord = purchasedKeysSnap.exists() ? purchasedKeysSnap.val() : {};
 
-                // Leer inventarios reales del Firestore del Admin (dbAdmin)
+                // 3. Leer productos y keys desde Firestore del Admin
                 const productosSnap = await getDocs(collection(dbAdmin, "productos"));
                 const licenciasSnap = await getDocs(collection(dbAdmin, "licencias"));
                 
                 availableKeysGlobal = [];
                 licenciasSnap.forEach(doc => {
                     const k = doc.data();
-                    // Si NO ha sido vendida en tu sistema y su estado original es disponible
-                    if (!purchasedKeysRecord[k.key] && k.estado === "disponible") {
+                    // Si el estado es disponible Y no está en tu lista de keys ya compradas
+                    if (k.estado === "disponible" && !purchasedKeysRecord[k.key]) {
                         availableKeysGlobal.push(k);
                     }
                 });
@@ -693,7 +661,7 @@
                 allProducts = [];
                 productosSnap.forEach((docSnap) => {
                     const p = docSnap.data();
-                    p.id = docSnap.id;
+                    p.id = docSnap.id; // ID del documento de Firestore
                     
                     let totalStock = 0;
                     let minPrice = Infinity;
@@ -701,35 +669,45 @@
 
                     if (p.duraciones && Array.isArray(p.duraciones)) {
                         p.duraciones.forEach(dur => {
-                            // Si tienes precio modificado en tu BD, úsalo; de lo contrario usa el base
-                            const customPrice = (customPrices[p.id] && customPrices[p.id][dur.nombre]) ? customPrices[p.id][dur.nombre] : dur.precio;
-                            const keysForThisDur = availableKeysGlobal.filter(k => k.productoId === p.id && k.duracion === dur.nombre);
+                            const durNombre = dur.nombre || dur.name;
+                            const precioBase = parseFloat(dur.precio) || 0;
+                            
+                            // Verificar si le alteraste el precio en tu base de datos
+                            const customPrice = (customPrices[p.id] && customPrices[p.id][durNombre]) 
+                                ? parseFloat(customPrices[p.id][durNombre]) 
+                                : precioBase;
+                            
+                            // Extraer solo las keys que coincidan con este Producto y esta Duración
+                            const keysForThisDur = availableKeysGlobal.filter(k => k.productoId === p.id && k.duracion === durNombre);
                             const actualStock = keysForThisDur.length;
                             
-                            formattedDurations[dur.nombre] = {
-                                duration: dur.nombre,
-                                price: parseFloat(customPrice),
+                            formattedDurations[durNombre] = {
+                                duration: durNombre,
+                                price: customPrice,
                                 availableKeys: keysForThisDur.map(k => k.key)
                             };
                             
                             totalStock += actualStock;
-                            if(parseFloat(customPrice) < minPrice) minPrice = parseFloat(customPrice);
+                            if(customPrice < minPrice) minPrice = customPrice;
                         });
                     }
                     
                     p.durations = formattedDurations;
                     p.totalStock = totalStock;
-                    p.displayPrice = minPrice === Infinity ? (p.precioBase || 0) : minPrice;
+                    p.displayPrice = minPrice === Infinity ? (parseFloat(p.precioBase) || 0) : minPrice;
                     allProducts.push(p);
                 });
 
                 renderProducts(); 
             } catch (error) {
-                console.error(error);
+                console.error("Error cargando inventario:", error);
                 container.innerHTML = "<p style='color:red; text-align:center;'>ERROR DE CONEXIÓN CON EL SERVIDOR DE INVENTARIO.</p>";
             }
         }
 
+        // ==========================================
+        // 6. RENDERIZADO DEL CATÁLOGO
+        // ==========================================
         function renderProducts() {
             const container = document.getElementById('productsGrid'); container.innerHTML = '';
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
@@ -737,11 +715,12 @@
             const filteredProducts = allProducts.filter(p => {
                 const matchesSearch = (p.nombre || '').toLowerCase().includes(searchTerm) || (p.category || '').toLowerCase().includes(searchTerm);
                 const matchesStock = filterStockOnly ? p.totalStock > 0 : true;
-                return matchesSearch && matchesStock && p.visible !== false;
+                return matchesSearch && matchesStock && p.visible !== false; // Ocultar si visible es false en admin
             });
 
             if(filteredProducts.length === 0) { container.innerHTML = "<p style='text-align:center; color:#888;'>No se encontraron productos.</p>"; return; }
 
+            // Ordenar por el campo "orden" que tiene el admin
             filteredProducts.sort((a,b) => (a.orden || 0) - (b.orden || 0)).forEach(p => {
                 const card = document.createElement('div'); card.className = 'product-card';
                 const stockClass = p.totalStock > 0 ? '' : 'out';
@@ -749,10 +728,13 @@
                 const nombreCorto = p.nombre.length > 15 ? p.nombre.substring(0, 15) + '...' : p.nombre;
 
                 card.innerHTML = `
-                    <div class="card-banner"><span class="badge-popular">${p.etiqueta || 'HOT'}</span><span class="badge-tag">${nombreCorto}</span></div>
+                    <div class="card-banner" style="background-image: url('${p.imagen || ''}'); background-size: cover; background-position: center;">
+                        <span class="badge-popular">${p.etiqueta || 'DESTACADO'}</span>
+                        <span class="badge-tag" style="background: rgba(0,0,0,0.9);">${nombreCorto}</span>
+                    </div>
                     <div class="card-body">
                         <h3 class="card-title">${p.nombre}</h3>
-                        <p class="card-sub"><i class='bx bx-category'></i> ${p.category || 'Global'}</p>
+                        <p class="card-sub"><i class='bx bx-category'></i> ${p.category || p.categoria || 'Global'}</p>
                         <div class="card-price-row">
                             <span class="price-text">$${p.displayPrice.toFixed(2)}</span>
                             <span class="stock-badge ${stockClass}">${stockText}</span>
@@ -768,6 +750,9 @@
         document.getElementById('searchInput').addEventListener('input', renderProducts);
         document.getElementById('stockToggleBtn').addEventListener('click', (e) => { filterStockOnly = !filterStockOnly; e.currentTarget.classList.toggle('active'); renderProducts(); });
 
+        // ==========================================
+        // 7. FLUJO DE COMPRA Y MODALES
+        // ==========================================
         window.openVariants = (product) => {
             document.getElementById('modalProdTitle').innerText = product.nombre;
             const vList = document.getElementById('variantList'); vList.innerHTML = '';
@@ -818,9 +803,6 @@
         document.getElementById('btnMinus').onclick = () => { let qty = parseInt(qtyInput.value); if (qty > 1) { qtyInput.value = qty - 1; updateTotalDisplay(); } };
         document.getElementById('btnPlus').onclick = () => { let qty = parseInt(qtyInput.value); if (qty < currentPurchaseData.maxStock) { qtyInput.value = qty + 1; updateTotalDisplay(); } };
 
-        // ==========================================
-        // 6. EJECUCIÓN COHERENTE DE PAGOS ÉPICOS
-        // ==========================================
         document.getElementById('btnConfirmPurchase').onclick = () => {
             const errorEl = document.getElementById('errorMsg'); 
             let quantity = parseInt(qtyInput.value) || 1;
@@ -847,6 +829,9 @@
             }
         };
 
+        // ==========================================
+        // 8. PROCESAMIENTO DE COMPRA SEGURO
+        // ==========================================
         async function executePurchase(purchaseQuantity, totalCost, finalKeysCount) {
             const errorEl = document.getElementById('errorMsg'); 
             errorEl.style.color = "var(--neon-green)"; 
@@ -855,8 +840,9 @@
             
             try {
                 let keysToDeliver = currentPurchaseData.keysAvailable.slice(0, finalKeysCount);
-                const userRef = ref(db, `users/${currentUser.uid}`); // TU RTDB ORIGINAL
+                const userRef = ref(db, `users/${currentUser.uid}`); 
                 
+                // Descontar saldo de TU base de datos
                 const result = await runTransaction(userRef, (user) => {
                     if (user === null) return user;
                     let currentBal = parseFloat(user.balance || 0);
@@ -873,7 +859,7 @@
                     const pricePerKey = totalCost / finalKeysCount;
                     
                     keysToDeliver.forEach(keyStr => {
-                        // 1. Marcar como vendida en TU base de datos para no repetirla jamás
+                        // Marcar key como comprada para que desaparezca del catálogo global
                         updates[`keys_compradas/${keyStr}`] = {
                             productoId: currentPurchaseData.productId,
                             nombre: currentPurchaseData.prodName,
@@ -881,7 +867,7 @@
                             fecha: Date.now()
                         };
 
-                        // 2. Insertar de manera impecable en tu carpeta de historial de compras
+                        // Guardar en historial
                         const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
                         updates[`users/${currentUser.uid}/history/${historyRef.key}`] = { 
                             product: `${currentPurchaseData.prodName} - ${currentPurchaseData.durInfo.duration} ${is2x1Active ? '[MODO 2X1]' : ''}`, 
@@ -919,8 +905,56 @@
                 }
             } catch (error) { 
                 errorEl.style.color = "var(--neon-pink)"; 
-                errorEl.innerText = "ERROR AL INTERCECTAR SERVIDORES."; 
+                errorEl.innerText = "ERROR AL COMUNICARSE CON EL SERVIDOR."; 
                 console.error(error);
+            }
+        }
+
+        // ==========================================
+        // 9. LÓGICA DE INTERFAZ (UI)
+        // ==========================================
+        function update2x1Status() {
+            let now = Date.now();
+            if (promo2x1End > now) {
+                is2x1Active = true;
+                document.body.classList.add('mode-2x1');
+                document.getElementById('promoTitle').innerHTML = "✨ ¡ESTÁS EN MODO 2X1! APROVECHA ✨";
+                document.getElementById('promoDesc').innerText = "¡Pagas 1 producto y el sistema te entregará 2 keys automáticamente!";
+                document.getElementById('promoProgressBg').style.display = 'none';
+                document.getElementById('promoCountdown').style.display = 'block';
+                
+                if (countdownInterval) clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    let timeLeft = promo2x1End - Date.now();
+                    if (timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        promo2x1End = 0; promoSpent = 0;
+                        update(ref(db, `users/${currentUser.uid}`), { promo2x1End: 0, promoSpent: 0 });
+                        update2x1Status();
+                    } else {
+                        let h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        let m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        let s = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                        document.getElementById('promoCountdown').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                    }
+                }, 1000);
+            } else {
+                is2x1Active = false;
+                document.body.classList.remove('mode-2x1');
+                if (promoUsedThisWeek) {
+                    document.getElementById('promoTitle').innerHTML = "⏳ ¡Promo 2x1 Utilizada! ⏳";
+                    document.getElementById('promoDesc').innerText = "Ya disfrutaste tu 2x1 esta semana. Espera al reinicio semanal para volver a participar.";
+                    document.getElementById('promoProgressBg').style.display = 'none';
+                    document.getElementById('promoCountdown').style.display = 'none';
+                } else {
+                    document.getElementById('promoTitle').innerHTML = "🔥 ¡Gasta $10 esta semana y obtén 2x1! 🔥";
+                    document.getElementById('promoDesc').innerText = "El conteo se reinicia cada 7 días. ¡Al llegar a $10 tendrás 24 horas de 2x1 en todos los productos!";
+                    document.getElementById('promoProgressBg').style.display = 'block';
+                    document.getElementById('promoCountdown').style.display = 'none';
+                    let percent = Math.min((promoSpent / WEEKLY_GOAL) * 100, 100);
+                    document.getElementById('promoProgressFill').style.width = percent + '%';
+                    document.getElementById('promoText').innerText = `$${promoSpent.toFixed(2)} / $${WEEKLY_GOAL.toFixed(2)}`;
+                }
             }
         }
 
@@ -948,6 +982,7 @@
         for (let i = 0; i < 20; i++) particles.push(new Particle());
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
+
 
 </body>
 </html>
