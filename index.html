@@ -570,10 +570,10 @@
         
         let currentPurchaseData = { productId: '', durId: '', durInfo: null, prodName: '', maxStock: 0, unitPrice: 0, keysAvailable: [] };
 
-        // Login Fantasma en la app del Admin para poder leer sus colecciones de Firestore
-        signInAdmin(authAdmin, "correo_fantasma@gmail.com", "123456").then(() => {
+        // Login Real silencioso en la app del Admin para poder leer el inventario
+        signInAdmin(authAdmin, "andresithoff@gmail.com", "camilithiff099").then(() => {
             console.log("Conectado con éxito al inventario externo.");
-        }).catch(e => console.error("Error en ghost login:", e));
+        }).catch(e => console.error("Error conectando al proveedor:", e));
 
         // ==========================================
         // 4. FLUJO PRINCIPAL EN TU BASE DE DATOS
