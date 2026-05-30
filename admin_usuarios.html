@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Usuarios - LUCK XIT OFC</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&family=Exo+2:wght@300;500;700&display=swap');
+
+        * { user-select: none; box-sizing: border-box; }
+
+        :root {
+            var(--neon-purple): #bc13fe;
+            --neon-red: #ff073a;
+            --neon-cyan: #00f3ff;
+            --neon-green: #00ffcc;
+            --neon-pink: #ff0055;
+            --neon-blue: #00eeff;
+            --glass-bg: rgba(15, 0, 25, 0.7);
+            --sidebar-bg: rgba(5, 10, 20, 0.95);
+        }
+
+        body {
+            background-color: #020005;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes gradientScroll { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020202; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-pink); border-radius: 4px; }
+
+        /* LOADER CIBERNÉTICO */
+        #loadingScreen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #020005; z-index: 9999; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; gap: 30px; transition: opacity 0.6s ease;
+        }
+        .cyber-loader { position: relative; width: 120px; height: 120px; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--neon-pink); border-bottom-color: var(--neon-cyan); animation: spin 1.5s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #loadingText { font-family: 'Orbitron', sans-serif; font-size: 1rem; color: var(--neon-pink); letter-spacing: 3px; text-shadow: 0 0 10px var(--neon-pink); }
+
+        /* INTERFAZ BARRA SUPERIOR */
+        .top-bar {
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px;
+            background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--neon-pink); border-radius: 12px;
+            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(255, 0, 85, 0.15); z-index: 100;
+        }
+        .btn-back { background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); border-radius: 8px; padding: 6px 12px; font-size: 1rem; cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; display: flex; align-items: center; gap: 5px; text-decoration: none;}
+        .btn-back:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon-pink); background: rgba(255, 0, 85, 0.1); }
+        .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--neon-pink); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: var(--neon-pink); font-weight: bold; box-shadow: 0 0 10px rgba(255, 0, 85, 0.2); }
+
+        /* CONTENEDOR FORMULARIO (ESTILO LOGIN/ADMIN) */
+        .admin-container { width: 95%; max-width: 500px; margin: 90px auto 30px auto; z-index: 10; animation: popIn 0.6s ease-out; }
+        .header-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 20px 0; background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+
+        .form-box {
+            background: var(--glass-bg); backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 0, 85, 0.3); padding: 30px; 
+            border-radius: 20px; box-shadow: 0 0 30px rgba(255, 0, 85, 0.15);
+        }
+
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group label { display: block; font-family: 'Orbitron'; font-size: 0.8rem; color: var(--neon-cyan); margin-bottom: 8px; letter-spacing: 1px; }
+        
+        .input-group input, .input-group select {
+            width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px;
+            color: #fff; font-family: 'Exo 2', sans-serif; font-size: 1rem;
+            outline: none; transition: 0.3s;
+            -webkit-user-select: text; user-select: text;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+            background: rgba(20, 10, 20, 0.9);
+        }
+
+        .input-group select option { background: #050a14; color: #fff; }
+
+        .btn-submit {
+            width: 100%; padding: 16px; margin-top: 10px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+            border: none; border-radius: 12px; color: white;
+            font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 1.1rem;
+            text-transform: uppercase; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.4); letter-spacing: 2px;
+        }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 0 30px var(--neon-pink); }
+        .btn-submit:active { transform: scale(0.95); }
+
+        #msg { text-align: center; margin-top: 15px; font-weight: bold; font-size: 0.9rem; min-height: 20px; }
+        .success { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
+        .error { color: var(--neon-red); text-shadow: 0 0 8px var(--neon-red); }
+
+    </style>
+</head>
+<body oncontextmenu="return false;"> 
+
+    <div id="loadingScreen">
+        <div class="cyber-loader"></div>
+        <div id="loadingText">VERIFICANDO PERMISOS...</div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="top-bar">
+        <a href="admin.html" class="btn-back"><i class='bx bx-chevron-left'></i> Volver</a>
+        <div class="badge"><i class='bx bx-shield-quarter'></i> <span>CREADOR</span></div>
+    </div>
+
+    <div class="admin-container" id="adminMainPanel" style="display: none;">
+        <h1 class="header-title">NUEVO USUARIO</h1>
+        
+        <div class="form-box">
+            <div class="input-group">
+                <label>Usuario (Nickname sin espacios)</label>
+                <input type="text" id="regUser" placeholder="Ej: JuanPerez99" autocomplete="off">
+            </div>
+            
+            <div class="input-group">
+                <label>Contraseña</label>
+                <input type="text" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label>Correo Real (Recuperación)</label>
+                <input type="email" id="regEmail" placeholder="correo@ejemplo.com" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label>Teléfono / WhatsApp</label>
+                <input type="tel" id="regPhone" placeholder="+57 300 000 0000" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label>Rol del Usuario</label>
+                <select id="regRole">
+                    <option value="user">Usuario Normal</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+
+            <button class="btn-submit" id="btnCreate">Crear Cuenta</button>
+            <p id="msg"></p>
+        </div>
+    </div>
+
+    <!-- Carga Firebase (Debe usar tu mismo config) -->
+    <script type="module">
+        import { auth, db, onAuthStateChanged, ref, get, child, set } from './firebase-config.js';
+        
+        // IMPORTANTE: Importamos esto directo del SDK para crear la "App Secundaria"
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        let isSuperAdmin = false;
+        let isAdmin = false;
+
+        // VERIFICACIÓN DE SEGURIDAD
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snapshot = await get(child(ref(db), `users/${user.uid}`));
+                const data = snapshot.val();
+                const safeUsername = data && data.username ? data.username.trim().toLowerCase() : '';
+
+                isSuperAdmin = (safeUsername === 'sebasxit');
+                isAdmin = data && data.role === 'admin';
+
+                if (isSuperAdmin || isAdmin) {
+                    document.getElementById('loadingScreen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('adminMainPanel').style.display = 'block';
+                    }, 500);
+                } else {
+                    alert("⚠️ Acceso Denegado.");
+                    window.location.href = "dashboard.html";
+                }
+            } else { 
+                window.location.href = "login.html"; 
+            }
+        });
+
+        // LÓGICA DE CREACIÓN DE USUARIO SIN CERRAR SESIÓN DEL ADMIN
+        // Instanciamos una App secundaria usando la misma configuración de tu app principal
+        const secondaryApp = initializeApp(auth.app.options, "SecondaryApp");
+        const secondaryAuth = getAuth(secondaryApp);
+
+        const btnCreate = document.getElementById('btnCreate');
+        const msg = document.getElementById('msg');
+
+        btnCreate.addEventListener('click', async () => {
+            const uUser = document.getElementById('regUser').value.trim();
+            const uPass = document.getElementById('regPass').value;
+            const uEmail = document.getElementById('regEmail').value.trim();
+            const uPhone = document.getElementById('regPhone').value.trim();
+            const uRole = document.getElementById('regRole').value;
+
+            if(!uUser || !uPass || !uEmail || !uPhone) {
+                msg.className = 'error';
+                msg.innerText = "Por favor, llena todos los campos.";
+                return;
+            }
+
+            if(uPass.length < 6) {
+                msg.className = 'error';
+                msg.innerText = "La contraseña debe tener al menos 6 caracteres.";
+                return;
+            }
+
+            // Mismo sistema de login: Generamos correo falso para Auth
+            const userClean = uUser.replace(/\s/g, ''); 
+            const fakeEmail = `${userClean}@sistema.local`;
+
+            btnCreate.innerText = "PROCESANDO...";
+            btnCreate.disabled = true;
+            msg.innerText = "";
+
+            try {
+                // Usamos secondaryAuth para que tú (el admin) no pierdas tu sesión activa
+                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, fakeEmail, uPass);
+                const newUid = userCredential.user.uid;
+
+                // Guardamos los datos en la base de datos (Realtime Database)
+                await set(ref(db, 'users/' + newUid), {
+                    username: userClean,
+                    correoReal: uEmail,
+                    telefono: uPhone,
+                    balance: 0,
+                    role: uRole,
+                    emailAuth: fakeEmail,
+                    banned: false // Por si usas el sistema de baneos
+                });
+
+                // Cerramos sesión SOLAMENTE en la app secundaria por seguridad
+                await secondaryAuth.signOut();
+
+                msg.className = 'success';
+                msg.innerText = `¡ÉXITO! Usuario ${userClean} creado correctamente.`;
+                
+                // Limpiar campos
+                document.getElementById('regUser').value = '';
+                document.getElementById('regPass').value = '';
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPhone').value = '';
+
+            } catch (error) {
+                console.error(error);
+                msg.className = 'error';
+                if (error.code === 'auth/email-already-in-use') msg.innerText = "Este nombre de usuario ya está registrado.";
+                else msg.innerText = "ERROR: " + error.code;
+            } finally {
+                btnCreate.innerText = "Crear Cuenta";
+                btnCreate.disabled = false;
+            }
+        });
+
+        // PARTICULAS DE FONDO
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 0.5; this.color = Math.random() > 0.5 ? 'rgba(255, 0, 85, ' : 'rgba(0, 238, 255, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+    </script>
+</body>
+</html>

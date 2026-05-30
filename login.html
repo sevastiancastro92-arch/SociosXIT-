@@ -110,7 +110,7 @@
             width: 100%;
             max-width: 420px;
             margin-bottom: 30px; 
-            padding: 3px; /* Espacio para el borde animado */
+            padding: 3px; 
             background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue), var(--neon-pink));
             border-radius: 25px;
             animation: rotateBorder 5s linear infinite;
@@ -169,7 +169,6 @@
             background: rgba(20, 20, 30, 0.9);
         }
 
-        /* Ojito de contraseña */
         .toggle-password {
             position: absolute;
             right: 15px;
@@ -181,19 +180,6 @@
             transition: 0.3s;
         }
         .toggle-password:hover { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
-
-        /* Campos ocultos de registro animado */
-        .reg-wrapper {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-        }
-
-        .reg-wrapper.active {
-            max-height: 200px; /* Suficiente para los dos inputs */
-            opacity: 1;
-        }
 
         #actionBtn {
             width: 100%; padding: 16px; margin-top: 10px;
@@ -207,21 +193,11 @@
         #actionBtn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 30px var(--neon-pink), 0 0 15px var(--neon-blue); }
         #actionBtn:active { transform: scale(0.95); }
 
-        .btn-secondary {
-            background: transparent; border: none; color: var(--neon-blue);
-            margin-top: 25px; font-size: 0.95rem; cursor: pointer; transition: 0.3s;
-            font-family: 'Exo 2', sans-serif; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn-secondary:hover { color: #fff; text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue); }
-
         .error { color: #ff3333; font-size: 0.85rem; margin: 10px 0; min-height: 20px; font-weight: 700; text-shadow: 0 0 8px rgba(255, 0, 0, 0.8); }
 
         /* =========================================
-           6. COMPONENTES EXTRA (LOADER, ADS, ADBLOCK)
+           6. COMPONENTES EXTRA (LOADER)
            ========================================= */
-        #ads-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 15px; margin-top: 10px; align-items: center; }
-        .adsbox { width: 100%; min-height: 50px; background: rgba(0, 0, 0, 0.4); border: 1px dashed rgba(0, 242, 255, 0.3); border-radius: 8px; display: flex; justify-content: center; align-items: center; color: rgba(255, 255, 255, 0.3); font-family: 'Orbitron', sans-serif; font-size: 0.8rem; overflow: hidden; padding: 5px; }
-        
         #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 18, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.5s ease; }
         #loader-overlay.active { opacity: 1; visibility: visible; }
         .loader-atom { position: relative; width: 100px; height: 100px; }
@@ -230,11 +206,9 @@
         .orbit:nth-child(3) { transform: rotateX(60deg) rotateY(-45deg); animation: orbitSpin3 1.4s linear infinite; border-top-color: var(--neon-pink); border-bottom-color: var(--neon-purple); }
         .loader-text { margin-top: 30px; font-family: 'Orbitron'; font-size: 1.2rem; color: #fff; letter-spacing: 4px; animation: pulseText 1.5s infinite alternate; }
         @keyframes pulseText { 0% { opacity: 0.5; text-shadow: 0 0 10px var(--neon-blue); } 100% { opacity: 1; text-shadow: 0 0 20px var(--neon-blue), 0 0 30px var(--neon-pink); } }
-        
-        .adblock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 18, 0.98); backdrop-filter: blur(15px); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        .adblock-overlay i { font-size: 5rem; color: var(--neon-pink); margin-bottom: 20px; animation: pulseText 2s infinite; }
-        .btn-reload { padding: 15px 35px; background: transparent; border: 2px solid var(--neon-pink); color: white; border-radius: 12px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s; }
-        .btn-reload:hover { background: var(--neon-pink); box-shadow: 0 0 30px var(--neon-pink); }
+        @keyframes orbitSpin { 100% { transform: rotate(360deg); } }
+        @keyframes orbitSpin2 { 100% { transform: rotateX(60deg) rotateY(45deg) rotateZ(360deg); } }
+        @keyframes orbitSpin3 { 100% { transform: rotateX(60deg) rotateY(-45deg) rotateZ(360deg); } }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -244,14 +218,6 @@
         <button id="audioBtn" title="Activar/Desactivar Sonido">
             <i class='bx bx-volume-full' id="audioIcon"></i>
         </button>
-    </div>
-
-    <!-- AdBlock -->
-    <div class="adblock-overlay" id="adblockScreen" style="display: none;">
-        <i class='bx bx-shield-x'></i>
-        <h1 style="font-family: 'Orbitron'; margin-bottom: 10px;">ADBLOCK DETECTADO</h1>
-        <p style="color: #ccc; max-width: 450px; margin-bottom: 30px;">Para acceder a SociosXIT, necesitamos que desactives tu bloqueador. Mantenemos esto gracias a la publicidad.</p>
-        <button class="btn-reload" onclick="location.reload()">YA LO DESACTIVÉ</button>
     </div>
 
     <!-- Fondos -->
@@ -278,21 +244,6 @@
                 <img src="Logo/SOCIOS INFO 20260417_230028.jpg" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/90/1a0033/00eeff?text=XIT'">
                 
                 <h1 id="title">Iniciar Sesión</h1>
-
-                <!-- DIV NUEVO: Mensaje de Referido (Oculto por defecto) -->
-                <div id="refMessage" style="display: none; color: #00ffcc; font-size: 0.95rem; margin-bottom: 20px; font-weight: bold; text-shadow: 0 0 10px rgba(0, 255, 204, 0.8); text-align: center; border: 1px dashed #00ffcc; padding: 12px; border-radius: 8px; background: rgba(0, 255, 204, 0.05); transition: opacity 0.4s ease;">
-                    <!-- El texto se inyecta por JS -->
-                </div>
-                
-                <!-- Contenedor Deslizante para Registro -->
-                <div class="reg-wrapper" id="regFields">
-                    <div class="input-box">
-                        <input type="email" id="emailReal" placeholder="Correo Electrónico" autocomplete="off">
-                    </div>
-                    <div class="input-box">
-                        <input type="tel" id="phone" placeholder="Teléfono / WhatsApp" autocomplete="off">
-                    </div>
-                </div>
                 
                 <!-- Campos Fijos -->
                 <div class="input-box">
@@ -307,43 +258,13 @@
                 <p id="msg" class="error"></p>
                 
                 <button id="actionBtn">Entrar</button>
-                <button id="toggleBtn" class="btn-secondary">No tengo cuenta, Registrarme</button>
-            </div>
-        </div>
-
-        <div id="ads-container">
-            <!-- BLOQUE DE ANUNCIO 1: Mediano (300x250) -->
-            <div class="ad-slot adsbox">
-                <script type="text/javascript">
-                    atOptions = { 'key' : 'cee8e337a4322443b8513b91f8f6f91e', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-                </script>
-                <script type="text/javascript" src="https://www.highperformanceformat.com/cee8e337a4322443b8513b91f8f6f91e/invoke.js"></script>
-            </div>
-            
-            <!-- BLOQUE DE ANUNCIO 2: Horizontal pequeño (320x50) -->
-            <div class="ad-slot adsbox">
-                <script type="text/javascript">
-                    atOptions = {'key' : '22131686a5bfbef1dbd17962fb7e46a4', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};
-                </script>
-                <script type="text/javascript" src="https://www.highperformanceformat.com/22131686a5bfbef1dbd17962fb7e46a4/invoke.js"></script>
             </div>
         </div>
     </div>
 
     <!-- LOGICA DE INTERFAZ -->
     <script>
-        // 1. Detección de AdBlock
-        window.addEventListener('load', () => {
-            const ad = document.createElement('div');
-            ad.className = 'adsbox'; ad.style.height = '1px'; ad.style.width = '1px'; ad.style.position = 'absolute'; ad.style.left = '-1000px';
-            document.body.appendChild(ad);
-            setTimeout(() => {
-                if (ad.offsetHeight === 0) document.getElementById('adblockScreen').style.display = 'flex';
-                ad.remove();
-            }, 300);
-        });
-
-        // 2. Control de Audio con LocalStorage
+        // Control de Audio con LocalStorage
         const audioBtn = document.getElementById('audioBtn');
         const audioIcon = document.getElementById('audioIcon');
         let isAudioEnabled = localStorage.getItem('audioState') !== 'false'; // Por defecto true
@@ -361,7 +282,7 @@
             updateAudioUI();
         });
 
-        // 3. Mostrar/Ocultar Contraseña
+        // Mostrar/Ocultar Contraseña
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         
@@ -373,9 +294,9 @@
         });
     </script>
 
-    <!-- LOGICA FIREBASE CON SISTEMA DE REFERIDOS -->
+    <!-- LOGICA FIREBASE: SOLO INICIO DE SESIÓN -->
     <script type="module">
-        import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, set, get, child } from './firebase-config.js';
+        import { auth, db, signInWithEmailAndPassword, ref, get, child } from './firebase-config.js';
 
         // ==========================================
         // SISTEMA DE SEGURIDAD: VERIFICACIÓN DE IP
@@ -393,134 +314,41 @@
 
         const userIn = document.getElementById('username');
         const passIn = document.getElementById('password');
-        const emailRealIn = document.getElementById('emailReal');
-        const phoneIn = document.getElementById('phone');
-        
         const actionBtn = document.getElementById('actionBtn');
-        const toggleBtn = document.getElementById('toggleBtn');
-        const title = document.getElementById('title');
         const msg = document.getElementById('msg');
-        const regFields = document.getElementById('regFields'); 
         
         const loaderOverlay = document.getElementById('loader-overlay');
         const loaderMsg = document.getElementById('loader-msg');
-        const refMessage = document.getElementById('refMessage'); 
         
         const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
-        
-        let isLogin = true;
-
-        // --- LÓGICA DE REFERIDOS ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const referrerUid = urlParams.get('ref');
-        let referrerName = "";
-
-        if (referrerUid) {
-            get(child(ref(db), `users/${referrerUid}`)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    referrerName = snapshot.val().username || "un Socio";
-                    if (!isLogin) {
-                        refMessage.innerHTML = `¡Hola! Bienvenido a SociosXIT.<br>Fuiste invitado por <span style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.1rem;">${referrerName}</span>`;
-                    }
-                }
-            }).catch(e => console.log("Error al consultar patrocinador:", e));
-
-            setTimeout(() => {
-                if(isLogin) toggleBtn.click();
-            }, 300);
-        }
-
-        toggleBtn.addEventListener('click', () => {
-            isLogin = !isLogin;
-            title.style.opacity = 0;
-            refMessage.style.opacity = 0;
-
-            setTimeout(() => {
-                title.innerText = isLogin ? "Iniciar Sesión" : "Crear Cuenta";
-                actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
-                toggleBtn.innerText = isLogin ? "No tengo cuenta, Registrarme" : "Ya tengo cuenta, Iniciar";
-                
-                if (!isLogin && referrerUid) {
-                    refMessage.innerHTML = `¡Hola! Bienvenido a SociosXIT.<br>Fuiste invitado por <span style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.1rem;">${referrerName || 'un Socio'}</span>`;
-                    refMessage.style.display = "block";
-                } else {
-                    refMessage.style.display = "none";
-                }
-
-                title.style.opacity = 1;
-                refMessage.style.opacity = 1;
-            }, 200);
-
-            msg.innerText = "";
-            if (isLogin) {
-                regFields.classList.remove('active');
-            } else {
-                regFields.classList.add('active');
-            }
-        });
 
         actionBtn.addEventListener('click', async () => {
             const userRaw = userIn.value.trim();
             const userClean = userRaw.replace(/\s/g, ''); 
             const pass = passIn.value;
             const fakeEmail = `${userClean}@sistema.local`; 
-            const emailReal = emailRealIn.value.trim();
-            const phone = phoneIn.value.trim();
 
-            if(isLogin) {
-                if(!userClean || !pass) return msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
-            } else {
-                if(!userClean || !pass || !emailReal || !phone) return msg.innerText = "LLENA TODOS LOS CAMPOS"; 
-            }
-
-            window.open("https://thorpejoy.com/kv2bj8yg6z?key=2876b79be2dd47e51d4ae0c52393db77", "_blank");
+            if(!userClean || !pass) return msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
 
             try {
                 actionBtn.innerText = "PROCESANDO...";
                 actionBtn.disabled = true;
 
-                if(isLogin) {
-                    const userCred = await signInWithEmailAndPassword(auth, fakeEmail, pass);
-                    
-                    // VALIDACIÓN DE BANEO A NIVEL DE USUARIO
-                    const userSnapshot = await get(child(ref(db), `users/${userCred.user.uid}`));
-                    if (userSnapshot.exists() && userSnapshot.val().banned === true) {
-                        window.location.replace("baneado.html");
-                        return; // Detiene la ejecución aquí
-                    }
-
-                    if(isAudioEnabled) {
-                        audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
-                    }
-                } else {
-                    const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
-                    const uid = userCredential.user.uid;
-
-                    const newUserData = {
-                        username: userClean,
-                        correoReal: emailReal, 
-                        telefono: phone,       
-                        balance: 0,          
-                        role: 'user',        
-                        emailAuth: fakeEmail     
-                    };
-
-                    if (referrerUid) {
-                        newUserData.referredBy = referrerUid;
-                    }
-
-                    await set(ref(db, 'users/' + uid), newUserData);
-
-                    if (referrerUid) {
-                        try {
-                            await set(ref(db, `users/${referrerUid}/referrals/${uid}`), true);
-                        } catch(e) {
-                            console.log("Aviso: No se pudo agregar a la sub-lista del patrocinador por reglas de seguridad:", e);
-                        }
-                    }
+                // Solo inicio de sesión
+                const userCred = await signInWithEmailAndPassword(auth, fakeEmail, pass);
+                
+                // VALIDACIÓN DE BANEO A NIVEL DE USUARIO
+                const userSnapshot = await get(child(ref(db), `users/${userCred.user.uid}`));
+                if (userSnapshot.exists() && userSnapshot.val().banned === true) {
+                    window.location.replace("baneado.html");
+                    return; // Detiene la ejecución aquí
                 }
 
-                loaderMsg.innerText = isLogin ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
+                if(isAudioEnabled) {
+                    audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
+                }
+
+                loaderMsg.innerText = "CONECTANDO AL SERVIDOR...";
                 loaderOverlay.classList.add('active');
 
                 setTimeout(() => {
@@ -535,12 +363,13 @@
 
             } catch (error) {
                 console.error(error);
-                if (error.code === 'auth/email-already-in-use') msg.innerText = "ESTE NOMBRE DE USUARIO YA EXISTE.";
-                else if (error.code === 'auth/weak-password') msg.innerText = "CONTRASEÑA MUY CORTA (MIN 6).";
-                else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') msg.innerText = "USUARIO O CONTRASEÑA INCORRECTOS.";
-                else msg.innerText = "ERROR: " + error.code;
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    msg.innerText = "USUARIO O CONTRASEÑA INCORRECTOS.";
+                } else {
+                    msg.innerText = "ERROR: " + error.code;
+                }
                 
-                actionBtn.innerText = isLogin ? "Entrar" : "Registrarse";
+                actionBtn.innerText = "Entrar";
                 actionBtn.disabled = false;
             }
         });
