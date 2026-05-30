@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Precios Propios - SociosXIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #030008; background-image: radial-gradient(circle at top, #1a0033 0%, #030008 70%); color: #fff; font-family: 'Exo 2', sans-serif; padding: 20px; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px dashed rgba(188, 19, 254, 0.4); padding-bottom: 20px; }
+        .header h2 { color: #00e5ff; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 15px rgba(0, 229, 255, 0.5); font-size: 2rem; margin-bottom: 10px; }
+        .header p { color: #aaa; }
+        
+        #loading { text-align: center; font-family: 'Orbitron', sans-serif; color: #bc13fe; font-size: 1.2rem; margin-top: 50px; animation: pulse 1.5s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.5; text-shadow: 0 0 5px #bc13fe; } to { opacity: 1; text-shadow: 0 0 20px #bc13fe; } }
+
+        .products-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        
+        .card { background: rgba(10, 2, 20, 0.8); border: 1px solid rgba(0, 238, 255, 0.3); border-radius: 15px; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+        .card-title { color: #a855f7; font-family: 'Orbitron', sans-serif; font-size: 1.3rem; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+        
+        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 3px solid #00e5ff; }
+        .row-info { display: flex; flex-direction: column; gap: 5px; }
+        .row-info strong { color: #fff; font-size: 1.1rem; }
+        .row-info small { color: #888; font-family: monospace; font-size: 0.9rem; }
+        
+        .row-actions { display: flex; align-items: center; gap: 10px; }
+        .row-actions span { font-weight: bold; color: #00ffcc; font-size: 1.2rem; }
+        
+        input[type="number"] { background: #111; border: 1px solid #a855f7; color: #fff; padding: 10px; width: 110px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; text-align: center; outline: none; transition: 0.3s; }
+        input[type="number"]:focus { box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); border-color: #00e5ff; }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        button { background: linear-gradient(90deg, #00e5ff, #a855f7); color: #000; border: none; padding: 10px 20px; font-weight: bold; font-family: 'Orbitron', sans-serif; cursor: pointer; border-radius: 8px; transition: 0.3s; box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+        button:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); color: #fff; }
+        button:active { transform: scale(0.95); }
+
+        .cat-tag { background: rgba(188, 19, 254, 0.2); color: #a855f7; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem; font-family: 'Exo 2'; border: 1px solid rgba(188, 19, 254, 0.4); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2><i class="fa-solid fa-tags"></i> Gestor de Precios Propios</h2>
+            <p>Ajusta el precio de venta para tus clientes. Si no guardas un precio, se usará el del proveedor original.</p>
+        </div>
+        
+        <div id="loading"><i class="fa-solid fa-satellite-dish"></i> Conectando con bases de datos y sincronizando catálogo...</div>
+        <div id="products-list" class="products-grid"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // ==========================================
+        // 1. TU FIREBASE (Donde guardaremos los precios custom - RTDB)
+        // ==========================================
+        const firebaseConfigPropia = {
+            apiKey: "PON_TUS_DATOS_AQUI",
+            authDomain: "tu-proyecto.firebaseapp.com",
+            databaseURL: "PON_TUS_DATOS_AQUI",
+            projectId: "PON_TUS_DATOS_AQUI",
+            storageBucket: "tu-proyecto.appspot.com",
+            messagingSenderId: "123456",
+            appId: "1:123456:web:abcd"
+        };
+
+        // ==========================================
+        // 2. FIREBASE DEL ADMIN (Donde leemos los productos - FIRESTORE)
+        // ==========================================
+        const firebaseConfigAdmin = {
+            apiKey: "AIzaSyC9C47NbBDe0-0LyKVal2jBY9zwLZhMWt8",
+            authDomain: "breinerxit-fa44e.firebaseapp.com",
+            projectId: "breinerxit-fa44e",
+            storageBucket: "breinerxit-fa44e.firebasestorage.app",
+            messagingSenderId: "21637983058",
+            appId: "1:21637983058:web:896405aca925542c2c288b"
+        };
+
+        const appPropia = initializeApp(firebaseConfigPropia, "propia");
+        const appAdmin = initializeApp(firebaseConfigAdmin, "admin");
+
+        const dbPropia = getDatabase(appPropia);
+        const authAdminApp = getAuth(appAdmin);
+        const dbAdmin = getFirestore(appAdmin);
+
+        // Iniciar Sesión en la base del Admin para tener permisos de lectura
+        signInWithEmailAndPassword(authAdminApp, "andresithoff@gmail.com", "camilithiff099").then(async () => {
+            document.getElementById('loading').innerHTML = "<i class='fa-solid fa-download'></i> Descargando catálogo...";
+            
+            try {
+                // Traer productos del Admin ordenados
+                const q = query(collection(dbAdmin, "productos"), orderBy("orden", "asc"));
+                const productosSnap = await getDocs(q);
+                
+                // Traer precios guardados en Tu Firebase
+                const customPricesSnap = await get(ref(dbPropia, 'custom_prices'));
+                const customPrices = customPricesSnap.exists() ? customPricesSnap.val() : {};
+
+                const container = document.getElementById('products-list');
+                document.getElementById('loading').style.display = 'none';
+
+                let allProducts = [];
+                productosSnap.forEach(doc => {
+                    let p = doc.data();
+                    p.id = doc.id;
+                    allProducts.push(p);
+                });
+
+                allProducts.forEach(p => {
+                    // Mapeo seguro de duraciones (Igual que en el index)
+                    let duracionesList = [];
+                    if (p.duraciones) {
+                        if (Array.isArray(p.duraciones)) {
+                            duracionesList = p.duraciones;
+                        } else if (typeof p.duraciones === 'object') {
+                            duracionesList = Object.keys(p.duraciones).map(k => ({ 
+                                nombre: k, 
+                                precio: (p.duraciones[k] && p.duraciones[k].precio !== undefined) ? p.duraciones[k].precio : (p.precioBase || 0) 
+                            }));
+                        }
+                    }
+                    if (duracionesList.length === 0) {
+                        duracionesList.push({ nombre: '1 Día', precio: p.precioBase || 0 });
+                    }
+                    
+                    let cardHTML = `
+                        <div class="card">
+                            <div class="card-title">
+                                <span>${p.nombre}</span>
+                                <span class="cat-tag">${p.category || p.categoria || 'Global'}</span>
+                            </div>
+                    `;
+                    
+                    duracionesList.forEach((dur, index) => {
+                        const durNombre = dur.nombre || dur.name;
+                        const precioOriginalAdmin = parseFloat(dur.precio) || parseFloat(p.precioBase) || 0;
+                        
+                        // ID único para el input (eliminamos espacios por seguridad en el DOM)
+                        const safeId = `${p.id}_${index}`; 
+                        
+                        // Verificar si ya le habías alterado el precio antes
+                        const currentPrice = (customPrices[p.id] && customPrices[p.id][durNombre]) 
+                                            ? parseFloat(customPrices[p.id][durNombre]) 
+                                            : precioOriginalAdmin;
+                        
+                        cardHTML += `
+                            <div class="row">
+                                <div class="row-info">
+                                    <strong><i class="fa-regular fa-clock"></i> ${durNombre}</strong>
+                                    <small>Precio Base Proveedor: $${precioOriginalAdmin.toFixed(2)}</small>
+                                </div>
+                                <div class="row-actions">
+                                    <span>$</span>
+                                    <input type="number" step="0.01" id="input_${safeId}" value="${currentPrice.toFixed(2)}">
+                                    <button onclick="window.savePrice('${p.id}', '${durNombre}', 'input_${safeId}')">
+                                        <i class="fa-solid fa-floppy-disk"></i> Guardar
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    cardHTML += `</div>`;
+                    container.innerHTML += cardHTML;
+                });
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerHTML = `<span style="color:red;">Error cargando datos: ${err.message}</span>`;
+            }
+        }).catch(e => {
+            document.getElementById('loading').innerHTML = `<span style="color:red;">Error de autenticación: Verifica credenciales del admin.</span>`;
+            console.error(e);
+        });
+
+        // Función Global para guardar el precio en TU base de datos
+        window.savePrice = async (prodId, duracionName, inputId) => {
+            const btn = document.querySelector(`#${inputId}`).nextElementSibling;
+            const originalText = btn.innerHTML;
+            
+            const newPrice = document.getElementById(inputId).value;
+            if(!newPrice || isNaN(newPrice) || newPrice < 0) {
+                alert("Por favor ingresa un precio válido.");
+                return;
+            }
+
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>...`;
+            btn.style.pointerEvents = 'none';
+
+            try {
+                // Guardar en TU Realtime Database
+                await set(ref(dbPropia, `custom_prices/${prodId}/${duracionName}`), parseFloat(newPrice));
+                
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> Listo`;
+                btn.style.background = "#00ffcc";
+                btn.style.color = "#000";
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = "";
+                    btn.style.color = "";
+                    btn.style.pointerEvents = 'auto';
+                }, 2000);
+            } catch (error) {
+                alert("Error al guardar: " + error.message);
+                btn.innerHTML = originalText;
+                btn.style.pointerEvents = 'auto';
+            }
+        };
+    </script>
+</body>
+</html>
