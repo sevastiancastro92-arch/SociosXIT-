@@ -557,21 +557,14 @@
         let availableKeysGlobal = []; 
         let filterStockOnly = false;
         
-        // Variables para la promo 2x1
-        let weeklySpent = 0;           
-        let promoSpent = 0;            
-        let promoUsedThisWeek = false; 
-        let lastReset = 0;
-        let promo2x1End = 0;
-        let is2x1Active = false;
-        let countdownInterval = null;
-        const WEEKLY_GOAL = 10.00;
-        const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-        const DAY_MS = 24 * 60 * 60 * 1000;
+        let weeklySpent = 0, promoSpent = 0, promoUsedThisWeek = false, lastReset = 0, promo2x1End = 0, is2x1Active = false, countdownInterval = null;
+        const WEEKLY_GOAL = 10.00, WEEK_MS = 7 * 24 * 60 * 60 * 1000, DAY_MS = 24 * 60 * 60 * 1000;
         
         let currentPurchaseData = { productId: '', durId: '', durInfo: null, prodName: '', maxStock: 0, unitPrice: 0, keysAvailable: [] };
 
-        // Función vital: Esperar a estar logueado en la BD del Admin antes de leer
+        // ==========================================
+        // 4. CONEXIÓN FORZADA AL ADMIN ANTES DE LEER
+        // ==========================================
         async function ensureAdminConnection() {
             if (!authAdmin.currentUser) {
                 try {
@@ -585,7 +578,7 @@
         }
 
         // ==========================================
-        // 4. FLUJO DE USUARIO EN TU BASE DE DATOS
+        // 5. FLUJO DE USUARIO
         // ==========================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -593,7 +586,6 @@
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
-                // Leer de tu base de datos
                 const snapshot = await get(child(ref(db), `users/${user.uid}`));
                 if (snapshot.exists()) {
                     const data = snapshot.val();
@@ -605,22 +597,17 @@
                     if(data.username && data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
                     
                     let now = Date.now();
-                    weeklySpent = data.weeklySpent || 0;
-                    promoSpent = data.promoSpent || 0;
-                    promoUsedThisWeek = data.promoUsedThisWeek || false;
-                    lastReset = data.lastReset || now;
-                    promo2x1End = data.promo2x1End || 0;
+                    weeklySpent = data.weeklySpent || 0; promoSpent = data.promoSpent || 0; promoUsedThisWeek = data.promoUsedThisWeek || false;
+                    lastReset = data.lastReset || now; promo2x1End = data.promo2x1End || 0;
 
                     if (now - lastReset > WEEK_MS) {
                         weeklySpent = 0; promoSpent = 0; promoUsedThisWeek = false; lastReset = now;
                         update(ref(db, `users/${user.uid}`), { weeklySpent: 0, promoSpent: 0, promoUsedThisWeek: false, lastReset: now });
                     }
-
                     update2x1Status();
                 }
                 
-                // Cargar el catálogo
-                await loadCoreData();
+                await loadCoreData(); // Cargar inventario tras loguearse
             } else { 
                 const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
                 window.location.href = "login.html?redirect=" + currentPath; 
@@ -628,31 +615,27 @@
         });
 
         // ==========================================
-        // 5. OBTENCIÓN Y CRUCE DE INVENTARIO (MAGIA)
+        // 6. CARGA DE CATÁLOGO (LECTURA CORREGIDA)
         // ==========================================
         async function loadCoreData() {
             const container = document.getElementById('productsGrid');
-            container.innerHTML = "<p style='text-align: center; color: var(--neon-blue); font-family: Orbitron;'>CONECTANDO A SERVIDORES GLOBALES...</p>";
+            container.innerHTML = "<p style='text-align: center; color: var(--neon-blue); font-family: Orbitron;'>SINCORNIZANDO INVENTARIO...</p>";
             
             try {
-                // 1. Iniciar sesión en Firestore PRIMERO
                 await ensureAdminConnection();
 
-                // 2. Leer tus precios y tus keys quemadas desde TU base de datos original
                 const customPricesSnap = await get(ref(db, 'custom_prices'));
                 customPrices = customPricesSnap.exists() ? customPricesSnap.val() : {};
 
                 const purchasedKeysSnap = await get(ref(db, 'keys_compradas'));
                 purchasedKeysRecord = purchasedKeysSnap.exists() ? purchasedKeysSnap.val() : {};
 
-                // 3. Leer productos y keys desde Firestore del Admin
                 const productosSnap = await getDocs(collection(dbAdmin, "productos"));
                 const licenciasSnap = await getDocs(collection(dbAdmin, "licencias"));
                 
                 availableKeysGlobal = [];
                 licenciasSnap.forEach(doc => {
                     const k = doc.data();
-                    // Si el estado es disponible Y no está en tu lista de keys ya compradas
                     if (k.estado === "disponible" && !purchasedKeysRecord[k.key]) {
                         availableKeysGlobal.push(k);
                     }
@@ -661,36 +644,52 @@
                 allProducts = [];
                 productosSnap.forEach((docSnap) => {
                     const p = docSnap.data();
-                    p.id = docSnap.id; // ID del documento de Firestore
+                    p.id = docSnap.id; 
                     
                     let totalStock = 0;
                     let minPrice = Infinity;
                     let formattedDurations = {};
 
-                    if (p.duraciones && Array.isArray(p.duraciones)) {
-                        p.duraciones.forEach(dur => {
-                            const durNombre = dur.nombre || dur.name;
-                            const precioBase = parseFloat(dur.precio) || 0;
-                            
-                            // Verificar si le alteraste el precio en tu base de datos
-                            const customPrice = (customPrices[p.id] && customPrices[p.id][durNombre]) 
-                                ? parseFloat(customPrices[p.id][durNombre]) 
-                                : precioBase;
-                            
-                            // Extraer solo las keys que coincidan con este Producto y esta Duración
-                            const keysForThisDur = availableKeysGlobal.filter(k => k.productoId === p.id && k.duracion === durNombre);
-                            const actualStock = keysForThisDur.length;
-                            
-                            formattedDurations[durNombre] = {
-                                duration: durNombre,
-                                price: customPrice,
-                                availableKeys: keysForThisDur.map(k => k.key)
-                            };
-                            
-                            totalStock += actualStock;
-                            if(customPrice < minPrice) minPrice = customPrice;
-                        });
+                    // NORMALIZACIÓN DE DURACIONES IGUAL AL ADMIN
+                    let duracionesList = [];
+                    if (p.duraciones) {
+                        if (Array.isArray(p.duraciones)) {
+                            duracionesList = p.duraciones;
+                        } else if (typeof p.duraciones === 'object') {
+                            // Si es formato viejo (Objeto), lo convertimos a Array
+                            duracionesList = Object.keys(p.duraciones).map(k => ({ 
+                                nombre: k, 
+                                precio: (p.duraciones[k] && p.duraciones[k].precio !== undefined) ? p.duraciones[k].precio : p.precioBase 
+                            }));
+                        }
                     }
+                    
+                    // Si un producto no tiene duraciones, le ponemos 1 Día por defecto como el admin
+                    if (duracionesList.length === 0) {
+                        duracionesList.push({ nombre: '1 Día', precio: p.precioBase || 0 });
+                    }
+
+                    // Ahora sí mapeamos y contamos las keys
+                    duracionesList.forEach(dur => {
+                        const durNombre = dur.nombre || dur.name;
+                        const precioBase = parseFloat(dur.precio) || parseFloat(p.precioBase) || 0;
+                        
+                        const customPrice = (customPrices[p.id] && customPrices[p.id][durNombre]) 
+                            ? parseFloat(customPrices[p.id][durNombre]) 
+                            : precioBase;
+                        
+                        const keysForThisDur = availableKeysGlobal.filter(k => k.productoId === p.id && k.duracion === durNombre);
+                        const actualStock = keysForThisDur.length;
+                        
+                        formattedDurations[durNombre] = {
+                            duration: durNombre,
+                            price: customPrice,
+                            availableKeys: keysForThisDur.map(k => k.key)
+                        };
+                        
+                        totalStock += actualStock;
+                        if(customPrice < minPrice) minPrice = customPrice;
+                    });
                     
                     p.durations = formattedDurations;
                     p.totalStock = totalStock;
@@ -706,7 +705,7 @@
         }
 
         // ==========================================
-        // 6. RENDERIZADO DEL CATÁLOGO
+        // 7. INTERFAZ VISUAL DEL CATÁLOGO
         // ==========================================
         function renderProducts() {
             const container = document.getElementById('productsGrid'); container.innerHTML = '';
@@ -715,22 +714,22 @@
             const filteredProducts = allProducts.filter(p => {
                 const matchesSearch = (p.nombre || '').toLowerCase().includes(searchTerm) || (p.category || '').toLowerCase().includes(searchTerm);
                 const matchesStock = filterStockOnly ? p.totalStock > 0 : true;
-                return matchesSearch && matchesStock && p.visible !== false; // Ocultar si visible es false en admin
+                return matchesSearch && matchesStock && p.visible !== false;
             });
 
             if(filteredProducts.length === 0) { container.innerHTML = "<p style='text-align:center; color:#888;'>No se encontraron productos.</p>"; return; }
 
-            // Ordenar por el campo "orden" que tiene el admin
             filteredProducts.sort((a,b) => (a.orden || 0) - (b.orden || 0)).forEach(p => {
                 const card = document.createElement('div'); card.className = 'product-card';
                 const stockClass = p.totalStock > 0 ? '' : 'out';
                 const stockText = p.totalStock > 0 ? `${p.totalStock} DISPONIBLES` : 'AGOTADO';
                 const nombreCorto = p.nombre.length > 15 ? p.nombre.substring(0, 15) + '...' : p.nombre;
+                const imgStr = p.imagen || p.imagenUrl || 'https://via.placeholder.com/300x120/1a0033/00eeff?text=XIT';
 
                 card.innerHTML = `
-                    <div class="card-banner" style="background-image: url('${p.imagen || ''}'); background-size: cover; background-position: center;">
-                        <span class="badge-popular">${p.etiqueta || 'DESTACADO'}</span>
-                        <span class="badge-tag" style="background: rgba(0,0,0,0.9);">${nombreCorto}</span>
+                    <div class="card-banner" style="background-image: url('${imgStr}'); background-size: cover; background-position: center;">
+                        <span class="badge-popular">${p.etiqueta || 'HOT'}</span>
+                        <span class="badge-tag" style="background: rgba(0,0,0,0.8);">${nombreCorto}</span>
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">${p.nombre}</h3>
@@ -739,7 +738,7 @@
                             <span class="price-text">$${p.displayPrice.toFixed(2)}</span>
                             <span class="stock-badge ${stockClass}">${stockText}</span>
                         </div>
-                        <button class="btn-select"><i class='bx bx-cart-add'></i> SELECCIONAR DURACIÓN</button>
+                        <button class="btn-select"><i class='bx bx-cart-add'></i> VER DURACIONES</button>
                     </div>
                 `;
                 card.querySelector('.btn-select').onclick = () => openVariants(p);
@@ -751,7 +750,7 @@
         document.getElementById('stockToggleBtn').addEventListener('click', (e) => { filterStockOnly = !filterStockOnly; e.currentTarget.classList.toggle('active'); renderProducts(); });
 
         // ==========================================
-        // 7. FLUJO DE COMPRA Y MODALES
+        // 8. FLUJO DE COMPRA
         // ==========================================
         window.openVariants = (product) => {
             document.getElementById('modalProdTitle').innerText = product.nombre;
@@ -764,7 +763,7 @@
                     const vItem = document.createElement('div'); vItem.className = 'variant-item';
                     
                     if(actualStock > 0) {
-                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>Stock: ${actualStock}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>Stock real: ${actualStock}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
                         vItem.onclick = () => openPurchaseModal(product.id, durId, dur, product.nombre, actualStock, dur.availableKeys);
                     } else {
                         vItem.style.opacity = '0.5'; vItem.style.cursor = 'not-allowed';
@@ -829,9 +828,6 @@
             }
         };
 
-        // ==========================================
-        // 8. PROCESAMIENTO DE COMPRA SEGURO
-        // ==========================================
         async function executePurchase(purchaseQuantity, totalCost, finalKeysCount) {
             const errorEl = document.getElementById('errorMsg'); 
             errorEl.style.color = "var(--neon-green)"; 
@@ -842,7 +838,6 @@
                 let keysToDeliver = currentPurchaseData.keysAvailable.slice(0, finalKeysCount);
                 const userRef = ref(db, `users/${currentUser.uid}`); 
                 
-                // Descontar saldo de TU base de datos
                 const result = await runTransaction(userRef, (user) => {
                     if (user === null) return user;
                     let currentBal = parseFloat(user.balance || 0);
@@ -859,7 +854,6 @@
                     const pricePerKey = totalCost / finalKeysCount;
                     
                     keysToDeliver.forEach(keyStr => {
-                        // Marcar key como comprada para que desaparezca del catálogo global
                         updates[`keys_compradas/${keyStr}`] = {
                             productoId: currentPurchaseData.productId,
                             nombre: currentPurchaseData.prodName,
@@ -867,7 +861,6 @@
                             fecha: Date.now()
                         };
 
-                        // Guardar en historial
                         const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
                         updates[`users/${currentUser.uid}/history/${historyRef.key}`] = { 
                             product: `${currentPurchaseData.prodName} - ${currentPurchaseData.durInfo.duration} ${is2x1Active ? '[MODO 2X1]' : ''}`, 
@@ -905,13 +898,13 @@
                 }
             } catch (error) { 
                 errorEl.style.color = "var(--neon-pink)"; 
-                errorEl.innerText = "ERROR AL COMUNICARSE CON EL SERVIDOR."; 
+                errorEl.innerText = "ERROR DE CONEXIÓN CON EL SERVIDOR."; 
                 console.error(error);
             }
         }
 
         // ==========================================
-        // 9. LÓGICA DE INTERFAZ (UI)
+        // 9. LÓGICA DE INTERFAZ GENERAL
         // ==========================================
         function update2x1Status() {
             let now = Date.now();
