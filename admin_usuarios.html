@@ -62,7 +62,7 @@
         .btn-back:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon-pink); background: rgba(255, 0, 85, 0.1); }
         .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--neon-pink); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-family: 'Poppins', sans-serif; color: var(--neon-pink); font-weight: bold; box-shadow: 0 0 10px rgba(255, 0, 85, 0.2); }
 
-        /* CONTENEDOR FORMULARIO (ESTILO LOGIN/ADMIN) */
+        /* CONTENEDOR FORMULARIO */
         .admin-container { width: 95%; max-width: 500px; margin: 90px auto 30px auto; z-index: 10; animation: popIn 0.6s ease-out; }
         .header-title { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0 0 20px 0; background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
 
@@ -101,9 +101,35 @@
         .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 0 30px var(--neon-pink); }
         .btn-submit:active { transform: scale(0.95); }
 
-        #msg { text-align: center; margin-top: 15px; font-weight: bold; font-size: 0.9rem; min-height: 20px; }
-        .success { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
-        .error { color: var(--neon-red); text-shadow: 0 0 8px var(--neon-red); }
+        /* NUEVO ESTILO: CAJA DE CREDENCIALES CHIDA */
+        #msgContainer { margin-top: 20px; }
+        .error { text-align: center; color: var(--neon-red); font-weight: bold; text-shadow: 0 0 8px var(--neon-red); }
+        
+        .success-box {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px dashed var(--neon-green);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            animation: popIn 0.5s ease-out;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+        }
+        .success-box h3 {
+            color: var(--neon-green); margin-top: 0; font-family: 'Orbitron'; font-size: 1.2rem;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        .success-box .cred-item {
+            font-family: 'Exo 2'; font-size: 1.1rem; margin: 10px 0; color: #fff;
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;
+        }
+        .success-box span { color: var(--neon-cyan); font-weight: bold; letter-spacing: 1px; user-select: text; }
+        
+        .btn-copy {
+            background: var(--neon-cyan); color: #000; border: none; padding: 10px 20px;
+            margin-top: 15px; border-radius: 8px; font-family: 'Orbitron'; font-weight: bold;
+            cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-copy:hover { box-shadow: 0 0 15px var(--neon-cyan); transform: scale(1.05); }
 
     </style>
 </head>
@@ -136,11 +162,6 @@
             </div>
 
             <div class="input-group">
-                <label>Correo Real (Recuperación)</label>
-                <input type="email" id="regEmail" placeholder="correo@ejemplo.com" autocomplete="off">
-            </div>
-
-            <div class="input-group">
                 <label>Teléfono / WhatsApp</label>
                 <input type="tel" id="regPhone" placeholder="+57 300 000 0000" autocomplete="off">
             </div>
@@ -154,15 +175,29 @@
             </div>
 
             <button class="btn-submit" id="btnCreate">Crear Cuenta</button>
-            <p id="msg"></p>
+            <div id="msgContainer"></div>
         </div>
     </div>
 
-    <!-- Carga Firebase (Debe usar tu mismo config) -->
+    <script>
+        window.copiarCredenciales = function(usuario, password) {
+            const texto = `🔥 CREDENCIALES DE ACCESO 🔥\n👤 Usuario: ${usuario}\n🔑 Contraseña: ${password}\n\n¡Guarda estos datos de forma segura!`;
+            navigator.clipboard.writeText(texto).then(() => {
+                const btn = document.getElementById('btnCopiar');
+                btn.innerHTML = "<i class='bx bx-check-double'></i> ¡COPIADO!";
+                btn.style.background = "#00ffcc";
+                setTimeout(() => {
+                    btn.innerHTML = "<i class='bx bx-copy'></i> COPIAR DATOS";
+                    btn.style.background = "var(--neon-cyan)";
+                }, 3000);
+            }).catch(err => {
+                alert('Error al copiar: ', err);
+            });
+        }
+    </script>
+
     <script type="module">
         import { auth, db, onAuthStateChanged, ref, get, child, set } from './firebase-config.js';
-        
-        // IMPORTANTE: Importamos esto directo del SDK para crear la "App Secundaria"
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -194,74 +229,76 @@
             }
         });
 
-        // LÓGICA DE CREACIÓN DE USUARIO SIN CERRAR SESIÓN DEL ADMIN
-        // Instanciamos una App secundaria usando la misma configuración de tu app principal
         const secondaryApp = initializeApp(auth.app.options, "SecondaryApp");
         const secondaryAuth = getAuth(secondaryApp);
 
         const btnCreate = document.getElementById('btnCreate');
-        const msg = document.getElementById('msg');
+        const msgContainer = document.getElementById('msgContainer');
 
         btnCreate.addEventListener('click', async () => {
             const uUser = document.getElementById('regUser').value.trim();
             const uPass = document.getElementById('regPass').value;
-            const uEmail = document.getElementById('regEmail').value.trim();
             const uPhone = document.getElementById('regPhone').value.trim();
             const uRole = document.getElementById('regRole').value;
 
-            if(!uUser || !uPass || !uEmail || !uPhone) {
-                msg.className = 'error';
-                msg.innerText = "Por favor, llena todos los campos.";
+            // Validación actualizada (sin email)
+            if(!uUser || !uPass || !uPhone) {
+                msgContainer.innerHTML = "<p class='error'>Por favor, llena todos los campos.</p>";
                 return;
             }
 
             if(uPass.length < 6) {
-                msg.className = 'error';
-                msg.innerText = "La contraseña debe tener al menos 6 caracteres.";
+                msgContainer.innerHTML = "<p class='error'>La contraseña debe tener al menos 6 caracteres.</p>";
                 return;
             }
 
-            // Mismo sistema de login: Generamos correo falso para Auth
             const userClean = uUser.replace(/\s/g, ''); 
             const fakeEmail = `${userClean}@sistema.local`;
 
             btnCreate.innerText = "PROCESANDO...";
             btnCreate.disabled = true;
-            msg.innerText = "";
+            msgContainer.innerHTML = "";
 
             try {
-                // Usamos secondaryAuth para que tú (el admin) no pierdas tu sesión activa
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, fakeEmail, uPass);
                 const newUid = userCredential.user.uid;
 
-                // Guardamos los datos en la base de datos (Realtime Database)
+                // Base de datos (sin correo real)
                 await set(ref(db, 'users/' + newUid), {
                     username: userClean,
-                    correoReal: uEmail,
                     telefono: uPhone,
                     balance: 0,
                     role: uRole,
                     emailAuth: fakeEmail,
-                    banned: false // Por si usas el sistema de baneos
+                    banned: false
                 });
 
-                // Cerramos sesión SOLAMENTE en la app secundaria por seguridad
                 await secondaryAuth.signOut();
 
-                msg.className = 'success';
-                msg.innerText = `¡ÉXITO! Usuario ${userClean} creado correctamente.`;
+                // MENSAJE CHIDO DE CREDENCIALES
+                msgContainer.innerHTML = `
+                    <div class="success-box">
+                        <h3><i class='bx bxs-check-shield'></i> ¡CREDENCIALES CREADAS!</h3>
+                        <div class="cred-item">Usuario: <span>${userClean}</span></div>
+                        <div class="cred-item">Contraseña: <span>${uPass}</span></div>
+                        <button id="btnCopiar" class="btn-copy" onclick="window.copiarCredenciales('${userClean}', '${uPass}')">
+                            <i class='bx bx-copy'></i> COPIAR DATOS
+                        </button>
+                    </div>
+                `;
                 
                 // Limpiar campos
                 document.getElementById('regUser').value = '';
                 document.getElementById('regPass').value = '';
-                document.getElementById('regEmail').value = '';
                 document.getElementById('regPhone').value = '';
 
             } catch (error) {
                 console.error(error);
-                msg.className = 'error';
-                if (error.code === 'auth/email-already-in-use') msg.innerText = "Este nombre de usuario ya está registrado.";
-                else msg.innerText = "ERROR: " + error.code;
+                if (error.code === 'auth/email-already-in-use') {
+                    msgContainer.innerHTML = "<p class='error'>Este nombre de usuario ya está registrado.</p>";
+                } else {
+                    msgContainer.innerHTML = `<p class='error'>ERROR: ${error.code}</p>`;
+                }
             } finally {
                 btnCreate.innerText = "Crear Cuenta";
                 btnCreate.disabled = false;
