@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administración - LUCK XIT OFC</title>
+    <title>Crear Usuarios - LUCK XIT OFC</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&family=Exo+2:wght@300;500;700&display=swap');
@@ -15,33 +15,20 @@
             --neon-cyan: #00f3ff;
             --neon-green: #00ffcc;
             --neon-pink: #ff0055;
-            --neon-blue: #0044ff;
             --glass-bg: rgba(15, 0, 25, 0.7);
         }
-        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; padding-bottom: 50px; }
+        body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
         /* Estilos UI */
-        .admin-container { width: 95%; max-width: 500px; margin: 50px auto 20px auto; z-index: 10; }
-        .form-box { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255, 0, 85, 0.3); padding: 30px; border-radius: 20px; box-shadow: 0 0 20px rgba(188, 19, 254, 0.1); }
-        .form-box.cyan-box { border-color: rgba(0, 243, 255, 0.3); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); }
-        
+        .admin-container { width: 95%; max-width: 500px; margin: 90px auto 30px auto; z-index: 10; }
+        .form-box { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255, 0, 85, 0.3); padding: 30px; border-radius: 20px; }
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; font-family: 'Orbitron'; font-size: 0.8rem; color: var(--neon-cyan); margin-bottom: 8px; }
-        .input-group input, .input-group select { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; }
-        .input-group input:focus, .input-group select:focus { border-color: var(--neon-purple); box-shadow: 0 0 10px rgba(188, 19, 254, 0.3); }
-        
-        .btn-submit { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); border: none; border-radius: 12px; color: white; font-family: 'Orbitron'; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4); }
-        
-        .btn-cyan { background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue)); }
-        .btn-cyan:hover { box-shadow: 0 5px 15px rgba(0, 243, 255, 0.4); }
-
+        .input-group input, .input-group select { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: #fff; font-size: 1rem; }
+        .btn-submit { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); border: none; border-radius: 12px; color: white; font-family: 'Orbitron'; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .success-box { background: rgba(0, 0, 0, 0.8); border: 2px dashed var(--neon-green); padding: 20px; border-radius: 15px; text-align: center; margin-top: 20px; }
         .btn-gen { background: var(--neon-pink); color: #fff; border: none; padding: 12px 20px; margin-top: 15px; border-radius: 8px; font-family: 'Orbitron'; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-gen:hover { background: #d40047; }
-        
-        .msg-text { margin-top: 15px; text-align: center; font-family: 'Orbitron'; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -49,62 +36,23 @@
     <canvas id="particle-canvas"></canvas>
     <canvas id="imgCanvas" width="800" height="400" style="display:none;"></canvas>
 
-    <div class="admin-container" id="adminMainPanel" style="margin-top: 90px;">
-        <h1 style="text-align: center; font-family: 'Orbitron'; color: white; text-shadow: 0 0 10px var(--neon-pink);">NUEVO USUARIO</h1>
+    <div class="admin-container" id="adminMainPanel">
+        <h1 style="text-align: center; font-family: 'Orbitron';">NUEVO USUARIO</h1>
         <div class="form-box">
-            <div class="input-group"><label>Nickname</label><input type="text" id="regUser" placeholder="Nombre de usuario"></div>
-            <div class="input-group"><label>Contraseña</label><input type="text" id="regPass" placeholder="Mínimo 6 caracteres"></div>
-            <div class="input-group"><label>Teléfono</label><input type="text" id="regPhone" placeholder="Número de WhatsApp"></div>
-            <div class="input-group">
-                <label>Rol de Sistema</label>
-                <select id="regRole">
-                    <option value="user">Usuario Estándar</option>
-                    <option value="admin">Administrador</option>
-                </select>
-            </div>
+            <div class="input-group"><label>Nickname</label><input type="text" id="regUser"></div>
+            <div class="input-group"><label>Contraseña</label><input type="text" id="regPass"></div>
+            <div class="input-group"><label>Teléfono</label><input type="text" id="regPhone"></div>
+            <div class="input-group"><label>Rol</label><select id="regRole"><option value="user">Usuario</option><option value="admin">Admin</option></select></div>
             <button class="btn-submit" id="btnCreate">CREAR CUENTA</button>
             <div id="msgContainer"></div>
         </div>
     </div>
 
-    <div class="admin-container">
-        <h2 style="text-align: center; font-family: 'Orbitron'; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); margin-top: 40px;"><i class='bx bxs-diamond'></i> GESTIÓN DE SOCIOS</h2>
-        <div class="form-box cyan-box">
-            <p style="font-size: 0.85rem; color: #aaa; text-align: center; margin-top: 0; margin-bottom: 20px;">Otorga o revoca el acceso a precios especiales y saldo XitCoins.</p>
-            
-            <div class="input-group">
-                <label style="color: var(--neon-cyan);">UID del Usuario</label>
-                <input type="text" id="targetUid" placeholder="Pega aquí el UID de Firebase del usuario">
-            </div>
-            <div class="input-group">
-                <label style="color: var(--neon-cyan);">Tipo de Cuenta Comercial</label>
-                <select id="targetRoleSocio">
-                    <option value="false">Cliente Normal (Usa Saldo $)</option>
-                    <option value="true">Socio / Revendedor (Usa XitCoins)</option>
-                </select>
-            </div>
-            <button class="btn-submit btn-cyan" id="btnUpdateRole">ACTUALIZAR PRIVILEGIOS</button>
-            <div id="updateMsgContainer" class="msg-text"></div>
-        </div>
-    </div>
-
-    <script>
-        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
-        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
-        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
-        for (let i = 0; i < 50; i++) particles.push(new Particle());
-        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
-    </script>
-
     <script type="module">
         import { auth, db, ref, set } from './firebase-config.js';
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        // Añadimos 'update' para poder modificar nodos específicos sin borrar lo demás
-        import { update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ==========================================
-        // 1. LÓGICA DE CREACIÓN DE USUARIO (TUYA)
-        // ==========================================
+        // Función para generar la imagen "Melo"
         window.generarImagen = (usuario, password) => {
             const canvas = document.getElementById('imgCanvas');
             const ctx = canvas.getContext('2d');
@@ -139,23 +87,18 @@
             btn.innerText = "PROCESANDO...";
 
             try {
-                const secondaryAuth = getAuth(); 
+                // Lógica de registro Firebase
+                const secondaryAuth = getAuth(); // Asegúrate de tener tu configuración
                 const fakeEmail = `${uUser.replace(/\s/g, '')}@sistema.local`;
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, fakeEmail, uPass);
                 
                 await set(ref(db, 'users/' + userCredential.user.uid), {
-                    username: uUser, 
-                    telefono: uPhone, 
-                    role: document.getElementById('regRole').value,
-                    isSocio: false, // Por defecto nacen como clientes normales
-                    balance: 0,
-                    xitcoins: 0
+                    username: uUser, telefono: uPhone, role: document.getElementById('regRole').value
                 });
 
                 document.getElementById('msgContainer').innerHTML = `
                     <div class="success-box">
                         <h3><i class='bx bxs-check-shield'></i> ¡CUENTA CREADA!</h3>
-                        <p style="font-size: 0.8rem; color: #ccc;">UID: ${userCredential.user.uid}</p>
                         <button class="btn-gen" onclick="window.generarImagen('${uUser}', '${uPass}')">
                             <i class='bx bx-download'></i> DESCARGAR TARJETA
                         </button>
@@ -163,46 +106,6 @@
                 `;
             } catch (e) { alert("Error: " + e.message); }
             btn.innerText = "CREAR CUENTA";
-        });
-
-        // ==========================================
-        // 2. NUEVA LÓGICA: GESTIÓN DE REVENDEDORES
-        // ==========================================
-        document.getElementById('btnUpdateRole').addEventListener('click', async () => {
-            const uid = document.getElementById('targetUid').value.trim();
-            const isSocioValue = document.getElementById('targetRoleSocio').value;
-            const msgBox = document.getElementById('updateMsgContainer');
-
-            if(!uid) {
-                msgBox.innerHTML = "<span style='color: var(--neon-red);'><i class='bx bx-error'></i> Ingresa el UID del usuario.</span>";
-                return;
-            }
-
-            // Convertimos el string del select a un booleano real (true/false)
-            const isSocioBoolean = isSocioValue === "true";
-            
-            const btn = document.getElementById('btnUpdateRole');
-            btn.innerText = "ACTUALIZANDO...";
-
-            try {
-                // Usamos 'update' para no borrar los demás datos del usuario, solo modificamos 'isSocio'
-                await update(ref(db, 'users/' + uid), {
-                    isSocio: isSocioBoolean
-                });
-                
-                msgBox.innerHTML = `<span style='color: var(--neon-green);'><i class='bx bx-check-double'></i> ¡Privilegios de la cuenta actualizados correctamente!</span>`;
-                
-                // Limpiar input después de 2 segundos
-                setTimeout(() => {
-                    document.getElementById('targetUid').value = '';
-                    msgBox.innerHTML = '';
-                }, 3000);
-
-            } catch(error) {
-                msgBox.innerHTML = `<span style='color: var(--neon-red);'><i class='bx bx-error'></i> Error: ${error.message}</span>`;
-            }
-            
-            btn.innerText = "ACTUALIZAR PRIVILEGIOS";
         });
     </script>
 </body>
