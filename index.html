@@ -516,398 +516,92 @@
         </div>
     </div>
 
-        <script type="module">
-        // ==========================================
-        // 1. TUS IMPORTACIONES ORIGINALES (LA BD QUE LEE EL INDEX)
-        // ==========================================
+    <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, update, runTransaction, push, child } from './firebase-config.js';
         import { setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // ==========================================
-        // 2. IMPORTACIONES EXCLUSIVAS PARA LA BD DEL ADMIN (FIRESTORE)
-        // ==========================================
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth as getAdminAuth, signInWithEmailAndPassword as signInAdmin } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // Configuración de la Firebase del Admin
-        const firebaseConfigAdmin = {
-            apiKey: "AIzaSyC9C47NbBDe0-0LyKVal2jBY9zwLZhMWt8",
-            authDomain: "breinerxit-fa44e.firebaseapp.com",
-            projectId: "breinerxit-fa44e",
-            storageBucket: "breinerxit-fa44e.firebasestorage.app",
-            messagingSenderId: "21637983058",
-            appId: "1:21637983058:web:896405aca925542c2c288b"
-        };
-
-        const appAdmin = initializeApp(firebaseConfigAdmin, "adminApp");
-        const dbAdmin = getFirestore(appAdmin);
-        const authAdmin = getAdminAuth(appAdmin);
-
         setPersistence(auth, browserSessionPersistence).catch(console.error);
 
-        // ==========================================
-        // 3. VARIABLES GLOBALES DE ESTADO
-        // ==========================================
         let currentUser = null; 
         let currentBalance = 0; 
         let allProducts = []; 
-        let customPrices = {}; 
-        let purchasedKeysRecord = {}; 
-        let availableKeysGlobal = []; 
         let filterStockOnly = false;
         
-        let weeklySpent = 0, promoSpent = 0, promoUsedThisWeek = false, lastReset = 0, promo2x1End = 0, is2x1Active = false, countdownInterval = null;
-        const WEEKLY_GOAL = 10.00, WEEK_MS = 7 * 24 * 60 * 60 * 1000, DAY_MS = 24 * 60 * 60 * 1000;
+        // Variables Promoción 2x1 y Ranking
+        let weeklySpent = 0;           // Gasto total semanal (PUNTOS PARA RANKING, NO SE BORRA A MITAD DE SEMANA)
+        let promoSpent = 0;            // NUEVO: Cuenta separada para la promoción 2x1
+        let promoUsedThisWeek = false; // NUEVO: Evita que el 2x1 se repita en la misma semana
+        let lastReset = 0;
+        let promo2x1End = 0;
+        let is2x1Active = false;
+        let countdownInterval = null;
+        const WEEKLY_GOAL = 10.00;
+        const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+        const DAY_MS = 24 * 60 * 60 * 1000;
         
-        let currentPurchaseData = { productId: '', durId: '', durInfo: null, prodName: '', maxStock: 0, unitPrice: 0, keysAvailable: [] };
+        // Estado de la compra actual
+        let currentPurchaseData = { productId: '', durId: '', durInfo: null, prodName: '', maxStock: 0, unitPrice: 0 };
 
-        // ==========================================
-        // 4. CONEXIÓN FORZADA AL ADMIN ANTES DE LEER
-        // ==========================================
-        async function ensureAdminConnection() {
-            if (!authAdmin.currentUser) {
-                try {
-                    await signInAdmin(authAdmin, "vetaxff@gmail.com", "capricho1029");
-                    console.log("✅ Conexión establecida con el Inventario del Admin.");
-                } catch (e) {
-                    console.error("❌ Error conectando al proveedor:", e);
-                    throw e;
-                }
+        function adaptarProductoLegacy(p) {
+            if (p && !p.durations && p.price !== undefined) {
+                p.durations = { 'legacy_var': { duration: p.duration || 'Única / Estándar', price: p.price, warranty: p.warranty || 0, keys: p.keys || {} } };
+                p.category = p.category || 'Android'; 
             }
+            return p;
         }
 
-        // ==========================================
-        // 5. FLUJO DE USUARIO
-        // ==========================================
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 const d = new Date(user.metadata.creationTime);
                 document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 
-                const snapshot = await get(child(ref(db), `users/${user.uid}`));
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    document.getElementById('topUserDisplay').innerText = data.username || 'Usuario';
-                    currentBalance = data.balance !== undefined ? parseFloat(data.balance) : 0;
-                    document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
-                    
-                    if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                    if(data.username && data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
-                    
-                    let now = Date.now();
-                    weeklySpent = data.weeklySpent || 0; promoSpent = data.promoSpent || 0; promoUsedThisWeek = data.promoUsedThisWeek || false;
-                    lastReset = data.lastReset || now; promo2x1End = data.promo2x1End || 0;
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        document.getElementById('topUserDisplay').innerText = data.username;
+                        currentBalance = data.balance !== undefined ? parseFloat(data.balance) : 0;
+                        document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
+                        
+                        if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
+                        if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
+                        
+                        // Lógica del modo 2x1 con validaciones independientes
+                        let now = Date.now();
+                        weeklySpent = data.weeklySpent || 0;
+                        promoSpent = data.promoSpent || 0;
+                        promoUsedThisWeek = data.promoUsedThisWeek || false;
+                        lastReset = data.lastReset || now;
+                        promo2x1End = data.promo2x1End || 0;
 
-                    if (now - lastReset > WEEK_MS) {
-                        weeklySpent = 0; promoSpent = 0; promoUsedThisWeek = false; lastReset = now;
-                        update(ref(db, `users/${user.uid}`), { weeklySpent: 0, promoSpent: 0, promoUsedThisWeek: false, lastReset: now });
+                        // Reiniciar TODAS las variables si pasaron 7 días (reinicio semanal de ranking y promo)
+                        if (now - lastReset > WEEK_MS) {
+                            weeklySpent = 0; 
+                            promoSpent = 0;
+                            promoUsedThisWeek = false;
+                            lastReset = now;
+                            update(ref(db, `users/${user.uid}`), { 
+                                weeklySpent: 0, 
+                                promoSpent: 0, 
+                                promoUsedThisWeek: false, 
+                                lastReset: now 
+                            });
+                        }
+
+                        update2x1Status();
                     }
-                    update2x1Status();
-                }
-                
-                await loadCoreData(); // Cargar inventario tras loguearse
+                });
+                loadProductsData();
             } else { 
                 const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
                 window.location.href = "login.html?redirect=" + currentPath; 
             }
         });
 
-        // ==========================================
-        // 6. CARGA DE CATÁLOGO (LECTURA CORREGIDA)
-        // ==========================================
-        async function loadCoreData() {
-            const container = document.getElementById('productsGrid');
-            container.innerHTML = "<p style='text-align: center; color: var(--neon-blue); font-family: Orbitron;'>SINCORNIZANDO INVENTARIO...</p>";
-            
-            try {
-                await ensureAdminConnection();
-
-                const customPricesSnap = await get(ref(db, 'custom_prices'));
-                customPrices = customPricesSnap.exists() ? customPricesSnap.val() : {};
-
-                const purchasedKeysSnap = await get(ref(db, 'keys_compradas'));
-                purchasedKeysRecord = purchasedKeysSnap.exists() ? purchasedKeysSnap.val() : {};
-
-                const productosSnap = await getDocs(collection(dbAdmin, "productos"));
-                const licenciasSnap = await getDocs(collection(dbAdmin, "licencias"));
-                
-                availableKeysGlobal = [];
-                licenciasSnap.forEach(doc => {
-                    const k = doc.data();
-                    if (k.estado === "disponible" && !purchasedKeysRecord[k.key]) {
-                        availableKeysGlobal.push(k);
-                    }
-                });
-
-                allProducts = [];
-                productosSnap.forEach((docSnap) => {
-                    const p = docSnap.data();
-                    p.id = docSnap.id; 
-                    
-                    let totalStock = 0;
-                    let minPrice = Infinity;
-                    let formattedDurations = {};
-
-                    // NORMALIZACIÓN DE DURACIONES IGUAL AL ADMIN
-                    let duracionesList = [];
-                    if (p.duraciones) {
-                        if (Array.isArray(p.duraciones)) {
-                            duracionesList = p.duraciones;
-                        } else if (typeof p.duraciones === 'object') {
-                            // Si es formato viejo (Objeto), lo convertimos a Array
-                            duracionesList = Object.keys(p.duraciones).map(k => ({ 
-                                nombre: k, 
-                                precio: (p.duraciones[k] && p.duraciones[k].precio !== undefined) ? p.duraciones[k].precio : p.precioBase 
-                            }));
-                        }
-                    }
-                    
-                    // Si un producto no tiene duraciones, le ponemos 1 Día por defecto como el admin
-                    if (duracionesList.length === 0) {
-                        duracionesList.push({ nombre: '1 Día', precio: p.precioBase || 0 });
-                    }
-
-                    // Ahora sí mapeamos y contamos las keys
-                    duracionesList.forEach(dur => {
-                        const durNombre = dur.nombre || dur.name;
-                        const precioBase = parseFloat(dur.precio) || parseFloat(p.precioBase) || 0;
-                        
-                        const customPrice = (customPrices[p.id] && customPrices[p.id][durNombre]) 
-                            ? parseFloat(customPrices[p.id][durNombre]) 
-                            : precioBase;
-                        
-                        const keysForThisDur = availableKeysGlobal.filter(k => k.productoId === p.id && k.duracion === durNombre);
-                        const actualStock = keysForThisDur.length;
-                        
-                        formattedDurations[durNombre] = {
-                            duration: durNombre,
-                            price: customPrice,
-                            availableKeys: keysForThisDur.map(k => k.key)
-                        };
-                        
-                        totalStock += actualStock;
-                        if(customPrice < minPrice) minPrice = customPrice;
-                    });
-                    
-                    p.durations = formattedDurations;
-                    p.totalStock = totalStock;
-                    p.displayPrice = minPrice === Infinity ? (parseFloat(p.precioBase) || 0) : minPrice;
-                    allProducts.push(p);
-                });
-
-                renderProducts(); 
-            } catch (error) {
-                console.error("Error cargando inventario:", error);
-                container.innerHTML = "<p style='color:red; text-align:center;'>ERROR DE CONEXIÓN CON EL SERVIDOR DE INVENTARIO.</p>";
-            }
-        }
-
-        // ==========================================
-        // 7. INTERFAZ VISUAL DEL CATÁLOGO
-        // ==========================================
-        function renderProducts() {
-            const container = document.getElementById('productsGrid'); container.innerHTML = '';
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
-            const filteredProducts = allProducts.filter(p => {
-                const matchesSearch = (p.nombre || '').toLowerCase().includes(searchTerm) || (p.category || '').toLowerCase().includes(searchTerm);
-                const matchesStock = filterStockOnly ? p.totalStock > 0 : true;
-                return matchesSearch && matchesStock && p.visible !== false;
-            });
-
-            if(filteredProducts.length === 0) { container.innerHTML = "<p style='text-align:center; color:#888;'>No se encontraron productos.</p>"; return; }
-
-            filteredProducts.sort((a,b) => (a.orden || 0) - (b.orden || 0)).forEach(p => {
-                const card = document.createElement('div'); card.className = 'product-card';
-                const stockClass = p.totalStock > 0 ? '' : 'out';
-                const stockText = p.totalStock > 0 ? `${p.totalStock} DISPONIBLES` : 'AGOTADO';
-                const nombreCorto = p.nombre.length > 15 ? p.nombre.substring(0, 15) + '...' : p.nombre;
-                const imgStr = p.imagen || p.imagenUrl || 'https://via.placeholder.com/300x120/1a0033/00eeff?text=XIT';
-
-                card.innerHTML = `
-                    <div class="card-banner" style="background-image: url('${imgStr}'); background-size: cover; background-position: center;">
-                        <span class="badge-popular">${p.etiqueta || 'HOT'}</span>
-                        <span class="badge-tag" style="background: rgba(0,0,0,0.8);">${nombreCorto}</span>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">${p.nombre}</h3>
-                        <p class="card-sub"><i class='bx bx-category'></i> ${p.category || p.categoria || 'Global'}</p>
-                        <div class="card-price-row">
-                            <span class="price-text">$${p.displayPrice.toFixed(2)}</span>
-                            <span class="stock-badge ${stockClass}">${stockText}</span>
-                        </div>
-                        <button class="btn-select"><i class='bx bx-cart-add'></i> VER DURACIONES</button>
-                    </div>
-                `;
-                card.querySelector('.btn-select').onclick = () => openVariants(p);
-                container.appendChild(card);
-            });
-        }
-
-        document.getElementById('searchInput').addEventListener('input', renderProducts);
-        document.getElementById('stockToggleBtn').addEventListener('click', (e) => { filterStockOnly = !filterStockOnly; e.currentTarget.classList.toggle('active'); renderProducts(); });
-
-        // ==========================================
-        // 8. FLUJO DE COMPRA
-        // ==========================================
-        window.openVariants = (product) => {
-            document.getElementById('modalProdTitle').innerText = product.nombre;
-            const vList = document.getElementById('variantList'); vList.innerHTML = '';
-
-            if(product.durations) {
-                Object.keys(product.durations).forEach(durId => {
-                    const dur = product.durations[durId]; 
-                    const actualStock = dur.availableKeys.length;
-                    const vItem = document.createElement('div'); vItem.className = 'variant-item';
-                    
-                    if(actualStock > 0) {
-                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>Stock real: ${actualStock}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
-                        vItem.onclick = () => openPurchaseModal(product.id, durId, dur, product.nombre, actualStock, dur.availableKeys);
-                    } else {
-                        vItem.style.opacity = '0.5'; vItem.style.cursor = 'not-allowed';
-                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span style="color:var(--neon-pink)">Agotado</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
-                    }
-                    vList.appendChild(vItem);
-                });
-            }
-            document.getElementById('variantModal').style.display = 'flex';
-        };
-
-        window.closeVariants = () => document.getElementById('variantModal').style.display = 'none';
-
-        window.openPurchaseModal = (productId, durId, durInfo, prodName, realStock, keysAvailable) => {
-            document.getElementById('variantModal').style.display = 'none';
-            document.getElementById('errorMsg').style.display = 'none';
-            currentPurchaseData = { productId, durId, durInfo, prodName, maxStock: realStock, unitPrice: durInfo.price, keysAvailable };
-            
-            document.getElementById('purchaseProdTitle').innerText = prodName;
-            document.getElementById('purchaseProdDur').innerText = durInfo.duration;
-            document.getElementById('purchaseStock').innerText = realStock;
-            document.getElementById('purchasePrice').innerText = `$${durInfo.price.toFixed(2)}`;
-            document.getElementById('purchaseQty').value = 1;
-            updateTotalDisplay();
-            document.getElementById('purchaseModal').style.display = 'flex';
-        };
-
-        window.backToVariants = () => { document.getElementById('purchaseModal').style.display = 'none'; document.getElementById('variantModal').style.display = 'flex'; };
-
-        const qtyInput = document.getElementById('purchaseQty');
-        function updateTotalDisplay() {
-            let qty = parseInt(qtyInput.value) || 1;
-            document.getElementById('purchaseTotal').innerText = `$${(currentPurchaseData.unitPrice * qty).toFixed(2)}`;
-        }
-
-        document.getElementById('btnMinus').onclick = () => { let qty = parseInt(qtyInput.value); if (qty > 1) { qtyInput.value = qty - 1; updateTotalDisplay(); } };
-        document.getElementById('btnPlus').onclick = () => { let qty = parseInt(qtyInput.value); if (qty < currentPurchaseData.maxStock) { qtyInput.value = qty + 1; updateTotalDisplay(); } };
-
-        document.getElementById('btnConfirmPurchase').onclick = () => {
-            const errorEl = document.getElementById('errorMsg'); 
-            let quantity = parseInt(qtyInput.value) || 1;
-            const totalCost = currentPurchaseData.unitPrice * quantity;
-            let keysRequired = is2x1Active ? quantity * 2 : quantity;
-            let availableKeysCount = currentPurchaseData.maxStock;
-
-            if (currentBalance < totalCost) { 
-                errorEl.style.color = "var(--neon-pink)";
-                errorEl.innerText = `SALDO INSUFICIENTE. REFIERES $${totalCost.toFixed(2)}`; 
-                errorEl.style.display = 'block'; 
-                return; 
-            }
-
-            if (is2x1Active && keysRequired > availableKeysCount) {
-                document.getElementById('partialKeysCount').innerText = availableKeysCount;
-                document.getElementById('confirmPartialModal').style.display = 'flex';
-                document.getElementById('btnProceedPartial').onclick = () => {
-                    document.getElementById('confirmPartialModal').style.display = 'none';
-                    executePurchase(quantity, totalCost, availableKeysCount);
-                };
-            } else {
-                executePurchase(quantity, totalCost, keysRequired);
-            }
-        };
-
-        async function executePurchase(purchaseQuantity, totalCost, finalKeysCount) {
-            const errorEl = document.getElementById('errorMsg'); 
-            errorEl.style.color = "var(--neon-green)"; 
-            errorEl.innerText = `PROCESANDO COMPRA SEGURA...`; 
-            errorEl.style.display = 'block';
-            
-            try {
-                let keysToDeliver = currentPurchaseData.keysAvailable.slice(0, finalKeysCount);
-                const userRef = ref(db, `users/${currentUser.uid}`); 
-                
-                const result = await runTransaction(userRef, (user) => {
-                    if (user === null) return user;
-                    let currentBal = parseFloat(user.balance || 0);
-                    if (currentBal >= totalCost) {
-                        user.balance = parseFloat((currentBal - totalCost).toFixed(2));
-                        return user;
-                    }
-                    return; 
-                });
-
-                if (result.committed) {
-                    currentBalance = parseFloat(result.snapshot.val().balance);
-                    const updates = {};
-                    const pricePerKey = totalCost / finalKeysCount;
-                    
-                    keysToDeliver.forEach(keyStr => {
-                        updates[`keys_compradas/${keyStr}`] = {
-                            productoId: currentPurchaseData.productId,
-                            nombre: currentPurchaseData.prodName,
-                            comprador: currentUser.uid,
-                            fecha: Date.now()
-                        };
-
-                        const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
-                        updates[`users/${currentUser.uid}/history/${historyRef.key}`] = { 
-                            product: `${currentPurchaseData.prodName} - ${currentPurchaseData.durInfo.duration} ${is2x1Active ? '[MODO 2X1]' : ''}`, 
-                            key: keyStr, 
-                            price: pricePerKey, 
-                            date: Date.now() 
-                        };
-                    });
-
-                    weeklySpent += totalCost;
-                    updates[`users/${currentUser.uid}/weeklySpent`] = weeklySpent;
-
-                    if (!is2x1Active && !promoUsedThisWeek) {
-                        promoSpent += totalCost;
-                        updates[`users/${currentUser.uid}/promoSpent`] = promoSpent;
-                        if (promoSpent >= WEEKLY_GOAL) {
-                            promo2x1End = Date.now() + DAY_MS;
-                            promoUsedThisWeek = true;
-                            updates[`users/${currentUser.uid}/promo2x1End`] = promo2x1End;
-                            updates[`users/${currentUser.uid}/promoUsedThisWeek`] = true;
-                        }
-                    }
-
-                    await update(ref(db), updates);
-                    
-                    document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
-                    update2x1Status();
-                    
-                    document.getElementById('purchaseModal').style.display = 'none'; 
-                    document.getElementById('deliveredKeyNeon').innerHTML = keysToDeliver.join('<br><br>'); 
-                    document.getElementById('successModal').style.display = 'flex';
-                } else { 
-                    errorEl.style.color = "var(--neon-pink)"; 
-                    errorEl.innerText = `ERROR: TRANSACCIÓN RECHAZADA.`; 
-                }
-            } catch (error) { 
-                errorEl.style.color = "var(--neon-pink)"; 
-                errorEl.innerText = "ERROR DE CONEXIÓN CON EL SERVIDOR."; 
-                console.error(error);
-            }
-        }
-
-        // ==========================================
-        // 9. LÓGICA DE INTERFAZ GENERAL
-        // ==========================================
+        // Actualizar UI del modo 2x1
         function update2x1Status() {
             let now = Date.now();
+            
             if (promo2x1End > now) {
                 is2x1Active = true;
                 document.body.classList.add('mode-2x1');
@@ -921,19 +615,27 @@
                     let timeLeft = promo2x1End - Date.now();
                     if (timeLeft <= 0) {
                         clearInterval(countdownInterval);
-                        promo2x1End = 0; promoSpent = 0;
-                        update(ref(db, `users/${currentUser.uid}`), { promo2x1End: 0, promoSpent: 0 });
-                        update2x1Status();
+                        promo2x1End = 0;
+                        promoSpent = 0; // Borramos SOLO la cantidad de los 10$ gastados en la promo
+                        // IMPORTANTE: promoUsedThisWeek se mantiene en TRUE para no repetir en la misma semana
+                        update(ref(db, `users/${currentUser.uid}`), { 
+                            promo2x1End: 0, 
+                            promoSpent: 0 
+                        });
+                        update2x1Status(); // Volver al modo normal
                     } else {
                         let h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         let m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
                         let s = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                        document.getElementById('promoCountdown').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                        document.getElementById('promoCountdown').innerText = 
+                            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
                     }
                 }, 1000);
             } else {
                 is2x1Active = false;
                 document.body.classList.remove('mode-2x1');
+                
+                // Si la promoción ya se activó y finalizó esta semana:
                 if (promoUsedThisWeek) {
                     document.getElementById('promoTitle').innerHTML = "⏳ ¡Promo 2x1 Utilizada! ⏳";
                     document.getElementById('promoDesc').innerText = "Ya disfrutaste tu 2x1 esta semana. Espera al reinicio semanal para volver a participar.";
@@ -944,6 +646,7 @@
                     document.getElementById('promoDesc').innerText = "El conteo se reinicia cada 7 días. ¡Al llegar a $10 tendrás 24 horas de 2x1 en todos los productos!";
                     document.getElementById('promoProgressBg').style.display = 'block';
                     document.getElementById('promoCountdown').style.display = 'none';
+                    
                     let percent = Math.min((promoSpent / WEEKLY_GOAL) * 100, 100);
                     document.getElementById('promoProgressFill').style.width = percent + '%';
                     document.getElementById('promoText').innerText = `$${promoSpent.toFixed(2)} / $${WEEKLY_GOAL.toFixed(2)}`;
@@ -951,8 +654,245 @@
             }
         }
 
+        async function loadProductsData() {
+            const container = document.getElementById('productsGrid');
+            try {
+                const snapshot = await get(ref(db, 'products'));
+                allProducts = []; 
+                if (snapshot.exists()) {
+                    snapshot.forEach((child) => {
+                        const p = adaptarProductoLegacy(child.val());
+                        p.id = child.key;
+                        let totalStock = 0, minPrice = Infinity;
+                        if (p.durations) {
+                            Object.values(p.durations).forEach(dur => {
+                                const stock = dur.keys ? Object.keys(dur.keys).length : 0;
+                                totalStock += stock;
+                                if(dur.price < minPrice) minPrice = dur.price;
+                            });
+                        }
+                        p.totalStock = totalStock; p.displayPrice = minPrice === Infinity ? 0 : minPrice;
+                        allProducts.push(p);
+                    });
+                    renderProducts(); 
+                } else { container.innerHTML = "<p style='text-align:center; color:#888;'>NO HAY SUMINISTROS DISPONIBLES.</p>"; }
+            } catch (e) { container.innerHTML = "<p style='color:red; text-align:center;'>ERROR DE CONEXIÓN.</p>"; }
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsGrid'); container.innerHTML = '';
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredProducts = allProducts.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm) || p.category.toLowerCase().includes(searchTerm);
+                const matchesStock = filterStockOnly ? p.totalStock > 0 : true;
+                return matchesSearch && matchesStock;
+            });
+            if(filteredProducts.length === 0) { container.innerHTML = "<p style='text-align:center; color:#888;'>No se encontraron productos.</p>"; return; }
+
+            filteredProducts.forEach(p => {
+                const card = document.createElement('div'); card.className = 'product-card';
+                const stockClass = p.totalStock > 0 ? '' : 'out';
+                const stockText = p.totalStock > 0 ? `${p.totalStock} DISPONIBLES` : 'AGOTADO';
+                const tagText = p.name.substring(0, 12) + (p.name.length > 12 ? '...' : '');
+
+                card.innerHTML = `
+                    <div class="card-banner"><span class="badge-popular">Top Ventas</span><span class="badge-tag">${tagText}</span></div>
+                    <div class="card-body"><h3 class="card-title">${p.name}</h3><p class="card-sub"><i class='bx bx-category'></i> ${p.category}</p><div class="card-price-row"><span class="price-text">$${p.displayPrice.toFixed(2)}</span><span class="stock-badge ${stockClass}">${stockText}</span></div><button class="btn-select"><i class='bx bx-cart-add'></i> SELECCIONAR DURACIÓN</button></div>
+                `;
+                card.querySelector('.btn-select').onclick = () => openVariants(p);
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderProducts);
+        document.getElementById('stockToggleBtn').addEventListener('click', (e) => { filterStockOnly = !filterStockOnly; e.currentTarget.classList.toggle('active'); renderProducts(); });
+
+        // PASO 1: Abrir lista de duraciones (Mostrando stock real siempre)
+        window.openVariants = (product) => {
+            document.getElementById('modalProdTitle').innerText = product.name;
+            const vList = document.getElementById('variantList'); vList.innerHTML = '';
+
+            if(product.durations) {
+                Object.keys(product.durations).forEach(durId => {
+                    const dur = product.durations[durId]; 
+                    const actualStock = dur.keys ? Object.keys(dur.keys).length : 0;
+                    
+                    const vItem = document.createElement('div'); vItem.className = 'variant-item';
+                    
+                    if(actualStock > 0) {
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>Stock Total: ${actualStock}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
+                        vItem.onclick = () => openPurchaseModal(product.id, durId, dur, product.name, actualStock);
+                    } else {
+                        vItem.style.opacity = '0.5'; vItem.style.cursor = 'not-allowed';
+                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span style="color:var(--neon-pink)">Agotado temporalmente</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
+                    }
+                    vList.appendChild(vItem);
+                });
+            }
+            document.getElementById('variantModal').style.display = 'flex';
+        };
+
+        window.closeVariants = () => document.getElementById('variantModal').style.display = 'none';
+
+        // PASO 2: Abrir modal de compra específica
+        window.openPurchaseModal = (productId, durId, durInfo, prodName, realStock) => {
+            document.getElementById('variantModal').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+            
+            currentPurchaseData = { productId, durId, durInfo, prodName, maxStock: realStock, unitPrice: durInfo.price };
+            
+            document.getElementById('purchaseProdTitle').innerText = prodName;
+            document.getElementById('purchaseProdDur').innerText = durInfo.duration;
+            document.getElementById('purchaseStock').innerText = realStock;
+            document.getElementById('purchasePrice').innerText = `$${durInfo.price.toFixed(2)}`;
+            
+            document.getElementById('purchaseQty').value = 1;
+            updateTotalDisplay();
+
+            document.getElementById('purchaseModal').style.display = 'flex';
+        };
+
+        window.backToVariants = () => {
+            document.getElementById('purchaseModal').style.display = 'none';
+            document.getElementById('variantModal').style.display = 'flex';
+        };
+
+        const qtyInput = document.getElementById('purchaseQty');
+        
+        function updateTotalDisplay() {
+            let qty = parseInt(qtyInput.value) || 1;
+            const total = currentPurchaseData.unitPrice * qty;
+            document.getElementById('purchaseTotal').innerText = `$${total.toFixed(2)}`;
+        }
+
+        document.getElementById('btnMinus').onclick = () => {
+            let qty = parseInt(qtyInput.value);
+            if (qty > 1) { qtyInput.value = qty - 1; updateTotalDisplay(); }
+        };
+
+        document.getElementById('btnPlus').onclick = () => {
+            let qty = parseInt(qtyInput.value);
+            if (qty < currentPurchaseData.maxStock) { qtyInput.value = qty + 1; updateTotalDisplay(); }
+        };
+
+        // Evento de validación de pago e intercepción de 2x1 incompleto
+        document.getElementById('btnConfirmPurchase').onclick = () => {
+            const errorEl = document.getElementById('errorMsg'); 
+            let quantity = parseInt(qtyInput.value) || 1;
+            const totalCost = currentPurchaseData.unitPrice * quantity;
+
+            let keysRequired = is2x1Active ? quantity * 2 : quantity;
+            let availableKeys = currentPurchaseData.maxStock;
+
+            if (currentBalance < totalCost) { 
+                errorEl.style.color = "var(--neon-pink)";
+                errorEl.innerText = `SALDO INSUFICIENTE. NECESITAS $${totalCost.toFixed(2)}`; 
+                errorEl.style.display = 'block'; 
+                return; 
+            }
+
+            // Si el 2x1 está activo pero los requisitos superan el stock real...
+            if (is2x1Active && keysRequired > availableKeys) {
+                document.getElementById('partialKeysCount').innerText = availableKeys;
+                document.getElementById('confirmPartialModal').style.display = 'flex';
+                
+                // Si el usuario acepta, procedemos con lo disponible
+                document.getElementById('btnProceedPartial').onclick = () => {
+                    document.getElementById('confirmPartialModal').style.display = 'none';
+                    executePurchase(quantity, totalCost, availableKeys);
+                };
+            } else {
+                // Proceder normalmente
+                executePurchase(quantity, totalCost, keysRequired);
+            }
+        };
+
+        // Función principal de transacción en Firebase
+        async function executePurchase(purchaseQuantity, totalCost, finalKeysCount) {
+            const errorEl = document.getElementById('errorMsg'); 
+            errorEl.style.color = "var(--neon-green)"; 
+            errorEl.innerText = `PROCESANDO TRANSACCIÓN...`; 
+            errorEl.style.display = 'block';
+            
+            try {
+                const productRef = ref(db, 'products/' + currentPurchaseData.productId); 
+                let keysToDeliver = [];
+                
+                const result = await runTransaction(productRef, (product) => {
+                    if (product === null) return product;
+                    let targetDur = product.durations ? product.durations[currentPurchaseData.durId] : null;
+                    if(currentPurchaseData.durId === 'legacy_var' && product.keys) targetDur = { keys: product.keys };
+                    
+                    if (targetDur && targetDur.keys) {
+                        const keyIds = Object.keys(targetDur.keys);
+                        if (keyIds.length >= finalKeysCount) { 
+                            for(let i = 0; i < finalKeysCount; i++) {
+                                const keyId = keyIds[i];
+                                keysToDeliver.push(targetDur.keys[keyId]);
+                                delete targetDur.keys[keyId];
+                            }
+                            return product; 
+                        }
+                    }
+                    return; 
+                });
+
+                if (result.committed && keysToDeliver.length === finalKeysCount) {
+                    const newBalance = parseFloat((currentBalance - totalCost).toFixed(2));
+                    const updates = { [`users/${currentUser.uid}/balance`]: newBalance };
+                    
+                    // Guardar todas las keys en el historial
+                    const pricePerKey = totalCost / finalKeysCount;
+                    keysToDeliver.forEach(k => {
+                        const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
+                        updates[`users/${currentUser.uid}/history/${historyRef.key}`] = { 
+                            product: `${currentPurchaseData.prodName} - ${currentPurchaseData.durInfo.duration} ${is2x1Active ? '[MODO 2X1]' : ''}`, 
+                            key: k, 
+                            price: pricePerKey, 
+                            date: Date.now() 
+                        };
+                    });
+
+                    // Siempre sumar el total de la compra al ranking (NO SE RESETEA HASTA QUE PASEN LOS 7 DÍAS)
+                    weeklySpent += totalCost;
+                    updates[`users/${currentUser.uid}/weeklySpent`] = weeklySpent;
+
+                    // Progreso del 2x1 si NO está activo actualmente y NO lo ha usado en esta semana
+                    if (!is2x1Active && !promoUsedThisWeek) {
+                        promoSpent += totalCost;
+                        updates[`users/${currentUser.uid}/promoSpent`] = promoSpent;
+                        
+                        // Si alcanzó la meta de la promo ($10), activar 24 horas
+                        if (promoSpent >= WEEKLY_GOAL) {
+                            promo2x1End = Date.now() + DAY_MS;
+                            promoUsedThisWeek = true; // Bloquea la repetición
+                            updates[`users/${currentUser.uid}/promo2x1End`] = promo2x1End;
+                            updates[`users/${currentUser.uid}/promoUsedThisWeek`] = true;
+                        }
+                    }
+
+                    await update(ref(db), updates);
+                    currentBalance = newBalance; 
+                    document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
+                    
+                    update2x1Status();
+                    
+                    document.getElementById('purchaseModal').style.display = 'none'; 
+                    document.getElementById('deliveredKeyNeon').innerHTML = keysToDeliver.join('<br><br>'); 
+                    document.getElementById('successModal').style.display = 'flex';
+                } else { 
+                    errorEl.style.color = "var(--neon-pink)"; 
+                    errorEl.innerText = `ERROR: STOCK INSUFICIENTE DURANTE LA TRANSACCIÓN.`; 
+                }
+            } catch (error) { 
+                errorEl.style.color = "var(--neon-pink)"; 
+                errorEl.innerText = "ERROR DE CONEXIÓN AL SERVIDOR."; 
+                console.error(error);
+            }
+        }
+
         window.copyKey = () => { 
-            navigator.clipboard.writeText(document.getElementById('deliveredKeyNeon').innerText.replace(/<br>/g, '\n')).then(() => { 
+            navigator.clipboard.writeText(document.getElementById('deliveredKeyNeon').innerText).then(() => { 
                 const btn = document.querySelector('.btn-copy'); 
                 btn.innerText = "¡CÓDIGO(S) COPIADO(S)!"; 
                 setTimeout(() => btn.innerText = "COPIAR CÓDIGO(S)", 2000); 
@@ -963,8 +903,10 @@
         document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
         document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
         overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        
         document.getElementById('logoutMenuBtn').onclick = () => signOut(auth).then(()=>window.location.href="login.html");
-k
+        
+        // Optimización del canvas
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { 
@@ -975,7 +917,5 @@ k
         for (let i = 0; i < 20; i++) particles.push(new Particle());
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
-
-
 </body>
 </html>
