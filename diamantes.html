@@ -218,17 +218,15 @@
             <span id="userRoleBadge" class="role-badge" style="display: none;">MODO SOCIO ACTIVO - PRECIOS ESPECIALES</span>
         </h2>
 
-        <!-- Contenedor Dinámico de Paquetes -->
         <div class="grid" id="packagesGrid">
-            <!-- Los paquetes se cargarán aquí por JS -->
-        </div>
+            </div>
 
         <div class="info-panel">
             <h3><i class='bx bx-info-circle'></i> Protocolo de Recarga Directa</h3>
             <ul class="info-list">
                 <li>
                     <i class='bx bx-check-circle'></i>
-                    <div>Selecciona el paquete deseado. El costo será descontado de tu saldo exclusivo de <strong>XitCoins</strong>.</div>
+                    <div>Selecciona el paquete deseado. El costo será descontado de tu <strong>saldo correspondiente</strong> (XitCoins para socios, Saldo Normal para clientes).</div>
                 </li>
                 <li>
                     <i class='bx bx-id-card'></i>
@@ -242,14 +240,13 @@
         </div>
     </div>
 
-    <!-- Modal de Compra -->
     <div id="buyPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box">
             <div class="epic-icon-wrapper"><i class='bx bxs-diamond'></i></div>
             <h2 class="epic-title">Confirmar Recarga</h2>
             <p class="epic-msg" id="buyPackageName" style="font-size: 1.2rem; font-weight: bold;"></p>
             <p class="epic-msg" style="color: var(--neon-pink); font-size: 1.4rem; font-family: 'Orbitron'; margin-top: -10px;">
-                Precio: <span id="buyPackagePrice">0.00</span> XitCoins
+                Precio: <span id="buyPackagePrice">0.00</span> <span id="buyCurrencyLabel">XitCoins</span>
             </p>
             
             <input type="number" id="freeFireIdInput" class="ff-input" placeholder="ID del Jugador (Ej. 123456789)">
@@ -263,7 +260,6 @@
         </div>
     </div>
 
-    <!-- Modal de Éxito -->
     <div id="successPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box" style="border-color: var(--neon-green);">
             <div class="epic-icon-wrapper" style="color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,204,0.1);"><i class='bx bx-check-double'></i></div>
@@ -276,7 +272,6 @@
         </div>
     </div>
 
-    <!-- Scripts de Interfaz y Animaciones -->
     <script>
         // Control del Menú Lateral y Partículas
         const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
@@ -291,7 +286,6 @@
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
     </script>
 
-    <!-- Script Principal y Lógica de Firebase -->
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
         import { onValue, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -320,7 +314,7 @@
         // Renderizado dinámico de la tienda
         function renderStore() {
             const grid = document.getElementById('packagesGrid');
-            grid.innerHTML = ''; // Limpiamos la grilla
+            grid.innerHTML = ''; 
             
             if(userIsSocio) {
                 document.getElementById('userRoleBadge').style.display = 'inline-block';
@@ -328,12 +322,14 @@
 
             packages.forEach(pkg => {
                 const finalPrice = userIsSocio ? pkg.priceSocio : pkg.priceClient;
+                // Definimos qué moneda mostrar en la tarjeta según el rol
+                const currencyDisplay = userIsSocio ? "XitCoins" : "$ Saldo";
                 
                 grid.innerHTML += `
                     <div class="card">
                         <div class="card-icon"><i class='bx bxs-diamond'></i></div>
                         <div class="card-title">${pkg.name}</div>
-                        <div class="card-price">${finalPrice.toFixed(2)} <span>XitCoins</span></div>
+                        <div class="card-price">${finalPrice.toFixed(2)} <span>${currencyDisplay}</span></div>
                         <button class="btn-buy" onclick="window.openBuyPopup('${pkg.id}')">
                             <i class='bx bx-cart'></i> Recargar ID
                         </button>
@@ -342,15 +338,22 @@
             });
         }
 
-        // Eventos Globales para los Modales
+        // Evento para abrir el modal
         window.openBuyPopup = (packageId) => {
             selectedPackage = packages.find(p => p.id === packageId);
             if(!selectedPackage) return;
 
             const finalPrice = userIsSocio ? selectedPackage.priceSocio : selectedPackage.priceClient;
+            // Definimos el texto de la moneda para el modal
+            const currencyDisplay = userIsSocio ? "XitCoins" : "Saldo Normal";
             
             document.getElementById('buyPackageName').innerText = selectedPackage.name;
             document.getElementById('buyPackagePrice').innerText = finalPrice.toFixed(2);
+            
+            // Actualizamos la etiqueta de la moneda en el HTML del modal
+            const currencyLabel = document.getElementById('buyCurrencyLabel');
+            if (currencyLabel) currencyLabel.innerText = currencyDisplay;
+
             document.getElementById('freeFireIdInput').value = '';
             document.getElementById('buyErrorMsg').style.display = 'none';
             document.getElementById('buyPopupOverlay').classList.add('show');
@@ -379,29 +382,32 @@
             }
 
             const finalPrice = userIsSocio ? selectedPackage.priceSocio : selectedPackage.priceClient;
-            const currentXitCoins = parseFloat(userData.xitcoins || 0);
+            
+            // === VALIDACIÓN DINÁMICA DE SALDOS ===
+            const currentBalance = userIsSocio ? parseFloat(userData.xitcoins || 0) : parseFloat(userData.balance || 0);
+            const currencyName = userIsSocio ? "XitCoins" : "Saldo Normal";
 
-            if (currentXitCoins < finalPrice) {
-                errorMsg.innerText = "❌ Saldo insuficiente de XitCoins para este paquete.";
+            if (currentBalance < finalPrice) {
+                errorMsg.innerText = `❌ Saldo insuficiente de ${currencyName} para este paquete.`;
                 errorMsg.style.display = 'block';
                 return;
             }
 
-            // Desactivar botón temporalmente para evitar doble clic
+            // Desactivar botón temporalmente
             const btn = document.getElementById('confirmPayBtn');
             btn.innerText = "PROCESANDO...";
             btn.disabled = true;
 
             try {
-                // 1. Restar el saldo al usuario
-                const newBalance = currentXitCoins - finalPrice;
+                // 1. Restar el saldo al usuario en el nodo correcto de Firebase
+                const newBalance = currentBalance - finalPrice;
                 const userRef = ref(db, `users/${currentUser.uid}`);
                 
-                await update(userRef, {
-                    xitcoins: newBalance
-                });
+                // Creamos un objeto de actualización que apunta a 'xitcoins' o a 'balance'
+                const updatePayload = userIsSocio ? { xitcoins: newBalance } : { balance: newBalance };
+                await update(userRef, updatePayload);
 
-                // 2. Crear la orden de pedido en el panel (diamond_orders)
+                // 2. Crear la orden de pedido
                 const ordersRef = ref(db, 'diamond_orders');
                 await push(ordersRef, {
                     uid: currentUser.uid,
@@ -409,8 +415,9 @@
                     paquete: selectedPackage.name,
                     cantidad_diamantes: selectedPackage.amount,
                     precio_cobrado: finalPrice,
+                    metodo_pago: currencyName, // Guardamos con qué pagó para tu control
                     id_free_fire: ffId,
-                    estado: "Pendiente", // Esto lo verás en el admin para procesarlo
+                    estado: "Pendiente",
                     fecha: serverTimestamp()
                 });
 
