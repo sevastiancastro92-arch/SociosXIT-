@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Usuarios - LUCK XIT OFC</title>
+    <title>Panel Admin - LUCK XIT OFC</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&family=Exo+2:wght@300;500;700&display=swap');
@@ -15,20 +15,54 @@
             --neon-cyan: #00f3ff;
             --neon-green: #00ffcc;
             --neon-pink: #ff0055;
+            --neon-yellow: #fcee0a;
             --glass-bg: rgba(15, 0, 25, 0.7);
         }
         body { background-color: #020005; color: white; font-family: 'Poppins', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* Estilos UI */
-        .admin-container { width: 95%; max-width: 500px; margin: 90px auto 30px auto; z-index: 10; }
-        .form-box { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255, 0, 85, 0.3); padding: 30px; border-radius: 20px; }
+        /* Estilos UI y Tabs */
+        .admin-wrapper { width: 95%; max-width: 900px; margin: 40px auto; z-index: 10; }
+        .admin-header { text-align: center; font-family: 'Orbitron'; margin-bottom: 30px; text-shadow: 0 0 10px var(--neon-cyan); }
+        
+        .tab-menu { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px 20px; border-radius: 8px; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .tab-btn.active, .tab-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+
+        .tab-content { display: none; animation: fadeIn 0.5s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-box { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255, 0, 85, 0.3); padding: 30px; border-radius: 20px; max-width: 500px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; font-family: 'Orbitron'; font-size: 0.8rem; color: var(--neon-cyan); margin-bottom: 8px; }
-        .input-group input, .input-group select { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: #fff; font-size: 1rem; }
-        .btn-submit { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); border: none; border-radius: 12px; color: white; font-family: 'Orbitron'; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .input-group input, .input-group select { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: #fff; font-size: 1rem; transition: 0.3s; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+        
+        .btn-submit { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); border: none; border-radius: 12px; color: white; font-family: 'Orbitron'; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-submit:hover { box-shadow: 0 0 20px var(--neon-purple); transform: scale(1.02); }
+        .btn-success { background: linear-gradient(90deg, #00b09b, #96c93d); }
+
+        /* Tarjetas de Pedidos */
+        .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
+        .order-card { background: rgba(10, 2, 20, 0.8); border: 1px solid #333; padding: 15px; border-radius: 12px; border-left: 4px solid var(--neon-yellow); transition: 0.3s; }
+        .order-card.approved { border-left-color: var(--neon-green); opacity: 0.8; }
+        .order-card h4 { margin: 0 0 10px 0; color: var(--neon-cyan); font-family: 'Orbitron'; display: flex; justify-content: space-between; }
+        .order-card p { margin: 5px 0; font-size: 0.9rem; color: #ccc; }
+        .order-card strong { color: #fff; }
+        .ff-id-highlight { background: rgba(255,0,85,0.2); padding: 2px 6px; border-radius: 4px; color: var(--neon-pink); font-family: 'Orbitron'; letter-spacing: 1px; }
+        
+        .badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
+        .badge.pending { background: rgba(252, 238, 10, 0.2); color: var(--neon-yellow); border: 1px solid var(--neon-yellow); }
+        .badge.approved { background: rgba(0, 255, 204, 0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
+
+        .btn-approve { margin-top: 10px; width: 100%; padding: 10px; background: rgba(0, 255, 204, 0.1); border: 1px solid var(--neon-green); color: var(--neon-green); font-family: 'Orbitron'; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-approve:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 15px var(--neon-green); }
+
         .success-box { background: rgba(0, 0, 0, 0.8); border: 2px dashed var(--neon-green); padding: 20px; border-radius: 15px; text-align: center; margin-top: 20px; }
         .btn-gen { background: var(--neon-pink); color: #fff; border: none; padding: 12px 20px; margin-top: 15px; border-radius: 8px; font-family: 'Orbitron'; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        
+        .section-title { font-family: 'Orbitron'; border-bottom: 1px dashed var(--neon-purple); padding-bottom: 10px; margin-top: 30px; color: var(--neon-purple); }
     </style>
 </head>
 <body>
@@ -36,77 +70,242 @@
     <canvas id="particle-canvas"></canvas>
     <canvas id="imgCanvas" width="800" height="400" style="display:none;"></canvas>
 
-    <div class="admin-container" id="adminMainPanel">
-        <h1 style="text-align: center; font-family: 'Orbitron';">NUEVO USUARIO</h1>
-        <div class="form-box">
-            <div class="input-group"><label>Nickname</label><input type="text" id="regUser"></div>
-            <div class="input-group"><label>Contraseña</label><input type="text" id="regPass"></div>
-            <div class="input-group"><label>Teléfono</label><input type="text" id="regPhone"></div>
-            <div class="input-group"><label>Rol</label><select id="regRole"><option value="user">Usuario</option><option value="admin">Admin</option></select></div>
-            <button class="btn-submit" id="btnCreate">CREAR CUENTA</button>
-            <div id="msgContainer"></div>
+    <div class="admin-wrapper">
+        <h1 class="admin-header"><i class='bx bxs-dashboard'></i> PANEL DE CONTROL XIT</h1>
+        
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="showTab('tab-users', this)"><i class='bx bx-user-plus'></i> Crear Usuario</button>
+            <button class="tab-btn" onclick="showTab('tab-orders', this)"><i class='bx bx-list-check'></i> Pedidos Diamantes</button>
+            <button class="tab-btn" onclick="showTab('tab-xitcoins', this)"><i class='bx bx-coin-stack'></i> Recargar XitCoins</button>
         </div>
+
+        <div id="tab-users" class="tab-content active">
+            <div class="form-box">
+                <h2 style="text-align: center; font-family: 'Orbitron'; margin-top:0;">NUEVO USUARIO</h2>
+                <div class="input-group"><label>Nickname</label><input type="text" id="regUser" placeholder="Ej. JuanPerez"></div>
+                <div class="input-group"><label>Contraseña</label><input type="text" id="regPass" placeholder="Mínimo 6 caracteres"></div>
+                <div class="input-group"><label>Teléfono</label><input type="text" id="regPhone" placeholder="+57..."></div>
+                <div class="input-group">
+                    <label>Rol</label>
+                    <select id="regRole">
+                        <option value="user">Cliente (Precios Normales)</option>
+                        <option value="socio">SocioXIT (Precios Rebajados)</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <button class="btn-submit" id="btnCreate"><i class='bx bx-user-check'></i> CREAR CUENTA</button>
+                <div id="msgContainer"></div>
+            </div>
+        </div>
+
+        <div id="tab-orders" class="tab-content">
+            <h3 class="section-title"><i class='bx bx-time-five'></i> Pedidos Pendientes (Por inyectar)</h3>
+            <div class="orders-grid" id="pendingOrdersContainer">
+                <p style="color:#aaa;">Cargando pedidos...</p>
+            </div>
+
+            <h3 class="section-title"><i class='bx bx-check-double'></i> Pedidos Aprobados (Historial)</h3>
+            <div class="orders-grid" id="approvedOrdersContainer">
+                <p style="color:#aaa;">Cargando historial...</p>
+            </div>
+        </div>
+
+        <div id="tab-xitcoins" class="tab-content">
+            <div class="form-box">
+                <h2 style="text-align: center; font-family: 'Orbitron'; margin-top:0; color: var(--neon-cyan);">BANCO XITCOINS</h2>
+                <div class="input-group">
+                    <label>Seleccionar Usuario</label>
+                    <select id="selectUserXit">
+                        <option value="">Cargando usuarios...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Cantidad a Recargar (XitCoins)</label>
+                    <input type="number" step="0.01" id="amountXit" placeholder="Ej. 10.50">
+                </div>
+                <button class="btn-submit btn-success" id="btnAddXitCoins"><i class='bx bx-send'></i> ENVIAR SALDO</button>
+            </div>
+        </div>
+
     </div>
+
+    <script>
+        function showTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+    </script>
 
     <script type="module">
         import { auth, db, ref, set } from './firebase-config.js';
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { onValue, update, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // Función para generar la imagen "Melo"
+        // ==========================================
+        // 1. SISTEMA CREAR USUARIO (ORIGINAL MEJORADO)
+        // ==========================================
         window.generarImagen = (usuario, password) => {
-            const canvas = document.getElementById('imgCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#050a14';
-            ctx.fillRect(0, 0, 800, 400);
+            const canvas = document.getElementById('imgCanvas'); const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#050a14'; ctx.fillRect(0, 0, 800, 400);
             ctx.strokeStyle = '#ff0055'; ctx.lineWidth = 15; ctx.strokeRect(0, 0, 800, 400);
-            
-            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 40px Orbitron'; ctx.textAlign = 'center';
-            ctx.fillText('LUCK XIT - CREDENCIALES', 400, 80);
-            
-            ctx.fillStyle = '#00f3ff'; ctx.font = '30px Poppins';
-            ctx.fillText('Usuario: ' + usuario, 400, 200);
-            ctx.fillText('Password: ' + password, 400, 260);
-            
-            ctx.fillStyle = '#00ffcc'; ctx.font = '20px Orbitron';
-            ctx.fillText('GENERADO POR LUCK XIT OFC', 400, 360);
-
-            const link = document.createElement('a');
-            link.download = `Acceso_${usuario}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 40px Orbitron'; ctx.textAlign = 'center'; ctx.fillText('LUCK XIT - CREDENCIALES', 400, 80);
+            ctx.fillStyle = '#00f3ff'; ctx.font = '30px Poppins'; ctx.fillText('Usuario: ' + usuario, 400, 200); ctx.fillText('Password: ' + password, 400, 260);
+            ctx.fillStyle = '#00ffcc'; ctx.font = '20px Orbitron'; ctx.fillText('GENERADO POR LUCK XIT OFC', 400, 360);
+            const link = document.createElement('a'); link.download = `Acceso_${usuario}.png`; link.href = canvas.toDataURL('image/png'); link.click();
         };
 
         document.getElementById('btnCreate').addEventListener('click', async () => {
             const uUser = document.getElementById('regUser').value.trim();
             const uPass = document.getElementById('regPass').value;
             const uPhone = document.getElementById('regPhone').value.trim();
+            const roleSelect = document.getElementById('regRole').value;
             
             if(!uUser || !uPass) return alert("Llena los campos");
-
-            const btn = document.getElementById('btnCreate');
-            btn.innerText = "PROCESANDO...";
+            const btn = document.getElementById('btnCreate'); btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> PROCESANDO..."; btn.disabled = true;
 
             try {
-                // Lógica de registro Firebase
-                const secondaryAuth = getAuth(); // Asegúrate de tener tu configuración
-                const fakeEmail = `${uUser.replace(/\s/g, '')}@sistema.local`;
+                const secondaryAuth = getAuth(); 
+                const fakeEmail = `${uUser.replace(/\s/g, '').toLowerCase()}@sistemaxit.local`;
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, fakeEmail, uPass);
                 
+                // Si el rol es socio, isSocio será true, si no false.
+                const isSocio = roleSelect === "socio";
+                const dbRole = roleSelect === "admin" ? "admin" : "user";
+
                 await set(ref(db, 'users/' + userCredential.user.uid), {
-                    username: uUser, telefono: uPhone, role: document.getElementById('regRole').value
+                    username: uUser, 
+                    telefono: uPhone, 
+                    role: dbRole,
+                    isSocio: isSocio,
+                    balance: 0,
+                    xitcoins: 0
                 });
 
                 document.getElementById('msgContainer').innerHTML = `
                     <div class="success-box">
                         <h3><i class='bx bxs-check-shield'></i> ¡CUENTA CREADA!</h3>
-                        <button class="btn-gen" onclick="window.generarImagen('${uUser}', '${uPass}')">
-                            <i class='bx bx-download'></i> DESCARGAR TARJETA
-                        </button>
+                        <p>ID: ${userCredential.user.uid.substring(0,6)}...</p>
+                        <button class="btn-gen" onclick="window.generarImagen('${uUser}', '${uPass}')"><i class='bx bx-download'></i> DESCARGAR TARJETA</button>
+                    </div>`;
+            } catch (e) { alert("Error: " + e.message); }
+            btn.innerHTML = "<i class='bx bx-user-check'></i> CREAR CUENTA"; btn.disabled = false;
+        });
+
+        // ==========================================
+        // 2. SISTEMA GESTIÓN DE PEDIDOS (DIAMANTES)
+        // ==========================================
+        const ordersRef = ref(db, 'diamond_orders');
+        
+        onValue(ordersRef, (snapshot) => {
+            const pendingContainer = document.getElementById('pendingOrdersContainer');
+            const approvedContainer = document.getElementById('approvedOrdersContainer');
+            pendingContainer.innerHTML = ''; approvedContainer.innerHTML = '';
+            
+            if (!snapshot.exists()) {
+                pendingContainer.innerHTML = '<p style="color:#aaa;">No hay pedidos pendientes.</p>';
+                return;
+            }
+
+            const orders = [];
+            snapshot.forEach(child => {
+                orders.push({ id: child.key, ...child.val() });
+            });
+
+            // Ordenar por fecha (más recientes primero)
+            orders.sort((a, b) => b.fecha - a.fecha);
+
+            orders.forEach(order => {
+                const isPending = order.estado === "Pendiente";
+                const badgeClass = isPending ? "pending" : "approved";
+                const dateObj = order.fecha ? new Date(order.fecha) : new Date();
+                const dateString = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString();
+
+                const cardHtml = `
+                    <div class="order-card ${isPending ? '' : 'approved'}">
+                        <h4>${order.paquete} <span class="badge ${badgeClass}">${order.estado}</span></h4>
+                        <p>👤 <strong>Usuario:</strong> ${order.username}</p>
+                        <p>🎮 <strong>ID Free Fire:</strong> <span class="ff-id-highlight">${order.id_free_fire}</span></p>
+                        <p>💎 <strong>Cantidad:</strong> ${order.cantidad_diamantes}</p>
+                        <p>💰 <strong>Cobrado:</strong> ${parseFloat(order.precio_cobrado).toFixed(2)} XC</p>
+                        <p style="font-size:0.75rem; color:#888;">🕒 ${dateString}</p>
+                        ${isPending ? `<button class="btn-approve" onclick="window.approveOrder('${order.id}')"><i class='bx bx-check-circle'></i> MARCAR COMO RECARGADO</button>` : ''}
                     </div>
                 `;
-            } catch (e) { alert("Error: " + e.message); }
-            btn.innerText = "CREAR CUENTA";
+
+                if (isPending) pendingContainer.innerHTML += cardHtml;
+                else approvedContainer.innerHTML += cardHtml;
+            });
+
+            if(pendingContainer.innerHTML === '') pendingContainer.innerHTML = '<p style="color:#aaa;">¡Todo limpio! No hay pedidos pendientes.</p>';
+            if(approvedContainer.innerHTML === '') approvedContainer.innerHTML = '<p style="color:#aaa;">No hay historial aún.</p>';
         });
+
+        // Función global para aprobar pedido
+        window.approveOrder = async (orderId) => {
+            if(!confirm("¿Confirmas que ya inyectaste los diamantes a este ID?")) return;
+            try {
+                await update(ref(db, `diamond_orders/${orderId}`), { estado: "Aprobado" });
+                // No necesitas alert, la pantalla se actualiza sola al instante
+            } catch (error) { alert("Error al aprobar: " + error.message); }
+        };
+
+        // ==========================================
+        // 3. SISTEMA RECARGA XITCOINS A USUARIOS
+        // ==========================================
+        const usersRef = ref(db, 'users');
+        
+        // Cargar lista de usuarios para el select
+        onValue(usersRef, (snapshot) => {
+            const select = document.getElementById('selectUserXit');
+            select.innerHTML = '<option value="">Selecciona un usuario...</option>';
+            if(snapshot.exists()){
+                snapshot.forEach(child => {
+                    const u = child.val();
+                    const currentXit = parseFloat(u.xitcoins || 0).toFixed(2);
+                    // Muestra el nombre y su saldo actual para que sepas cuánto tiene
+                    select.innerHTML += `<option value="${child.key}">${u.username} (Saldo actual: ${currentXit} XC)</option>`;
+                });
+            }
+        });
+
+        document.getElementById('btnAddXitCoins').addEventListener('click', async () => {
+            const uid = document.getElementById('selectUserXit').value;
+            const amountInput = document.getElementById('amountXit').value;
+            const amount = parseFloat(amountInput);
+
+            if(!uid) return alert("Selecciona un usuario.");
+            if(isNaN(amount) || amount <= 0) return alert("Ingresa una cantidad válida mayor a 0.");
+
+            const btn = document.getElementById('btnAddXitCoins');
+            btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> PROCESANDO..."; btn.disabled = true;
+
+            try {
+                // Obtener datos actuales del usuario para sumar el saldo
+                const userSnapshot = await get(child(ref(db), `users/${uid}`));
+                if (userSnapshot.exists()) {
+                    const userData = userSnapshot.val();
+                    const currentXitcoins = parseFloat(userData.xitcoins || 0);
+                    const newBalance = currentXitcoins + amount;
+
+                    await update(ref(db, `users/${uid}`), { xitcoins: newBalance });
+                    alert(`✅ ¡Recarga Exitosa!\nSe añadieron ${amount} XC a ${userData.username}.\nNuevo saldo: ${newBalance.toFixed(2)} XC`);
+                    document.getElementById('amountXit').value = ''; // limpiar campo
+                }
+            } catch (error) {
+                alert("Error al recargar: " + error.message);
+            }
+
+            btn.innerHTML = "<i class='bx bx-send'></i> ENVIAR SALDO"; btn.disabled = false;
+        });
+
     </script>
 </body>
 </html>
