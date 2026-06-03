@@ -1,28 +1,7 @@
 // firebase-config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { 
-    getAuth, 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signOut, 
-    updatePassword,
-    setPersistence,             // <-- Agregado para "Recuérdame"
-    browserLocalPersistence,    // <-- Agregado para "Recuérdame"
-    browserSessionPersistence   // <-- Agregado para "Recuérdame"
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { 
-    getDatabase, 
-    ref, 
-    set, 
-    get, 
-    child, 
-    update, 
-    push, 
-    runTransaction, 
-    remove, 
-    onValue 
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, set, get, child, update, push, runTransaction, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDoIGXJQ2NEgeUXCDHLSFc7YDA6EtDYUSg",
@@ -46,9 +25,6 @@ export {
     onAuthStateChanged,
     signOut,
     updatePassword,
-    setPersistence,             // <-- Exportado
-    browserLocalPersistence,    // <-- Exportado
-    browserSessionPersistence,  // <-- Exportado
     ref,
     set,
     get,
