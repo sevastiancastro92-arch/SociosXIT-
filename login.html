@@ -98,7 +98,7 @@
         @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
 
         /* =========================================
-           4. CONTENEDOR PRINCIPAL Y ANIMACIÓN
+           4. CONTENEDOR PRINCIPAL
            ========================================= */
         .main-wrapper {
             display: flex; flex-direction: column; align-items: center;
@@ -182,21 +182,11 @@
         .toggle-password:hover { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
 
         .remember-box {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
+            display: flex; align-items: center; justify-content: flex-start;
+            margin-bottom: 15px; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);
         }
 
-        .remember-box input[type="checkbox"] {
-            width: auto;
-            margin-right: 8px;
-            cursor: pointer;
-            accent-color: var(--neon-blue);
-        }
-
+        .remember-box input[type="checkbox"] { width: auto; margin-right: 8px; cursor: pointer; accent-color: var(--neon-blue); }
         .remember-box label { cursor: pointer; }
 
         #actionBtn {
@@ -289,10 +279,39 @@
         </div>
     </div>
 
-    <script>
-        // Control de Audio con LocalStorage
+    <script type="module">
+        // 1. IMPORTACIONES DIRECTAS DESDE LOS SERVIDORES DE FIREBASE
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, 
+            setPersistence, browserLocalPersistence, browserSessionPersistence, onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getDatabase, ref, get, child, set 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // 2. CONFIGURACIÓN FIREBASE (Tus credenciales reales)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDoIGXJQ2NEgeUXCDHLSFc7YDA6EtDYUSg",
+            authDomain: "socios666-7056e.firebaseapp.com",
+            projectId: "socios666-7056e",
+            storageBucket: "socios666-7056e.firebasestorage.app",
+            messagingSenderId: "328433251001",
+            appId: "1:328433251001:web:141a5bf56127e323afe168",
+            databaseURL: "https://socios666-7056e-default-rtdb.firebaseio.com"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // ==========================================
+        // 3. LÓGICA DE INTERFAZ Y EVENTOS BÁSICOS
+        // ==========================================
+        
+        // --- Control de Audio ---
         const audioBtn = document.getElementById('audioBtn');
         const audioIcon = document.getElementById('audioIcon');
+        const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
         let isAudioEnabled = localStorage.getItem('audioState') !== 'false'; 
 
         const updateAudioUI = () => {
@@ -308,7 +327,7 @@
             updateAudioUI();
         });
 
-        // Mostrar/Ocultar Contraseña
+        // --- Mostrar/Ocultar Contraseña ---
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         
@@ -318,54 +337,53 @@
             togglePassword.classList.toggle('bx-show');
             togglePassword.classList.toggle('bx-hide');
         });
-    </script>
 
-    <script type="module">
-        import { 
-            auth, db, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword, 
-            setPersistence, 
-            browserLocalPersistence, 
-            browserSessionPersistence,
-            onAuthStateChanged,
-            ref, get, child, set 
-        } from './firebase-config.js';
-
+        // --- Referencias al DOM ---
         const loaderOverlay = document.getElementById('loader-overlay');
         const loaderMsg = document.getElementById('loader-msg');
-        const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
+        const title = document.getElementById('title');
+        const userIn = document.getElementById('username');
+        const passIn = document.getElementById('password');
+        const actionBtn = document.getElementById('actionBtn');
+        const msg = document.getElementById('msg');
+        const toggleMode = document.getElementById('toggleMode');
+        const rememberMe = document.getElementById('rememberMe');
+
+        let isLoginMode = true;
+
+        // --- Alternar Iniciar Sesión / Registro ---
+        toggleMode.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            title.innerText = isLoginMode ? "Iniciar Sesión" : "Registrar Cuenta";
+            actionBtn.innerText = isLoginMode ? "Entrar" : "Registrarse";
+            toggleMode.innerText = isLoginMode ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia Sesión";
+            msg.innerText = "";
+            msg.style.color = "#ff3333";
+        });
 
         // ==========================================
-        // AUTO-LOGIN (Verifica si ya hay sesión activa)
+        // 4. LÓGICA FIREBASE: AUTO-LOGIN Y BANEO
         // ==========================================
+        
+        // Auto-Login (Recuérdame)
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Muestra loader para ocultar formulario mientras redirige
                 loaderMsg.innerText = "RESTAURANDO SESIÓN...";
                 loaderOverlay.classList.add('active');
 
-                // Verifica si el usuario no ha sido baneado después de su última sesión
                 const userSnapshot = await get(child(ref(db), `users/${user.uid}`));
                 if (userSnapshot.exists() && userSnapshot.val().banned === true) {
                     window.location.replace("baneado.html");
                     return;
                 }
 
-                // Redirige
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirectUrl = urlParams.get('redirect');
-                if (redirectUrl === 'sugerencias.html') {
-                    window.location.href = "sugerencias.html";
-                } else {
-                    window.location.href = "dashboard.html"; 
-                }
+                window.location.href = redirectUrl === 'sugerencias.html' ? "sugerencias.html" : "dashboard.html"; 
             }
         });
 
-        // ==========================================
-        // SISTEMA DE SEGURIDAD: VERIFICACIÓN DE IP GLOBAL
-        // ==========================================
+        // Verificación de IP (Baneo Global)
         fetch('https://api.ipify.org?format=json')
             .then(res => res.json())
             .then(data => {
@@ -377,27 +395,9 @@
                 });
             }).catch(e => console.log("Fallo verificación de IP:", e));
 
-        const title = document.getElementById('title');
-        const userIn = document.getElementById('username');
-        const passIn = document.getElementById('password');
-        const actionBtn = document.getElementById('actionBtn');
-        const msg = document.getElementById('msg');
-        const toggleMode = document.getElementById('toggleMode');
-        const rememberMe = document.getElementById('rememberMe');
-
-        let isLoginMode = true;
-
-        // Alternar Formularios
-        toggleMode.addEventListener('click', () => {
-            isLoginMode = !isLoginMode;
-            title.innerText = isLoginMode ? "Iniciar Sesión" : "Registrar Cuenta";
-            actionBtn.innerText = isLoginMode ? "Entrar" : "Registrarse";
-            toggleMode.innerText = isLoginMode ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia Sesión";
-            msg.innerText = "";
-            msg.style.color = "#ff3333";
-        });
-
-        // Botón Principal de Acción
+        // ==========================================
+        // 5. ACCIÓN PRINCIPAL: BOTÓN ENTRAR / REGISTRARSE
+        // ==========================================
         actionBtn.addEventListener('click', async () => {
             const userRaw = userIn.value.trim();
             const userClean = userRaw.replace(/\s/g, ''); 
@@ -413,30 +413,25 @@
                 actionBtn.innerText = "PROCESANDO...";
                 actionBtn.disabled = true;
 
-                // ==========================================
-                // LÓGICA DE PERSISTENCIA (Recuérdame)
-                // ==========================================
+                // Lógica de "Recuérdame"
                 const persistenceType = rememberMe.checked ? browserLocalPersistence : browserSessionPersistence;
                 await setPersistence(auth, persistenceType);
 
                 if (isLoginMode) {
-                    // Lógica Iniciar Sesión
+                    // INICIAR SESIÓN
                     const userCred = await signInWithEmailAndPassword(auth, fakeEmail, pass);
-                    
                     const userSnapshot = await get(child(ref(db), `users/${userCred.user.uid}`));
                     if (userSnapshot.exists() && userSnapshot.val().banned === true) {
                         window.location.replace("baneado.html");
                         return;
                     }
-
                 } else {
-                    // Lógica Registro y Captura de IP
+                    // REGISTRO Y CAPTURA DE IP
                     const ipResponse = await fetch('https://api.ipify.org?format=json');
                     const ipData = await ipResponse.json();
                     const userIp = ipData.ip;
 
                     const userCred = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
-
                     await set(ref(db, `users/${userCred.user.uid}`), {
                         username: userClean,
                         ipRegistrada: userIp,
@@ -445,26 +440,18 @@
                     });
                 }
 
-                // ==========================================
-                // ÉXITO 
-                // ==========================================
+                // ÉXITO
                 if(isAudioEnabled) {
-                    audioBienvenida.play().catch(error => console.log("No se pudo reproducir", error));
+                    audioBienvenida.play().catch(error => console.log("Audio falló", error));
                 }
 
                 loaderMsg.innerText = isLoginMode ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
-                // La redirección ocurrirá automáticamente por el onAuthStateChanged de arriba, 
-                // pero por seguridad dejamos un fallback de tiempo.
                 setTimeout(() => {
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirectUrl = urlParams.get('redirect');
-                    if (redirectUrl === 'sugerencias.html') {
-                        window.location.href = "sugerencias.html";
-                    } else {
-                        window.location.href = "dashboard.html"; 
-                    }
+                    window.location.href = redirectUrl === 'sugerencias.html' ? "sugerencias.html" : "dashboard.html"; 
                 }, 2000);
 
             } catch (error) {
@@ -477,8 +464,10 @@
                     msg.innerText = "ESTE USUARIO YA EXISTE.";
                 } else if (error.code === 'auth/weak-password') {
                     msg.innerText = "MÍNIMO 6 CARACTERES EN LA CONTRASEÑA.";
+                } else if (error.message) {
+                    msg.innerText = "ERROR DE CONEXIÓN O FIREBASE.";
                 } else {
-                    msg.innerText = "ERROR: " + error.code;
+                    msg.innerText = "ERROR DESCONOCIDO.";
                 }
                 
                 actionBtn.innerText = isLoginMode ? "Entrar" : "Registrarse";
