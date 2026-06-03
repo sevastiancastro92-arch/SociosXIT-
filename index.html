@@ -270,9 +270,20 @@
             height: 120px; position: relative; 
             background: linear-gradient(135deg, rgba(188, 19, 254, 0.3), rgba(0, 238, 255, 0.2)); 
             border-bottom: 1px dashed rgba(255,255,255,0.1);
+            overflow: hidden; /* Asegura que la imagen no se salga de las esquinas redondeadas */
         }
-        .badge-popular { position: absolute; top: 12px; right: 12px; background: var(--neon-pink); color: #fff; font-family: 'Orbitron'; font-weight: bold; font-size: 0.7rem; padding: 4px 10px; border-radius: 6px; box-shadow: 0 0 10px var(--neon-pink); letter-spacing: 1px; }
-        .badge-tag { position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: #fff; border-left: 3px solid var(--neon-blue); font-size: 0.75rem; padding: 4px 8px; font-family: 'Orbitron'; box-shadow: 0 0 10px rgba(0, 238, 255, 0.3); }
+
+        /* CLASE NUEVA PARA LA IMAGEN DEL PRODUCTO */
+        .card-img { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; z-index: 0; opacity: 0.65; 
+            transition: 0.3s;
+        }
+        .product-card:hover .card-img { opacity: 0.85; transform: scale(1.05); }
+
+        /* Actualizados z-index para que se vean por encima de la imagen */
+        .badge-popular { z-index: 1; position: absolute; top: 12px; right: 12px; background: var(--neon-pink); color: #fff; font-family: 'Orbitron'; font-weight: bold; font-size: 0.7rem; padding: 4px 10px; border-radius: 6px; box-shadow: 0 0 10px var(--neon-pink); letter-spacing: 1px; }
+        .badge-tag { z-index: 1; position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: #fff; border-left: 3px solid var(--neon-blue); font-size: 0.75rem; padding: 4px 8px; font-family: 'Orbitron'; box-shadow: 0 0 10px rgba(0, 238, 255, 0.3); }
         
         .card-body { padding: 20px; position: relative; }
         .card-title { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; margin: 0 0 5px 0; text-transform: uppercase; text-shadow: 0 0 5px rgba(255,255,255,0.3); }
@@ -391,7 +402,6 @@
         </div>
     </div>
 
-    <!-- MENÚ LATERAL CYBERPUNK COMPLETO -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -425,7 +435,6 @@
     
     <canvas id="particle-canvas"></canvas>
 
-    <!-- SISTEMA DE PROMOCIÓN 2X1 -->
     <div class="promo-container" id="promoContainer">
         <h3 class="promo-title" id="promoTitle">🔥 ¡Gasta $10 esta semana y obtén 2x1! 🔥</h3>
         <p id="promoDesc" style="font-size: 0.85rem; color: #ccc; margin-top: 0; margin-bottom: 15px; font-family: 'Exo 2';">El conteo se reinicia cada 7 días. ¡Al llegar a $10 tendrás 24 horas de 2x1 en todos los productos!</p>
@@ -486,7 +495,6 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIRMACIÓN STOCK INCOMPLETO PARA 2X1 -->
     <div id="confirmPartialModal" class="modal-overlay">
         <div class="modal-box" style="border-color: #ffcc00; box-shadow: 0 0 40px rgba(255, 204, 0, 0.3);">
             <h3 class="modal-title" style="color: #ffcc00;">⚠️ AVISO DE STOCK ⚠️</h3>
@@ -528,9 +536,9 @@
         let filterStockOnly = false;
         
         // Variables Promoción 2x1 y Ranking
-        let weeklySpent = 0;           // Gasto total semanal (PUNTOS PARA RANKING, NO SE BORRA A MITAD DE SEMANA)
-        let promoSpent = 0;            // NUEVO: Cuenta separada para la promoción 2x1
-        let promoUsedThisWeek = false; // NUEVO: Evita que el 2x1 se repita en la misma semana
+        let weeklySpent = 0;           
+        let promoSpent = 0;            
+        let promoUsedThisWeek = false; 
         let lastReset = 0;
         let promo2x1End = 0;
         let is2x1Active = false;
@@ -539,7 +547,6 @@
         const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
         const DAY_MS = 24 * 60 * 60 * 1000;
         
-        // Estado de la compra actual
         let currentPurchaseData = { productId: '', durId: '', durInfo: null, prodName: '', maxStock: 0, unitPrice: 0 };
 
         function adaptarProductoLegacy(p) {
@@ -566,7 +573,6 @@
                         if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
                         if(data.username.toLowerCase() === 'sebasxit') document.getElementById('adminMenuBtn').style.display = 'flex';
                         
-                        // Lógica del modo 2x1 con validaciones independientes
                         let now = Date.now();
                         weeklySpent = data.weeklySpent || 0;
                         promoSpent = data.promoSpent || 0;
@@ -574,7 +580,6 @@
                         lastReset = data.lastReset || now;
                         promo2x1End = data.promo2x1End || 0;
 
-                        // Reiniciar TODAS las variables si pasaron 7 días (reinicio semanal de ranking y promo)
                         if (now - lastReset > WEEK_MS) {
                             weeklySpent = 0; 
                             promoSpent = 0;
@@ -598,7 +603,6 @@
             }
         });
 
-        // Actualizar UI del modo 2x1
         function update2x1Status() {
             let now = Date.now();
             
@@ -616,13 +620,12 @@
                     if (timeLeft <= 0) {
                         clearInterval(countdownInterval);
                         promo2x1End = 0;
-                        promoSpent = 0; // Borramos SOLO la cantidad de los 10$ gastados en la promo
-                        // IMPORTANTE: promoUsedThisWeek se mantiene en TRUE para no repetir en la misma semana
+                        promoSpent = 0; 
                         update(ref(db, `users/${currentUser.uid}`), { 
                             promo2x1End: 0, 
                             promoSpent: 0 
                         });
-                        update2x1Status(); // Volver al modo normal
+                        update2x1Status(); 
                     } else {
                         let h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         let m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
@@ -635,7 +638,6 @@
                 is2x1Active = false;
                 document.body.classList.remove('mode-2x1');
                 
-                // Si la promoción ya se activó y finalizó esta semana:
                 if (promoUsedThisWeek) {
                     document.getElementById('promoTitle').innerHTML = "⏳ ¡Promo 2x1 Utilizada! ⏳";
                     document.getElementById('promoDesc').innerText = "Ya disfrutaste tu 2x1 esta semana. Espera al reinicio semanal para volver a participar.";
@@ -695,9 +697,25 @@
                 const stockText = p.totalStock > 0 ? `${p.totalStock} DISPONIBLES` : 'AGOTADO';
                 const tagText = p.name.substring(0, 12) + (p.name.length > 12 ? '...' : '');
 
+                // AQUÍ: Lógica para insertar la imagen o dejarlo vacío (se mantendrá el gradiente de fondo)
+                const imgSrc = p.image || p.imagen || p.url || '';
+                const imgElement = imgSrc ? `<img src="${imgSrc}" class="card-img" alt="${p.name}">` : '';
+
                 card.innerHTML = `
-                    <div class="card-banner"><span class="badge-popular">Top Ventas</span><span class="badge-tag">${tagText}</span></div>
-                    <div class="card-body"><h3 class="card-title">${p.name}</h3><p class="card-sub"><i class='bx bx-category'></i> ${p.category}</p><div class="card-price-row"><span class="price-text">$${p.displayPrice.toFixed(2)}</span><span class="stock-badge ${stockClass}">${stockText}</span></div><button class="btn-select"><i class='bx bx-cart-add'></i> SELECCIONAR DURACIÓN</button></div>
+                    <div class="card-banner">
+                        ${imgElement}
+                        <span class="badge-popular">Top Ventas</span>
+                        <span class="badge-tag">${tagText}</span>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">${p.name}</h3>
+                        <p class="card-sub"><i class='bx bx-category'></i> ${p.category}</p>
+                        <div class="card-price-row">
+                            <span class="price-text">$${p.displayPrice.toFixed(2)}</span>
+                            <span class="stock-badge ${stockClass}">${stockText}</span>
+                        </div>
+                        <button class="btn-select"><i class='bx bx-cart-add'></i> SELECCIONAR DURACIÓN</button>
+                    </div>
                 `;
                 card.querySelector('.btn-select').onclick = () => openVariants(p);
                 container.appendChild(card);
@@ -707,7 +725,6 @@
         document.getElementById('searchInput').addEventListener('input', renderProducts);
         document.getElementById('stockToggleBtn').addEventListener('click', (e) => { filterStockOnly = !filterStockOnly; e.currentTarget.classList.toggle('active'); renderProducts(); });
 
-        // PASO 1: Abrir lista de duraciones (Mostrando stock real siempre)
         window.openVariants = (product) => {
             document.getElementById('modalProdTitle').innerText = product.name;
             const vList = document.getElementById('variantList'); vList.innerHTML = '';
@@ -734,7 +751,6 @@
 
         window.closeVariants = () => document.getElementById('variantModal').style.display = 'none';
 
-        // PASO 2: Abrir modal de compra específica
         window.openPurchaseModal = (productId, durId, durInfo, prodName, realStock) => {
             document.getElementById('variantModal').style.display = 'none';
             document.getElementById('errorMsg').style.display = 'none';
@@ -775,7 +791,6 @@
             if (qty < currentPurchaseData.maxStock) { qtyInput.value = qty + 1; updateTotalDisplay(); }
         };
 
-        // Evento de validación de pago e intercepción de 2x1 incompleto
         document.getElementById('btnConfirmPurchase').onclick = () => {
             const errorEl = document.getElementById('errorMsg'); 
             let quantity = parseInt(qtyInput.value) || 1;
@@ -791,23 +806,19 @@
                 return; 
             }
 
-            // Si el 2x1 está activo pero los requisitos superan el stock real...
             if (is2x1Active && keysRequired > availableKeys) {
                 document.getElementById('partialKeysCount').innerText = availableKeys;
                 document.getElementById('confirmPartialModal').style.display = 'flex';
                 
-                // Si el usuario acepta, procedemos con lo disponible
                 document.getElementById('btnProceedPartial').onclick = () => {
                     document.getElementById('confirmPartialModal').style.display = 'none';
                     executePurchase(quantity, totalCost, availableKeys);
                 };
             } else {
-                // Proceder normalmente
                 executePurchase(quantity, totalCost, keysRequired);
             }
         };
 
-        // Función principal de transacción en Firebase
         async function executePurchase(purchaseQuantity, totalCost, finalKeysCount) {
             const errorEl = document.getElementById('errorMsg'); 
             errorEl.style.color = "var(--neon-green)"; 
@@ -841,7 +852,6 @@
                     const newBalance = parseFloat((currentBalance - totalCost).toFixed(2));
                     const updates = { [`users/${currentUser.uid}/balance`]: newBalance };
                     
-                    // Guardar todas las keys en el historial
                     const pricePerKey = totalCost / finalKeysCount;
                     keysToDeliver.forEach(k => {
                         const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
@@ -853,19 +863,16 @@
                         };
                     });
 
-                    // Siempre sumar el total de la compra al ranking (NO SE RESETEA HASTA QUE PASEN LOS 7 DÍAS)
                     weeklySpent += totalCost;
                     updates[`users/${currentUser.uid}/weeklySpent`] = weeklySpent;
 
-                    // Progreso del 2x1 si NO está activo actualmente y NO lo ha usado en esta semana
                     if (!is2x1Active && !promoUsedThisWeek) {
                         promoSpent += totalCost;
                         updates[`users/${currentUser.uid}/promoSpent`] = promoSpent;
                         
-                        // Si alcanzó la meta de la promo ($10), activar 24 horas
                         if (promoSpent >= WEEKLY_GOAL) {
                             promo2x1End = Date.now() + DAY_MS;
-                            promoUsedThisWeek = true; // Bloquea la repetición
+                            promoUsedThisWeek = true; 
                             updates[`users/${currentUser.uid}/promo2x1End`] = promo2x1End;
                             updates[`users/${currentUser.uid}/promoUsedThisWeek`] = true;
                         }
@@ -906,7 +913,6 @@
         
         document.getElementById('logoutMenuBtn').onclick = () => signOut(auth).then(()=>window.location.href="login.html");
         
-        // Optimización del canvas
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { 
