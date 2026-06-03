@@ -144,7 +144,7 @@
         }
 
         /* =========================================
-           5. INPUTS Y BOTONES CON OJITO DE CONTRASEÑA
+           5. INPUTS, BOTONES, CHECKBOX Y TOGGLE
            ========================================= */
         .input-box {
             position: relative;
@@ -152,7 +152,7 @@
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        input {
+        input[type="text"], input[type="password"] {
             width: 100%; padding: 15px 45px 15px 20px;
             background: rgba(0, 0, 0, 0.6);
             border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
@@ -163,7 +163,7 @@
 
         input::placeholder { color: rgba(255, 255, 255, 0.4); }
 
-        input:focus {
+        input[type="text"]:focus, input[type="password"]:focus {
             border-color: var(--neon-blue);
             box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
             background: rgba(20, 20, 30, 0.9);
@@ -181,6 +181,24 @@
         }
         .toggle-password:hover { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
 
+        .remember-box {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .remember-box input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+            accent-color: var(--neon-blue);
+        }
+
+        .remember-box label { cursor: pointer; }
+
         #actionBtn {
             width: 100%; padding: 16px; margin-top: 10px;
             background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
@@ -194,6 +212,12 @@
         #actionBtn:active { transform: scale(0.95); }
 
         .error { color: #ff3333; font-size: 0.85rem; margin: 10px 0; min-height: 20px; font-weight: 700; text-shadow: 0 0 8px rgba(255, 0, 0, 0.8); }
+
+        .toggle-mode {
+            margin-top: 15px; font-size: 0.9rem; color: var(--neon-blue);
+            cursor: pointer; transition: 0.3s; font-weight: 500;
+        }
+        .toggle-mode:hover { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
 
         /* =========================================
            6. COMPONENTES EXTRA (LOADER)
@@ -213,14 +237,12 @@
 </head>
 <body oncontextmenu="return false;"> 
 
-    <!-- Botón Flotante de Audio -->
     <div class="audio-btn-container">
         <button id="audioBtn" title="Activar/Desactivar Sonido">
             <i class='bx bx-volume-full' id="audioIcon"></i>
         </button>
     </div>
 
-    <!-- Fondos -->
     <div class="cosmic-portal">
         <div class="stars"></div>
         <div class="magic-ring ring-outer"></div>
@@ -228,7 +250,6 @@
         <div class="magic-ring ring-inner"></div>
     </div>
 
-    <!-- Loader -->
     <div id="loader-overlay">
         <div class="loader-atom">
             <div class="orbit"></div>
@@ -245,7 +266,6 @@
                 
                 <h1 id="title">Iniciar Sesión</h1>
                 
-                <!-- Campos Fijos -->
                 <div class="input-box">
                     <input type="text" id="username" placeholder="Usuario" autocomplete="off">
                 </div>
@@ -254,20 +274,26 @@
                     <input type="password" id="password" placeholder="Contraseña">
                     <i class='bx bx-show toggle-password' id="togglePassword"></i>
                 </div>
+
+                <div class="remember-box">
+                    <input type="checkbox" id="rememberMe" checked>
+                    <label for="rememberMe">Recuérdame en este dispositivo</label>
+                </div>
                 
                 <p id="msg" class="error"></p>
                 
                 <button id="actionBtn">Entrar</button>
+
+                <p id="toggleMode" class="toggle-mode">¿No tienes cuenta? Regístrate</p>
             </div>
         </div>
     </div>
 
-    <!-- LOGICA DE INTERFAZ -->
     <script>
         // Control de Audio con LocalStorage
         const audioBtn = document.getElementById('audioBtn');
         const audioIcon = document.getElementById('audioIcon');
-        let isAudioEnabled = localStorage.getItem('audioState') !== 'false'; // Por defecto true
+        let isAudioEnabled = localStorage.getItem('audioState') !== 'false'; 
 
         const updateAudioUI = () => {
             audioIcon.className = isAudioEnabled ? 'bx bx-volume-full' : 'bx bx-volume-mute';
@@ -294,12 +320,51 @@
         });
     </script>
 
-    <!-- LOGICA FIREBASE: SOLO INICIO DE SESIÓN -->
     <script type="module">
-        import { auth, db, signInWithEmailAndPassword, ref, get, child } from './firebase-config.js';
+        import { 
+            auth, db, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            setPersistence, 
+            browserLocalPersistence, 
+            browserSessionPersistence,
+            onAuthStateChanged,
+            ref, get, child, set 
+        } from './firebase-config.js';
+
+        const loaderOverlay = document.getElementById('loader-overlay');
+        const loaderMsg = document.getElementById('loader-msg');
+        const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
 
         // ==========================================
-        // SISTEMA DE SEGURIDAD: VERIFICACIÓN DE IP
+        // AUTO-LOGIN (Verifica si ya hay sesión activa)
+        // ==========================================
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Muestra loader para ocultar formulario mientras redirige
+                loaderMsg.innerText = "RESTAURANDO SESIÓN...";
+                loaderOverlay.classList.add('active');
+
+                // Verifica si el usuario no ha sido baneado después de su última sesión
+                const userSnapshot = await get(child(ref(db), `users/${user.uid}`));
+                if (userSnapshot.exists() && userSnapshot.val().banned === true) {
+                    window.location.replace("baneado.html");
+                    return;
+                }
+
+                // Redirige
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
+                if (redirectUrl === 'sugerencias.html') {
+                    window.location.href = "sugerencias.html";
+                } else {
+                    window.location.href = "dashboard.html"; 
+                }
+            }
+        });
+
+        // ==========================================
+        // SISTEMA DE SEGURIDAD: VERIFICACIÓN DE IP GLOBAL
         // ==========================================
         fetch('https://api.ipify.org?format=json')
             .then(res => res.json())
@@ -312,45 +377,86 @@
                 });
             }).catch(e => console.log("Fallo verificación de IP:", e));
 
+        const title = document.getElementById('title');
         const userIn = document.getElementById('username');
         const passIn = document.getElementById('password');
         const actionBtn = document.getElementById('actionBtn');
         const msg = document.getElementById('msg');
-        
-        const loaderOverlay = document.getElementById('loader-overlay');
-        const loaderMsg = document.getElementById('loader-msg');
-        
-        const audioBienvenida = new Audio('Logo/bienvenida_paisa.wav');
+        const toggleMode = document.getElementById('toggleMode');
+        const rememberMe = document.getElementById('rememberMe');
 
+        let isLoginMode = true;
+
+        // Alternar Formularios
+        toggleMode.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            title.innerText = isLoginMode ? "Iniciar Sesión" : "Registrar Cuenta";
+            actionBtn.innerText = isLoginMode ? "Entrar" : "Registrarse";
+            toggleMode.innerText = isLoginMode ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia Sesión";
+            msg.innerText = "";
+            msg.style.color = "#ff3333";
+        });
+
+        // Botón Principal de Acción
         actionBtn.addEventListener('click', async () => {
             const userRaw = userIn.value.trim();
             const userClean = userRaw.replace(/\s/g, ''); 
             const pass = passIn.value;
             const fakeEmail = `${userClean}@sistema.local`; 
 
-            if(!userClean || !pass) return msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
+            if(!userClean || !pass) {
+                msg.style.color = "#ff3333";
+                return msg.innerText = "LLENA USUARIO Y CONTRASEÑA"; 
+            }
 
             try {
                 actionBtn.innerText = "PROCESANDO...";
                 actionBtn.disabled = true;
 
-                // Solo inicio de sesión
-                const userCred = await signInWithEmailAndPassword(auth, fakeEmail, pass);
-                
-                // VALIDACIÓN DE BANEO A NIVEL DE USUARIO
-                const userSnapshot = await get(child(ref(db), `users/${userCred.user.uid}`));
-                if (userSnapshot.exists() && userSnapshot.val().banned === true) {
-                    window.location.replace("baneado.html");
-                    return; // Detiene la ejecución aquí
+                // ==========================================
+                // LÓGICA DE PERSISTENCIA (Recuérdame)
+                // ==========================================
+                const persistenceType = rememberMe.checked ? browserLocalPersistence : browserSessionPersistence;
+                await setPersistence(auth, persistenceType);
+
+                if (isLoginMode) {
+                    // Lógica Iniciar Sesión
+                    const userCred = await signInWithEmailAndPassword(auth, fakeEmail, pass);
+                    
+                    const userSnapshot = await get(child(ref(db), `users/${userCred.user.uid}`));
+                    if (userSnapshot.exists() && userSnapshot.val().banned === true) {
+                        window.location.replace("baneado.html");
+                        return;
+                    }
+
+                } else {
+                    // Lógica Registro y Captura de IP
+                    const ipResponse = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipResponse.json();
+                    const userIp = ipData.ip;
+
+                    const userCred = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
+
+                    await set(ref(db, `users/${userCred.user.uid}`), {
+                        username: userClean,
+                        ipRegistrada: userIp,
+                        banned: false,
+                        fechaRegistro: new Date().toISOString()
+                    });
                 }
 
+                // ==========================================
+                // ÉXITO 
+                // ==========================================
                 if(isAudioEnabled) {
-                    audioBienvenida.play().catch(error => console.log("No se pudo reproducir el audio", error));
+                    audioBienvenida.play().catch(error => console.log("No se pudo reproducir", error));
                 }
 
-                loaderMsg.innerText = "CONECTANDO AL SERVIDOR...";
+                loaderMsg.innerText = isLoginMode ? "CONECTANDO AL SERVIDOR..." : "CREANDO PERFIL...";
                 loaderOverlay.classList.add('active');
 
+                // La redirección ocurrirá automáticamente por el onAuthStateChanged de arriba, 
+                // pero por seguridad dejamos un fallback de tiempo.
                 setTimeout(() => {
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirectUrl = urlParams.get('redirect');
@@ -363,13 +469,19 @@
 
             } catch (error) {
                 console.error(error);
+                msg.style.color = "#ff3333"; 
+                
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     msg.innerText = "USUARIO O CONTRASEÑA INCORRECTOS.";
+                } else if (error.code === 'auth/email-already-in-use') {
+                    msg.innerText = "ESTE USUARIO YA EXISTE.";
+                } else if (error.code === 'auth/weak-password') {
+                    msg.innerText = "MÍNIMO 6 CARACTERES EN LA CONTRASEÑA.";
                 } else {
                     msg.innerText = "ERROR: " + error.code;
                 }
                 
-                actionBtn.innerText = "Entrar";
+                actionBtn.innerText = isLoginMode ? "Entrar" : "Registrarse";
                 actionBtn.disabled = false;
             }
         });
