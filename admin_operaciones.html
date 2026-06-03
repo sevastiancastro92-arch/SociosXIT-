@@ -192,11 +192,9 @@
         </div>
     </div>
 
-    <!-- PANEL CENTRAL -->
     <div class="admin-container" id="adminMainPanel" style="display: none;">
         <h1 class="header-title"><i class='bx bx-command'></i> NÚCLEO DE OPERACIONES</h1>
 
-        <!-- SECCIÓN FINANZAS -->
         <h2 class="section-divider"><i class='bx bx-dollar-circle'></i> Finanzas y Pagos</h2>
         <div class="admin-grid">
             <div class="admin-card color-cyan" onclick="openRechargesModal()">
@@ -225,7 +223,6 @@
             </div>
         </div>
 
-        <!-- SECCIÓN INVENTARIO -->
         <h2 class="section-divider"><i class='bx bx-box'></i> Inventario y Productos</h2>
         <div class="admin-grid">
             <div class="admin-card" onclick="openModal('modalCreateProduct')">
@@ -254,7 +251,6 @@
             </div>
         </div>
 
-        <!-- SECCIÓN COMUNIDAD Y AJUSTES -->
         <h2 class="section-divider"><i class='bx bx-shield-quarter'></i> Comunidad y Ajustes</h2>
         <div class="admin-grid">
             <div class="admin-card color-purple" onclick="openModal('modalTransferUser')">
@@ -267,7 +263,6 @@
                 <div class="card-info"><h3>Banear Usuario</h3><p>Bloquear acceso e IP.</p></div>
             </div>
 
-            <!-- NUEVA TARJETA: DESBANEAR USUARIO -->
             <div class="admin-card color-green" onclick="openModal('modalUnbanUser')">
                 <div class="card-icon"><i class='bx bx-check-shield'></i></div>
                 <div class="card-info"><h3>Desbanear Usuario</h3><p>Restaurar cuenta e IP.</p></div>
@@ -300,7 +295,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE REEMBOLSOS CON IMÁGENES -->
     <div class="modal-overlay" id="modalRefunds">
         <div class="modal-box" style="max-width: 650px; border-color: var(--neon-pink);">
             <h3 style="font-family:'Orbitron'; color: var(--neon-pink);"><i class='bx bx-money-withdraw'></i> Gestión de Reembolsos</h3>
@@ -312,7 +306,6 @@
         </div>
     </div>
 
-    <!-- RESTO DE MODALES EXISTENTES (Limpios de emojis) -->
     <div class="modal-overlay" id="modalQuickApproval" style="z-index: 3000;">
         <div class="modal-box" style="border-color: var(--neon-cyan); max-width: 400px; padding: 20px;">
             <h3 style="font-family:'Orbitron'; color: var(--neon-cyan); margin-top: 0;"><i class='bx bx-zap'></i> APROBACIÓN RÁPIDA</h3>
@@ -335,6 +328,15 @@
                     <div class="input-group" style="flex:2;"><label>Nombre Comercial</label><input type="text" id="editPName"></div>
                     <div class="input-group" style="flex:1;"><label>Ecosistema</label><select id="editPCat"><option value="Android">Android</option><option value="iPhone">iPhone</option><option value="PC">PC</option></select></div>
                 </div>
+                <div class="input-group" style="margin-top: 5px;">
+                    <label>Foto del Producto (Opcional)</label>
+                    <div style="display:flex; gap:10px; align-items: center;">
+                        <img id="editPImagePreview" src="" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; display: none; border: 1px solid var(--neon-purple);">
+                        <input type="file" id="editPImageFile" accept="image/*" style="flex:1; padding: 8px;">
+                    </div>
+                    <p id="editPUploadStatus" style="font-size:0.8rem; color:#ffd700; margin-top:5px; display:none;">Subiendo imagen a la nube...</p>
+                </div>
+                
                 <button class="btn-action" style="background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); color: #000; padding: 10px;" onclick="funcUpdateProduct()"><i class='bx bx-save'></i> ACTUALIZAR PRODUCTO BASE</button>
                 <button class="btn-action" style="background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); box-shadow: none; padding: 10px; margin-top: 5px;" onclick="funcDeleteProduct()"><i class='bx bx-trash'></i> ELIMINAR PRODUCTO Y PLANES</button>
             </div>
@@ -472,6 +474,13 @@
                 <div class="input-group"><label>Ecosistema</label><select id="pCat"><option value="Android">Android</option><option value="iPhone">iPhone</option><option value="PC">PC</option></select></div>
             </div>
             <div class="cyber-box">
+                <div class="input-group">
+                    <label>Foto del Producto (Opcional)</label>
+                    <input type="file" id="pImageFile" accept="image/*" style="padding: 8px;">
+                    <p id="pUploadStatus" style="font-size:0.8rem; color:var(--neon-cyan); margin-top:5px; display:none;">Subiendo imagen a la nube...</p>
+                </div>
+            </div>
+            <div class="cyber-box">
                 <div style="display: flex; gap: 10px;">
                     <div class="input-group" style="flex:1;"><label>Precio ($)</label><input type="number" id="pPrice" step="0.01"></div>
                     <div class="input-group" style="flex:1.5;"><label>Tiempo</label><input type="text" id="pDur" placeholder="Ej: 30 Días"></div>
@@ -520,7 +529,6 @@
         </div>
     </div>
 
-    <!-- NUEVO MODAL: QUITAR SALDO -->
     <div class="modal-overlay" id="modalRemoveBalance">
         <div class="modal-box" style="border-color: var(--neon-red);">
             <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-money-withdraw'></i> Quitar Capital</h3>
@@ -545,7 +553,6 @@
         </div>
     </div>
 
-    <!-- NUEVO MODAL: BANEAR USUARIO -->
     <div class="modal-overlay" id="modalBanUser">
         <div class="modal-box" style="border-color: var(--neon-red);">
             <h3 style="font-family:'Orbitron'; color: var(--neon-red);"><i class='bx bx-block'></i> Banear Entidad e IP</h3>
@@ -557,7 +564,6 @@
         </div>
     </div>
 
-    <!-- NUEVO MODAL: DESBANEAR USUARIO -->
     <div class="modal-overlay" id="modalUnbanUser">
         <div class="modal-box" style="border-color: var(--neon-green);">
             <h3 style="font-family:'Orbitron'; color: var(--neon-green);"><i class='bx bx-check-shield'></i> Restaurar Entidad e IP</h3>
@@ -598,6 +604,42 @@
         let isSuperAdmin = false;
         let currentAdminIp = "0.0.0.0";
         let loadedProductsData = {}; 
+
+        // =========================================
+        //  SISTEMA API IMGBB 
+        // =========================================
+        async function uploadToImgBB(fileElementId, statusElementId) {
+            const fileInput = document.getElementById(fileElementId);
+            if (!fileInput.files || fileInput.files.length === 0) return null;
+
+            const statusEl = document.getElementById(statusElementId);
+            if(statusEl) { statusEl.style.display = 'block'; statusEl.innerText = "Subiendo imagen a ImgBB..."; }
+
+            const formData = new FormData();
+            formData.append("image", fileInput.files[0]);
+
+            try {
+                // LLAVE API IMGBB REQUERIDA
+                const res = await fetch("https://api.imgbb.com/1/upload?key=fd76f06048b34773ba64f11cc4535ff4", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await res.json();
+                
+                if(statusEl) statusEl.style.display = 'none';
+                
+                if (data.success) {
+                    return data.data.url; // Retorna el link directo
+                } else {
+                    alert("Error subiendo imagen: " + data.error.message);
+                    return null;
+                }
+            } catch (e) {
+                if(statusEl) statusEl.style.display = 'none';
+                alert("Error de conexión al subir imagen a ImgBB.");
+                return null;
+            }
+        }
 
         async function logAdminAction(actionType, targetUsername, details) {
             try {
@@ -741,9 +783,6 @@
             } catch (e) { alert("ERROR en el proceso: " + e.message); }
         };
 
-        // =========================================
-        //  RESTO DE FUNCIONES DEL PANEL
-        // =========================================
         window.checkQuickApprovalToken = async (token) => {
             try {
                 document.getElementById('loadingScreen').style.display = 'flex';
@@ -933,17 +972,51 @@
             } catch(e) { alert("ERROR: " + e.message); }
         };
 
+        // =========================================
+        //  CREACIÓN DE PRODUCTO CON IMAGEN
+        // =========================================
         window.funcCreateProduct = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("ERROR: Sin permiso.");
-            const name = document.getElementById('pName').value.trim(); const cat = document.getElementById('pCat').value; const price = parseFloat(document.getElementById('pPrice').value); const dur = document.getElementById('pDur').value.trim(); const warr = parseInt(document.getElementById('pWarr').value);
+            const name = document.getElementById('pName').value.trim(); 
+            const cat = document.getElementById('pCat').value; 
+            const price = parseFloat(document.getElementById('pPrice').value); 
+            const dur = document.getElementById('pDur').value.trim(); 
+            const warr = parseInt(document.getElementById('pWarr').value);
+            
             if(!name || isNaN(price)) return alert("ATENCION: Faltan datos.");
-            try { const newProdRef = push(ref(db, 'products')); const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key; await set(newProdRef, { name, category: cat }); await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr }); alert("EXITO: Creado."); closeAllModals(); } catch(e) { alert("ERROR: " + e.message); }
+
+            // Subir imagen primero
+            let imageUrl = await uploadToImgBB('pImageFile', 'pUploadStatus');
+
+            try { 
+                const newProdRef = push(ref(db, 'products')); 
+                const durId = push(ref(db, `products/${newProdRef.key}/durations`)).key; 
+                
+                const prodData = { name, category: cat };
+                if (imageUrl) prodData.image = imageUrl; // Guardar URL de la imagen
+
+                await set(newProdRef, prodData); 
+                await set(ref(db, `products/${newProdRef.key}/durations/${durId}`), { duration: dur, price, warranty: warr }); 
+                
+                alert("EXITO: Producto Creado."); 
+                document.getElementById('pImageFile').value = ''; // Limpiar input
+                closeAllModals(); 
+            } catch(e) { alert("ERROR: " + e.message); }
         };
         
         window.openEditProductModal = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return alert("ERROR: Sin permiso.");
             const select = document.getElementById('editProdSelect'); select.innerHTML = "<option value=''>Cargando...</option>"; openModal('modalEditProduct');
-            document.getElementById('editPName').value = ''; document.getElementById('editDurSelect').innerHTML = ''; document.getElementById('editDurName').value = ''; document.getElementById('editDurPrice').value = ''; document.getElementById('editDurWarr').value = '';
+            
+            // Limpiar campos de edición
+            document.getElementById('editPName').value = ''; 
+            document.getElementById('editDurSelect').innerHTML = ''; 
+            document.getElementById('editDurName').value = ''; 
+            document.getElementById('editDurPrice').value = ''; 
+            document.getElementById('editDurWarr').value = '';
+            document.getElementById('editPImageFile').value = '';
+            document.getElementById('editPImagePreview').style.display = 'none';
+
             try {
                 const snap = await get(ref(db, 'products')); select.innerHTML = "<option value=''>-- Elige un Producto --</option>";
                 if(snap.exists()) { loadedProductsData = snap.val(); Object.keys(loadedProductsData).forEach(pId => { const opt = document.createElement('option'); opt.value = pId; opt.text = loadedProductsData[pId].name; select.appendChild(opt); }); } else { select.innerHTML = "<option value=''>BD Vacía</option>"; }
@@ -951,10 +1024,31 @@
         };
 
         window.loadProductDetailsForEdit = () => {
-            const pId = document.getElementById('editProdSelect').value; const durSelect = document.getElementById('editDurSelect'); durSelect.innerHTML = "<option value=''>-- Elige un Plan --</option>";
-            document.getElementById('editDurName').value = ''; document.getElementById('editDurPrice').value = ''; document.getElementById('editDurWarr').value = '';
+            const pId = document.getElementById('editProdSelect').value; 
+            const durSelect = document.getElementById('editDurSelect'); 
+            durSelect.innerHTML = "<option value=''>-- Elige un Plan --</option>";
+            
+            document.getElementById('editDurName').value = ''; 
+            document.getElementById('editDurPrice').value = ''; 
+            document.getElementById('editDurWarr').value = '';
+            
+            const imgPreview = document.getElementById('editPImagePreview');
+            imgPreview.style.display = 'none';
+            imgPreview.src = '';
+            document.getElementById('editPImageFile').value = '';
+
             if(!pId || !loadedProductsData[pId]) { document.getElementById('editPName').value = ''; return; }
-            const prod = loadedProductsData[pId]; document.getElementById('editPName').value = prod.name || ''; document.getElementById('editPCat').value = prod.category || 'Android';
+            
+            const prod = loadedProductsData[pId]; 
+            document.getElementById('editPName').value = prod.name || ''; 
+            document.getElementById('editPCat').value = prod.category || 'Android';
+
+            // Mostrar imagen si existe
+            if(prod.image || prod.imagen || prod.url) {
+                imgPreview.src = prod.image || prod.imagen || prod.url;
+                imgPreview.style.display = 'block';
+            }
+
             if(prod.durations) { Object.keys(prod.durations).forEach(dId => { const opt = document.createElement('option'); opt.value = dId; opt.text = prod.durations[dId].duration; durSelect.appendChild(opt); }); }
         };
 
@@ -964,10 +1058,28 @@
             const dur = loadedProductsData[pId].durations[dId]; document.getElementById('editDurName').value = dur.duration || ''; document.getElementById('editDurPrice').value = dur.price || 0; document.getElementById('editDurWarr').value = dur.warranty || 0;
         };
 
+        // =========================================
+        //  ACTUALIZACIÓN DE PRODUCTO CON IMAGEN
+        // =========================================
         window.funcUpdateProduct = async () => {
             if(!isSuperAdmin && (!adminUser.permissions || !adminUser.permissions.products)) return;
-            const pId = document.getElementById('editProdSelect').value; const name = document.getElementById('editPName').value.trim(); const cat = document.getElementById('editPCat').value;
-            if(!pId || !name) return alert("ATENCION: Selecciona producto."); try { await update(ref(db, `products/${pId}`), { name: name, category: cat }); alert("EXITO: Actualizado."); openEditProductModal(); } catch(e) { alert("ERROR: " + e.message); }
+            const pId = document.getElementById('editProdSelect').value; 
+            const name = document.getElementById('editPName').value.trim(); 
+            const cat = document.getElementById('editPCat').value;
+            
+            if(!pId || !name) return alert("ATENCION: Selecciona producto."); 
+
+            // Si suben una nueva imagen, se procesa
+            let newImageUrl = await uploadToImgBB('editPImageFile', 'editPUploadStatus');
+
+            try { 
+                const updates = { name: name, category: cat };
+                if (newImageUrl) updates.image = newImageUrl; // Reemplazar imagen solo si se subió una nueva
+
+                await update(ref(db, `products/${pId}`), updates); 
+                alert("EXITO: Producto Actualizado."); 
+                openEditProductModal(); 
+            } catch(e) { alert("ERROR: " + e.message); }
         };
 
         window.funcUpdateDuration = async () => {
