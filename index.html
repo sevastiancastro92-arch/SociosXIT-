@@ -697,7 +697,6 @@
                 const stockText = p.totalStock > 0 ? `${p.totalStock} DISPONIBLES` : 'AGOTADO';
                 const tagText = p.name.substring(0, 12) + (p.name.length > 12 ? '...' : '');
 
-                // AQUÍ: Lógica para insertar la imagen o dejarlo vacío (se mantendrá el gradiente de fondo)
                 const imgSrc = p.image || p.imagen || p.url || '';
                 const imgElement = imgSrc ? `<img src="${imgSrc}" class="card-img" alt="${p.name}">` : '';
 
@@ -728,23 +727,26 @@
         window.openVariants = (product) => {
             document.getElementById('modalProdTitle').innerText = product.name;
             const vList = document.getElementById('variantList'); vList.innerHTML = '';
+            
+            let hasVisibleVariants = false;
 
             if(product.durations) {
                 Object.keys(product.durations).forEach(durId => {
                     const dur = product.durations[durId]; 
                     const actualStock = dur.keys ? Object.keys(dur.keys).length : 0;
                     
-                    const vItem = document.createElement('div'); vItem.className = 'variant-item';
-                    
                     if(actualStock > 0) {
+                        hasVisibleVariants = true;
+                        const vItem = document.createElement('div'); vItem.className = 'variant-item';
                         vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span>Stock Total: ${actualStock}</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
                         vItem.onclick = () => openPurchaseModal(product.id, durId, dur, product.name, actualStock);
-                    } else {
-                        vItem.style.opacity = '0.5'; vItem.style.cursor = 'not-allowed';
-                        vItem.innerHTML = `<div class="var-info"><strong>${dur.duration}</strong><span style="color:var(--neon-pink)">Agotado temporalmente</span></div><div class="var-price">$${dur.price.toFixed(2)}</div>`;
+                        vList.appendChild(vItem);
                     }
-                    vList.appendChild(vItem);
                 });
+                
+                if (!hasVisibleVariants) {
+                    vList.innerHTML = `<p style="color:var(--neon-pink); text-align:center; font-family:'Exo 2';">No hay planes con stock disponible temporalmente.</p>`;
+                }
             }
             document.getElementById('variantModal').style.display = 'flex';
         };
