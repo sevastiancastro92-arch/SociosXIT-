@@ -7,7 +7,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* =========================================
-           1. FUENTES Y VARIABLES CÓSMICAS (BASE Socios XIT )
+           1. FUENTES Y VARIABLES CÓSMICAS (BASE)
            ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
         
@@ -19,7 +19,6 @@
             --neon-purple: #bc13fe;
             --neon-green: #00ffcc; 
             --neon-yellow: #fcee0a;
-            --wa-green: #25D366;
             --bg-deep: #030008;
             --glass-bg: rgba(10, 2, 20, 0.85); 
             --sidebar-bg: rgba(5, 0, 15, 0.95); 
@@ -50,7 +49,7 @@
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.8; }
         
         /* =========================================
-           2. BARRA SUPERIOR
+           2. BARRA SUPERIOR (INTACTA)
            ========================================= */
         .top-bar { 
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%); 
@@ -88,7 +87,7 @@
         .badge.history-btn i { color: #fff; }
 
         /* =========================================
-           3. MENÚ LATERAL CYBERPUNK
+           3. MENÚ LATERAL CYBERPUNK (INTACTO)
            ========================================= */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.4s; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
@@ -106,68 +105,127 @@
         .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron'; cursor: pointer; display: flex; justify-content: center; gap: 8px; }
 
         /* =========================================
-           4. TIENDA DE DIAMANTES (GRID & CARDS)
+           4. NUEVO DISEÑO CHINGÓN: TIENDA & CARDS
            ========================================= */
         .main-wrapper { width: 100%; max-width: 1200px; padding: 100px 20px 40px 20px; z-index: 10; display: flex; flex-direction: column; align-items: center; }
         
-        .section-title { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 2rem; margin-bottom: 30px; text-shadow: 0 0 15px rgba(0, 238, 255, 0.4); border-left: 4px solid var(--neon-blue); padding-left: 15px; letter-spacing: 2px; width: 100%; text-align: left; text-transform: uppercase;}
+        .header-container { width: 100%; display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 40px; border-left: 5px solid var(--neon-blue); padding-left: 20px; background: linear-gradient(90deg, rgba(0, 238, 255, 0.05), transparent); padding-top: 10px; padding-bottom: 10px; border-radius: 0 15px 15px 0;}
+        .section-title { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 2.2rem; margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px rgba(0, 238, 255, 0.3);}
+        .section-title span.blue-text { color: var(--neon-blue); }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; width: 100%; margin-bottom: 50px; }
-        
-        .card { 
-            background: var(--glass-bg); border: 1px solid #333; position: relative; padding: 25px 20px; 
-            transition: all 0.3s ease; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
-            backdrop-filter: blur(10px);
-        }
-        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid transparent; transition: 0.3s; pointer-events: none; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%); }
-        .card:hover { transform: translateY(-5px); background: rgba(15, 5, 25, 0.95); box-shadow: 0 10px 30px rgba(0, 238, 255, 0.15); }
-        .card:hover::before { border-color: var(--neon-blue); box-shadow: inset 0 0 20px rgba(0, 238, 255, 0.2); }
-        
-        .card-icon { font-size: 3.5rem; color: var(--neon-blue); text-align: center; margin-bottom: 15px; text-shadow: 0 0 15px rgba(0, 238, 255, 0.5); }
-        .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; color: #fff; text-align: center; }
-        .card-price { font-size: 1.8rem; font-family: 'Orbitron', sans-serif; color: var(--neon-pink); text-align: center; margin: 15px 0; text-shadow: 0 0 10px rgba(255, 0, 85, 0.4); display: flex; justify-content: center; align-items: center; gap: 5px;}
-        .card-price span { font-size: 0.9rem; color: #aaa; text-shadow: none; font-family: 'Exo 2'; }
-        
-        .btn-buy {
-            width: 100%; background: rgba(0, 238, 255, 0.05); color: var(--neon-blue); border: 1px solid var(--neon-blue);
-            padding: 12px; font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 700;
-            cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
-            display: flex; justify-content: center; align-items: center; gap: 10px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-        }
-        .btn-buy:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px var(--neon-blue); }
+        .role-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 15px; background: linear-gradient(45deg, rgba(188, 19, 254, 0.2), rgba(0, 238, 255, 0.1)); border: 1px solid var(--neon-purple); border-radius: 30px; color: #fff; font-size: 0.85rem; font-family: 'Orbitron'; margin-top: 10px; box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); letter-spacing: 1px;}
+        .role-badge i { color: var(--neon-yellow); font-size: 1.2rem; }
 
-        /* Panel Info */
-        .info-panel { background: var(--glass-bg); border: 1px solid #333; border-left: 4px solid var(--neon-purple); padding: 25px; margin-bottom: 40px; width: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .info-panel h3 { color: var(--neon-purple); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; font-size: 1.4rem; text-shadow: 0 0 10px rgba(188, 19, 254, 0.4);}
-        .info-list { list-style: none; padding: 0; }
-        .info-list li { margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: flex-start; gap: 15px; color: #ccc; }
-        .info-list li i { color: var(--neon-blue); font-size: 1.3rem; margin-top: 2px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; width: 100%; margin-bottom: 60px; perspective: 1000px;}
+        
+        /* Rediseño Completo de la Tarjeta */
+        .premium-card {
+            background: linear-gradient(160deg, rgba(20, 5, 35, 0.8) 0%, rgba(5, 0, 15, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 35px 20px 25px 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* Efecto de Brillo de Fondo Animado */
+        .premium-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent 70%, var(--neon-blue) 80%, transparent 100%);
+            animation: rotateBg 4s linear infinite;
+            opacity: 0; transition: opacity 0.4s ease; z-index: -1;
+        }
+        .premium-card::after {
+            content: ''; position: absolute; inset: 2px; background: rgba(10, 2, 20, 0.95);
+            border-radius: 22px; z-index: -1;
+        }
+
+        .premium-card:hover { transform: translateY(-12px) scale(1.03); z-index: 2; box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 20px rgba(0, 238, 255, 0.2); }
+        .premium-card:hover::before { opacity: 1; }
+        
+        @keyframes rotateBg { 100% { transform: rotate(360deg); } }
+
+        /* Contenedor de la Imagen Real (Animación Flotante) */
+        .card-img-wrapper {
+            width: 130px; height: 130px;
+            margin-bottom: 25px;
+            display: flex; justify-content: center; align-items: center;
+            animation: floatImg 6s ease-in-out infinite;
+            transition: transform 0.4s ease, filter 0.4s ease;
+            filter: drop-shadow(0 10px 15px rgba(0, 238, 255, 0.3));
+        }
+        .premium-card:hover .card-img-wrapper { transform: scale(1.2) translateY(-10px); filter: drop-shadow(0 15px 25px rgba(0, 238, 255, 0.6)); animation-play-state: paused; }
+        .card-img-wrapper img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        @keyframes floatImg { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Textos de la Tarjeta */
+        .card-title { font-size: 1.3rem; font-weight: 800; font-family: 'Orbitron', sans-serif; color: #fff; text-align: center; letter-spacing: 1px; margin-bottom: 5px; text-transform: uppercase;}
+        .card-price-box { background: rgba(0,0,0,0.5); padding: 8px 20px; border-radius: 12px; margin: 15px 0 25px 0; border: 1px dashed rgba(255, 0, 85, 0.4); display: flex; flex-direction: column; align-items: center; width: 100%; }
+        .card-price { font-size: 1.8rem; font-family: 'Orbitron', sans-serif; color: var(--neon-pink); font-weight: 900; text-shadow: 0 0 10px rgba(255, 0, 85, 0.5); line-height: 1; }
+        .card-currency { font-size: 0.8rem; color: #aaa; font-family: 'Exo 2'; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
+        
+        /* Botón de Compra Moderno */
+        .btn-buy-modern {
+            width: 100%; background: linear-gradient(90deg, rgba(0, 238, 255, 0.1), rgba(0, 238, 255, 0.05));
+            color: var(--neon-blue); border: 1px solid var(--neon-blue); border-radius: 12px;
+            padding: 14px; font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 700;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;
+            display: flex; justify-content: center; align-items: center; gap: 8px; position: relative; overflow: hidden;
+        }
+        .btn-buy-modern::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0, 238, 255, 0.4), transparent); transition: left 0.5s ease; }
+        .btn-buy-modern:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px var(--neon-blue); transform: translateY(-2px); }
+        .btn-buy-modern:hover::before { left: 100%; }
+        .btn-buy-modern i { font-size: 1.3rem; }
+
+        /* Panel Info Rediseñado (Estilo HUD Futuro) */
+        .modern-hud-panel {
+            background: linear-gradient(135deg, rgba(15, 5, 25, 0.9), rgba(5, 0, 10, 0.95));
+            border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 20px;
+            padding: 30px; margin-bottom: 40px; width: 100%; position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(188, 19, 254, 0.1);
+        }
+        .modern-hud-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); }
+        .modern-hud-panel h3 { color: #fff; margin: 0 0 20px 0; display: flex; align-items: center; gap: 12px; font-family: 'Orbitron'; font-size: 1.4rem; letter-spacing: 1px; }
+        .modern-hud-panel h3 i { color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); font-size: 1.8rem;}
+        .hud-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .hud-item { display: flex; align-items: flex-start; gap: 15px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .hud-item:hover { background: rgba(188, 19, 254, 0.05); border-color: rgba(188, 19, 254, 0.3); transform: translateX(5px); }
+        .hud-icon { background: rgba(0, 238, 255, 0.1); color: var(--neon-blue); padding: 10px; border-radius: 10px; font-size: 1.4rem; display: flex; justify-content: center; align-items: center; }
+        .hud-text { font-size: 0.95rem; color: #bbb; line-height: 1.5; }
+        .hud-text strong { color: #fff; font-weight: 700; }
 
         /* =========================================
-           5. MODALES Y POPUPS GENERALES
+           5. MODALES Y POPUPS GENERALES (INTACTOS)
            ========================================= */
         .epic-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
         .epic-popup-overlay.show { opacity: 1; visibility: visible; }
-        .epic-popup-box { background: var(--glass-bg); border-radius: 20px; padding: 40px 25px; width: 90%; max-width: 450px; text-align: center; transform: scale(0.8) translateY(50px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 2px solid var(--neon-blue); position: relative; }
+        .epic-popup-box { background: var(--glass-bg); border-radius: 24px; padding: 40px 30px; width: 90%; max-width: 450px; text-align: center; transform: scale(0.8) translateY(50px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 2px solid var(--neon-blue); position: relative; }
         .epic-popup-overlay.show .epic-popup-box { transform: scale(1) translateY(0); box-shadow: 0 0 40px rgba(0, 238, 255, 0.2); }
         
         .epic-icon-wrapper { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; font-size: 3.5rem; background: rgba(0, 238, 255, 0.1); color: var(--neon-blue); border: 2px solid var(--neon-blue); }
         .epic-title { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
         .epic-msg { font-size: 1rem; color: #ddd; margin-bottom: 20px; line-height: 1.6; }
         
-        .ff-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--neon-blue); color: white; padding: 12px; border-radius: 8px; font-family: 'Exo 2'; font-size: 1.1rem; text-align: center; margin-bottom: 20px; transition: 0.3s; }
-        .ff-input:focus { outline: none; box-shadow: 0 0 15px rgba(0, 238, 255, 0.5); }
+        .ff-input { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid rgba(0, 238, 255, 0.5); color: white; padding: 15px; border-radius: 12px; font-family: 'Orbitron'; font-size: 1.2rem; text-align: center; margin-bottom: 20px; transition: 0.3s; letter-spacing: 2px;}
+        .ff-input:focus { outline: none; box-shadow: 0 0 20px rgba(0, 238, 255, 0.4); border-color: var(--neon-blue); }
         
-        .btn-epic-secondary { width: 100%; background: transparent; border: 2px solid #555; color: #aaa; padding: 12px; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-epic-secondary:hover { border-color: var(--neon-blue); color: var(--neon-blue); box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
-        .btn-epic-primary { width: 100%; background: rgba(255, 0, 85, 0.1); border: 2px solid var(--neon-pink); color: var(--neon-pink); padding: 12px; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-epic-primary:hover { background: var(--neon-pink); color: white; box-shadow: 0 0 20px var(--neon-pink); }
+        .btn-epic-secondary { width: 100%; background: transparent; border: 2px solid #555; color: #aaa; padding: 14px; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem;}
+        .btn-epic-secondary:hover { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(0, 238, 255, 0.05); }
+        .btn-epic-primary { width: 100%; background: linear-gradient(90deg, rgba(255, 0, 85, 0.8), var(--neon-pink)); border: none; color: white; padding: 14px; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);}
+        .btn-epic-primary:hover { box-shadow: 0 0 25px var(--neon-pink); transform: translateY(-2px); }
         
-        .buttons-row { display: flex; gap: 10px; }
-        .role-badge { display: inline-block; padding: 5px 10px; background: rgba(188, 19, 254, 0.2); border: 1px solid var(--neon-purple); border-radius: 5px; color: var(--neon-purple); font-size: 0.8rem; font-family: 'Orbitron'; margin-bottom: 10px; }
+        .buttons-row { display: flex; gap: 15px; }
 
         /* =========================================
-           6. MODAL DE HISTORIAL Y GASTOS
+           6. MODAL DE HISTORIAL (INTACTO)
            ========================================= */
         .history-box { max-width: 700px; padding: 30px 20px; border-color: var(--neon-purple); }
         .close-history-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #aaa; font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
@@ -221,16 +279,15 @@
         <div class="magic-ring ring-inner"></div>
     </div>
 
+    <!-- TOP BAR (INTACTA) -->
     <div class="top-bar">
         <div class="top-bar-left">
             <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
         </div>
         <div class="top-bar-right">
-            <!-- BOTÓN DE COMPRAS -->
             <div class="badge history-btn" onclick="openHistoryPopup()">
                 <i class='bx bx-receipt'></i> <span>Mis Compras</span>
             </div>
-            
             <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
             <div class="badge" onclick="window.location.href='perfil.html'">
                 <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U"> 
@@ -243,6 +300,7 @@
         </div>
     </div>
 
+    <!-- SIDEBAR (INTACTO) -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -264,70 +322,75 @@
 
     <canvas id="particle-canvas"></canvas>
 
+    <!-- ÁREA PRINCIPAL REDISEÑADA -->
     <div class="main-wrapper">
-        <h2 class="section-title">
-            <i class='bx bx-package'></i> Cargamentos Free Fire
-            <br>
-            <span id="userRoleBadge" class="role-badge" style="display: none;">MODO SOCIO ACTIVO - PRECIOS ESPECIALES</span>
-        </h2>
-
-        <div class="grid" id="packagesGrid">
+        
+        <div class="header-container">
+            <h2 class="section-title">Store <span class="blue-text">Diamantes</span></h2>
+            <div id="userRoleBadge" class="role-badge" style="display: none;">
+                <i class='bx bxs-crown'></i> RANGO SOCIO ACTIVO DESBLOQUEADO
             </div>
-
-        <div class="info-panel">
-            <h3><i class='bx bx-info-circle'></i> Protocolo de Recarga Directa</h3>
-            <ul class="info-list">
-                <li>
-                    <i class='bx bx-check-circle'></i>
-                    <div>Selecciona el paquete deseado. El costo será descontado de tu <strong>saldo correspondiente</strong> (XitCoins para socios, Saldo Normal para clientes).</div>
-                </li>
-                <li>
-                    <i class='bx bx-id-card'></i>
-                    <div>Ingresa correctamente el <strong>ID de Jugador</strong> de Free Fire de la cuenta destino al realizar la compra.</div>
-                </li>
-                <li>
-                    <i class='bx bx-time-five'></i>
-                    <div>El sistema organizará tu orden en la base de datos. Los diamantes pueden tardar <strong>hasta 2 horas en ser procesados</strong> e inyectados a la cuenta.</div>
-                </li>
-            </ul>
         </div>
+
+        <!-- El grid donde se inyectan las tarjetas con las nuevas imágenes -->
+        <div class="grid" id="packagesGrid"></div>
+
+        <!-- Panel de información estilo HUD -->
+        <div class="modern-hud-panel">
+            <h3><i class='bx bx-radar'></i> Transmisión de Protocolo de Recarga</h3>
+            <div class="hud-grid">
+                <div class="hud-item">
+                    <div class="hud-icon"><i class='bx bx-wallet'></i></div>
+                    <div class="hud-text">El costo será descontado automáticamente de tu saldo. <strong>XitCoins</strong> si eres Socio, o <strong>Saldo Normal</strong> si eres Cliente.</div>
+                </div>
+                <div class="hud-item">
+                    <div class="hud-icon"><i class='bx bx-id-card'></i></div>
+                    <div class="hud-text">Asegúrate de ingresar el <strong>ID de Jugador Exacto</strong>. Nuestro servidor se conectará directo a la cuenta de Free Fire especificada.</div>
+                </div>
+                <div class="hud-item">
+                    <div class="hud-icon"><i class='bx bx-time-five'></i></div>
+                    <div class="hud-text">El sistema sincroniza los pedidos en la base de datos central. La inyección de diamantes puede tardar <strong>hasta 2 horas</strong>.</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- MODAL DE COMPRA -->
     <div id="buyPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box">
-            <div class="epic-icon-wrapper"><i class='bx bxs-diamond'></i></div>
-            <h2 class="epic-title">Confirmar Recarga</h2>
-            <p class="epic-msg" id="buyPackageName" style="font-size: 1.2rem; font-weight: bold;"></p>
-            <p class="epic-msg" style="color: var(--neon-pink); font-size: 1.4rem; font-family: 'Orbitron'; margin-top: -10px;">
-                Precio: <span id="buyPackagePrice">0.00</span> <span id="buyCurrencyLabel">XitCoins</span>
+            <div class="epic-icon-wrapper" id="modalImgWrapper" style="background: transparent; border: none; height: auto;">
+                <!-- Aquí se inyecta la imagen del paquete dinámicamente -->
+            </div>
+            <h2 class="epic-title" id="buyPackageName">Nombre Paquete</h2>
+            <p class="epic-msg" style="color: var(--neon-pink); font-size: 1.6rem; font-family: 'Orbitron'; font-weight: 900; margin-top: -10px;">
+                <span id="buyPackagePrice">0.00</span> <span id="buyCurrencyLabel" style="font-size: 1rem; color:#aaa; font-family: 'Exo 2';">XitCoins</span>
             </p>
             
-            <input type="number" id="freeFireIdInput" class="ff-input" placeholder="ID del Jugador (Ej. 123456789)">
+            <input type="number" id="freeFireIdInput" class="ff-input" placeholder="INGRESA ID DE JUGADOR">
             
             <div id="buyErrorMsg" style="color: #ff0055; font-size: 0.9rem; margin-bottom: 15px; display: none; text-shadow: 0 0 5px red;"></div>
             
             <div class="buttons-row">
                 <button onclick="closeBuyPopup()" class="btn-epic-secondary">CANCELAR</button>
-                <button id="confirmPayBtn" class="btn-epic-primary">PAGAR</button>
+                <button id="confirmPayBtn" class="btn-epic-primary">CONFIRMAR PAGO</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE ÉXITO -->
+    <!-- MODALES DE ÉXITO, UPGRADE E HISTORIAL (SE MANTIENEN IGUAL) -->
     <div id="successPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box" style="border-color: var(--neon-green);">
             <div class="epic-icon-wrapper" style="color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,204,0.1);"><i class='bx bx-check-double'></i></div>
             <h2 class="epic-title" style="color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green);">¡PAGO EXITOSO!</h2>
-            <p class="epic-msg">Tu pedido ha sido registrado correctamente.</p>
+            <p class="epic-msg">Tu pedido ha sido registrado correctamente en la central.</p>
             <p class="epic-msg" style="background: rgba(255,0,0,0.1); border: 1px dashed red; padding: 10px; border-radius: 8px;">
-                ⚠️ <strong>Aviso Importante:</strong> Los diamantes pueden tardar <strong>hasta 2 horas en ser procesados</strong> e inyectados en la cuenta.
+                ⚠️ <strong>Aviso Importante:</strong> Los diamantes pueden tardar <strong>hasta 2 horas</strong> en ser procesados e inyectados en la cuenta.
             </p>
             <button onclick="closeSuccessPopup()" class="btn-epic-secondary" style="border-color: var(--neon-green); color: var(--neon-green);">ENTENDIDO</button>
         </div>
     </div>
 
-    <!-- MODAL DE NUEVO SOCIO (AUTO-UPGRADE) -->
     <div id="upgradePopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box" style="border-color: var(--neon-purple);">
             <div class="epic-icon-wrapper" style="color: var(--neon-purple); border-color: var(--neon-purple); background: rgba(188, 19, 254,0.1);"><i class='bx bxs-crown'></i></div>
@@ -343,7 +406,6 @@
         </div>
     </div>
 
-    <!-- MODAL: HISTORIAL DE COMPRAS -->
     <div id="historyPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box history-box">
             <button class="close-history-btn" onclick="closeHistoryPopup()"><i class='bx bx-x'></i></button>
@@ -356,23 +418,17 @@
                 <button class="tab-btn" onclick="switchHistoryTab('gastos', this)">Detalle de Gastos</button>
             </div>
 
-            <!-- Pestaña 1: Estado -->
             <div id="tab-recargas" class="tab-content active">
                 <div class="status-section">
                     <h3><i class='bx bx-time-five' style="color: var(--neon-yellow);"></i> Órdenes Pendientes</h3>
-                    <div id="pendingOrdersList" class="history-list">
-                        <!-- Render dinámico -->
-                    </div>
+                    <div id="pendingOrdersList" class="history-list"></div>
                 </div>
                 <div class="status-section" style="margin-top: 15px;">
                     <h3><i class='bx bx-check-double' style="color: var(--neon-green);"></i> Órdenes Aprobadas</h3>
-                    <div id="approvedOrdersList" class="history-list">
-                        <!-- Render dinámico -->
-                    </div>
+                    <div id="approvedOrdersList" class="history-list"></div>
                 </div>
             </div>
 
-            <!-- Pestaña 2: Gastos -->
             <div id="tab-gastos" class="tab-content">
                 <div class="total-spent-box">
                     <span>Total Invertido:</span>
@@ -381,16 +437,9 @@
                 <div class="history-table-wrapper">
                     <table class="history-table">
                         <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Paquete</th>
-                                <th>ID Destino</th>
-                                <th>Costo</th>
-                            </tr>
+                            <tr><th>Fecha</th><th>Paquete</th><th>ID Destino</th><th>Costo</th></tr>
                         </thead>
-                        <tbody id="expensesTableBody">
-                            <!-- Render dinámico -->
-                        </tbody>
+                        <tbody id="expensesTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -410,7 +459,6 @@
         for (let i = 0; i < 60; i++) particles.push(new Particle());
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
 
-        // Control visual de Pestañas del Historial
         window.switchHistoryTab = (tabId, btnElement) => {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -421,18 +469,18 @@
 
     <script type="module">
         import { auth, db, onAuthStateChanged, signOut, ref, child } from './firebase-config.js';
-        // SE AÑADIÓ 'get' como 'getDB' para usarlo en la validación de gastos sin generar conflictos
         import { onValue, update, push, serverTimestamp, query, orderByChild, equalTo, get as getDB } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ================= CONFIGURACIÓN DE PAQUETES =================
+        // ================= CONFIGURACIÓN DE PAQUETES CON IMÁGENES =================
+        // Se agregaron links de imágenes PNG transparentes de diamantes/cofres según la cantidad
         const packages = [
-            { id: "pkg_110", name: "110 Diamantes", priceClient: 1.01, priceSocio: 0.95, amount: 110 },
-            { id: "pkg_220", name: "220 Diamantes", priceClient: 2.02, priceSocio: 1.90, amount: 220 },
-            { id: "pkg_341", name: "341 Diamantes", priceClient: 3.34, priceSocio: 3.10, amount: 341 },
-            { id: "pkg_572", name: "572 Diamantes", priceClient: 4.67, priceSocio: 4.30, amount: 572 },
-            { id: "pkg_1160", name: "1160 Diamantes", priceClient: 8.68, priceSocio: 8.00, amount: 1160 },
-            { id: "pkg_2398", name: "2398 Diamantes", priceClient: 17.35, priceSocio: 16.00, amount: 2398 },
-            { id: "pkg_6160", name: "6160 Diamantes", priceClient: 43.78, priceSocio: 40.50, amount: 6160 }
+            { id: "pkg_110", name: "110 Diamantes", priceClient: 1.01, priceSocio: 0.95, amount: 110, img: "https://cdn-icons-png.flaticon.com/512/755/755106.png" },
+            { id: "pkg_220", name: "220 Diamantes", priceClient: 2.02, priceSocio: 1.90, amount: 220, img: "https://cdn-icons-png.flaticon.com/512/2850/2850125.png" },
+            { id: "pkg_341", name: "341 Diamantes", priceClient: 3.34, priceSocio: 3.10, amount: 341, img: "https://cdn-icons-png.flaticon.com/512/2850/2850125.png" },
+            { id: "pkg_572", name: "572 Diamantes", priceClient: 4.67, priceSocio: 4.30, amount: 572, img: "https://cdn-icons-png.flaticon.com/512/2651/2651036.png" },
+            { id: "pkg_1160", name: "1160 Diamantes", priceClient: 8.68, priceSocio: 8.00, amount: 1160, img: "https://cdn-icons-png.flaticon.com/512/2651/2651036.png" },
+            { id: "pkg_2398", name: "2398 Diamantes", priceClient: 17.35, priceSocio: 16.00, amount: 2398, img: "https://cdn-icons-png.flaticon.com/512/5029/5029141.png" },
+            { id: "pkg_6160", name: "6160 Diamantes", priceClient: 43.78, priceSocio: 40.50, amount: 6160, img: "https://cdn-icons-png.flaticon.com/512/4741/4741438.png" }
         ];
 
         let currentUser = null;
@@ -445,13 +493,13 @@
             signOut(auth).then(()=>window.location.href="login.html");
         };
 
-        // Renderizado dinámico de la tienda
+        // Renderizado de las nuevas tarjetas Premium
         function renderStore() {
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = ''; 
             
             if(userIsSocio) {
-                document.getElementById('userRoleBadge').style.display = 'inline-block';
+                document.getElementById('userRoleBadge').style.display = 'inline-flex';
             } else {
                 document.getElementById('userRoleBadge').style.display = 'none';
             }
@@ -461,12 +509,17 @@
                 const currencyDisplay = userIsSocio ? "XitCoins" : "$ Saldo";
                 
                 grid.innerHTML += `
-                    <div class="card">
-                        <div class="card-icon"><i class='bx bxs-diamond'></i></div>
+                    <div class="premium-card">
+                        <div class="card-img-wrapper">
+                            <img src="${pkg.img}" alt="Diamantes Free Fire">
+                        </div>
                         <div class="card-title">${pkg.name}</div>
-                        <div class="card-price">${finalPrice.toFixed(2)} <span>${currencyDisplay}</span></div>
-                        <button class="btn-buy" onclick="window.openBuyPopup('${pkg.id}')">
-                            <i class='bx bx-cart'></i> Recargar ID
+                        <div class="card-price-box">
+                            <div class="card-price">${finalPrice.toFixed(2)}</div>
+                            <div class="card-currency">${currencyDisplay}</div>
+                        </div>
+                        <button class="btn-buy-modern" onclick="window.openBuyPopup('${pkg.id}')">
+                            <i class='bx bx-cart-add'></i> ADQUIRIR PAQUETE
                         </button>
                     </div>
                 `;
@@ -481,31 +534,23 @@
             const finalPrice = userIsSocio ? selectedPackage.priceSocio : selectedPackage.priceClient;
             const currencyDisplay = userIsSocio ? "XitCoins" : "Saldo Normal";
             
+            // Inyectamos la imagen en el modal también
+            document.getElementById('modalImgWrapper').innerHTML = `<img src="${selectedPackage.img}" style="width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(0,238,255,0.5));">`;
+            
             document.getElementById('buyPackageName').innerText = selectedPackage.name;
             document.getElementById('buyPackagePrice').innerText = finalPrice.toFixed(2);
-            
-            const currencyLabel = document.getElementById('buyCurrencyLabel');
-            if (currencyLabel) currencyLabel.innerText = currencyDisplay;
+            document.getElementById('buyCurrencyLabel').innerText = currencyDisplay;
 
             document.getElementById('freeFireIdInput').value = '';
             document.getElementById('buyErrorMsg').style.display = 'none';
             document.getElementById('buyPopupOverlay').classList.add('show');
         };
 
-        window.closeBuyPopup = () => {
-            document.getElementById('buyPopupOverlay').classList.remove('show');
-            selectedPackage = null;
-        };
+        window.closeBuyPopup = () => document.getElementById('buyPopupOverlay').classList.remove('show');
+        window.closeSuccessPopup = () => document.getElementById('successPopupOverlay').classList.remove('show');
+        window.closeUpgradePopup = () => document.getElementById('upgradePopupOverlay').classList.remove('show');
 
-        window.closeSuccessPopup = () => {
-            document.getElementById('successPopupOverlay').classList.remove('show');
-        };
-
-        window.closeUpgradePopup = () => {
-            document.getElementById('upgradePopupOverlay').classList.remove('show');
-        };
-
-        // Lógica de Compra
+        // Lógica de Compra e Historial Intacta
         document.getElementById('confirmPayBtn').onclick = async () => {
             if (!currentUser || !userData || !selectedPackage) return;
 
@@ -513,18 +558,17 @@
             const errorMsg = document.getElementById('buyErrorMsg');
             
             if (ffId === "" || ffId.length < 5) {
-                errorMsg.innerText = "Por favor, ingresa un ID de Free Fire válido.";
+                errorMsg.innerText = "Error: ID de Jugador Inválido.";
                 errorMsg.style.display = 'block';
                 return;
             }
 
             const finalPrice = userIsSocio ? selectedPackage.priceSocio : selectedPackage.priceClient;
-            
             const currentBalance = userIsSocio ? parseFloat(userData.xitcoins || 0) : parseFloat(userData.balance || 0);
             const currencyName = userIsSocio ? "XitCoins" : "Saldo Normal";
 
             if (currentBalance < finalPrice) {
-                errorMsg.innerText = `❌ Saldo insuficiente de ${currencyName} para este paquete.`;
+                errorMsg.innerText = `❌ Saldo insuficiente de ${currencyName}.`;
                 errorMsg.style.display = 'block';
                 return;
             }
@@ -534,13 +578,11 @@
             btn.disabled = true;
 
             try {
-                // 1. Restar Saldo
                 const newBalance = currentBalance - finalPrice;
                 const userRef = ref(db, `users/${currentUser.uid}`);
                 const updatePayload = userIsSocio ? { xitcoins: newBalance } : { balance: newBalance };
                 await update(userRef, updatePayload);
 
-                // 2. Registrar Pedido
                 const ordersRef = ref(db, 'diamond_orders');
                 await push(ordersRef, {
                     uid: currentUser.uid,
@@ -554,39 +596,26 @@
                     fecha: serverTimestamp()
                 });
 
-                // ==========================================
-                // 3. SISTEMA AUTOMÁTICO DE ASCENSO A SOCIO
-                // ==========================================
                 if (!userIsSocio) {
-                    // Consultamos todo lo que ha gastado el usuario sumando sus pedidos
                     const q = query(ordersRef, orderByChild('uid'), equalTo(currentUser.uid));
                     const snapshot = await getDB(q);
                     
                     let totalSpentNow = 0;
                     if (snapshot.exists()) {
-                        snapshot.forEach(child => {
-                            totalSpentNow += parseFloat(child.val().precio_cobrado || 0);
-                        });
+                        snapshot.forEach(child => totalSpentNow += parseFloat(child.val().precio_cobrado || 0));
                     }
 
-                    // Validamos si supera los $15
                     if (totalSpentNow >= 15) {
-                        // Lo convertimos en socio
                         await update(userRef, { isSocio: true });
-                        
-                        // Ocultamos modal de compra y mostramos el de ASCENSO (que reemplaza al de éxito normal)
                         window.closeBuyPopup();
                         document.getElementById('upgradePopupOverlay').classList.add('show');
                         loadUserHistory();
-                        
-                        btn.innerText = "PAGAR";
+                        btn.innerText = "CONFIRMAR PAGO";
                         btn.disabled = false;
-                        return; // Terminamos la función aquí
+                        return;
                     }
                 }
-                // ==========================================
 
-                // Cierre y Éxito normal si no hubo ascenso
                 window.closeBuyPopup();
                 document.getElementById('successPopupOverlay').classList.add('show');
                 loadUserHistory();
@@ -596,24 +625,20 @@
                 errorMsg.innerText = "Error de conexión. Intenta nuevamente.";
                 errorMsg.style.display = 'block';
             } finally {
-                btn.innerText = "PAGAR";
+                btn.innerText = "CONFIRMAR PAGO";
                 btn.disabled = false;
             }
         };
 
-        // ================= SISTEMA DE HISTORIAL =================
         window.openHistoryPopup = () => {
             document.getElementById('historyPopupOverlay').classList.add('show');
             loadUserHistory();
         };
 
-        window.closeHistoryPopup = () => {
-            document.getElementById('historyPopupOverlay').classList.remove('show');
-        };
+        window.closeHistoryPopup = () => document.getElementById('historyPopupOverlay').classList.remove('show');
 
         function loadUserHistory() {
             if (!currentUser) return;
-            
             const ordersRef = ref(db, 'diamond_orders');
             const q = query(ordersRef, orderByChild('uid'), equalTo(currentUser.uid));
 
@@ -629,10 +654,7 @@
 
                 if (snapshot.exists()) {
                     let orders = [];
-                    snapshot.forEach(child => {
-                        orders.push({ key: child.key, ...child.val() });
-                    });
-
+                    snapshot.forEach(child => orders.push({ key: child.key, ...child.val() }));
                     orders.reverse();
 
                     orders.forEach(order => {
@@ -648,29 +670,16 @@
                         const isPending = order.estado === 'Pendiente';
                         const itemHtml = `
                             <div class="history-item ${isPending ? 'pending-item' : 'approved-item'}">
-                                <div>
-                                    <strong style="color: #fff;">${order.paquete}</strong><br>
-                                    <span style="font-size: 0.8rem; color: #888;">ID Destino: <span style="color:var(--neon-blue);">${order.id_free_fire}</span></span>
-                                </div>
-                                <div class="status-badge ${isPending ? 'pending' : 'approved'}">
-                                    ${order.estado}
-                                </div>
+                                <div><strong style="color: #fff;">${order.paquete}</strong><br><span style="font-size: 0.8rem; color: #888;">ID: <span style="color:var(--neon-blue);">${order.id_free_fire}</span></span></div>
+                                <div class="status-badge ${isPending ? 'pending' : 'approved'}">${order.estado}</div>
                             </div>
                         `;
 
-                        if (isPending) {
-                            pendingList.innerHTML += itemHtml;
-                        } else {
-                            approvedList.innerHTML += itemHtml;
-                        }
+                        if (isPending) pendingList.innerHTML += itemHtml;
+                        else approvedList.innerHTML += itemHtml;
 
                         expensesTable.innerHTML += `
-                            <tr>
-                                <td style="font-size: 0.8rem;">${dateStr}</td>
-                                <td style="color: #fff;">${order.paquete}</td>
-                                <td style="font-family: monospace; color: var(--neon-blue);">${order.id_free_fire}</td>
-                                <td style="color: var(--neon-pink); font-family: 'Orbitron';">-${price.toFixed(2)}</td>
-                            </tr>
+                            <tr><td style="font-size: 0.8rem;">${dateStr}</td><td style="color: #fff;">${order.paquete}</td><td style="font-family: monospace; color: var(--neon-blue);">${order.id_free_fire}</td><td style="color: var(--neon-pink); font-family: 'Orbitron';">-$${price.toFixed(2)}</td></tr>
                         `;
                     });
 
@@ -678,17 +687,16 @@
                     if(approvedList.innerHTML === '') approvedList.innerHTML = '<p style="color:#666; text-align:center; padding: 10px;">Aún no hay órdenes completadas.</p>';
 
                 } else {
-                    const noDataHtml = '<p style="color:#666; text-align:center; padding: 15px;">No se encontraron registros de compras.</p>';
+                    const noDataHtml = '<p style="color:#666; text-align:center; padding: 15px;">No se encontraron registros.</p>';
                     pendingList.innerHTML = noDataHtml;
                     approvedList.innerHTML = noDataHtml;
-                    expensesTable.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#666;">No hay datos de gastos registrados.</td></tr>`;
+                    expensesTable.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#666;">Sin gastos registrados.</td></tr>`;
                 }
 
                 document.getElementById('totalSpentValue').innerText = totalSpent.toFixed(2);
             });
         }
 
-        // Escucha de sesión y datos en tiempo real
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -708,7 +716,6 @@
                         document.getElementById('balanceDisplay').innerText = parseFloat(userData.balance || 0).toFixed(2);
                         document.getElementById('xitcoinsDisplay').innerText = parseFloat(userData.xitcoins || 0).toFixed(2);
 
-                        // Se re-renderiza la tienda si hay cambios en el rol 'isSocio' en tiempo real
                         renderStore();
                     }
                 });
