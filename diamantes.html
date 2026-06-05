@@ -49,7 +49,7 @@
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.8; }
         
         /* =========================================
-           2. BARRA SUPERIOR (INTACTA)
+           2. BARRA SUPERIOR
            ========================================= */
         .top-bar { 
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%); 
@@ -87,7 +87,7 @@
         .badge.history-btn i { color: #fff; }
 
         /* =========================================
-           3. MENÚ LATERAL CYBERPUNK (INTACTO)
+           3. MENÚ LATERAL CYBERPUNK
            ========================================= */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.4s; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
@@ -105,7 +105,7 @@
         .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron'; cursor: pointer; display: flex; justify-content: center; gap: 8px; }
 
         /* =========================================
-           4. NUEVO DISEÑO CHINGÓN: TIENDA & CARDS
+           4. DISEÑO CHINGÓN: TIENDA & CARDS
            ========================================= */
         .main-wrapper { width: 100%; max-width: 1200px; padding: 100px 20px 40px 20px; z-index: 10; display: flex; flex-direction: column; align-items: center; }
         
@@ -118,7 +118,6 @@
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; width: 100%; margin-bottom: 60px; perspective: 1000px;}
         
-        /* Rediseño Completo de la Tarjeta */
         .premium-card {
             background: linear-gradient(160deg, rgba(20, 5, 35, 0.8) 0%, rgba(5, 0, 15, 0.9) 100%);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -135,7 +134,6 @@
             z-index: 1;
         }
 
-        /* Efecto de Brillo de Fondo Animado */
         .premium-card::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: conic-gradient(from 0deg, transparent 70%, var(--neon-blue) 80%, transparent 100%);
@@ -152,7 +150,6 @@
         
         @keyframes rotateBg { 100% { transform: rotate(360deg); } }
 
-        /* Contenedor de la Imagen Real (Animación Flotante) */
         .card-img-wrapper {
             width: 130px; height: 130px;
             margin-bottom: 25px;
@@ -166,13 +163,11 @@
 
         @keyframes floatImg { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        /* Textos de la Tarjeta */
         .card-title { font-size: 1.3rem; font-weight: 800; font-family: 'Orbitron', sans-serif; color: #fff; text-align: center; letter-spacing: 1px; margin-bottom: 5px; text-transform: uppercase;}
         .card-price-box { background: rgba(0,0,0,0.5); padding: 8px 20px; border-radius: 12px; margin: 15px 0 25px 0; border: 1px dashed rgba(255, 0, 85, 0.4); display: flex; flex-direction: column; align-items: center; width: 100%; }
         .card-price { font-size: 1.8rem; font-family: 'Orbitron', sans-serif; color: var(--neon-pink); font-weight: 900; text-shadow: 0 0 10px rgba(255, 0, 85, 0.5); line-height: 1; }
         .card-currency { font-size: 0.8rem; color: #aaa; font-family: 'Exo 2'; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
         
-        /* Botón de Compra Moderno */
         .btn-buy-modern {
             width: 100%; background: linear-gradient(90deg, rgba(0, 238, 255, 0.1), rgba(0, 238, 255, 0.05));
             color: var(--neon-blue); border: 1px solid var(--neon-blue); border-radius: 12px;
@@ -185,7 +180,6 @@
         .btn-buy-modern:hover::before { left: 100%; }
         .btn-buy-modern i { font-size: 1.3rem; }
 
-        /* Panel Info Rediseñado (Estilo HUD Futuro) */
         .modern-hud-panel {
             background: linear-gradient(135deg, rgba(15, 5, 25, 0.9), rgba(5, 0, 10, 0.95));
             border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 20px;
@@ -203,7 +197,7 @@
         .hud-text strong { color: #fff; font-weight: 700; }
 
         /* =========================================
-           5. MODALES Y POPUPS GENERALES (INTACTOS)
+           5. MODALES Y POPUPS GENERALES
            ========================================= */
         .epic-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
         .epic-popup-overlay.show { opacity: 1; visibility: visible; }
@@ -225,7 +219,7 @@
         .buttons-row { display: flex; gap: 15px; }
 
         /* =========================================
-           6. MODAL DE HISTORIAL (INTACTO)
+           6. MODAL DE HISTORIAL
            ========================================= */
         .history-box { max-width: 700px; padding: 30px 20px; border-color: var(--neon-purple); }
         .close-history-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #aaa; font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
@@ -279,7 +273,7 @@
         <div class="magic-ring ring-inner"></div>
     </div>
 
-    <!-- TOP BAR (INTACTA) -->
+    <!-- TOP BAR -->
     <div class="top-bar">
         <div class="top-bar-left">
             <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
@@ -300,7 +294,7 @@
         </div>
     </div>
 
-    <!-- SIDEBAR (INTACTO) -->
+    <!-- SIDEBAR -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -322,7 +316,7 @@
 
     <canvas id="particle-canvas"></canvas>
 
-    <!-- ÁREA PRINCIPAL REDISEÑADA -->
+    <!-- ÁREA PRINCIPAL -->
     <div class="main-wrapper">
         
         <div class="header-container">
@@ -332,10 +326,8 @@
             </div>
         </div>
 
-        <!-- El grid donde se inyectan las tarjetas con las nuevas imágenes -->
         <div class="grid" id="packagesGrid"></div>
 
-        <!-- Panel de información estilo HUD -->
         <div class="modern-hud-panel">
             <h3><i class='bx bx-radar'></i> Transmisión de Protocolo de Recarga</h3>
             <div class="hud-grid">
@@ -356,11 +348,11 @@
 
     </div>
 
-    <!-- MODAL DE COMPRA -->
+    <!-- MODALES -->
     <div id="buyPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box">
             <div class="epic-icon-wrapper" id="modalImgWrapper" style="background: transparent; border: none; height: auto;">
-                <!-- Aquí se inyecta la imagen del paquete dinámicamente -->
+                <!-- Aquí se inyecta la imagen local -->
             </div>
             <h2 class="epic-title" id="buyPackageName">Nombre Paquete</h2>
             <p class="epic-msg" style="color: var(--neon-pink); font-size: 1.6rem; font-family: 'Orbitron'; font-weight: 900; margin-top: -10px;">
@@ -378,7 +370,6 @@
         </div>
     </div>
 
-    <!-- MODALES DE ÉXITO, UPGRADE E HISTORIAL (SE MANTIENEN IGUAL) -->
     <div id="successPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box" style="border-color: var(--neon-green);">
             <div class="epic-icon-wrapper" style="color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,204,0.1);"><i class='bx bx-check-double'></i></div>
@@ -447,7 +438,6 @@
     </div>
 
     <script>
-        // Control del Menú Lateral y Partículas
         const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
         document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
         document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
@@ -471,16 +461,15 @@
         import { auth, db, onAuthStateChanged, signOut, ref, child } from './firebase-config.js';
         import { onValue, update, push, serverTimestamp, query, orderByChild, equalTo, get as getDB } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ================= CONFIGURACIÓN DE PAQUETES CON IMÁGENES =================
-        // Se agregaron links de imágenes PNG transparentes de diamantes/cofres según la cantidad
+        // ================= CONFIGURACIÓN DE PAQUETES CON IMÁGENES LOCALES =================
         const packages = [
-            { id: "pkg_110", name: "110 Diamantes", priceClient: 1.01, priceSocio: 0.95, amount: 110, img: "https://cdn-icons-png.flaticon.com/512/755/755106.png" },
-            { id: "pkg_220", name: "220 Diamantes", priceClient: 2.02, priceSocio: 1.90, amount: 220, img: "https://cdn-icons-png.flaticon.com/512/2850/2850125.png" },
-            { id: "pkg_341", name: "341 Diamantes", priceClient: 3.34, priceSocio: 3.10, amount: 341, img: "https://cdn-icons-png.flaticon.com/512/2850/2850125.png" },
-            { id: "pkg_572", name: "572 Diamantes", priceClient: 4.67, priceSocio: 4.30, amount: 572, img: "https://cdn-icons-png.flaticon.com/512/2651/2651036.png" },
-            { id: "pkg_1160", name: "1160 Diamantes", priceClient: 8.68, priceSocio: 8.00, amount: 1160, img: "https://cdn-icons-png.flaticon.com/512/2651/2651036.png" },
-            { id: "pkg_2398", name: "2398 Diamantes", priceClient: 17.35, priceSocio: 16.00, amount: 2398, img: "https://cdn-icons-png.flaticon.com/512/5029/5029141.png" },
-            { id: "pkg_6160", name: "6160 Diamantes", priceClient: 43.78, priceSocio: 40.50, amount: 6160, img: "https://cdn-icons-png.flaticon.com/512/4741/4741438.png" }
+            { id: "pkg_110", name: "110 Diamantes", priceClient: 1.01, priceSocio: 0.95, amount: 110, img: "Logo/110diamantes.png" },
+            { id: "pkg_220", name: "220 Diamantes", priceClient: 2.02, priceSocio: 1.90, amount: 220, img: "Logo/220diamantes.png" },
+            { id: "pkg_341", name: "341 Diamantes", priceClient: 3.34, priceSocio: 3.10, amount: 341, img: "Logo/341diamantes.png" },
+            { id: "pkg_572", name: "572 Diamantes", priceClient: 4.67, priceSocio: 4.30, amount: 572, img: "Logo/572diamantes.png" },
+            { id: "pkg_1160", name: "1160 Diamantes", priceClient: 8.68, priceSocio: 8.00, amount: 1160, img: "Logo/1160diamantes.png" },
+            { id: "pkg_2398", name: "2398 Diamantes", priceClient: 17.35, priceSocio: 16.00, amount: 2398, img: "Logo/2398diamantes.png" },
+            { id: "pkg_6160", name: "6160 Diamantes", priceClient: 43.78, priceSocio: 40.50, amount: 6160, img: "Logo/6160diamantes.png" }
         ];
 
         let currentUser = null;
@@ -493,7 +482,6 @@
             signOut(auth).then(()=>window.location.href="login.html");
         };
 
-        // Renderizado de las nuevas tarjetas Premium
         function renderStore() {
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = ''; 
@@ -511,7 +499,7 @@
                 grid.innerHTML += `
                     <div class="premium-card">
                         <div class="card-img-wrapper">
-                            <img src="${pkg.img}" alt="Diamantes Free Fire">
+                            <img src="${pkg.img}" alt="Diamantes Free Fire" onerror="this.src='https://cdn-icons-png.flaticon.com/512/755/755106.png'">
                         </div>
                         <div class="card-title">${pkg.name}</div>
                         <div class="card-price-box">
@@ -526,7 +514,6 @@
             });
         }
 
-        // ================= MODALES =================
         window.openBuyPopup = (packageId) => {
             selectedPackage = packages.find(p => p.id === packageId);
             if(!selectedPackage) return;
@@ -534,8 +521,7 @@
             const finalPrice = userIsSocio ? selectedPackage.priceSocio : selectedPackage.priceClient;
             const currencyDisplay = userIsSocio ? "XitCoins" : "Saldo Normal";
             
-            // Inyectamos la imagen en el modal también
-            document.getElementById('modalImgWrapper').innerHTML = `<img src="${selectedPackage.img}" style="width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(0,238,255,0.5));">`;
+            document.getElementById('modalImgWrapper').innerHTML = `<img src="${selectedPackage.img}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/755/755106.png'" style="width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(0,238,255,0.5));">`;
             
             document.getElementById('buyPackageName').innerText = selectedPackage.name;
             document.getElementById('buyPackagePrice').innerText = finalPrice.toFixed(2);
@@ -550,7 +536,6 @@
         window.closeSuccessPopup = () => document.getElementById('successPopupOverlay').classList.remove('show');
         window.closeUpgradePopup = () => document.getElementById('upgradePopupOverlay').classList.remove('show');
 
-        // Lógica de Compra e Historial Intacta
         document.getElementById('confirmPayBtn').onclick = async () => {
             if (!currentUser || !userData || !selectedPackage) return;
 
