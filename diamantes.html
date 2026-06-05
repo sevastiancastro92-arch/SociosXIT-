@@ -83,7 +83,6 @@
         .badge.xitcoin span { color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); font-size: 0.95rem; }
         .badge.xitcoin i { color: var(--neon-blue); }
 
-        /* Botón especial Mis Compras en Top Bar */
         .badge.history-btn { border-color: rgba(188, 19, 254, 0.6); background: rgba(188, 19, 254, 0.1); }
         .badge.history-btn:hover { background: var(--neon-purple); border-color: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); }
         .badge.history-btn i { color: #fff; }
@@ -227,6 +226,7 @@
             <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
         </div>
         <div class="top-bar-right">
+            <!-- BOTÓN DE COMPRAS -->
             <div class="badge history-btn" onclick="openHistoryPopup()">
                 <i class='bx bx-receipt'></i> <span>Mis Compras</span>
             </div>
@@ -293,6 +293,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE COMPRA -->
     <div id="buyPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box">
             <div class="epic-icon-wrapper"><i class='bx bxs-diamond'></i></div>
@@ -313,6 +314,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE ÉXITO -->
     <div id="successPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box" style="border-color: var(--neon-green);">
             <div class="epic-icon-wrapper" style="color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,204,0.1);"><i class='bx bx-check-double'></i></div>
@@ -325,6 +327,23 @@
         </div>
     </div>
 
+    <!-- MODAL DE NUEVO SOCIO (AUTO-UPGRADE) -->
+    <div id="upgradePopupOverlay" class="epic-popup-overlay">
+        <div class="epic-popup-box" style="border-color: var(--neon-purple);">
+            <div class="epic-icon-wrapper" style="color: var(--neon-purple); border-color: var(--neon-purple); background: rgba(188, 19, 254,0.1);"><i class='bx bxs-crown'></i></div>
+            <h2 class="epic-title" style="color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple);">¡NUEVO RANGO DESBLOQUEADO!</h2>
+            <p class="epic-msg">Has superado los $15.00 en compras totales.</p>
+            <p class="epic-msg" style="color: var(--neon-blue); font-weight: bold; font-size: 1.1rem;">
+                ¡Felicidades! Ahora eres <span style="color: var(--neon-purple); text-shadow: 0 0 5px var(--neon-purple);">SOCIO ACTIVO</span>.
+            </p>
+            <p class="epic-msg" style="font-size: 0.9rem;">
+                A partir de ahora, disfrutarás de <strong>precios especiales reducidos</strong> y realizarás tus compras usando exclusivamente tu saldo de <strong>XitCoins</strong>.
+            </p>
+            <button onclick="closeUpgradePopup()" class="btn-epic-secondary" style="border-color: var(--neon-purple); color: var(--neon-purple);">¡INCREÍBLE!</button>
+        </div>
+    </div>
+
+    <!-- MODAL: HISTORIAL DE COMPRAS -->
     <div id="historyPopupOverlay" class="epic-popup-overlay">
         <div class="epic-popup-box history-box">
             <button class="close-history-btn" onclick="closeHistoryPopup()"><i class='bx bx-x'></i></button>
@@ -337,19 +356,23 @@
                 <button class="tab-btn" onclick="switchHistoryTab('gastos', this)">Detalle de Gastos</button>
             </div>
 
+            <!-- Pestaña 1: Estado -->
             <div id="tab-recargas" class="tab-content active">
                 <div class="status-section">
                     <h3><i class='bx bx-time-five' style="color: var(--neon-yellow);"></i> Órdenes Pendientes</h3>
                     <div id="pendingOrdersList" class="history-list">
-                        </div>
+                        <!-- Render dinámico -->
+                    </div>
                 </div>
                 <div class="status-section" style="margin-top: 15px;">
                     <h3><i class='bx bx-check-double' style="color: var(--neon-green);"></i> Órdenes Aprobadas</h3>
                     <div id="approvedOrdersList" class="history-list">
-                        </div>
+                        <!-- Render dinámico -->
+                    </div>
                 </div>
             </div>
 
+            <!-- Pestaña 2: Gastos -->
             <div id="tab-gastos" class="tab-content">
                 <div class="total-spent-box">
                     <span>Total Invertido:</span>
@@ -366,7 +389,8 @@
                             </tr>
                         </thead>
                         <tbody id="expensesTableBody">
-                            </tbody>
+                            <!-- Render dinámico -->
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -396,9 +420,9 @@
     </script>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, signOut, ref, get, child } from './firebase-config.js';
-        // SE AÑADIERON query, orderByChild, equalTo para poder filtrar las compras del usuario actual
-        import { onValue, update, push, serverTimestamp, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { auth, db, onAuthStateChanged, signOut, ref, child } from './firebase-config.js';
+        // SE AÑADIÓ 'get' como 'getDB' para usarlo en la validación de gastos sin generar conflictos
+        import { onValue, update, push, serverTimestamp, query, orderByChild, equalTo, get as getDB } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // ================= CONFIGURACIÓN DE PAQUETES =================
         const packages = [
@@ -428,6 +452,8 @@
             
             if(userIsSocio) {
                 document.getElementById('userRoleBadge').style.display = 'inline-block';
+            } else {
+                document.getElementById('userRoleBadge').style.display = 'none';
             }
 
             packages.forEach(pkg => {
@@ -447,7 +473,7 @@
             });
         }
 
-        // ================= MODALES DE COMPRA =================
+        // ================= MODALES =================
         window.openBuyPopup = (packageId) => {
             selectedPackage = packages.find(p => p.id === packageId);
             if(!selectedPackage) return;
@@ -473,6 +499,10 @@
 
         window.closeSuccessPopup = () => {
             document.getElementById('successPopupOverlay').classList.remove('show');
+        };
+
+        window.closeUpgradePopup = () => {
+            document.getElementById('upgradePopupOverlay').classList.remove('show');
         };
 
         // Lógica de Compra
@@ -504,11 +534,13 @@
             btn.disabled = true;
 
             try {
+                // 1. Restar Saldo
                 const newBalance = currentBalance - finalPrice;
                 const userRef = ref(db, `users/${currentUser.uid}`);
                 const updatePayload = userIsSocio ? { xitcoins: newBalance } : { balance: newBalance };
                 await update(userRef, updatePayload);
 
+                // 2. Registrar Pedido
                 const ordersRef = ref(db, 'diamond_orders');
                 await push(ordersRef, {
                     uid: currentUser.uid,
@@ -522,9 +554,41 @@
                     fecha: serverTimestamp()
                 });
 
+                // ==========================================
+                // 3. SISTEMA AUTOMÁTICO DE ASCENSO A SOCIO
+                // ==========================================
+                if (!userIsSocio) {
+                    // Consultamos todo lo que ha gastado el usuario sumando sus pedidos
+                    const q = query(ordersRef, orderByChild('uid'), equalTo(currentUser.uid));
+                    const snapshot = await getDB(q);
+                    
+                    let totalSpentNow = 0;
+                    if (snapshot.exists()) {
+                        snapshot.forEach(child => {
+                            totalSpentNow += parseFloat(child.val().precio_cobrado || 0);
+                        });
+                    }
+
+                    // Validamos si supera los $15
+                    if (totalSpentNow >= 15) {
+                        // Lo convertimos en socio
+                        await update(userRef, { isSocio: true });
+                        
+                        // Ocultamos modal de compra y mostramos el de ASCENSO (que reemplaza al de éxito normal)
+                        window.closeBuyPopup();
+                        document.getElementById('upgradePopupOverlay').classList.add('show');
+                        loadUserHistory();
+                        
+                        btn.innerText = "PAGAR";
+                        btn.disabled = false;
+                        return; // Terminamos la función aquí
+                    }
+                }
+                // ==========================================
+
+                // Cierre y Éxito normal si no hubo ascenso
                 window.closeBuyPopup();
                 document.getElementById('successPopupOverlay').classList.add('show');
-                // Al comprar, actualizamos los historiales de fondo
                 loadUserHistory();
 
             } catch (error) {
@@ -550,7 +614,6 @@
         function loadUserHistory() {
             if (!currentUser) return;
             
-            // Consultamos solo los pedidos que pertenecen a este usuario
             const ordersRef = ref(db, 'diamond_orders');
             const q = query(ordersRef, orderByChild('uid'), equalTo(currentUser.uid));
 
@@ -570,21 +633,18 @@
                         orders.push({ key: child.key, ...child.val() });
                     });
 
-                    // Invertimos el array para que lo más nuevo salga arriba
                     orders.reverse();
 
                     orders.forEach(order => {
                         const price = parseFloat(order.precio_cobrado || 0);
                         totalSpent += price;
                         
-                        // Parseo de fecha seguro para serverTimestamp
                         let dateStr = "Procesando...";
                         if (order.fecha) {
                             const d = new Date(order.fecha);
                             dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
                         }
 
-                        // Llenado para Listas de Estados
                         const isPending = order.estado === 'Pendiente';
                         const itemHtml = `
                             <div class="history-item ${isPending ? 'pending-item' : 'approved-item'}">
@@ -604,7 +664,6 @@
                             approvedList.innerHTML += itemHtml;
                         }
 
-                        // Llenado para Tabla de Gastos
                         expensesTable.innerHTML += `
                             <tr>
                                 <td style="font-size: 0.8rem;">${dateStr}</td>
@@ -615,7 +674,6 @@
                         `;
                     });
 
-                    // Mensajes vacíos si no hay en alguna categoría
                     if(pendingList.innerHTML === '') pendingList.innerHTML = '<p style="color:#666; text-align:center; padding: 10px;">Sin órdenes pendientes.</p>';
                     if(approvedList.innerHTML === '') approvedList.innerHTML = '<p style="color:#666; text-align:center; padding: 10px;">Aún no hay órdenes completadas.</p>';
 
@@ -626,7 +684,6 @@
                     expensesTable.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#666;">No hay datos de gastos registrados.</td></tr>`;
                 }
 
-                // Imprimir gasto total
                 document.getElementById('totalSpentValue').innerText = totalSpent.toFixed(2);
             });
         }
@@ -651,6 +708,7 @@
                         document.getElementById('balanceDisplay').innerText = parseFloat(userData.balance || 0).toFixed(2);
                         document.getElementById('xitcoinsDisplay').innerText = parseFloat(userData.xitcoins || 0).toFixed(2);
 
+                        // Se re-renderiza la tienda si hay cambios en el rol 'isSocio' en tiempo real
                         renderStore();
                     }
                 });
