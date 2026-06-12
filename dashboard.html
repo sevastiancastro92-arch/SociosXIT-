@@ -63,7 +63,7 @@
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.8; }
         
         /* =========================================
-           3. BARRA SUPERIOR HOLOGRÁFICA
+           3. BARRA SUPERIOR HOLOGRÁFICA (Estilos CSS Mantenidos)
            ========================================= */
         .top-bar { 
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%); 
@@ -96,7 +96,7 @@
         .badge.green span { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); font-size: 0.95rem; }
 
         /* =========================================
-           4. MENÚ LATERAL CYBERPUNK DINÁMICO
+           4. MENÚ LATERAL CYBERPUNK (Estilos CSS Mantenidos)
            ========================================= */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.4s ease; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
@@ -427,6 +427,8 @@
 </head>
 <body oncontextmenu="return false;"> 
 
+    <script src="menu.js"></script>
+
     <div class="adblock-overlay" id="adblockScreen" style="display: none;">
         <i class='bx bx-shield-x'></i>
         <h1>ADBLOCK DETECTADO</h1>
@@ -478,55 +480,6 @@
             <a href="https://t.me/Socios66_bot" target="_blank" class="btn-tg"><i class='bx bx-bot'></i> 1. Ir al Bot Oficial</a>
             <a href="bot.html" class="btn-auth"><i class='bx bx-link'></i> 2. Autorizar mi ID</a>
             <button class="btn-never-show" id="closeWelcomeBtn" disabled>Cerrar y no mostrar más (5s)</button>
-        </div>
-    </div>
-
-    <div class="top-bar">
-        <div class="top-bar-left">
-            <button class="menu-btn" id="openMenuBtn"><i class='bx bx-menu'></i></button>
-        </div>
-        <div class="top-bar-right">
-            <div class="badge"><i class='bx bx-calendar'></i> <span id="joinDateDisplay">--/--/----</span></div>
-            <div class="badge" onclick="window.location.href='perfil.html'">
-                <img id="topAvatar" src="https://via.placeholder.com/30/14001e/bc13fe?text=U"> 
-                <span id="topUserDisplay">...</span>
-            </div>
-            <div class="badge green"><span>$</span><span id="balanceDisplay">0.00</span></div>
-        </div>
-    </div>
-
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>Socios XIT </h2>
-            <button class="close-btn" id="closeMenuBtn"><i class='bx bx-x'></i></button>
-        </div>
-        
-        <div class="sidebar-menu">
-            <a href="dashboard.html" class="sidebar-item" style="border-left: 4px solid var(--neon-blue); background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); color: var(--neon-blue); box-shadow: -5px 0 15px rgba(0, 238, 255, 0.1); transform: translateX(5px); opacity: 1;"><i class='bx bx-home-alt-2' style="color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue);"></i> Inicio</a>
-            <a href="perfil.html" class="sidebar-item"><i class='bx bx-user-circle'></i> Mi Perfil</a>
-            <a href="index.html" class="sidebar-item"><i class='bx bx-store-alt'></i> Tienda</a>
-            <a href="ranking.html" class="sidebar-item"><i class='bx bx-trophy'></i> Rankings</a>
-            <a href="recarga.html" class="sidebar-item"><i class='bx bx-wallet'></i> Recargar Saldo</a>
-            <a href="transferir_saldo.html" class="sidebar-item"><i class='bx bx-transfer-alt'></i> Transferir Saldo</a>
-            <a href="bot.html" class="sidebar-item"><i class='bx bxl-telegram'></i> Autorizar ID</a>
-            <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
-            <a href="redes_sociales.html" class="sidebar-item">
-  <i class='bx bx-globe'></i> Seguidores Redes Sociales
-</a>
-            <a href="diamantes.html" class="sidebar-item"><i class='bx bxs-diamond'></i> Diamantes FF</a>
-                        <a href="referidos.html" class="sidebar-item active-menu"><i class='bx bx-share-alt'></i> Referidos</a>
-            <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
-            <a href="sugerencias.html" class="sidebar-item" style="border-left: 4px solid var(--neon-green);"><i class='bx bx-message-square-dots' style="color: var(--neon-green);"></i> Hacer Sugerencia</a>
-            <a href="admin.html" class="sidebar-item" id="adminMenuBtn" style="display:none; border-left: 4px solid var(--neon-pink);"><i class='bx bx-shield-quarter' style="color: var(--neon-pink);"></i> Panel Admin</a>
-        </div>
-        
-        <div class="sidebar-footer">
-            <button class="logout-btn" id="logoutMenuBtn"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
-            <div class="sidebar-version">
-                <p>Copyright SebasXit 2024 - 2026</p>
-                <div class="version-badge"><i class='bx bx-code-alt'></i> V4</div>
-            </div>
         </div>
     </div>
 
@@ -656,12 +609,7 @@
 
         closeIaBtn.addEventListener('click', () => { iaModalOverlay.classList.remove('active'); });
 
-        // --- CONTROL DEL MENÚ LATERAL Y PARTÍCULAS ---
-        const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('sidebarOverlay');
-        document.getElementById('openMenuBtn').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
-        document.getElementById('closeMenuBtn').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
-        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
-
+        // --- CONTROL DE PARTÍCULAS ---
         const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
         class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5); this.vy = (Math.random() - 0.5); this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.5 + 0.2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
@@ -678,20 +626,41 @@
 
         let initialLoad = true; let knownRecharges = {};
 
-        document.getElementById('logoutMenuBtn').onclick = (e) => { e.preventDefault(); signOut(auth).then(()=>window.location.href="login.html"); };
+        // Este botón ahora vive en menu.js, pero podemos asignarle el evento click
+        // usando delegación de eventos o esperar un poco a que cargue.
+        // La mejor manera es delegar el evento en el document:
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'logoutMenuBtn' || e.target.closest('#logoutMenuBtn')) {
+                e.preventDefault(); 
+                signOut(auth).then(() => window.location.href="login.html");
+            }
+        });
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const d = new Date(user.metadata.creationTime);
-                document.getElementById('joinDateDisplay').innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+                // Usamos validaciones por si los elementos aún no se renderizan desde menu.js
+                const joinDateEl = document.getElementById('joinDateDisplay');
+                if (joinDateEl) joinDateEl.innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+                
                 const userRef = ref(db, `users/${user.uid}`);
                 onValue(userRef, (snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        document.getElementById('topUserDisplay').innerText = data.username;
-                        document.getElementById('balanceDisplay').innerText = parseFloat(data.balance || 0).toFixed(2);
-                        if(data.avatar) document.getElementById('topAvatar').src = data.avatar;
-                        if(data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'socios xit ofc') { document.getElementById('adminMenuBtn').style.display = 'flex'; }
+                        
+                        const topUserEl = document.getElementById('topUserDisplay');
+                        const balanceEl = document.getElementById('balanceDisplay');
+                        const topAvatarEl = document.getElementById('topAvatar');
+                        const adminMenuEl = document.getElementById('adminMenuBtn');
+
+                        if (topUserEl) topUserEl.innerText = data.username;
+                        if (balanceEl) balanceEl.innerText = parseFloat(data.balance || 0).toFixed(2);
+                        if (topAvatarEl && data.avatar) topAvatarEl.src = data.avatar;
+                        
+                        if(adminMenuEl && (data.role === 'admin' || data.username.toLowerCase() === 'sebasxit' || data.username.toLowerCase() === 'socios xit ofc')) { 
+                            adminMenuEl.style.display = 'flex'; 
+                        }
+
                         if (!data.whatsapp && !sessionStorage.getItem('waAlertDismissed')) { setTimeout(() => { document.getElementById('waAlertOverlay').classList.add('show'); }, 2000); }
                         if (data.recharges) {
                             if (!initialLoad) {
