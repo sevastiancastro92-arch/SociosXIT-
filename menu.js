@@ -32,6 +32,7 @@ const menuHTML = `
             <a href="historial.html" class="sidebar-item"><i class='bx bx-history'></i> Mis Compras</a>
             <a href="redes_sociales.html" class="sidebar-item"><i class='bx bx-globe'></i> Seguidores Redes Sociales</a>
             <a href="diamantes.html" class="sidebar-item"><i class='bx bxs-diamond'></i> Diamantes FF</a>
+            <a href="downloader.html" class="sidebar-item"><i class='bx bx-cloud-download'></i> Descargar Media</a>
             <a href="referidos.html" class="sidebar-item"><i class='bx bx-share-alt'></i> Referidos</a>
             <a href="tutoriales.html" class="sidebar-item"><i class='bx bx-file'></i> Tutoriales</a>
             <a href="sugerencias.html" class="sidebar-item"><i class='bx bx-message-square-dots'></i> Hacer Sugerencia</a>
