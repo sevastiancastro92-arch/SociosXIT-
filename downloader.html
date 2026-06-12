@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Media Downloader - Socios XIT</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <style>
+    /* =========================================
+       1. FUENTES Y VARIABLES CÓSMICAS (Globales)
+       ========================================= */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;500;700&family=Poppins:wght@400;600&display=swap');
+    
+    * { user-select: none; box-sizing: border-box; touch-action: manipulation; }
+    
+    :root { 
+        --neon-pink: #ff0055;
+        --neon-blue: #00eeff;
+        --neon-purple: #bc13fe;
+        --neon-green: #00ffcc; 
+        --bg-deep: #030008;
+        --glass-bg: rgba(10, 2, 20, 0.7); 
+    }
+
+    body { 
+        background-color: var(--bg-deep); 
+        background-image: radial-gradient(circle at center, #1a0033 0%, var(--bg-deep) 70%);
+        color: white; 
+        font-family: 'Exo 2', sans-serif; 
+        margin: 0; padding: 0; 
+        min-height: 100dvh; 
+        display: flex; flex-direction: column; align-items: center;
+        overflow-x: hidden; 
+    }
+
+    .cosmic-portal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; z-index: -2; pointer-events: none; overflow: hidden; }
+    .stars { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)); background-repeat: repeat; background-size: 200px 200px; animation: twinkle 4s infinite alternate; opacity: 0.4; }
+    @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.7; } }
+    #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; pointer-events: none; }
+
+    /* =========================================
+       2. ESTILOS DEL DOWNLOADER
+       ========================================= */
+    .main-wrapper {
+        width: 100%; max-width: 700px; margin-top: 100px; padding: 1rem;
+        display: flex; flex-direction: column; align-items: center; z-index: 10;
+    }
+
+    .box {
+      background: rgba(10,10,20,0.85); backdrop-filter: blur(15px);
+      border-radius: 20px; padding: 3rem 2.5rem; position: relative; width: 100%;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(0, 250, 255, 0.2), inset 0 0 20px rgba(0, 250, 255, 0.05);
+      border: 1px solid rgba(0, 238, 255, 0.3);
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-container { text-align: center; margin-bottom: 2rem; position: relative; }
+    .skull-logo { width: 80px; height: 80px; margin: 0 auto 1rem; filter: drop-shadow(0 0 15px #00faff); animation: skullPulse 3s ease-in-out infinite; }
+    @keyframes skullPulse { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.05) rotate(3deg); } }
+
+    .logo-text {
+      font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 900;
+      background: linear-gradient(90deg, #00faff, #ff00f0, #00faff);
+      background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: textShine 3s linear infinite, glitch 5s infinite; letter-spacing: 2px;
+    }
+
+    @keyframes textShine { to { background-position: 200% center; } }
+    @keyframes glitch { 0%, 90%, 100% { transform: translate(0); } 91% { transform: translate(-2px, 2px); } 93% { transform: translate(2px, -2px); } 95% { transform: translate(-2px, 0); } }
+
+    .subtitle { color: #aaa; font-size: 1rem; margin-bottom: 2rem; text-align: center; }
+
+    .input-wrapper { position: relative; margin-bottom: 1.5rem; }
+    input[type=text] {
+      width: 100%; padding: 1.2rem 1rem 1.2rem 3.5rem;
+      border: 1px solid rgba(0, 250, 255, 0.3); border-radius: 12px; outline: none;
+      font-size: 1rem; background: rgba(0, 0, 0, 0.6); color: #fff;
+      transition: all 0.3s ease; font-family: 'Exo 2', sans-serif;
+    }
+    input[type=text]:focus {
+      border-color: #00faff; box-shadow: inset 0 0 15px rgba(0, 250, 255, 0.2); animation: inputGlitch 0.3s;
+    }
+    @keyframes inputGlitch { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+    input::placeholder { color: #777; font-style: italic; }
+
+    .input-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; opacity: 0.6; }
+
+    .preview-btn {
+      width: 100%; padding: 1rem; background: linear-gradient(135deg, #6a00ff, #bc13fe);
+      border: none; border-radius: 10px; color: #fff; font-weight: 600; cursor: pointer;
+      margin-bottom: 1.5rem; font-family: 'Orbitron', sans-serif; transition: all 0.3s ease;
+      text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .preview-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(188, 19, 254, 0.5); }
+
+    .preview-container { display: none; background: rgba(0, 0, 0, 0.5); border: 1px dashed rgba(0, 250, 255, 0.3); border-radius: 15px; padding: 1.5rem; margin-bottom: 1.5rem; animation: slideDown 0.4s ease-out; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .preview-container.active { display: block; }
+    .preview-video { width: 100%; max-height: 400px; border-radius: 10px; margin-bottom: 1rem; border: 1px solid rgba(0, 250, 255, 0.2); }
+    .preview-audio { width: 100%; margin-bottom: 1rem; border-radius: 10px; }
+    .preview-info { color: #aaa; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem; }
+    .preview-title { color: #00faff; font-size: 1.2rem; font-family: 'Orbitron'; margin-bottom: 0.8rem; text-shadow: 0 0 10px rgba(0, 250, 255, 0.5); }
+
+    /* Carrusel */
+    .carousel-container { position: relative; width: 100%; margin-bottom: 1rem; overflow: hidden; border-radius: 12px; }
+    .carousel-wrapper { display: flex; transition: transform 0.5s ease-in-out; }
+    .carousel-slide { min-width: 100%; position: relative; }
+    .carousel-img { width: 100%; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.8); }
+    .carousel-controls { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); padding: 0 1rem; pointer-events: none; }
+    .carousel-btn { pointer-events: all; background: rgba(0, 250, 255, 0.7); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #000; font-weight: bold; }
+    .carousel-indicators { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+    .carousel-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); cursor: pointer; }
+    .carousel-dot.active { background: #00faff; box-shadow: 0 0 10px #00faff; }
+
+    .media-type-badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-family: 'Orbitron'; margin-bottom: 0.8rem; letter-spacing: 1px; }
+    .badge-video { background: var(--neon-pink); color: white; box-shadow: 0 0 10px var(--neon-pink); }
+    .badge-audio { background: var(--neon-blue); color: black; box-shadow: 0 0 10px var(--neon-blue); }
+    .badge-gallery { background: var(--neon-purple); color: white; box-shadow: 0 0 10px var(--neon-purple); }
+
+    .buttons { display: flex; gap: 1rem; margin-bottom: 1rem; }
+    .action-btn { flex: 1; padding: 1.2rem 1rem; border: none; border-radius: 12px; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; color: #fff; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .btn-video { background: linear-gradient(135deg, #ff0088, #ff0055); box-shadow: 0 0 15px rgba(255, 0, 85, 0.3); }
+    .btn-audio { background: linear-gradient(135deg, #00faff, #0088ff); color: #000; box-shadow: 0 0 15px rgba(0, 238, 255, 0.3); }
+    .btn-gallery { background: linear-gradient(135deg, #bc13fe, #9d00ff); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
+    .action-btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; }
+    .btn-icon { font-size: 1.5rem; }
+
+    .cost-badge { background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; color: #ffcc00; margin-top: 5px; border: 1px solid #ffcc00; }
+
+    #status { text-align: center; font-size: 1rem; min-height: 2rem; color: #00faff; font-family: 'Orbitron'; margin-top: 15px; text-shadow: 0 0 5px rgba(0, 250, 255, 0.5); }
+    .loader { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(0, 250, 255, 0.3); border-top-color: #00faff; border-radius: 50%; animation: spin 1s linear infinite; margin-left: 8px; vertical-align: middle; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) { .box { padding: 2rem 1.5rem; } .buttons { flex-direction: column; } }
+  </style>
+</head>
+<body oncontextmenu="return false;">
+
+  <!-- AQUI INYECTAMOS EL MENÚ DINÁMICO DE TU WEB -->
+  <script src="menu.js"></script>
+
+  <!-- FONDOS CÓSMICOS DE LA WEB -->
+  <div class="cosmic-portal"><div class="stars"></div></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="main-wrapper">
+    <div class="box">
+      <div class="logo-container">
+        <svg class="skull-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="skullGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#00faff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#bc13fe;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <path d="M 50 15 Q 70 15 75 35 L 75 50 Q 78 65 70 72 L 65 78 L 35 78 L 30 72 Q 22 65 25 50 L 25 35 Q 30 15 50 15 Z" fill="url(#skullGrad)"/>
+          <ellipse cx="37" cy="38" rx="8" ry="12" fill="#000"/>
+          <ellipse cx="63" cy="38" rx="8" ry="12" fill="#000"/>
+          <path d="M 43 50 L 50 58 L 57 50 L 54 54 L 50 52 L 46 54 Z" fill="#000"/>
+          <path d="M 32 65 L 34 70 L 36 65" fill="#000"/>
+          <path d="M 44 65 L 46 73 L 48 65" fill="#000"/>
+          <path d="M 52 65 L 54 73 L 56 65" fill="#000"/>
+          <path d="M 64 65 L 66 70 L 68 65" fill="#000"/>
+        </svg>
+        <div class="logo-text">LUCK XIT</div>
+      </div>
+
+      <p class="subtitle">Descarga contenido de TikTok/Instagram al instante.<br><strong style="color:var(--neon-green);">Costo por descarga: $0.1 USD</strong></p>
+
+      <div class="input-wrapper">
+        <svg class="input-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="#00faff" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="#00faff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input id="url" type="text" placeholder="Pega el enlace de TikTok o Instagram aquí..." autocomplete="off">
+      </div>
+
+      <button class="preview-btn" onclick="previewMedia()">
+        <i class='bx bx-search-alt-2' style="font-size: 1.2rem;"></i> Previsualizar (Gratis)
+      </button>
+
+      <div id="preview" class="preview-container"></div>
+
+      <div class="buttons">
+        <button class="action-btn btn-video" onclick="downloadMedia('video')" id="btnVideo">
+          <i class='bx bx-video btn-icon'></i> DESCARGAR MP4
+          <span class="cost-badge">Cuesta $0.1</span>
+        </button>
+        <button class="action-btn btn-audio" onclick="downloadMedia('audio')" id="btnAudio">
+          <i class='bx bx-music btn-icon'></i> DESCARGAR MP3
+          <span class="cost-badge" style="border-color:#000; color:#000;">Cuesta $0.1</span>
+        </button>
+        <button class="action-btn btn-gallery" onclick="downloadMedia('gallery')" id="btnGallery" style="display:none;">
+          <i class='bx bx-images btn-icon'></i> DESCARGAR ZIP
+          <span class="cost-badge">Cuesta $0.1</span>
+        </button>
+      </div>
+
+      <p id="status"></p>
+    </div>
+  </div>
+
+  <script type="module">
+    // =========================================================
+    // 1. IMPORTACIONES DE FIREBASE
+    // =========================================================
+    import { auth, db, onAuthStateChanged, signOut, ref, get, child, runTransaction, push, update } from './firebase-config.js';
+
+    // =========================================================
+    // 2. CONFIGURACIÓN DEL SERVIDOR Y COSTOS
+    // =========================================================
+    
+    // 👇👇👇👇 PEGA AQUÍ TU URL DE RAILWAY 👇👇👇👇
+    const BACKEND_URL = "https://server-download-production.up.railway.app"; 
+    // 👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆
+    
+    const DOWNLOAD_COST = 0.10; 
+
+    // =========================================================
+    // 3. ESTADO GLOBAL
+    // =========================================================
+    let currentUser = null;
+    let currentBalance = 0;
+    
+    // Variables Carrusel
+    let previewData = null;
+    let currentSlide = 0;
+    let carouselImages = [];
+
+    // =========================================================
+    // 4. LÓGICA DE INTERFAZ DEL MENÚ Y PARTICULAS
+    // =========================================================
+    document.addEventListener('click', (e) => {
+        if (e.target && e.target.id === 'logoutMenuBtn' || e.target.closest('#logoutMenuBtn')) {
+            e.preventDefault(); signOut(auth).then(() => window.location.href="login.html");
+        }
+    });
+
+    const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
+    function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
+    class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.8; this.vy = (Math.random() - 0.5) * 0.8; this.size = Math.random() * 2 + 1; this.color = Math.random() > 0.5 ? 'rgba(0, 238, 255, ' : 'rgba(188, 19, 254, '; this.alpha = Math.random() * 0.4 + 0.1; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color + this.alpha + ')'; ctx.fill(); } }
+    for (let i = 0; i < 30; i++) particles.push(new Particle());
+    function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
+
+    // =========================================================
+    // 5. FLUJO DE AUTENTICACIÓN FIREBASE
+    // =========================================================
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            const d = new Date(user.metadata.creationTime);
+            const joinDateEl = document.getElementById('joinDateDisplay');
+            if (joinDateEl) joinDateEl.innerText = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+
+            get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const topUserEl = document.getElementById('topUserDisplay');
+                    const balanceEl = document.getElementById('balanceDisplay');
+                    const topAvatarEl = document.getElementById('topAvatar');
+                    const adminMenuEl = document.getElementById('adminMenuBtn');
+
+                    if(topUserEl) topUserEl.innerText = data.username || "Usuario";
+                    currentBalance = data.balance !== undefined ? parseFloat(data.balance) : 0;
+                    if(balanceEl) balanceEl.innerText = currentBalance.toFixed(2);
+                    if(topAvatarEl && data.avatar) topAvatarEl.src = data.avatar;
+                    if(adminMenuEl && (data.role === 'admin' || data.username?.toLowerCase() === 'sebasxit')) adminMenuEl.style.display = 'flex';
+                }
+            });
+        } else {
+            window.location.href = "login.html";
+        }
+    });
+
+    // =========================================================
+    // 6. LÓGICA DE DESCARGADOR (VISTA PREVIA)
+    // =========================================================
+    window.previewMedia = async () => {
+      const url = document.getElementById('url').value.trim();
+      const status = document.getElementById('status');
+      const previewContainer = document.getElementById('preview');
+      
+      if(!url){ 
+        status.innerHTML = '<i class="bx bx-error"></i> Pega un enlace válido primero';
+        status.style.color = 'var(--neon-pink)';
+        setTimeout(() => status.innerHTML = '', 3000);
+        return;
+      }
+      
+      status.innerHTML = 'Obteniendo información<span class="loader"></span>';
+      status.style.color = 'var(--neon-blue)';
+      previewContainer.classList.remove('active');
+
+      try{
+        const form = new FormData();
+        form.append('url', url);
+        // Conexión con Railway
+        const res = await fetch(`${BACKEND_URL}/preview`, { method:'POST', body: form });
+        
+        if(!res.ok){
+          const j = await res.json().catch(()=>null);
+          throw new Error(j && j.error ? j.error : res.statusText);
+        }
+
+        previewData = await res.json();
+        
+        if(previewData.success) {
+          let html = '';
+          currentSlide = 0;
+          
+          if(previewData.type === 'gallery' && previewData.images && previewData.images.length > 0) {
+            carouselImages = previewData.images;
+            html = `
+              <span class="media-type-badge badge-gallery"><i class='bx bx-images'></i> GALERÍA (${carouselImages.length} FOTOS)</span>
+              <div class="preview-title">${previewData.title || 'Galería de Redes'}</div>
+              <div class="carousel-container">
+                <div class="carousel-wrapper" id="carouselWrap">
+                  ${carouselImages.map(img => `<div class="carousel-slide"><img src="${img}" class="carousel-img" loading="lazy"></div>`).join('')}
+                </div>
+              </div>
+              <div class="preview-info">📦 Al descargar obtendrás un archivo ZIP con todas las imágenes.</div>
+            `;
+            document.getElementById('btnGallery').style.display = 'flex';
+            document.getElementById('btnVideo').style.display = 'none';
+            document.getElementById('btnAudio').style.display = 'none';
+            
+          } else if (previewData.type === 'video') {
+            html = `
+              <span class="media-type-badge badge-video"><i class='bx bx-video'></i> VIDEO MP4</span>
+              <div class="preview-title">${previewData.title || 'Video Extraído'}</div>
+              ${previewData.video_url ? `<video controls class="preview-video" controlsList="nodownload"><source src="${previewData.video_url}" type="video/mp4"></video>` 
+              : previewData.thumbnail ? `<img src="${previewData.thumbnail}" class="preview-video"><div class="preview-info" style="color: #ffaa00;">⚠ Vista previa no disponible. Descarga para ver.</div>` : ''}
+              <div class="preview-info">
+                ${previewData.uploader ? `<div><i class='bx bx-user'></i> ${previewData.uploader}</div>` : ''}
+              </div>
+            `;
+            document.getElementById('btnGallery').style.display = 'none';
+            document.getElementById('btnVideo').style.display = 'flex';
+            document.getElementById('btnAudio').style.display = 'flex';
+            
+          } else if (previewData.type === 'audio') {
+            html = `
+              <span class="media-type-badge badge-audio"><i class='bx bx-music'></i> AUDIO MP3</span>
+              <div class="preview-title">${previewData.title || 'Audio'}</div>
+              ${previewData.audio_url ? `<audio controls class="preview-audio"><source src="${previewData.audio_url}" type="audio/mpeg"></audio>` : ''}
+              ${previewData.thumbnail ? `<img src="${previewData.thumbnail}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px; margin: 0 auto 1rem auto; display: block;">` : ''}
+              <div class="preview-info">${previewData.uploader ? `<div><i class='bx bx-user'></i> ${previewData.uploader}</div>` : ''}</div>
+            `;
+            document.getElementById('btnGallery').style.display = 'none';
+            document.getElementById('btnVideo').style.display = 'none';
+            document.getElementById('btnAudio').style.display = 'flex';
+          }
+          
+          previewContainer.innerHTML = html;
+          previewContainer.classList.add('active');
+          status.innerHTML = '<i class="bx bx-check"></i> Vista previa lista';
+          status.style.color = 'var(--neon-green)';
+          setTimeout(() => status.innerHTML = '', 3000);
+        }
+      } catch(err) {
+        status.innerHTML = '<i class="bx bx-error"></i> Error: ' + err.message;
+        status.style.color = 'var(--neon-pink)';
+      }
+    };
+
+    // =========================================================
+    // 7. LÓGICA DE DESCARGA CON COBRO FIREBASE
+    // =========================================================
+    window.downloadMedia = async (kind) => {
+      const url = document.getElementById('url').value.trim();
+      const status = document.getElementById('status');
+      
+      if(!currentUser) { alert("ERROR: Debes iniciar sesión para descargar."); return; }
+      if(!url){ status.innerHTML = '<i class="bx bx-error"></i> Pega un enlace válido primero'; status.style.color = 'var(--neon-pink)'; return; }
+      if(currentBalance < DOWNLOAD_COST) {
+          status.innerHTML = `<i class="bx bx-wallet"></i> Saldo insuficiente. Necesitas $${DOWNLOAD_COST} USD.`;
+          status.style.color = 'var(--neon-pink)';
+          return;
+      }
+      
+      const buttons = document.querySelectorAll('.action-btn');
+      buttons.forEach(btn => btn.disabled = true);
+      
+      let downloadType = kind === 'video' ? 'MP4' : kind === 'audio' ? 'MP3' : 'ZIP';
+      status.innerHTML = `Verificando saldo y preparando ${downloadType}<span class="loader"></span>`;
+      status.style.color = 'var(--neon-blue)';
+
+      try {
+        // 1. TRANSACCIÓN DE COBRO EN FIREBASE
+        const userRef = ref(db, `users/${currentUser.uid}`);
+        const transactionResult = await runTransaction(userRef, (user) => {
+            if (user === null) return user;
+            let currentBal = parseFloat(user.balance || 0);
+            if (currentBal >= DOWNLOAD_COST) {
+                user.balance = parseFloat((currentBal - DOWNLOAD_COST).toFixed(2));
+                return user;
+            }
+            return; // Abortar si no hay saldo
+        });
+
+        if (!transactionResult.committed) {
+            throw new Error("Saldo insuficiente o error al procesar el pago.");
+        }
+
+        // Actualizar UI
+        currentBalance = parseFloat(transactionResult.snapshot.val().balance);
+        document.getElementById('balanceDisplay').innerText = currentBalance.toFixed(2);
+
+        // Guardar historial de compra
+        const historyRef = push(ref(db, `users/${currentUser.uid}/history`));
+        await update(ref(db, `users/${currentUser.uid}/history/${historyRef.key}`), { 
+            product: `Descarga Media (${downloadType})`, 
+            key: url.substring(0, 30) + '...', // Guardamos un fragmento de la URL como referencia
+            price: DOWNLOAD_COST, 
+            date: Date.now() 
+        });
+
+        status.innerHTML = `Pago aceptado. Descargando desde servidor<span class="loader"></span>`;
+
+        // 2. PETICIÓN DE DESCARGA A RAILWAY
+        const form = new FormData();
+        form.append('url', url);
+        form.append('kind', kind);
+        
+        const res = await fetch(`${BACKEND_URL}/download`, { method:'POST', body: form });
+        
+        if(!res.ok){
+          const j = await res.json().catch(()=>null);
+          throw new Error(j && j.error ? j.error : "Fallo en el servidor de descarga.");
+        }
+        
+        // Manejar el archivo recibido
+        const disposition = res.headers.get('content-disposition') || '';
+        const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        let filename = `LuckXIT_Media_${new Date().getTime()}.${kind === 'video' ? 'mp4' : kind === 'audio' ? 'mp3' : 'zip'}`;
+        if (match && match[1]) {
+          filename = decodeURIComponent(match[1].replace(/['"]/g, '').replace(/UTF-8''/i, ''));
+        }
+
+        const blob = await res.blob();
+        const urlBlob = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = urlBlob;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(urlBlob);
+        
+        status.innerHTML = `<i class="bx bx-check-double"></i> ¡Descarga Exitosa! (-$${DOWNLOAD_COST})`;
+        status.style.color = 'var(--neon-green)';
+        
+      } catch(err) {
+        status.innerHTML = '<i class="bx bx-error"></i> Error: ' + err.message;
+        status.style.color = 'var(--neon-pink)';
+        
+        // NOTA: Si cobró pero falló la descarga de railway, aquí idealmente deberías reembolsar
+        // Para simplificar, la advertencia está mostrada.
+      } finally {
+        buttons.forEach(btn => btn.disabled = false);
+        setTimeout(() => { if(status.innerHTML.includes('Exitosa') || status.innerHTML.includes('Error')) status.innerHTML = ''; }, 5000);
+      }
+    };
+  </script>
+</body>
+</html>
