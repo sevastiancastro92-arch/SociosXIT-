@@ -7,9 +7,9 @@
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
     /* =========================================
-       1. FUENTES Y VARIABLES CÓSMICAS
+       1. FUENTES Y VARIABLES CÓSMICAS (Globales)
        ========================================= */
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;500;700&family=Poppins:wght@400;600&display=swap');
     
     * { user-select: none; box-sizing: border-box; touch-action: manipulation; }
     
@@ -20,6 +20,7 @@
         --neon-green: #00ffcc; 
         --bg-deep: #030008;
         --glass-bg: rgba(10, 2, 20, 0.85); 
+        --sidebar-bg: rgba(5, 0, 15, 0.95); 
     }
 
     body { 
@@ -31,14 +32,49 @@
         overflow-x: hidden; 
     }
 
-    /* FONDOS */
+    /* =========================================
+       2. FONDOS CÓSMICOS
+       ========================================= */
     .cosmic-portal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; z-index: -2; pointer-events: none; overflow: hidden; }
     .stars { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)); background-repeat: repeat; background-size: 200px 200px; animation: twinkle 4s infinite alternate; opacity: 0.4; }
     @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.7; } }
     #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; pointer-events: none; }
 
     /* =========================================
-       2. CONTENEDOR PRINCIPAL ALINEADO A SOCIOS XIT
+       3. ESTILOS DEL MENÚ Y BARRA SUPERIOR
+       ========================================= */
+    .top-bar { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 700px; background: rgba(10, 2, 20, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0, 238, 255, 0.4); border-radius: 15px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 20px rgba(0, 238, 255, 0.2); z-index: 100; }
+    .menu-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 8px; padding: 6px 10px; font-size: 1.5rem; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0, 238, 255, 0.2); }
+    .menu-btn:hover { background: rgba(0, 238, 255, 0.1); box-shadow: 0 0 15px var(--neon-blue); transform: scale(1.05); }
+    .top-bar-right { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
+    .top-bar-right::-webkit-scrollbar { display: none; }
+    .badge { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-family: 'Orbitron', sans-serif; color: #ddd; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+    .badge:hover { border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); color: #fff; }
+    .badge img { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; }
+    .badge span { color: #fff; font-weight: 700; }
+    .badge.green { border-color: rgba(0, 255, 204, 0.4); cursor: default; }
+    .badge.green span { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
+
+    .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.4s ease; }
+    .sidebar-overlay.active { opacity: 1; visibility: visible; }
+    .sidebar { position: fixed; top: 0; left: -300px; width: 260px; height: 100dvh; background: var(--sidebar-bg); border-right: 2px solid var(--neon-purple); box-shadow: 10px 0 30px rgba(188, 19, 254, 0.2); z-index: 999; transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; padding: 20px; padding-bottom: 40px; }
+    .sidebar.active { left: 0; }
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(188, 19, 254, 0.4); padding-bottom: 15px; margin-bottom: 20px; }
+    .sidebar-header h2 { margin: 0; font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-blue); }
+    .close-btn { background: transparent; border: none; color: var(--neon-pink); font-size: 2rem; cursor: pointer; transition: 0.3s; }
+    .close-btn:hover { transform: scale(1.1) rotate(90deg); text-shadow: 0 0 10px var(--neon-pink); }
+    .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; overflow-x: hidden; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; color: #ddd; text-decoration: none; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 1rem; font-family: 'Exo 2', sans-serif; border: 1px solid transparent; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    .sidebar-item i { font-size: 1.4rem; color: var(--neon-purple); transition: 0.3s; }
+    .sidebar-item:hover { background: linear-gradient(90deg, rgba(0, 238, 255, 0.15), transparent); border-left: 4px solid var(--neon-blue); color: #fff; box-shadow: -5px 0 15px rgba(0, 238, 255, 0.2); transform: translateX(8px); }
+    .sidebar-footer { margin-top: auto; border-top: 1px dashed rgba(188, 19, 254, 0.4); padding-top: 20px; flex-shrink: 0; }
+    .logout-btn { width: 100%; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); padding: 12px; border-radius: 10px; font-weight: 600; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; z-index: 1; }
+    .logout-btn:hover { background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); text-shadow: 0 0 5px var(--neon-pink); }
+    .sidebar-version { text-align: center; margin-top: 20px; font-family: 'Exo 2', sans-serif; color: #666; font-size: 0.75rem; display: flex; flex-direction: column; gap: 5px; }
+    .version-badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: var(--neon-blue); font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; }
+
+    /* =========================================
+       4. CONTENEDOR PRINCIPAL DEL DOWNLOADER
        ========================================= */
     .main-wrapper {
         width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 10; margin-top: 90px; margin-bottom: 40px;
@@ -70,7 +106,7 @@
     .hub-desc strong { color: var(--neon-green); font-family: 'Orbitron'; letter-spacing: 1px; }
 
     /* =========================================
-       3. INPUTS Y BOTONES
+       5. INPUTS Y BOTONES
        ========================================= */
     .input-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
     .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: var(--neon-blue); opacity: 0.8; }
@@ -93,7 +129,7 @@
     .btn-preview:hover { background: rgba(188, 19, 254, 0.1); box-shadow: 0 0 15px rgba(188, 19, 254, 0.4); text-shadow: 0 0 5px var(--neon-purple); }
 
     /* =========================================
-       4. CONTENEDOR DE VISTA PREVIA
+       6. CONTENEDOR DE VISTA PREVIA
        ========================================= */
     .preview-container {
         display: none; width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 238, 255, 0.2);
@@ -125,7 +161,7 @@
     .carousel-dot.active { background: var(--neon-blue); box-shadow: 0 0 8px var(--neon-blue); }
 
     /* =========================================
-       5. BOTONES DE ACCIÓN (DESCARGA)
+       7. BOTONES DE ACCIÓN (DESCARGA)
        ========================================= */
     .action-buttons { display: flex; flex-direction: column; gap: 12px; width: 100%; }
     
@@ -202,22 +238,13 @@
   </div>
 
   <script type="module">
-    // =========================================================
-    // 1. IMPORTACIONES DE FIREBASE
-    // =========================================================
     import { auth, db, onAuthStateChanged, signOut, ref, get, child, runTransaction, push, update } from './firebase-config.js';
 
-    // =========================================================
-    // 2. CONFIGURACIÓN DEL SERVIDOR Y COSTOS
-    // =========================================================
     // 👇👇 PEGA AQUÍ TU URL DE RAILWAY 👇👇
     const BACKEND_URL = "https://server-download-production.up.railway.app"; 
     
     const DOWNLOAD_COST = 0.10; 
 
-    // =========================================================
-    // 3. ESTADO GLOBAL
-    // =========================================================
     let currentUser = null;
     let currentBalance = 0;
     
@@ -226,7 +253,7 @@
     window.carouselImages = [];
 
     // =========================================================
-    // 4. LÓGICA DEL CARRUSEL (Inyectable en HTML)
+    // LÓGICA DEL CARRUSEL (Inyectable en HTML)
     // =========================================================
     window.updateCarousel = () => {
       const wrapper = document.getElementById('carouselWrap');
@@ -240,7 +267,7 @@
     window.goToSlide = (index) => { window.currentSlide = index; window.updateCarousel(); };
 
     // =========================================================
-    // 5. EFECTOS VISUALES (Partículas)
+    // EFECTOS VISUALES (Partículas)
     // =========================================================
     const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let width, height, particles = [];
     function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; } window.addEventListener('resize', resize); resize();
@@ -249,8 +276,14 @@
     function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
 
     // =========================================================
-    // 6. FLUJO DE AUTENTICACIÓN FIREBASE
+    // FLUJO DE AUTENTICACIÓN FIREBASE Y EVENTOS DE MENÚ
     // =========================================================
+    document.addEventListener('click', (e) => {
+        if (e.target && e.target.id === 'logoutMenuBtn' || e.target.closest('#logoutMenuBtn')) {
+            e.preventDefault(); signOut(auth).then(() => window.location.href="login.html");
+        }
+    });
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
@@ -279,7 +312,7 @@
     });
 
     // =========================================================
-    // 7. LÓGICA DE DESCARGADOR (VISTA PREVIA)
+    // LÓGICA DE DESCARGADOR (VISTA PREVIA)
     // =========================================================
     window.previewMedia = async () => {
       const url = document.getElementById('url').value.trim();
@@ -375,7 +408,7 @@
     };
 
     // =========================================================
-    // 8. LÓGICA DE DESCARGA CON COBRO FIREBASE
+    // LÓGICA DE DESCARGA CON COBRO FIREBASE
     // =========================================================
     window.downloadMedia = async (kind) => {
       const url = document.getElementById('url').value.trim();
