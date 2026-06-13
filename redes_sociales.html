@@ -124,13 +124,10 @@
             width: 100%; background: rgba(188, 19, 254, 0.1); border: 2px dashed var(--neon-purple);
             color: var(--neon-purple); padding: 18px; border-radius: 15px; font-family: 'Orbitron';
             font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s;
-            margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;
             box-shadow: 0 0 15px rgba(188, 19, 254, 0.1);
         }
         .btn-open-modal:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 25px var(--neon-purple); transform: scale(1.02); }
-
-        .btn-api { background: rgba(0, 255, 204, 0.1); border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); margin-bottom: 20px; }
-        .btn-api:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 25px var(--neon-green); transform: scale(1.02); }
 
         .selected-service-box { background: rgba(0, 238, 255, 0.1); border: 1px solid var(--neon-blue); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; box-shadow: inset 0 0 15px rgba(0, 238, 255, 0.1); text-align: center; }
         .selected-service-box h4 { margin: 0 0 10px 0; color: #fff; font-family: 'Orbitron'; font-size: 1rem; }
@@ -222,16 +219,6 @@
         .modal-header-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .btn-back-cat { background: transparent; border: none; color: var(--neon-blue); font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
         .btn-back-cat:hover { transform: scale(1.1); text-shadow: 0 0 10px var(--neon-blue); }
-
-        /* ESTILOS API DOCS */
-        .api-docs { text-align: left; font-family: 'Exo 2'; overflow-y: auto; padding-right: 10px; flex: 1; }
-        .api-docs::-webkit-scrollbar { width: 5px; } .api-docs::-webkit-scrollbar-thumb { background: var(--neon-green); border-radius: 5px; }
-        .api-key-box { background: rgba(0,0,0,0.8); border: 1px dashed var(--neon-green); padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .api-key-box input { background: transparent; border: none; color: var(--neon-green); font-family: 'Orbitron'; font-weight: bold; font-size: 1rem; width: 100%; outline: none; }
-        .btn-copy { background: var(--neon-green); color: #000; border: none; padding: 8px 15px; border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
-        .doc-section { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 3px solid var(--neon-blue); margin-bottom: 15px; }
-        .doc-section h4 { margin: 0 0 10px 0; color: var(--neon-blue); font-family: 'Orbitron'; }
-        pre { background: #000; padding: 15px; border-radius: 8px; color: #0f0; overflow-x: auto; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(0, 255, 204, 0.2); }
     </style>
 </head>
 <body oncontextmenu="return false;"> 
@@ -306,10 +293,6 @@
             <button type="button" id="btnOpenCatModal" class="btn-open-modal">
                 <i class='bx bx-grid-alt'></i> EXPLORAR CATÁLOGO DE SERVICIOS
             </button>
-            
-            <button type="button" id="btnOpenApiModal" class="btn-open-modal btn-api">
-                <i class='bx bx-code-curly'></i> API PARA REVENDEDORES
-            </button>
 
             <div id="selectedServiceBox" class="selected-service-box">
                 <h4 id="selectedServiceName">Ningún servicio seleccionado</h4>
@@ -374,23 +357,6 @@
         </div>
     </div>
 
-    <div id="apiModal" class="modal-overlay">
-        <div class="modal-box" style="border-color: var(--neon-green);">
-            <h3 class="modal-title" style="color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green);"><i class='bx bx-code-block'></i> SMM API v1</h3>
-            
-            <div class="api-docs">
-                <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 15px;">Conecta tu panel SMM o tienda a nuestro sistema. Las compras se descontarán automáticamente de tu saldo de LUCK XIT.</p>
-                
-                <label style="color: var(--neon-green); font-family: 'Orbitron'; font-size: 0.9rem;">Tu API Key Secreta:</label>
-                <div class="api-key-box">
-                    <input type="text" id="apiKeyValue" readonly value="Cargando...">
-                    <button class="btn-copy" id="btnCopyApi">COPIAR</button>
-                </div>
-            </div>
-            <button class="btn-cancel-modal" style="border-color: var(--neon-green); color: var(--neon-green);" onclick="document.getElementById('apiModal').style.display='none'">CERRAR DOCUMENTACIÓN</button>
-        </div>
-    </div>
-
     <div id="msgModal" class="modal-overlay">
         <div class="modal-box" style="text-align: center; max-width: 400px; border-color: var(--neon-blue);">
             <h3 id="msgModalTitle" class="modal-title">Aviso</h3>
@@ -451,13 +417,6 @@
                             const firstLetter = (data.username ? data.username.charAt(0) : 'U').toUpperCase();
                             document.getElementById('topAvatar').src = `https://via.placeholder.com/30/14001e/bc13fe?text=${firstLetter}`;
                         }
-
-                        let apiKey = data.apiKey;
-                        if (!apiKey) {
-                            apiKey = 'luck_' + user.uid + '_' + Math.random().toString(16).substring(2, 10);
-                            update(ref(db, `users/${user.uid}`), { apiKey: apiKey });
-                        }
-                        document.getElementById('apiKeyValue').value = apiKey;
                     }
                 });
 
@@ -469,14 +428,6 @@
                 window.location.href = "login.html";
             }
         });
-
-        document.getElementById('btnOpenApiModal').onclick = () => document.getElementById('apiModal').style.display = 'flex';
-        document.getElementById('btnCopyApi').onclick = () => {
-            const input = document.getElementById('apiKeyValue');
-            navigator.clipboard.writeText(input.value);
-            document.getElementById('btnCopyApi').innerText = "COPIADO";
-            setTimeout(() => document.getElementById('btnCopyApi').innerText = "COPIAR", 2000);
-        };
 
         async function loadAPI() {
             try {
