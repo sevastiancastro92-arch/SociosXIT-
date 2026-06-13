@@ -419,7 +419,7 @@
         function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } animate();
 
         const API_URL = "https://panelseguidores-production.up.railway.app/api/smm";
-        const PROFIT_MARGIN = 1.20; 
+        const EXTRA_PROFIT = 0.20; 
         
         let currentBalance = 0;
         let currentUser = null;
@@ -488,7 +488,7 @@
                     groupedServices = {};
                     data.forEach(srv => {
                         if (!groupedServices[srv.category]) groupedServices[srv.category] = [];
-                        srv.finalRate = parseFloat(srv.rate) * PROFIT_MARGIN;
+                        srv.finalRate = parseFloat(srv.rate) + EXTRA_PROFIT;
                         groupedServices[srv.category].push(srv);
                     });
                     renderCategoryGrid();
