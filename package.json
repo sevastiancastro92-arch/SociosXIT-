@@ -1,5 +1,5 @@
 {
-  "name": "sociosxit-web",
+  "name": "sociosxit",
   "version": "1.0.0",
   "scripts": {
     "start": "serve -p $PORT -s ."
